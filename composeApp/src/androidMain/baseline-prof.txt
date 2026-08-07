@@ -1,0 +1,64 @@
+# Baseline profile da Antares (0.9.16.2, F4)
+#
+# O que isto é: uma lista de classes e métodos que o ART compila em ANTECIPAÇÃO,
+# em vez de os interpretar na primeira vez. O ganho aparece no arranque a frio —
+# a primeira impressão de quem acaba de instalar, e a única que a maioria vê.
+#
+# ---------------------------------------------------------------------------
+# O QUE JÁ FUNCIONAVA, E QUE NÃO SE DESCOBRE SEM OLHAR
+#
+# O `androidx.profileinstaller` já estava no APK (entra por baixo, com o
+# WorkManager e o Compose), e o AGP já juntava os perfis que o Compose e o
+# AndroidX publicam. Ou seja: o arranque **já** era compilado em antecipação na
+# parte que é biblioteca. O que faltava era o código da própria app.
+#
+# ---------------------------------------------------------------------------
+# HONESTIDADE SOBRE ESTE FICHEIRO
+#
+# Isto é **por regra, não por medição**. Um perfil a sério gera-se a correr a app
+# num aparelho com o Macrobenchmark, e depois é a lista exata do que aquele
+# arranque tocou. Aqui está o caminho de arranque escrito à mão a partir do
+# código: a Application, a Activity, a raiz da UI, a injeção, o tema, a navegação
+# e o ecrã Hoje — que é o destino inicial de quem já fez onboarding.
+#
+# Um perfil por regra é conservador por natureza: a pior coisa que uma regra a
+# mais faz é ocupar espaço e tempo de instalação, nunca partir nada. E uma regra
+# a menos só deixa o ganho por apanhar. Por isso este ficheiro é seguro sem ter
+# sido medido — mas **não** é o mesmo que ter sido medido, e fica escrito para
+# ninguém o confundir com isso. A medição precisa do telemóvel do dono.
+# ---------------------------------------------------------------------------
+
+# Arranque do processo: Application (Koin, DayTicker, agendamentos) e Activity.
+HSPLpt/antares/app/AntaresApplication;->**(**)**
+HSPLpt/antares/app/MainActivity;->**(**)**
+
+# A raiz da UI e o que ela decide antes de desenhar seja o que for.
+HSPLpt/antares/app/AppKt;->**(**)**
+HSPLpt/antares/app/AppViewModel;->**(**)**
+HSPLpt/antares/app/ComposableSingletons$AppKt**->**(**)**
+
+# Injeção de dependências: corre inteira antes do primeiro pixel.
+HSPLpt/antares/app/core/di/**->**(**)**
+
+# Tema e sistema de desenho — tudo o que compõe o primeiro frame.
+HSPLpt/antares/app/core/designsystem/**->**(**)**
+
+# Navegação: a barra e o grafo montam-se no arranque.
+HSPLpt/antares/app/navigation/**->**(**)**
+
+# O ecrã Hoje é o destino inicial de quem já passou o onboarding, e é onde a
+# primeira impressão se ganha ou se perde.
+HSPLpt/antares/app/feature/today/**->**(**)**
+
+# Base de dados e preferências: o Hoje não mostra um número sem elas.
+HSPLpt/antares/app/core/database/AntaresDb**->**(**)**
+HSPLpt/antares/app/core/datastore/**->**(**)**
+
+# Datas: o "que dia é hoje" é das primeiras coisas que a app pergunta.
+HSPLpt/antares/app/core/util/DateExtKt;->**(**)**
+HSPLpt/antares/app/core/util/DayTicker**->**(**)**
+
+# As contas do dia — o orçamento e as metas — correm antes do primeiro desenho
+# do anel.
+HSPLpt/antares/app/core/calc/DailyBudgetCalc**->**(**)**
+HSPLpt/antares/app/core/calc/NutritionCalc**->**(**)**

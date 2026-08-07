@@ -1,0 +1,1167 @@
+{
+  "_leia": [
+    "Receitas de pratos compostos PT/BR que não existem em base de dados nenhuma.",
+    "As PROPORÇÕES são estimativa minha; os VALORES vêm dos ingredientes reais do",
+    "catálogo (CIQUAL/USDA). É a mesma via honesta que o servidor usa na AI.",
+    "O build valida que as kcal da receita batem com as declaradas no prato (±30%)",
+    "e que TODOS os ingredientes resolvem — receita mal pensada rebenta o build.",
+    "'__agua__' é diluente sem nutrientes (caldo, água de cozedura): procurar",
+    "'water' no catálogo devolvia ÁGUA DE COCO e passava despercebido."
+  ],
+  "ptx_feijoada": {
+    "ingredients": [
+      {
+        "q": "red kidney bean boiled",
+        "g": 60
+      },
+      {
+        "q": "pork belly raw",
+        "g": 50
+      },
+      {
+        "q": "dry sausage",
+        "g": 40
+      },
+      {
+        "q": "red cabbage boiled",
+        "g": 20
+      }
+    ]
+  },
+  "ptx_caldo_verde": {
+    "ingredients": [
+      {
+        "q": "potato boiled water",
+        "g": 55
+      },
+      {
+        "q": "kale raw",
+        "g": 25
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 3
+      },
+      {
+        "q": "__agua__",
+        "g": 120
+      }
+    ]
+  },
+  "ptx_salada_mista": {
+    "ingredients": [
+      {
+        "q": "lettuce raw",
+        "g": 60
+      },
+      {
+        "q": "tomato round raw",
+        "g": 30
+      },
+      {
+        "q": "cucumber peeled raw",
+        "g": 20
+      }
+    ]
+  },
+  "ptx3_canja_de_galinha": {
+    "ingredients": [
+      {
+        "q": "chicken breast without skin",
+        "g": 20
+      },
+      {
+        "q": "rice red cooked",
+        "g": 25
+      },
+      {
+        "q": "carrot boiled water tender",
+        "g": 10
+      },
+      {
+        "q": "__agua__",
+        "g": 100
+      }
+    ]
+  },
+  "ptx3_caldeirada_de_peixe": {
+    "ingredients": [
+      {
+        "q": "cod steamed",
+        "g": 60
+      },
+      {
+        "q": "potato boiled water",
+        "g": 55
+      },
+      {
+        "q": "tomato round raw",
+        "g": 25
+      },
+      {
+        "q": "onion raw",
+        "g": 15
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 4
+      },
+      {
+        "q": "__agua__",
+        "g": 60
+      }
+    ]
+  },
+  "ptx2_jardineira": {
+    "ingredients": [
+      {
+        "q": "beef rib steak lean",
+        "g": 35
+      },
+      {
+        "q": "potato boiled water",
+        "g": 60
+      },
+      {
+        "q": "carrot boiled water tender",
+        "g": 30
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 3
+      },
+      {
+        "q": "__agua__",
+        "g": 55
+      }
+    ]
+  },
+  "ptx3_arroz_de_frango": {
+    "ingredients": [
+      {
+        "q": "rice red cooked",
+        "g": 90
+      },
+      {
+        "q": "chicken leg meat skin roasted",
+        "g": 35
+      },
+      {
+        "q": "carrot boiled water tender",
+        "g": 10
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 3
+      }
+    ]
+  },
+  "ptx3_bacalhau_a_gomes_de_sa": {
+    "ingredients": [
+      {
+        "q": "cod steamed",
+        "g": 45
+      },
+      {
+        "q": "potato boiled water",
+        "g": 90
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 15
+      },
+      {
+        "q": "onion raw",
+        "g": 15
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 8
+      }
+    ]
+  },
+  "ptx3_feijoada_brasileira": {
+    "ingredients": [
+      {
+        "q": "black bean turtle mature seeds raw",
+        "g": 28
+      },
+      {
+        "q": "pork belly raw",
+        "g": 30
+      },
+      {
+        "q": "dry sausage",
+        "g": 20
+      },
+      {
+        "q": "__agua__",
+        "g": 70
+      }
+    ]
+  },
+  "ptx3_baiao_de_dois": {
+    "ingredients": [
+      {
+        "q": "rice red cooked",
+        "g": 70
+      },
+      {
+        "q": "red kidney bean boiled",
+        "g": 60
+      },
+      {
+        "q": "dry sausage",
+        "g": 15
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 4
+      }
+    ]
+  },
+  "ptx3_feijao_tropeiro": {
+    "ingredients": [
+      {
+        "q": "red kidney bean boiled",
+        "g": 70
+      },
+      {
+        "q": "dry sausage",
+        "g": 20
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 15
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_papas_de_aveia_com_leite": {
+    "ingredients": [
+      {
+        "q": "oats",
+        "g": 20
+      },
+      {
+        "q": "milk semi-skimmed pasteurised",
+        "g": 130
+      }
+    ]
+  },
+  "ptx3_pao_com_manteiga": {
+    "ingredients": [
+      {
+        "q": "bread wheat",
+        "g": 80
+      },
+      {
+        "q": "butter salted",
+        "g": 10
+      }
+    ]
+  },
+  "ptx2_misto_quente": {
+    "ingredients": [
+      {
+        "q": "bread wheat",
+        "g": 60
+      },
+      {
+        "q": "cooked ham smoked",
+        "g": 25
+      },
+      {
+        "q": "cheese cheddar",
+        "g": 20
+      }
+    ]
+  },
+  "ptx3_prego_no_pao": {
+    "ingredients": [
+      {
+        "q": "bread wheat",
+        "g": 70
+      },
+      {
+        "q": "beef rib steak lean",
+        "g": 60
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      }
+    ]
+  },
+  "ptx2_bitoque_com_ovo": {
+    "ingredients": [
+      {
+        "q": "beef rib steak lean",
+        "g": 70
+      },
+      {
+        "q": "egg whole cooked fried",
+        "g": 45
+      },
+      {
+        "q": "french fries chips frozen roasted",
+        "g": 60
+      },
+      {
+        "q": "rice red cooked",
+        "g": 60
+      }
+    ]
+  },
+  "ptx3_empadao_de_carne": {
+    "ingredients": [
+      {
+        "q": "potato boiled water",
+        "g": 110
+      },
+      {
+        "q": "beef rib steak lean",
+        "g": 45
+      },
+      {
+        "q": "onion raw",
+        "g": 10
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_lasanha_a_bolonhesa": {
+    "ingredients": [
+      {
+        "q": "pasta dry regular cooked",
+        "g": 70
+      },
+      {
+        "q": "beef rib steak lean",
+        "g": 40
+      },
+      {
+        "q": "tomato round raw",
+        "g": 40
+      },
+      {
+        "q": "cheese cheddar",
+        "g": 12
+      },
+      {
+        "q": "milk semi-skimmed pasteurised",
+        "g": 30
+      }
+    ]
+  },
+  "ptx2_arroz_de_marisco": {
+    "ingredients": [
+      {
+        "q": "rice red cooked",
+        "g": 90
+      },
+      {
+        "q": "tomato round raw",
+        "g": 20
+      },
+      {
+        "q": "onion raw",
+        "g": 10
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      },
+      {
+        "q": "__agua__",
+        "g": 10
+      }
+    ]
+  },
+  "ptx3_migas": {
+    "ingredients": [
+      {
+        "q": "bread wheat",
+        "g": 60
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 10
+      },
+      {
+        "q": "__agua__",
+        "g": 30
+      }
+    ]
+  },
+  "ptx_galao": {
+    "ingredients": [
+      {
+        "q": "espresso coffee",
+        "g": 60
+      },
+      {
+        "q": "milk bulk",
+        "g": 140
+      }
+    ]
+  },
+  "ptx3_cappuccino": {
+    "ingredients": [
+      {
+        "q": "espresso coffee",
+        "g": 60
+      },
+      {
+        "q": "milk bulk",
+        "g": 100
+      }
+    ]
+  },
+  "ptx3_chocolate_quente": {
+    "ingredients": [
+      {
+        "q": "milk bulk",
+        "g": 180
+      },
+      {
+        "q": "cocoa dry powder unsweetened",
+        "g": 10
+      },
+      {
+        "q": "sugar white",
+        "g": 12
+      }
+    ]
+  },
+  "ptx2_cha_com_acucar": {
+    "ingredients": [
+      {
+        "q": "black tea brewed",
+        "g": 200
+      },
+      {
+        "q": "sugar white",
+        "g": 12
+      }
+    ]
+  },
+  "ptx3_cha_gelado": {
+    "ingredients": [
+      {
+        "q": "black tea brewed",
+        "g": 200
+      },
+      {
+        "q": "sugar white",
+        "g": 12
+      }
+    ]
+  },
+  "ptx_pao_queijo": {
+    "ingredients": [
+      {
+        "q": "tapioca raw",
+        "g": 50
+      },
+      {
+        "q": "cheese mozzarella whole milk",
+        "g": 20
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 10
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 8
+      },
+      {
+        "q": "milk bulk",
+        "g": 12
+      }
+    ]
+  },
+  "ptx3_pao_de_queijo_br": {
+    "ingredients": [
+      {
+        "q": "tapioca raw",
+        "g": 50
+      },
+      {
+        "q": "cheese mozzarella whole milk",
+        "g": 20
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 10
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 8
+      },
+      {
+        "q": "milk bulk",
+        "g": 12
+      }
+    ]
+  },
+  "ptx_pastel_nata": {
+    "ingredients": [
+      {
+        "q": "puff pastry savoury average",
+        "g": 40
+      },
+      {
+        "q": "milk bulk",
+        "g": 35
+      },
+      {
+        "q": "egg yolk raw",
+        "g": 10
+      },
+      {
+        "q": "sugar white",
+        "g": 15
+      }
+    ]
+  },
+  "ptx_brigadeiro": {
+    "ingredients": [
+      {
+        "q": "milk powder semi-skimmed",
+        "g": 12
+      },
+      {
+        "q": "sugar white",
+        "g": 40
+      },
+      {
+        "q": "cocoa dry powder unsweetened",
+        "g": 8
+      },
+      {
+        "q": "butter salted",
+        "g": 8
+      }
+    ]
+  },
+  "ptx2_beijinho_br": {
+    "ingredients": [
+      {
+        "q": "milk powder semi-skimmed",
+        "g": 12
+      },
+      {
+        "q": "sugar white",
+        "g": 40
+      },
+      {
+        "q": "coconut meat dried desiccated not sweetened",
+        "g": 10
+      },
+      {
+        "q": "__agua__",
+        "g": 15
+      }
+    ]
+  },
+  "ptx2_bolo_de_arroz": {
+    "ingredients": [
+      {
+        "q": "wheat flour type 65",
+        "g": 35
+      },
+      {
+        "q": "sugar white",
+        "g": 25
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 15
+      },
+      {
+        "q": "butter salted",
+        "g": 12
+      },
+      {
+        "q": "milk bulk",
+        "g": 13
+      }
+    ]
+  },
+  "ptx3_bolo_de_laranja": {
+    "ingredients": [
+      {
+        "q": "wheat flour type 65",
+        "g": 33
+      },
+      {
+        "q": "sugar white",
+        "g": 25
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 15
+      },
+      {
+        "q": "butter salted",
+        "g": 13
+      },
+      {
+        "q": "milk bulk",
+        "g": 14
+      }
+    ]
+  },
+  "ptx3_queque": {
+    "ingredients": [
+      {
+        "q": "wheat flour type 65",
+        "g": 35
+      },
+      {
+        "q": "sugar white",
+        "g": 25
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 15
+      },
+      {
+        "q": "butter salted",
+        "g": 15
+      },
+      {
+        "q": "milk bulk",
+        "g": 10
+      }
+    ]
+  },
+  "ptx3_aletria": {
+    "ingredients": [
+      {
+        "q": "rice vermicelli cooked",
+        "g": 50
+      },
+      {
+        "q": "milk bulk",
+        "g": 80
+      },
+      {
+        "q": "sugar white",
+        "g": 20
+      },
+      {
+        "q": "egg yolk raw",
+        "g": 6
+      }
+    ]
+  },
+  "ptx3_salame_de_chocolate": {
+    "ingredients": [
+      {
+        "q": "biscuit cookie plain",
+        "g": 40
+      },
+      {
+        "q": "dark chocolate 50 cocoa bar",
+        "g": 25
+      },
+      {
+        "q": "butter salted",
+        "g": 20
+      },
+      {
+        "q": "sugar white",
+        "g": 10
+      }
+    ]
+  },
+  "ptx3_doce_de_ovos": {
+    "ingredients": [
+      {
+        "q": "egg yolk raw",
+        "g": 35
+      },
+      {
+        "q": "sugar white",
+        "g": 35
+      },
+      {
+        "q": "__agua__",
+        "g": 25
+      }
+    ]
+  },
+  "ptx2_coxinha": {
+    "ingredients": [
+      {
+        "q": "wheat flour type 65",
+        "g": 35
+      },
+      {
+        "q": "chicken breast without skin",
+        "g": 25
+      },
+      {
+        "q": "potato boiled water",
+        "g": 15
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 10
+      },
+      {
+        "q": "__agua__",
+        "g": 20
+      }
+    ]
+  },
+  "ptx3_coxinha_de_frango": {
+    "ingredients": [
+      {
+        "q": "wheat flour type 65",
+        "g": 35
+      },
+      {
+        "q": "chicken breast without skin",
+        "g": 25
+      },
+      {
+        "q": "potato boiled water",
+        "g": 15
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 10
+      },
+      {
+        "q": "__agua__",
+        "g": 20
+      }
+    ]
+  },
+  "ptx2_pastel_frito_br": {
+    "ingredients": [
+      {
+        "q": "wheat flour type 65",
+        "g": 40
+      },
+      {
+        "q": "beef ground cooked average",
+        "g": 25
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 12
+      },
+      {
+        "q": "onion raw",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_pastel_de_feira": {
+    "ingredients": [
+      {
+        "q": "wheat flour type 65",
+        "g": 40
+      },
+      {
+        "q": "beef ground cooked average",
+        "g": 25
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 12
+      },
+      {
+        "q": "onion raw",
+        "g": 5
+      }
+    ]
+  },
+  "ptx2_empada_de_frango": {
+    "ingredients": [
+      {
+        "q": "puff pastry savoury average",
+        "g": 55
+      },
+      {
+        "q": "chicken breast without skin",
+        "g": 30
+      },
+      {
+        "q": "onion raw",
+        "g": 8
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 4
+      }
+    ]
+  },
+  "ptx3_folhado_de_salsicha": {
+    "ingredients": [
+      {
+        "q": "puff pastry savoury average",
+        "g": 60
+      },
+      {
+        "q": "dry sausage",
+        "g": 35
+      }
+    ]
+  },
+  "ptx3_torrada_com_doce": {
+    "ingredients": [
+      {
+        "q": "bread wheat",
+        "g": 60
+      },
+      {
+        "q": "butter salted",
+        "g": 8
+      },
+      {
+        "q": "jam strawberry",
+        "g": 20
+      }
+    ]
+  },
+  "ptx2_bacalhau_com_natas": {
+    "ingredients": [
+      {
+        "q": "cod steamed",
+        "g": 40
+      },
+      {
+        "q": "potato boiled water",
+        "g": 70
+      },
+      {
+        "q": "sour cream light",
+        "g": 35
+      },
+      {
+        "q": "milk bulk",
+        "g": 20
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 10
+      }
+    ]
+  },
+  "ptx3_acorda_de_marisco": {
+    "ingredients": [
+      {
+        "q": "bread wheat",
+        "g": 45
+      },
+      {
+        "q": "crustaceans shrimp cooked",
+        "g": 25
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 6
+      },
+      {
+        "q": "egg soft-boiled",
+        "g": 10
+      },
+      {
+        "q": "__agua__",
+        "g": 60
+      }
+    ]
+  },
+  "ptx3_dobrada_com_feijao": {
+    "ingredients": [
+      {
+        "q": "tripe beef raw",
+        "g": 45
+      },
+      {
+        "q": "red kidney bean boiled",
+        "g": 50
+      },
+      {
+        "q": "dry sausage",
+        "g": 15
+      },
+      {
+        "q": "__agua__",
+        "g": 40
+      }
+    ]
+  },
+  "ptx3_sopa_da_pedra": {
+    "ingredients": [
+      {
+        "q": "red kidney bean boiled",
+        "g": 35
+      },
+      {
+        "q": "pork belly raw",
+        "g": 10
+      },
+      {
+        "q": "dry sausage",
+        "g": 8
+      },
+      {
+        "q": "potato boiled water",
+        "g": 25
+      },
+      {
+        "q": "__agua__",
+        "g": 80
+      }
+    ]
+  },
+  "ptx3_ovos_mexidos_com_alheira": {
+    "ingredients": [
+      {
+        "q": "egg whole cooked fried",
+        "g": 60
+      },
+      {
+        "q": "dry sausage",
+        "g": 40
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_pica_pau": {
+    "ingredients": [
+      {
+        "q": "beef rib steak lean",
+        "g": 70
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 8
+      },
+      {
+        "q": "gherkin pickled vinegar",
+        "g": 15
+      }
+    ]
+  },
+  "ptx3_estrogonofe_de_frango": {
+    "ingredients": [
+      {
+        "q": "chicken breast without skin",
+        "g": 55
+      },
+      {
+        "q": "sour cream light",
+        "g": 30
+      },
+      {
+        "q": "tomato round raw",
+        "g": 15
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_escondidinho": {
+    "ingredients": [
+      {
+        "q": "potato boiled water",
+        "g": 70
+      },
+      {
+        "q": "beef ground cooked average",
+        "g": 40
+      },
+      {
+        "q": "milk bulk",
+        "g": 15
+      },
+      {
+        "q": "butter salted",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_moqueca_de_peixe": {
+    "ingredients": [
+      {
+        "q": "cod steamed",
+        "g": 60
+      },
+      {
+        "q": "coconut milk",
+        "g": 30
+      },
+      {
+        "q": "tomato round raw",
+        "g": 20
+      },
+      {
+        "q": "onion raw",
+        "g": 10
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_virado_a_paulista": {
+    "ingredients": [
+      {
+        "q": "red kidney bean boiled",
+        "g": 40
+      },
+      {
+        "q": "rice white cooked",
+        "g": 50
+      },
+      {
+        "q": "pork belly raw",
+        "g": 20
+      },
+      {
+        "q": "egg whole cooked fried",
+        "g": 25
+      }
+    ]
+  },
+  "ptx3_arroz_carreteiro": {
+    "ingredients": [
+      {
+        "q": "rice white cooked",
+        "g": 80
+      },
+      {
+        "q": "beef ground cooked average",
+        "g": 40
+      },
+      {
+        "q": "onion raw",
+        "g": 8
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_vinagrete_molho": {
+    "ingredients": [
+      {
+        "q": "tomato round raw",
+        "g": 45
+      },
+      {
+        "q": "onion raw",
+        "g": 20
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 1
+      },
+      {
+        "q": "__agua__",
+        "g": 15
+      }
+    ]
+  },
+  "ptx3_hamburguer_completo": {
+    "ingredients": [
+      {
+        "q": "bread wheat",
+        "g": 60
+      },
+      {
+        "q": "beef ground cooked average",
+        "g": 55
+      },
+      {
+        "q": "cheese cheddar",
+        "g": 15
+      },
+      {
+        "q": "tomato round raw",
+        "g": 10
+      },
+      {
+        "q": "lettuce raw",
+        "g": 5
+      }
+    ]
+  },
+  "ptx3_kebab_frango": {
+    "ingredients": [
+      {
+        "q": "wheat tortilla wrap filled",
+        "g": 55
+      },
+      {
+        "q": "chicken leg meat roasted",
+        "g": 45
+      },
+      {
+        "q": "lettuce raw",
+        "g": 15
+      },
+      {
+        "q": "tomato round raw",
+        "g": 15
+      },
+      {
+        "q": "sour cream light",
+        "g": 10
+      }
+    ]
+  },
+  "ptx3_batido_de_proteina_pronto": {
+    "ingredients": [
+      {
+        "q": "milk semi-skimmed pasteurised",
+        "g": 180
+      },
+      {
+        "q": "protein powder whey based",
+        "g": 12
+      }
+    ]
+  },
+  "ptx2_humus": {
+    "ingredients": [
+      {
+        "q": "chick pea boiled cooked water",
+        "g": 60
+      },
+      {
+        "q": "tahini sesame paste",
+        "g": 7
+      },
+      {
+        "q": "olive oil extra virgin",
+        "g": 3
+      },
+      {
+        "q": "__agua__",
+        "g": 25
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+id,name_pt,name_en,met,category
+walk_slow,Caminhada lenta (3 km/h),Walking slow (3 km/h),2.8,walking
+walk_casual,Caminhada casual (4 km/h),Walking casual (4 km/h),3.5,walking
+walk_brisk,Caminhada rápida (5.5 km/h),Walking brisk (5.5 km/h),4.3,walking
+walk_very_brisk,Caminhada muito rápida (6.5 km/h),Walking very brisk (6.5 km/h),5.0,walking
+walk_uphill,Caminhada em subida,Walking uphill,6.3,walking
+walk_stairs,Subir escadas,Climbing stairs,8.0,walking
+hiking,Caminhada em trilho (hiking),Hiking,6.0,walking
+walk_dog,Passear o cão,Walking the dog,3.0,walking
+run_slow,Corrida lenta (8 min/km),Running (8 min/km),9.8,running
+run_moderate,Corrida moderada (6 min/km),Running (6 min/km),11.0,running
+run_fast,Corrida rápida (5 min/km),Running (5 min/km),12.8,running
+run_very_fast,Corrida muito rápida (4 min/km),Running (4 min/km),14.5,running
+run_sprint,Sprint,Sprinting,19.0,running
+jogging,Jogging (footing),Jogging,7.0,running
+run_treadmill,Passadeira (corrida),Treadmill running,9.0,running
+trail_run,Trail running,Trail running,10.0,running
+cycle_leisure,Bicicleta lazer (<15 km/h),Cycling leisure (<15 km/h),4.0,cycling
+cycle_light,Bicicleta ligeira (15 km/h),Cycling light (15 km/h),5.8,cycling
+cycle_moderate,Bicicleta moderada (20 km/h),Cycling moderate (20 km/h),8.0,cycling
+cycle_fast,Bicicleta rápida (25 km/h),Cycling fast (25 km/h),10.0,cycling
+cycle_racing,Bicicleta corrida (>30 km/h),Cycling racing (>30 km/h),12.0,cycling
+cycle_mountain,BTT (montanha),Mountain biking,8.5,cycling
+cycle_spinning,Spinning / indoor,Spinning / indoor cycling,7.0,cycling
+cycle_stationary,Bicicleta estática moderada,Stationary bike moderate,6.8,cycling
+strength_light,Musculação ligeira,Strength training light,3.5,strength
+strength_moderate,Musculação moderada,Strength training moderate,5.0,strength
+strength_vigorous,Musculação vigorosa,Strength training vigorous,6.0,strength
+weightlifting,Levantamento de pesos,Weightlifting,6.0,strength
+calisthenics,Calistenia,Calisthenics,3.8,strength
+crossfit,CrossFit,CrossFit,8.0,strength
+circuit_training,Treino em circuito,Circuit training,7.0,strength
+kettlebell,Kettlebell,Kettlebell,9.0,strength
+bodyweight,Exercícios de peso corporal,Bodyweight exercises,4.3,strength
+pushups_situps,Flexões / abdominais,Push-ups / sit-ups,3.8,strength
+swim_leisure,Natação lazer,Swimming leisure,5.8,swimming
+swim_moderate,Natação moderada,Swimming moderate,7.0,swimming
+swim_vigorous,Natação vigorosa,Swimming vigorous,9.8,swimming
+swim_freestyle,Natação crol,Swimming freestyle,8.3,swimming
+swim_breaststroke,Natação bruços,Swimming breaststroke,10.3,swimming
+water_aerobics,Hidroginástica,Water aerobics,5.5,swimming
+football,Futebol,Football (soccer),7.0,sports
+futsal,Futsal,Futsal,8.0,sports
+basketball,Basquetebol,Basketball,6.5,sports
+volleyball,Voleibol,Volleyball,4.0,sports
+tennis,Ténis,Tennis,7.3,sports
+padel,Padel,Padel,6.0,sports
+table_tennis,Ténis de mesa,Table tennis,4.0,sports
+badminton,Badminton,Badminton,5.5,sports
+handball,Andebol,Handball,8.0,sports
+golf,Golfe,Golf,4.8,sports
+rugby,Râguebi,Rugby,8.3,sports
+hockey,Hóquei,Hockey,8.0,sports
+squash,Squash,Squash,7.3,sports
+martial_arts,Artes marciais,Martial arts,10.3,sports
+boxing,Boxe,Boxing,7.8,sports
+boxing_bag,Boxe (saco),Boxing (bag),5.5,sports
+climbing,Escalada,Rock climbing,8.0,sports
+skateboarding,Skate,Skateboarding,5.0,sports
+surfing,Surf,Surfing,3.0,sports
+dance_moderate,Dança moderada,Dancing moderate,5.0,cardio
+dance_vigorous,Dança vigorosa,Dancing vigorous,7.8,cardio
+zumba,Zumba,Zumba,6.5,cardio
+aerobics,Aeróbica,Aerobics,7.3,cardio
+step_aerobics,Step,Step aerobics,8.5,cardio
+jump_rope,Saltar à corda,Jump rope,11.0,cardio
+elliptical,Elíptica,Elliptical trainer,5.0,cardio
+rowing_moderate,Remo moderado,Rowing moderate,7.0,cardio
+rowing_vigorous,Remo vigoroso,Rowing vigorous,8.5,cardio
+stair_climber,Máquina de escadas,Stair climber,9.0,cardio
+hiit,HIIT,HIIT,8.0,cardio
+yoga,Yoga,Yoga,3.0,cardio
+pilates,Pilates,Pilates,3.8,cardio
+stretching,Alongamentos,Stretching,2.3,cardio
+tai_chi,Tai chi,Tai chi,3.0,cardio
+skiing,Esqui,Skiing,7.0,sports
+snowboard,Snowboard,Snowboarding,5.3,sports
+skating,Patinagem,Skating,7.0,sports
+kayaking,Canoagem / kayak,Kayaking,5.0,sports
+rowing_boat,Remar (barco),Rowing (boat),6.0,sports
+horse_riding,Equitação,Horse riding,5.5,sports
+cleaning,Limpeza da casa,House cleaning,3.3,daily
+vacuuming,Aspirar,Vacuuming,3.3,daily
+cooking,Cozinhar,Cooking,2.5,daily
+gardening,Jardinagem,Gardening,4.0,daily
+mowing,Cortar relva,Mowing the lawn,5.5,daily
+shopping,Compras (a pé),Shopping (walking),2.3,daily
+childcare,Cuidar de crianças,Childcare,3.5,daily
+moving_boxes,Carregar caixas,Carrying boxes,7.0,daily
+painting,Pintar (casa),Painting (house),4.5,daily
+manual_labor,Trabalho manual pesado,Heavy manual labor,6.0,daily

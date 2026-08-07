@@ -1,0 +1,58 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android / AGP
+*.apk
+*.aab
+*.ap_
+*.dex
+local.properties
+captures/
+.cxx/
+
+# Kotlin / KSP / IDE
+.kotlin/
+.idea/
+*.iml
+out/
+
+# Secrets / env
+.env
+.env.*
+*.keystore
+*.jks
+
+# OS
+.DS_Store
+Thumbs.db
+
+# APKs de teste por fase (entregues fora do git)
+apks/
+
+# Dataset USDA bruto do gerador de seed (43 MB) — reproduzível via download
+# documentado no README; só o seed_foods.json gerado é versionado.
+tools/seed-generator/data/
+
+# Dataset free-exercise-db bruto (1 MB) — reproduzível via README;
+# só o seed_exercises.json gerado é versionado.
+tools/exercise-importer/data/
+
+# Segredos / notas soltas — NUNCA versionar chaves. Valores públicos vão em
+# local.properties (já ignorado); secrets (sk-ant*, service_role) só no servidor.
+docs/*.txt
+docs/secrets*
+**/secrets.txt
+*.secret
+
+
+# Estado local do CLI do Supabase (ligação ao projeto, versões) — não é código.
+supabase/.temp/
+apks/mapping/
+
+# Saída do /graphify — derivada do código, regenerável, 18 MB.
+graphify-out/
+
+# O Excel da TCA — regenerável a partir do portal do INSA.
+tools/tca-importer/data/*.xlsx

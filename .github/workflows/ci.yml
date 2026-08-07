@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: Android — build + testes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - run: chmod +x gradlew
+
+      - name: Build + testes unitários
+        run: ./gradlew build --console=plain
+
+  functions:
+    name: Edge Functions — testes Deno
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Testes das funções
+        working-directory: supabase
+        run: deno test -A functions/_shared/
+
+      - name: Verificação de tipos
+        working-directory: supabase
+        run: deno check functions/analyze-food/index.ts functions/analyze-exercise/index.ts functions/delete-account/index.ts
+
+  secrets:
+    name: Nenhum segredo no repositório
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Procurar chaves
+        run: |
+          if grep -rInE "sk-ant-(api|admin)[A-Za-z0-9_-]{10,}" --exclude-dir=.git .; then
+            echo "::error::chave da Anthropic no repositório"; exit 1
+          fi
+          if grep -rInE "eyJ[A-Za-z0-9_-]{40,}" --exclude-dir=.git .; then
+            echo "::error::JWT/chave de serviço no repositório"; exit 1
+          fi
+          echo "limpo"

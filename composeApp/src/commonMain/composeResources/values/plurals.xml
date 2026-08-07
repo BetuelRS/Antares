@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="today_streak_days">
+        <item quantity="one">%1$d dia seguido a registar</item>
+        <item quantity="other">%1$d dias seguidos a registar</item>
+    </plurals>
+    <plurals name="today_streak_record">
+        <item quantity="one">Recorde: %1$d dia</item>
+        <item quantity="other">Recorde: %1$d dias</item>
+    </plurals>
+
+    <plurals name="week_budget_incomplete">
+        <item quantity="one">Falta %1$d dia por registar esta semana — a conta está incompleta.</item>
+        <item quantity="other">Faltam %1$d dias por registar esta semana — a conta está incompleta.</item>
+    </plurals>
+</resources>

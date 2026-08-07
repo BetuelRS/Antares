@@ -1,0 +1,168 @@
+{
+  "_leia": [
+    "Correções à mão sobre as propostas automáticas do match-pt.mjs.",
+    "'map'    força o dador certo (id verificado no catálogo).",
+    "'proxy'  usa um alimento MUITO próximo por não existir o exato — prática",
+    "         documentada da FAO/INFOODS ('borrowed values'), legítima desde que",
+    "         fique escrita. O motivo fica ao lado.",
+    "'reject' recusa a proposta e deixa o alimento sem micros. Recusar é uma",
+    "         decisão legítima: o painel diz 'sem dados medidos', e isso é melhor",
+    "         do que colar no diário as vitaminas de outro alimento.",
+    "Todos os ids são validados pelo build-pt-micros.mjs — id inexistente falha."
+  ],
+  "map": {
+    "ptx_batata_cozida": "ciqual-4003",
+    "ptx_azeite": "usda-171413",
+    "ptx_queijo_fresco": "ciqual-19641",
+    "ptx_fiambre_porco": "ciqual-28803",
+    "ptx_bife_vaca": "ciqual-6100",
+    "ptx_pao_forma": "usda-172686",
+    "ptx_aveia": "usda-169705",
+    "ptx_feijao_encarnado": "ciqual-20503",
+    "ptx_grao": "ciqual-20507",
+    "ptx_salmao": "ciqual-25996",
+    "ptx_coxa_frango": "ciqual-36004",
+    "ptx_lombo_porco": "ciqual-28302",
+    "ptx_iogurte_magro": "usda-170887",
+    "ptx2_tangerina": "ciqual-13024",
+    "ptx_cha_sem_acucar": "ciqual-18154",
+    "ptx_cafe_expresso": "ciqual-18071",
+    "ptx_broa": "usda-174910",
+    "ptx_farofa": "ciqual-54035",
+    "ptx3_febras_grelhadas": "ciqual-28302",
+    "ptx3_alcatra_assada": "ciqual-6100",
+    "ptx3_frango_de_churrasco": "ciqual-36005",
+    "ptx3_grao_de_bico_assado": "ciqual-20507",
+    "ptx2_hamburguer_de_vaca_grelhado": "ciqual-6255"
+  },
+  "proxy": {
+    "ptx_feijao_preto": {
+      "donor": "ciqual-20503",
+      "why": "o catálogo só tem feijão preto CRU (341 kcal); o feijão encarnado cozido é a leguminosa cozida mais próxima em perfil"
+    },
+    "ptx_feijao_frade": {
+      "donor": "usda-169220",
+      "why": "não existe feijão-frade cozido; usa-se o grão imaturo cru (90 kcal, próximo das 116 declaradas), a mesma espécie (Vigna unguiculata)"
+    },
+    "ptx2_dourada_grelhada": {
+      "donor": "ciqual-26080",
+      "why": "a dourada grelhada do catálogo (148 kcal) afasta-se demais; a dourada selvagem crua tem exatamente as 96 kcal declaradas, logo os micros por 100 g são coerentes com a nossa base"
+    },
+    "ptx2_robalo_grelhado": {
+      "donor": "usda-175142",
+      "why": "não há robalo grelhado no catálogo; o robalo cru tem as mesmas 97 kcal declaradas — mesma espécie, mesma base de matéria seca"
+    },
+    "ptx2_carapau_grelhado": {
+      "donor": "ciqual-26113",
+      "why": "não há carapau grelhado; o carapau cru (116 kcal) bate com as 118 declaradas"
+    },
+    "ptx2_polvo_cozido": {
+      "donor": "usda-174218",
+      "why": "o polvo cozido do catálogo tem 156 kcal; o cru tem 82, exatamente as declaradas — a nossa ficha está em base equivalente a cru"
+    },
+    "ptx2_lulas_grelhadas": {
+      "donor": "usda-174223",
+      "why": "idem lulas: o cru (92 kcal) bate com as declaradas, o cozido (149) não"
+    },
+    "ptx2_bebida_de_amendoa": {
+      "donor": "usda-174832",
+      "why": "bebida de amêndoa sem açúcar (15 kcal) é a mesma bebida; a nossa ficha (22 kcal) tem ligeiro açúcar, que não traz micros"
+    },
+    "ptx2_natas_culinarias_18": {
+      "donor": "usda-173443",
+      "why": "o catálogo não tem natas culinárias; as natas ácidas light (136 kcal, ~18% MG) são o creme lácteo mais próximo em matéria gorda"
+    },
+    "ptx3_iogurte_liquido": {
+      "donor": "usda-170886",
+      "why": "não há iogurte líquido; o iogurte natural meio-gordo tem a mesma matriz láctea fermentada e 63 kcal contra as 71 declaradas"
+    },
+    "ptx3_skyr": {
+      "donor": "usda-170887",
+      "why": "skyr não existe no catálogo; o iogurte natural magro é a matriz láctea fermentada desnatada equivalente"
+    },
+    "ptx3_iogurte_proteico": {
+      "donor": "usda-170887",
+      "why": "idem: iogurte natural magro, mesma matriz láctea desnatada"
+    },
+    "ptx3_banana_da_terra_frita": {
+      "donor": "ciqual-53101",
+      "why": "a banana-da-terra frita do catálogo tem 309 kcal, longe das 152 declaradas; a cozida (125) é a preparação com base de matéria seca compatível"
+    },
+    "ptx3_palmito": {
+      "donor": "ciqual-20018",
+      "why": "palmito em conserva escorrido (42 kcal) é o mesmo alimento; a diferença para as 28 declaradas é só de líquido de cobertura"
+    },
+    "ptx3_piri_piri_molho": {
+      "donor": "usda-174527",
+      "why": "molho de pimento picante pronto (11 kcal) é o mesmo tipo de molho; as 30 kcal declaradas incluem o óleo do piri-piri caseiro"
+    },
+    "ptx3_rojoes": {
+      "donor": "ciqual-28302",
+      "why": "rojões são cubos de pá/entremeada frita; o lombo de porco cozinhado é o corte suíno do catálogo mais próximo em perfil de micros (o toucinho cru sobrestimaria a gordura)"
+    }
+  },
+  "reject": {
+    "ptx_cafe_com_leite": "o único candidato é leite fortificado com vitaminas — copiar inventaria vitaminas que o galão não tem",
+    "ptx2_agua": "água simples não tem micros a declarar",
+    "ptx_batata_frita": "os candidatos são fritos industriais com perfil muito diferente",
+    "ptx_atum_agua": "o catálogo não tem atum em lata ao natural com micros; só sanduíches e saladas",
+    "ptx2_bacon_frito": "o catálogo só tem bacon cru (118 kcal) ou gordura de bacon (898); nenhum representa bacon frito a 541 kcal",
+    "ptx2_acai_polpa": "os únicos candidatos são bebidas de açaí fortificadas — copiar inventaria vitaminas adicionadas",
+    "ptx2_refrigerante_de_laranja": "não há refrigerante de laranja no catálogo; os candidatos são sumos de fruta, com perfil de micros totalmente diferente",
+    "ptx_tapioca": "a tapioca hidratada é amido praticamente puro; o único dador é tapioca seca (354 kcal) e sobrestimaria os micros ~1,5x",
+    "ptx3_tremocos": "só existe tremoço seco (356 kcal); copiar para tremoços demolhados (119 kcal) triplicaria os micros"
+  },
+  "query": {
+    "ptx_pao_integral": "bread wholemeal",
+    "ptx_pao_frances": "brown french bread",
+    "ptx_tosta": "bread white toasted",
+    "ptx_pure_batata": "mashed potato",
+    "ptx_atum_oleo": "tuna oil",
+    "ptx_requeijao": "ricotta",
+    "ptx_refrigerante_cola": "carbonated cola",
+    "ptx2_pimento_vermelho": "sweet pepper red raw",
+    "ptx2_pimento_verde": "sweet pepper green raw",
+    "ptx2_alho": "garlic raw",
+    "ptx2_sementes_de_chia": "chia seed",
+    "ptx2_peito_de_peru_grelhado": "turkey escalope roasted",
+    "ptx2_coelho_estufado": "rabbit cooked",
+    "ptx2_frango_assado_com_pele": "chicken meat skin roasted",
+    "ptx2_pescada_cozida": "european hake braised",
+    "ptx2_truta_grelhada": "trout roasted baked",
+    "ptx2_muesli": "muesli",
+    "ptx2_seitan": "seitan",
+    "ptx2_bebida_de_aveia": "oat drink",
+    "ptx2_agua_tonica": "tonic drink sugar",
+    "ptx2_bolacha_agua_e_sal": "cracker",
+    "ptx2_donut": "doughnut",
+    "ptx2_gomas": "jelly candy",
+    "ptx3_entremeada_grelhada": "pork belly raw",
+    "ptx3_pizza_de_pepperoni": "pizza cheeses prepacked",
+    "ptx3_nuggets_de_frango": "chicken nugget",
+    "ptx3_batata_frita_de_restaurante": "french fries deep-fried",
+    "ptx3_sushi_variado": "sushi",
+    "ptx3_croissant_misto": "croissant",
+    "ptx3_bolo_de_cenoura": "carrot cake",
+    "ptx3_pao_de_lo": "sponge cake",
+    "ptx3_panqueca_americana": "pancake",
+    "ptx3_pudim_flan": "caramel custard refrigerated",
+    "ptx3_gelatina": "gelatin desserts dry mix prepared water",
+    "ptx3_mascarpone": "mascarpone",
+    "ptx3_queijo_da_serra": "pecorino cheese ewe milk",
+    "ptx3_figo_seco": "fig dried",
+    "ptx3_mandioca_cozida": "cassava cooked",
+    "ptx3_guacamole": "guacamole",
+    "ptx3_leite_em_po": "milk powder",
+    "ptx3_cereais_com_chocolate": "cereal chocolate",
+    "ptx3_bolacha_recheada": "biscuit filled",
+    "ptx3_leite_creme": "custard dessert canned average",
+    "ptx3_molho_tartaro": "tartar sauce",
+    "ptx2_creme_de_avela_e_cacau": "chocolate spread",
+    "ptx3_farinheira": "smoked link sausage pork beef",
+    "ptx3_alheira": "smoked link sausage pork",
+    "ptx2_almondegas": "meatball",
+    "ptx3_manteiga_de_amendoim_light": "peanut butter smooth reduced fat",
+    "ptx3_batata_palha": "snacks potato sticks",
+    "ptx3_sangria": "sangria"
+  }
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="notif_channel_rest_name">Descanso do treino</string>
+    <string name="notif_channel_rest_desc">Aviso no fim do tempo de descanso entre séries.</string>
+    <string name="notif_channel_session_name">Treino em curso</string>
+    <string name="notif_channel_session_desc">Mostra que tens um treino a decorrer.</string>
+    <string name="notif_rest_done_title">Descanso terminado</string>
+    <string name="notif_rest_done_text">Bora para a próxima série.</string>
+    <string name="notif_session_title">Treino em curso</string>
+    <string name="notif_session_text">Toca para voltar ao treino.</string>
+    <string name="notif_channel_fasting_name">Jejum</string>
+    <string name="notif_channel_fasting_desc">Aviso quando atinges o objetivo do jejum.</string>
+    <string name="notif_fasting_goal_title">Objetivo de jejum atingido</string>
+    <string name="notif_fasting_goal_text">Completaste a tua janela de jejum. Podes comer.</string>
+    <string name="notif_channel_run_name">Corrida em curso</string>
+    <string name="notif_channel_run_desc">Mostra as métricas enquanto gravas uma corrida.</string>
+    <string name="notif_run_title">Antares — a gravar corrida</string>
+
+    <string name="notif_channel_meal_name">Lembretes de refeição</string>
+    <string name="notif_channel_meal_desc">Lembra-te de registar uma refeição que ainda não anotaste.</string>
+    <string name="notif_channel_weighin_name">Pesagem semanal</string>
+    <string name="notif_channel_weighin_desc">Lembra-te de te pesares uma vez por semana.</string>
+    <string name="notif_channel_coach_name">Relatório do coach</string>
+    <string name="notif_channel_coach_desc">Avisa quando o teu relatório semanal está pronto.</string>
+    <string name="notif_meal_title">Já registaste?</string>
+    <string name="notif_meal_breakfast">Não te esqueças de anotar o pequeno-almoço.</string>
+    <string name="notif_meal_lunch">Não te esqueças de anotar o almoço.</string>
+    <string name="notif_meal_dinner">Não te esqueças de anotar o jantar.</string>
+    <string name="notif_weighin_title">Hora de te pesares</string>
+    <string name="notif_weighin_text">Passou uma semana. Uma pesagem mantém a tendência atualizada.</string>
+    <string name="notif_coach_title">Relatório semanal pronto</string>
+    <string name="notif_coach_text">O teu coach analisou a semana. Toca para ver.</string>
+
+    <string name="notif_protein_title">Proteína a fechar o dia</string>
+    <string name="notif_protein_text">Faltam %1$dg de proteína para a tua meta de hoje.</string>
+
+    <string name="widget_title">Antares</string>
+    <string name="widget_kcal_remaining">%1$d kcal restantes</string>
+    <string name="widget_kcal_none">Define as tuas metas</string>
+    <string name="widget_water">Água: %1$d ml</string>
+    <string name="widget_fasting_on">Jejum ativo</string>
+    <string name="widget_fasting_off">Sem jejum</string>
+    <string name="widget_label">Antares — resumo do dia</string>
+    <string name="widget_add_water">+250 ml</string>
+    <string name="widget_repeat">Outra vez: %1$s</string>
+    <string name="widget_open">Abrir</string>
+</resources>

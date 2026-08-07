@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_channel_rest_name">Workout rest</string>
+    <string name="notif_channel_rest_desc">Alert when the rest between sets is over.</string>
+    <string name="notif_channel_session_name">Workout in progress</string>
+    <string name="notif_channel_session_desc">Shows that a workout is ongoing.</string>
+    <string name="notif_rest_done_title">Rest over</string>
+    <string name="notif_rest_done_text">On to the next set.</string>
+    <string name="notif_session_title">Workout in progress</string>
+    <string name="notif_session_text">Tap to go back to your workout.</string>
+    <string name="notif_channel_fasting_name">Fasting</string>
+    <string name="notif_channel_fasting_desc">Alert when you reach your fasting goal.</string>
+    <string name="notif_fasting_goal_title">Fasting goal reached</string>
+    <string name="notif_fasting_goal_text">You completed your fasting window. You can eat now.</string>
+    <string name="notif_channel_run_name">Run in progress</string>
+    <string name="notif_channel_run_desc">Shows your metrics while recording a run.</string>
+    <string name="notif_run_title">Antares — recording run</string>
+
+    <string name="notif_channel_meal_name">Meal reminders</string>
+    <string name="notif_channel_meal_desc">Reminds you to log a meal you haven\'t recorded yet.</string>
+    <string name="notif_channel_weighin_name">Weekly weigh-in</string>
+    <string name="notif_channel_weighin_desc">Reminds you to weigh yourself once a week.</string>
+    <string name="notif_channel_coach_name">Coach report</string>
+    <string name="notif_channel_coach_desc">Tells you when your weekly report is ready.</string>
+    <string name="notif_meal_title">Logged it yet?</string>
+    <string name="notif_meal_breakfast">Don\'t forget to log breakfast.</string>
+    <string name="notif_meal_lunch">Don\'t forget to log lunch.</string>
+    <string name="notif_meal_dinner">Don\'t forget to log dinner.</string>
+    <string name="notif_weighin_title">Time to weigh in</string>
+    <string name="notif_weighin_text">It\'s been a week. A weigh-in keeps your trend up to date.</string>
+    <string name="notif_coach_title">Weekly report ready</string>
+    <string name="notif_coach_text">Your coach reviewed the week. Tap to see it.</string>
+
+    <string name="notif_protein_title">Protein to close the day</string>
+    <string name="notif_protein_text">You\'re %1$dg of protein short of today\'s goal.</string>
+
+    <string name="widget_title">Antares</string>
+    <string name="widget_kcal_remaining">%1$d kcal left</string>
+    <string name="widget_kcal_none">Set your goals</string>
+    <string name="widget_water">Water: %1$d ml</string>
+    <string name="widget_fasting_on">Fasting active</string>
+    <string name="widget_fasting_off">No fasting</string>
+    <string name="widget_label">Antares — today\'s summary</string>
+    <string name="widget_add_water">+250 ml</string>
+    <string name="widget_repeat">Again: %1$s</string>
+    <string name="widget_open">Open</string>
+</resources>
