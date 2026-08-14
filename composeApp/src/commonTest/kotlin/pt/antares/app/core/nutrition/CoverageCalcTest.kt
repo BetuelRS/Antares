@@ -82,6 +82,50 @@ class CoverageCalcTest {
     }
 
     @Test
+    fun `uma semana compara-se com a referencia de UM dia, nao de sete`() {
+
+        val semana = fullyMeasured(mapOf("vitC_mg" to 770.0), kcal = 14_000.0)
+
+        val porSete = CoverageCalc.compute(semana, Sex.MALE, drvs, days = 7)
+            .first { it.key == "vitC_mg" }
+        assertEquals(100, porSete.coveragePct, "sete dias certos são 100%, não 700%")
+        assertEquals(110.0, porSete.intake, "a ingestão mostrada é a média por dia")
+    }
+
+    @Test
+    fun `sem dizer os dias continua a contar como um dia so`() {
+
+        val dia = fullyMeasured(mapOf("vitC_mg" to 110.0))
+        assertEquals(
+            100,
+            CoverageCalc.compute(dia, Sex.MALE, drvs).first { it.key == "vitC_mg" }.coveragePct,
+        )
+    }
+
+    @Test
+    fun `zero ou negativo nos dias nao rebenta a divisao`() {
+        val totals = fullyMeasured(mapOf("vitC_mg" to 110.0))
+        for (dias in listOf(0, -1, -7)) {
+            val r = CoverageCalc.compute(totals, Sex.MALE, drvs, days = dias)
+                .first { it.key == "vitC_mg" }
+            assertEquals(100, r.coveragePct, "days=$dias devia cair em 1 dia")
+        }
+    }
+
+    @Test
+    fun `a marca de medicao parcial nao muda com o numero de dias`() {
+
+        val totals = MicroTotals(
+            byKey = mapOf("iron_mg" to 35.0),
+            measuredKcalByKey = mapOf("iron_mg" to 3500.0),
+            totalKcal = 14_000.0,
+        )
+        val r = CoverageCalc.compute(totals, Sex.MALE, drvs, days = 7).first { it.key == "iron_mg" }
+        assertEquals(25, r.measuredPct)
+        assertTrue(r.isPartial)
+    }
+
+    @Test
     fun `parser EFSA ignora linhas mas le as boas`() {
         val csv = """
             key,male,female,unit
