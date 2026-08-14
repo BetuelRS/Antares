@@ -25,6 +25,9 @@ import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.LineString
 import org.maplibre.geojson.Point
 
+// Os quadrados do mapa vêm de fora, e isso é uma saída de dados: cada pedido diz a este
+// serviço, pelo endereço IP, que zona do mundo está a ser vista — e durante uma corrida, essa
+// zona é onde a pessoa está. O percurso em si nunca é enviado; fica na base do telemóvel.
 private const val STYLE_URI = "https://tiles.openfreemap.org/styles/liberty"
 private const val SRC = "run_path_src"
 private const val LAYER = "run_path_layer"

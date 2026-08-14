@@ -7,8 +7,10 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 
 /**
- * A Open Food Facts, a única fonte de alimentos que a app consulta em linha. Serve o que o
- * catálogo local não tem: produtos de marca, encontrados por código de barras.
+ * A Open Food Facts. Serve o que o catálogo local não tem: produtos de marca, encontrados por
+ * código de barras. É a única fonte de alimentos que a app consulta **por identificação direta**
+ * — a análise por foto e por texto também devolve nutrição, mas por estimativa e através das
+ * Edge Functions.
  *
  * O `userAgent` vem de fora porque a Open Food Facts exige nele o nome e a versão de quem
  * chama, e a versão tem uma fonte única — ver o [coreModule]. Escrevê-la aqui punha um

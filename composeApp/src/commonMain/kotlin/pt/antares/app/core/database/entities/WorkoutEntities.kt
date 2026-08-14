@@ -36,7 +36,9 @@ data class ExerciseEntity(
     val secondaryMuscles: String,
     val instructionsEnJson: String,
     val instructionsPtJson: String,
-    // Nomes de ficheiros locais, não endereços: a app mostra os exercícios sem rede.
+    // Nomes de ficheiro, não endereços completos: o endereço é montado com a base guardada
+    // pelo [ExerciseSeeder], que assim pode mudar sem semear o catálogo outra vez. As imagens
+    // são descarregadas quando se abre o exercício — o texto vê-se sem rede, as imagens não.
     val imagesJson: String,
     // Só os exercícios criados pelo utilizador podem ser apagados; os do catálogo ficam.
     val isCustom: Boolean = false,

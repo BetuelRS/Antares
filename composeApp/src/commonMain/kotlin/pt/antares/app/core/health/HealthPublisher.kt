@@ -29,8 +29,12 @@ data class HealthPublish(
 
 /**
  * O sentido inverso do [HealthRepository]: escreve no Health Connect o que a app sabe, para
- * outras apps o poderem ler. É a única saída de dados do telemóvel além da exportação, e
- * acontece localmente — o Health Connect não é um servidor.
+ * outras apps o poderem ler.
+ *
+ * Isto **não** é uma saída para fora do telemóvel: o Health Connect é do sistema, e a troca
+ * acontece entre apps do mesmo aparelho, com autorização dada nas definições. O que sai mesmo
+ * do telemóvel são a pesquisa na Open Food Facts, a análise por foto e por texto, os quadrados
+ * do mapa nas corridas e as imagens dos exercícios.
  */
 class HealthPublisher(
     private val gateway: HealthGateway,

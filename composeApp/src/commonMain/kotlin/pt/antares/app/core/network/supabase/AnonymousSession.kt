@@ -17,7 +17,8 @@ class AnonymousSession(
     val isConfigured: Boolean get() = container.client != null
 
     // O identificador vai para o ecrã de administração e para o pedido de apagamento de
-    // conta. É a única coisa que liga este telemóvel ao servidor.
+    // conta. É o único identificador que a app envia; o servidor guarda ainda um resumo
+    // criptográfico do IP, para contar utilizações sem saber de onde vieram.
     fun currentUid(): String? = container.client?.auth?.currentUserOrNull()?.id
 
     /** Sem chaves, não faz nada e não falha: a app tem de funcionar sem servidor. */

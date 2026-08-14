@@ -110,6 +110,9 @@ class ExerciseSeeder(
         private const val KEY_IMAGE_BASE = "seed_exercises_image_base"
         private const val KEY_NAMES = "exercise_names_fixed"
         private const val DONE_NAMES = "v1"
+        // As imagens não vêm dentro da app: são pedidas a este endereço quando alguém abre um
+        // exercício, e quem as serve vê o IP e qual foi pedido. Guardar a base aqui, e só os
+        // nomes de ficheiro na tabela, é o que permite mudá-la sem semear o catálogo outra vez.
         private const val DEFAULT_IMAGE_BASE =
             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
 
