@@ -1,0 +1,82 @@
+# Base de dados
+
+Room, no telemóvel e mais lado nenhum. Esquema na **versão 21**, com **29 tabelas** e **20
+migrações automáticas**.
+
+Os esquemas exportados estão em `composeApp/schemas/`, um ficheiro JSON por versão. São eles que
+permitem ao Room gerar as migrações e aos testes verificá-las.
+
+## Regra para quem mexe nas entidades
+
+**Uma coluna nova nasce anulável ou com valor por omissão.**
+
+Todas as migrações são automáticas. Uma coluna obrigatória sem omissão obriga a escrever a
+migração à mão, e sem ela a app rebenta ao abrir em cima de dados antigos.
+
+## Como o esquema cresceu
+
+Cada linha é uma versão do esquema e o que ela acrescentou. É o registo mais fiável da ordem em
+que a app foi construída.
+
+| Versão | Tabelas novas | Colunas novas |
+|---|---|---|
+| 1 | `db_info` | |
+| 2 | `user_profile`, `weight_log`, `daily_target_override` | |
+| 3 | `foods`, `foods_fts`, `food_log`, `water_log` | |
+| 4 | `recipe`, `recipe_ingredient` | |
+| 5 | `exercise_log` | |
+| 6 | `exercise`, `routine`, `routine_item`, `workout_session`, `workout_set` | |
+| 7 | `fasting_protocol`, `fasting_session` | |
+| 8 | `run`, `track_point` | |
+| 9 | `routine_schedule` | |
+| 10 | `sync_meta` | |
+| 11 | | `routine_schedule.deleted` |
+| 12 | `coach_report` | |
+| 13 | | `weight_log.source`, `weight_log.sourceRef` |
+| 14 | | `foods.lastAmountG` |
+| 15 | `meal_template`, `meal_template_item` | |
+| 16 | | `isLiquid` em `foods`, `food_log`, `meal_template_item` |
+| 17 | | `user_profile`: `goalWeightKg`, `bodyFatPct`, `bodyFatSource`, `waistCm`, `neckCm`, `hipCm` |
+| 18 | `body_measurement_log` | `user_profile`: `bmrFormulaOverride`, `goalBodyFatPct`, `heightConfirmedEpochDay`, `trendWindowDays` |
+| 19 | `goal_history`, `progress_photo`, `search_miss` | `body_measurement_log`: `armCm`, `thighCm`, `chestCm` |
+| 20 | `cycle_log` | `user_profile.lifeStage` |
+| 21 | **remove** `sync_meta` | |
+
+A v21 é a única migração que não é acrescento. O `sync_meta` guardava estado de sincronização, e a
+app deixou de sincronizar — ver
+[a decisão](../explicacao/decisoes/0001-a-app-nao-sincroniza.md).
+
+## Apagar não apaga
+
+Quase todas as tabelas têm `deleted` e são apagadas por marcação, não por remoção.
+
+Várias têm também um **índice único no dia** (`epochDay`), para não haver duas pesagens no mesmo
+dia. As duas regras juntas produzem uma armadilha que não dá erro — explicada em
+[Lápides e índices únicos](../explicacao/decisoes/0002-lapides-e-indices-unicos.md).
+
+Quem escrever um caminho novo que grave por dia tem de usar os métodos `byDayForWrite`, que vêem
+as lápides. O `TombstoneCollisionTest` defende isto.
+
+## A coluna `dirty`
+
+Escrita em toda a app e lida **num sítio só**: a contagem de registos de demonstração do
+`DemoDao`. Sobra da sincronização que já não existe.
+
+## O que é congelado e o que é vivo
+
+| | |
+|---|---|
+| **Vivo** | uma receita: muda um ingrediente e todos os números dela mudam |
+| **Congelado** | um registo do diário: o que comeste ontem não muda porque hoje corrigiste a ficha do alimento |
+
+O `FoodLogEntity` guarda os macros **já multiplicados pela quantidade** e os micronutrientes **por
+100 g**. É a diferença entre somar um dia e escalar uma ficha.
+
+## Sementeira
+
+O catálogo de alimentos e o de exercícios são semeados na primeira abertura, a partir de
+`composeApp/src/commonMain/composeResources/files/`. A marca de que já foi feito vive na tabela
+`db_info`.
+
+O `SeederOrderTest` garante que nenhum semeador lê o ficheiro antes de verificar a marca — é o que
+impede a app de ler megabytes em todos os arranques.

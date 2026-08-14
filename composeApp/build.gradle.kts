@@ -9,6 +9,33 @@ val localProps = Properties().apply {
 }
 fun localProp(key: String): String = localProps.getProperty(key, "")
 
+/**
+ * A versão da app, escrita uma vez só. Segue SemVer estrito: três números, nunca quatro.
+ * Sobe MAJOR quando o que a pessoa tinha deixa de funcionar como antes, MINOR quando ela
+ * ganha alguma coisa, PATCH quando só se corrige — ver `docs/VERSIONING.md`.
+ *
+ * O `AppChangelogTest` falha se o `AppChangelog.CURRENT` deixar de acompanhar este valor.
+ */
+val appVersion = "1.0.0"
+
+/**
+ * O `versionCode` deriva do nome em vez de ser contado à mão: `1.2.3` dá `10203`, e lê-se ao
+ * contrário sem consultar tabela nenhuma. Cabem 99 em cada casa, e cresce sempre — que é a
+ * única coisa que o Android exige de um `versionCode`.
+ *
+ * O valor anterior a esta regra era 66, contado à mão; `1.0.0` dá 10000, e por isso a subida
+ * mantém-se monótona apesar da mudança de esquema.
+ */
+fun androidVersionCode(version: String): Int {
+    val parts = version.split(".")
+    require(parts.size == 3) { "versão fora de SemVer (esperado MAJOR.MINOR.PATCH): $version" }
+    val (major, minor, patch) = parts.map {
+        it.toIntOrNull() ?: error("versão com um segmento não numérico: $version")
+    }
+    require(minor < 100 && patch < 100) { "minor e patch têm de caber em duas casas: $version" }
+    return major * 10_000 + minor * 100 + patch
+}
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -121,8 +148,8 @@ android {
         applicationId = "com.antares.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 66
-        versionName = "0.9.18.1"
+        versionName = appVersion
+        versionCode = androidVersionCode(appVersion)
 
         buildConfigField("String", "SUPABASE_URL", "\"${localProp("SUPABASE_URL")}\"")
         buildConfigField("String", "SUPABASE_ANON_KEY", "\"${localProp("SUPABASE_ANON_KEY")}\"")

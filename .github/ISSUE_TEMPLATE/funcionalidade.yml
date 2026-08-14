@@ -1,0 +1,40 @@
+name: Propor uma funcionalidade
+description: Uma coisa que a app devia fazer e não faz.
+labels: ["proposta"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Uma funcionalidade tem de ser mantida durante anos por uma pessoa só. Quanto melhor
+        explicares o problema, mais fácil é decidir.
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: Que problema é que isto resolve
+      description: O problema, e não a solução. O que estás a tentar fazer que a app hoje torna difícil?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposta
+    attributes:
+      label: O que propões
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Como resolves isso hoje
+      description: Com esta app ou com outra.
+
+  - type: checkboxes
+    id: confirmacoes
+    attributes:
+      label: Confirmações
+      options:
+        - label: Procurei e não existe uma proposta igual
+          required: true
+        - label: Isto não obriga a pôr dados do utilizador num servidor
+          required: true

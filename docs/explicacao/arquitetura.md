@@ -1,0 +1,98 @@
+# Arquitetura
+
+Este documento não descreve o que a app faz — isso lê-se no código, e um documento que o repete
+começa a mentir no dia em que alguém muda uma linha.
+
+Descreve o que o código **não consegue dizer sozinho**: porque é que está assim, e onde é que
+morde.
+
+## O mapa
+
+Kotlin Multiplatform com um único alvo, Android. Compose para a interface, Room para os dados,
+Koin para as ligações, DataStore para as preferências, Ktor para a rede.
+
+```
+composeApp/src/commonMain/kotlin/pt/antares/app/
+  core/          contas, dados, rede, sistema de design
+  feature/       um diretório por assunto: ecrã + ViewModel + repositório
+  navigation/    rotas e barra de baixo
+composeApp/src/androidMain/
+                 o que não existe fora do Android: GPS, notificações,
+                 widget, Health Connect, câmara
+```
+
+Não há camada de domínio separada nem *use cases*. Um ViewModel fala com um repositório, o
+repositório fala com o DAO, e a aritmética vive à parte, em funções puras. Para uma app de uma
+pessoa, uma camada a mais custa mais do que dá.
+
+## As decisões que moldaram tudo o resto
+
+Cada uma tem o seu registo, com o contexto em que foi tomada:
+
+| | |
+|---|---|
+| [A app não sincroniza](decisoes/0001-a-app-nao-sincroniza.md) | não há conta com os teus dados, nem servidor com uma cópia |
+| [Lápides e índices únicos](decisoes/0002-lapides-e-indices-unicos.md) | apagar é marcar, e isso colide com o índice do dia |
+| [As contas em funções puras](decisoes/0003-contas-em-funcoes-puras.md) | a nutrição não sabe o que é o Android |
+| [O versionamento deriva do nome](decisoes/0004-versionamento-derivado-do-nome.md) | um número, e o resto é consequência |
+| [Documentação verificada por testes](decisoes/0005-documentacao-verificada-por-testes.md) | porque é que este repositório foi esvaziado uma vez |
+
+## O congelado e o vivo
+
+Duas regras que se contradizem de propósito.
+
+Uma **receita é viva**: muda um ingrediente e todos os números dela mudam. Um **registo do diário
+é congelado**: o que comeste ontem não muda porque hoje corrigiste a ficha do alimento.
+
+A reconciliação está no `logRecipe`, em
+`composeApp/src/commonMain/kotlin/pt/antares/app/feature/recipe/RecipeRepository.kt`: a receita é
+convertida num alimento temporário que nunca entra no catálogo, e o registo copia dele os valores.
+A partir daí o diário é dono do que lá ficou.
+
+Se te vires a resolver um problema em que «o histórico mudou sozinho», é quase sempre aqui.
+
+## Duas fontes para a massa gorda
+
+O perfil (`user_profile`) guarda a percentagem mais recente, porque o cálculo do metabolismo basal
+a consulta a cada conta e não pode andar a varrer o histórico. A tabela `body_measurement_log`
+guarda a série toda.
+
+**As duas podem discordar, e há um caso concreto em que discordam:** escolher «não sei» limpa o
+perfil, mas o histórico do mesmo dia mantém o valor anterior, porque o registo de medições funde
+com o que lá está em vez de substituir.
+
+O `BodyCompositionSaveTest` fixa esse comportamento. O teste diz o que a app faz — **não diz que
+está certo**. É um assunto em aberto, e está documentado aqui para não ser descoberto por
+acidente.
+
+## As ligações
+
+| Módulo | Onde | O que liga |
+|---|---|---|
+| `coreModule` | `composeApp/src/commonMain/kotlin/pt/antares/app/core/di/CoreModule.kt` | repositórios, rede, preferências |
+| `viewModelModule` | `composeApp/src/commonMain/kotlin/pt/antares/app/core/di/ViewModelModule.kt` | um por ecrã |
+| `databaseModule` | `composeApp/src/androidMain/kotlin/pt/antares/app/core/di/DatabaseModule.kt` | a base, que precisa do contexto do Android |
+
+O `KoinGraphTest` resolve o grafo inteiro. Uma dependência em falta rebenta no teste, e não na
+primeira vez que alguém abre o ecrã.
+
+## Sem rede
+
+A app funciona sem rede, e isso é uma propriedade defendida por testes, não uma consequência
+feliz. O relatório semanal é calculado no telemóvel — o `AdaptiveTargetsOfflineTest` falha se
+alguma chamada de rede voltar a esse caminho.
+
+O que precisa mesmo de rede é a pesquisa na Open Food Facts, a análise por foto e por texto, o
+mapa das corridas e as imagens dos exercícios. Todas distinguem **falha de rede** de **não há
+resultados**, porque o ecrã diz coisas diferentes e a pessoa faz coisas diferentes a seguir.
+
+Ver [Privacidade](privacidade.md) para o que sai e para onde.
+
+## O que não está resolvido
+
+- A divergência da massa gorda, acima.
+- O gerador de dados de demonstração calcula a carga a partir do código do exercício, sem olhar ao
+  equipamento — daí aparecerem recordes de 155 kg em exercícios de mobilidade.
+- O resumo de uma corrida sem percurso deixa dois terços do ecrã vazios.
+- `supabase/functions/_shared/coach.ts` não tem chamador: sobra do relatório semanal gerado por
+  modelo, que passou a ser calculado no telemóvel.

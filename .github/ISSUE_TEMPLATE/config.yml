@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vulnerabilidade de segurança
+    url: https://github.com/BetuelRS/Antares/security/advisories/new
+    about: Não abras uma issue pública. Comunica em privado, por aqui.

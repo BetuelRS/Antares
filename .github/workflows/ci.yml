@@ -43,7 +43,7 @@ jobs:
 
       - name: Verificação de tipos
         working-directory: supabase
-        run: deno check functions/analyze-food/index.ts functions/analyze-exercise/index.ts functions/delete-account/index.ts
+        run: deno check functions/analyze-food/index.ts functions/analyze-exercise/index.ts functions/delete-account/index.ts functions/admin-unlock/index.ts
 
   secrets:
     name: Nenhum segredo no repositório

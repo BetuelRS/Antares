@@ -1,0 +1,68 @@
+name: Relatar um defeito
+description: Uma coisa que a app faz mal, ou não faz.
+labels: ["defeito"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de continuares: confirma que estás na versão mais recente e procura se já existe
+        uma *issue* sobre isto.
+
+  - type: textarea
+    id: passos
+    attributes:
+      label: Como se reproduz
+      description: Passo a passo, desde o arranque da app até ao problema.
+      placeholder: |
+        1. Abrir o Diário
+        2. Registar uma pesagem
+        3. Apagá-la
+        4. Registar outra no mesmo dia
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que esperavas que acontecesse
+    validations:
+      required: true
+
+  - type: textarea
+    id: aconteceu
+    attributes:
+      label: O que aconteceu
+    validations:
+      required: true
+
+  - type: input
+    id: versao
+    attributes:
+      label: Versão da app
+      description: Definições → Sobre
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: telemovel
+    attributes:
+      label: Telemóvel e versão do Android
+      placeholder: "Pixel 7, Android 15"
+    validations:
+      required: true
+
+  - type: textarea
+    id: erro
+    attributes:
+      label: Relatório de erro
+      description: |
+        Se a app fechou sozinha, o motivo fica guardado em Definições → Último erro, com um
+        botão para o partilhar. Cola-o aqui.
+      render: text
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Mais alguma coisa
+      description: Capturas de ecrã ajudam.
