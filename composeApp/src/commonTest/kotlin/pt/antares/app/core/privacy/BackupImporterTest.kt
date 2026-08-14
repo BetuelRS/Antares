@@ -11,7 +11,15 @@ import kotlin.test.assertTrue
 class BackupImporterTest {
 
     private val gravadas = mutableListOf<WeightLogEntity>()
-    private var limpezas = 0
+    private val truncadas = mutableListOf<String>()
+
+    // A transação de mentira corre o bloco na mesma e regista o que lhe mandaram esvaziar.
+    // O desfazer a sério só se prova contra uma base verdadeira — ver o
+    // `BackupImportRollbackTest`.
+    private val transacaoFalsa = BackupDb { aTruncar, bloco ->
+        truncadas += aTruncar
+        bloco()
+    }
 
     private fun peso(id: String, kg: Double, updatedAt: Long) = WeightLogEntity(
         id = id, epochDay = 20_000, weightKg = kg, note = null,
@@ -20,13 +28,13 @@ class BackupImporterTest {
 
     private fun importador(noTelemovel: List<WeightLogEntity> = emptyList()): BackupImporter {
         gravadas.clear()
-        limpezas = 0
+        truncadas.clear()
         val fonte = ExportSource(
             "weight_log",
             WeightLogEntity.serializer(),
             restore = { linhas -> gravadas += linhas },
         ) { noTelemovel }
-        return BackupImporter(listOf(fonte), Dispatchers.Unconfined, wipe = { limpezas++ })
+        return BackupImporter(listOf(fonte), Dispatchers.Unconfined, db = transacaoFalsa)
     }
 
     private suspend fun backupCom(linhas: List<WeightLogEntity>): String =
@@ -49,17 +57,17 @@ class BackupImporterTest {
     }
 
     @Test
-    fun `substituir limpa antes de escrever`() = runTest {
+    fun `substituir esvazia as tabelas que sabe repor`() = runTest {
         val backup = backupCom(listOf(peso("a", 80.0, 100)))
         importador().import(backup, ImportMode.REPLACE)
-        assertEquals(1, limpezas, "o `substituir` tem de limpar primeiro")
+        assertEquals(listOf("weight_log"), truncadas, "o `substituir` tem de esvaziar primeiro")
     }
 
     @Test
-    fun `juntar nao limpa nada`() = runTest {
+    fun `juntar nao esvazia nada`() = runTest {
         val backup = backupCom(listOf(peso("a", 80.0, 100)))
         importador().import(backup, ImportMode.MERGE)
-        assertEquals(0, limpezas, "o `juntar` apagou dados que devia ter mantido")
+        assertTrue(truncadas.isEmpty(), "o `juntar` apagou dados que devia ter mantido")
     }
 
     @Test
@@ -113,7 +121,7 @@ class BackupImporterTest {
 
         assertIs<ImportResult.NotABackup>(importador().import("isto não é JSON", ImportMode.REPLACE))
         assertIs<ImportResult.NotABackup>(importador().import("""{"lista":[]}""", ImportMode.REPLACE))
-        assertEquals(0, limpezas, "recusou o ficheiro mas já tinha limpado a base")
+        assertTrue(truncadas.isEmpty(), "recusou o ficheiro mas já tinha esvaziado a base")
     }
 
     @Test
@@ -125,10 +133,15 @@ class BackupImporterTest {
         val backup = DataExporter(listOf(fonte), appVersion = "0.9.18").exportJson()
         assertTrue(backup.contains("search_miss"), "devia sair no ficheiro")
 
-        val r = BackupImporter(listOf(fonte), Dispatchers.Unconfined, wipe = {})
+        truncadas.clear()
+        val r = BackupImporter(listOf(fonte), Dispatchers.Unconfined, db = transacaoFalsa)
             .import(backup, ImportMode.REPLACE)
 
         assertIs<ImportResult.Done>(r)
         assertEquals(0, r.total, "uma tabela sem restore não pode ser escrita")
+        assertTrue(
+            truncadas.isEmpty(),
+            "esvaziou uma tabela que não sabe repor — ficaria vazia para sempre",
+        )
     }
 }

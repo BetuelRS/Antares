@@ -54,6 +54,7 @@ import pt.antares.app.core.privacy.BackupImporter
 import pt.antares.app.core.privacy.DataExporter
 import pt.antares.app.core.privacy.ExportSource
 import pt.antares.app.core.privacy.PrivacyRepository
+import pt.antares.app.core.privacy.RoomBackupDb
 import pt.antares.app.feature.about.AppChangelog
 import pt.antares.app.feature.diary.DiaryRepository
 import pt.antares.app.feature.exercise.ExerciseRepository
@@ -500,7 +501,7 @@ val coreModule = module {
         BackupImporter(
             sources = exportador.sources,
             io = get(IoDispatcher),
-            wipe = { get<PrivacyRepository>().deleteEverything() },
+            db = RoomBackupDb(get()),
         )
     }
 

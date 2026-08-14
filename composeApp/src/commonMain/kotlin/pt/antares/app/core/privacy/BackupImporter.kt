@@ -10,7 +10,8 @@ import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Como tratar o que já está no telemóvel. `MERGE` mantém os registos locais mais recentes;
- * `REPLACE` apaga tudo antes de escrever.
+ * `REPLACE` esvazia as tabelas que a cópia repõe antes de escrever. Nem um nem outro toca
+ * nas preferências nem nas fotos — para isso há o `apagar tudo`.
  */
 enum class ImportMode {
 
@@ -34,7 +35,7 @@ class BackupImporter(
     private val sources: List<ExportSource<*>>,
     private val io: CoroutineDispatcher,
 
-    private val wipe: suspend () -> Unit,
+    private val db: BackupDb,
 ) {
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
@@ -49,14 +50,22 @@ class BackupImporter(
             return@withContext ImportResult.NotABackup("faltam os campos de um backup do Antares")
         }
 
-        try {
-            if (modo == ImportMode.REPLACE) wipe()
+        // O `substituir` esvazia só as tabelas que a cópia sabe repor. Apagar uma tabela
+        // sem `restore` deixá-la-ia vazia para sempre, e restaurar passaria a destruir
+        // dados que ninguém mandou destruir.
+        val aTruncar = when (modo) {
+            ImportMode.REPLACE -> sources.filter { it.restore != null }.map { it.name }
+            ImportMode.MERGE -> emptyList()
+        }
 
+        try {
             val recibo = LinkedHashMap<String, Int>()
-            for (source in sources) {
-                val bruto = raiz[source.name] as? JsonArray ?: continue
-                val escritas = aplicar(source, bruto, modo)
-                if (escritas > 0) recibo[source.name] = escritas
+            db.emTransacao(aTruncar) {
+                for (source in sources) {
+                    val bruto = raiz[source.name] as? JsonArray ?: continue
+                    val escritas = aplicar(source, bruto, modo)
+                    if (escritas > 0) recibo[source.name] = escritas
+                }
             }
             ImportResult.Done(recibo)
         } catch (e: Throwable) {

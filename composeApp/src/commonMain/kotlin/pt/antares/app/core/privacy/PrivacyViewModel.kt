@@ -82,6 +82,10 @@ class PrivacyViewModel(
                 return@launch
             }
 
+            // As fotos são ficheiros e ficam fora da transação da base — que só desfaz
+            // linhas. Escrevem-se primeiro de propósito: uma importação falhada deixa
+            // ficheiros soltos, que não se veem, e a ordem inversa deixaria linhas a
+            // apontar para imagens que não existem. O `BackupCompleteTest` fixa a ordem.
             val caminhos = LinkedHashMap<String, String>()
             for ((nome, bytes) in entries) {
                 val id = BackupFiles.photoIdOf(nome) ?: continue
