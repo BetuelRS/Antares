@@ -2,13 +2,21 @@ package pt.antares.app.core.ai
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import pt.antares.app.core.calc.WeeklyAggregate
 
+/**
+ * O contrato com as Edge Functions. Cada `@Serializable` aqui tem de bater certo com o
+ * esquema do lado do servidor, em `supabase/functions`: mudar um nome de campo só de um
+ * lado não dá erro de compilação, dá uma resposta que não se consegue ler.
+ */
+
+/** A contagem de utilizações, decidida no servidor. A app só a mostra. */
 @Serializable
 data class AiUsage(
     val used: Int,
     val limit: Int,
 
+    // Distingue o período de experiência do plano normal, para o ecrã dizer o que muda
+    // quando acabar em vez de o número mudar sem aviso.
     val trial: Boolean,
 ) {
     val remaining: Int get() = (limit - used).coerceAtLeast(0)
@@ -29,6 +37,8 @@ data class FoodAnalysisRequest(
 data class AiFoodItem(
     val name: String,
 
+    // Diz se o servidor encontrou o alimento numa tabela ou se o modelo o estimou. É a
+    // diferença entre um valor analisado e um palpite, e o ecrã mostra-a.
     val matchedSource: String,
     val grams: Double,
     val kcal: Int,
@@ -40,9 +50,13 @@ data class AiFoodItem(
 
     val estimated: Boolean,
 
+    // O que o modelo assumiu para chegar ao número — o tamanho de uma dose, o método de
+    // cozedura. Mostra-se para a pessoa poder discordar em vez de aceitar às cegas.
     val assumption: String? = null,
 ) {
 
+    // Abaixo de 60% de confiança, ou sendo estimativa, o ecrã marca o item para revisão em
+    // vez de o gravar direto.
     val needsReview: Boolean get() = confidence < 0.6 || estimated
 }
 
@@ -54,6 +68,8 @@ data class FoodAnalysis(
     val usage: AiUsage,
 )
 
+// Tudo anulável: um rótulo real pode não declarar metade destes campos, e um zero
+// assumido passaria por uma medição.
 @Serializable
 data class LabelPer100g(
     val kcal: Double? = null,
@@ -93,11 +109,16 @@ data class ExerciseAnalysisRequest(
 
 @Serializable
 data class ExerciseAnalysis(
+    // O nome vem nos dois idiomas: o local para mostrar, o inglês para casar com o
+    // catálogo de METs, que está em inglês.
     val activity: String,
     @SerialName("activityEn") val activityEn: String,
+    // Nulo quando a descrição não diz quanto tempo durou; o ecrã pergunta em vez de supor.
     val durationMin: Double? = null,
     val met: Double,
 
+    // As calorias podem vir calculadas ou não. Vindo nulas, a app calcula-as com o MET e o
+    // peso — a conta é a mesma do [MetCalc], e o resultado não depende de haver rede.
     val kcal: Int? = null,
     val confidence: Double,
     val estimated: Boolean,
@@ -105,31 +126,10 @@ data class ExerciseAnalysis(
     val usage: AiUsage,
 )
 
-@Serializable
-data class CoachRequest(
-    val aggregate: WeeklyAggregate,
-
-    val adaptive: CoachAdaptive? = null,
-    val lang: String,
-    val day: String,
-)
-
-@Serializable
-data class CoachAdaptive(
-    val newTargetKcal: Int,
-    val previousTargetKcal: Int,
-    val observedTdee: Int,
-)
-
-@Serializable
-data class CoachAnalysis(
-    val wins: List<String> = emptyList(),
-    val observations: List<String> = emptyList(),
-    val adjustments: List<String> = emptyList(),
-    val focus: String = "",
-    val usage: AiUsage,
-)
-
+/**
+ * Códigos que o servidor devolve quando a análise não deu o que se pedia. São códigos e
+ * não frases para o ecrã os traduzir; o modelo nunca escreve texto que a app mostre.
+ */
 object AiWarnings {
     const val NOT_FOOD = "NOT_FOOD"
 

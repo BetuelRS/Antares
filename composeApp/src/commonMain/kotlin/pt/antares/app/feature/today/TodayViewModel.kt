@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.isoDayNumber
+import pt.antares.app.core.calc.DailyGoals
 import pt.antares.app.core.calc.LoggingStreak
 import pt.antares.app.core.calc.Targets
 import pt.antares.app.core.calc.WeeklyBudget
@@ -41,7 +42,6 @@ import pt.antares.app.feature.running.data.RunRepository
 import pt.antares.app.feature.workout.data.RoutineRepository
 import pt.antares.app.feature.workout.data.WorkoutHistoryRepository
 import pt.antares.app.feature.workout.data.WorkoutSessionRepository
-import kotlin.math.roundToInt
 
 data class TodayState(
     val loading: Boolean = true,
@@ -73,6 +73,16 @@ data class TodayWorkout(
     val scheduledRoutineName: String? = null,
 )
 
+/**
+ * O ecrã de hoje. É o mais dependente da app — doze repositórios — porque é a única vista
+ * que junta tudo o que se pode registar num dia.
+ *
+ * Cada bloco é um `StateFlow` independente em vez de um estado único gigante: assim
+ * registar água não recompõe o cartão de treino, e cada parte do ecrã aparece assim que os
+ * seus dados chegam, sem esperar pelas outras.
+ *
+ * Todos partem do [DayTicker], e é por isso que o ecrã vira sozinho à meia-noite.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayViewModel(
     private val profileRepository: ProfileRepository,
@@ -101,6 +111,8 @@ class TodayViewModel(
 
     fun syncHealthConnect() {
         viewModelScope.launch {
+            // Importar antes de publicar, sempre: assim um treino que veio de fora não é
+            // devolvido ao Health Connect como se fosse da app.
             health.importNow()
 
             healthPublisher.publishNow(todayFlow.value)
@@ -142,6 +154,8 @@ class TodayViewModel(
 
         viewModelScope.launch {
             loggingStreak.collect { s ->
+                // A comparação com o último marco celebrado é o que impede a animação de
+                // voltar a disparar a cada abertura do ecrã com a mesma sequência.
                 if (s.current in STREAK_MILESTONES && s.current > preferences.lastCelebratedStreak.first()) {
                     preferences.setLastCelebratedStreak(s.current)
                     _celebration.value = s.current
@@ -156,6 +170,8 @@ class TodayViewModel(
 
     val workout: StateFlow<TodayWorkout> = todayFlow.flatMapLatest { today ->
 
+        // O `flatMapLatest` é o que faz virar o dia cancelar os fluxos antigos e recomeçar:
+        // com `map`, o ecrã continuava a ouvir as consultas de ontem.
         val todayIsoDay = epochDayToLocalDate(today).dayOfWeek.isoDayNumber
         combine(
             workoutSessionRepository.observeActive(),
@@ -226,7 +242,10 @@ class TodayViewModel(
             val chronological = weights.sortedBy { it.epochDay }.map { it.weightKg }
             val latest = chronological.lastOrNull()
 
-            val waterGoal = waterRaw.override ?: (((latest ?: 70.0) * 35 / 50).roundToInt() * 50)
+            // A meta de água escolhida à mão manda sobre a calculada pelo peso; sem
+            // pesagem nenhuma, um peso de recurso evita uma meta de zero.
+            val waterGoal = waterRaw.override
+                ?: DailyGoals.waterMl(latest ?: ProfileRepository.DEFAULT_WEIGHT_KG)
             TodayState(
                 loading = false,
                 targets = targets,
@@ -244,6 +263,8 @@ class TodayViewModel(
     private companion object {
         const val DAY_MS = 24L * 60 * 60 * 1000
 
+        // Pouco mais de um ano: chega para a sequência mais longa possível caber na janela
+        // sem carregar o histórico todo a cada abertura do ecrã.
         const val STREAK_WINDOW_DAYS = 400L
 
         val STREAK_MILESTONES = setOf(3, 7, 14, 30, 60, 100, 200, 365)

@@ -8,6 +8,8 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+// Três limites em escada: ligar, receber cada pedaço, e o pedido inteiro. O último é o
+// mais generoso porque a análise de uma fotografia demora mesmo dezenas de segundos.
 private const val CONNECT_TIMEOUT_MS = 10_000L
 
 private const val SOCKET_TIMEOUT_MS = 15_000L
@@ -21,6 +23,9 @@ fun createAntaresHttpClient(): HttpClient = HttpClient {
         requestTimeoutMillis = REQUEST_TIMEOUT_MS
     }
     install(ContentNegotiation) {
+        // Tolerante de propósito. A Open Food Facts é preenchida por voluntários: campos
+        // inesperados, números em texto e nulos onde se espera valor são o normal, e uma
+        // leitura estrita perdia o produto inteiro por causa de um campo.
         json(
             Json {
                 ignoreUnknownKeys = true
@@ -29,6 +34,8 @@ fun createAntaresHttpClient(): HttpClient = HttpClient {
             },
         )
     }
+    // `INFO` regista o método, o endereço e o estado, mas não os corpos — que levariam a
+    // fotografia da refeição e o que a pessoa escreveu para o registo do sistema.
     install(Logging) {
         level = LogLevel.INFO
     }

@@ -39,6 +39,13 @@ import pt.antares.app.feature.workout.ui.WorkoutSessionViewModel
 import pt.antares.app.feature.workout.ui.WorkoutStatsViewModel
 import pt.antares.app.feature.workout.ui.WorkoutSummaryViewModel
 
+/**
+ * Os ViewModels, todos com ciclo de vida próprio — cada ecrã recebe o seu e ele morre com
+ * o ecrã. É o oposto do [coreModule], onde tudo é único e vive enquanto a app viver.
+ *
+ * Os `get()` sem tipo resolvem-se pela assinatura do construtor: acrescentar um parâmetro
+ * a um ViewModel obriga a acrescentar um `get()` aqui, e o erro só aparece ao correr.
+ */
 val viewModelModule = module {
     viewModel { AppViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { OnboardingViewModel(get(), get()) }

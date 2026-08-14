@@ -19,6 +19,8 @@ sealed interface BarcodeResult {
 
     data class Found(val foodId: String) : BarcodeResult
 
+    // Os dois estados de falha são distintos de propósito: não encontrado convida a criar
+    // o alimento à mão, falha de rede convida a tentar outra vez.
     data class NotFound(val barcode: String) : BarcodeResult
 
     data class NetworkError(val barcode: String) : BarcodeResult
@@ -58,11 +60,19 @@ class BarcodeResolveViewModel(
         _continuous.value = !_continuous.value
     }
 
+    /**
+     * Resolve um código lido. Primeiro no catálogo local, só depois em linha: a leitura
+     * repete-se muitas vezes por segundo com a câmara apontada, e ir à rede a cada uma
+     * seria um pedido por fotograma.
+     */
     fun resolve(barcode: String) {
+        // A guarda contra chamadas concorrentes é o que torna a leitura contínua possível.
         if (_result.value is BarcodeResult.Resolving) return
         _result.value = BarcodeResult.Resolving
         viewModelScope.launch {
 
+            // Tenta as variantes do código: o mesmo produto está guardado com ou sem o
+            // zero à frente conforme a origem — ver [Barcode.searchVariants].
             val local = Barcode.searchVariants(barcode)
                 .firstNotNullOfOrNull { foodRepository.byBarcode(it) }
 

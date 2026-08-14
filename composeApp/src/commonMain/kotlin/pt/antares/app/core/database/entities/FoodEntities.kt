@@ -10,6 +10,15 @@ import pt.antares.app.core.model.FoodSource
 import pt.antares.app.core.model.LogOrigin
 import pt.antares.app.core.model.MealSlot
 
+/**
+ * Um alimento do catálogo. Os índices servem os três modos de o encontrar sem escrever
+ * nada: recentes, favoritos e por origem.
+ *
+ * Nota sobre duas colunas que aparecem em quase todas as tabelas: `deleted` marca
+ * lápides — as linhas apagadas ficam, e por isso praticamente todas as consultas filtram
+ * `deleted = 0`; `dirty` é escrito em toda a app e lido apenas pelo contador de registos
+ * de demonstração do [DemoDao].
+ */
 @Serializable
 @Entity(
     tableName = "foods",
@@ -19,7 +28,11 @@ data class FoodEntity(
     @PrimaryKey val id: String,
     val source: FoodSource,
 
+    // Identificador na origem — o código de barras, no caso da Open Food Facts. Permite
+    // reconhecer o mesmo alimento sem depender do nome.
     val sourceRef: String?,
+    // Os dois nomes vivem lado a lado em vez de haver uma tabela de traduções: o catálogo
+    // é fixo e de dois idiomas, e ambos entram no índice de pesquisa.
     val namePt: String,
     val nameEn: String,
     val brand: String?,
@@ -32,14 +45,20 @@ data class FoodEntity(
     val fiberG: Double?,
     val sodiumMg: Int?,
 
+    // Micronutrientes por 100 g, em JSON: são umas dezenas, quase sempre ausentes, e uma
+    // coluna por cada deixaria a tabela quase toda a null. Nulo aqui é o que faz um
+    // alimento não contribuir para os ecrãs de micronutrientes.
     val microsJson: String?,
     val servingName: String?,
     val servingGrams: Double?,
 
+    // Separa mililitros de gramas na apresentação; a nutrição continua toda por 100 g.
     @ColumnInfo(defaultValue = "0") val isLiquid: Boolean = false,
     val isFavorite: Boolean = false,
     val lastUsedAt: Long = 0L,
 
+    // A última quantidade serve de sugestão quando ainda não há registos que cheguem para
+    // a porção habitual do [UsualPortion].
     val lastAmountG: Double? = null,
 
     val verified: Boolean = false,
@@ -48,11 +67,17 @@ data class FoodEntity(
     val dirty: Boolean = false,
 )
 
+/**
+ * Índice de pesquisa em texto livre. Tabela à parte porque o FTS4 do SQLite guarda tudo
+ * como texto e não sabe de tipos — daí a ligação por [foodId] à tabela verdadeira.
+ */
 @Fts4(notIndexed = ["foodId"])
 @Entity(tableName = "foods_fts")
 data class FoodFtsEntity(
     val foodId: String,
 
+    // Nomes e marca já concatenados e normalizados. Guardar o texto pronto poupa fazer a
+    // mesma normalização a cada tecla escrita na pesquisa.
     val searchText: String,
 )
 
@@ -61,6 +86,12 @@ data class FoodFtsEntity(
     tableName = "food_log",
     indices = [Index(value = ["epochDay", "mealSlot"]), Index("foodId")],
 )
+/**
+ * Uma refeição registada. Tudo o que interessa é copiado para aqui no momento do
+ * registo — os campos `Snapshot` — para o diário de ontem não mudar quando alguém
+ * corrigir o alimento hoje. Por isso [foodId] é anulável: o registo sobrevive ao
+ * alimento ser apagado.
+ */
 data class FoodLogEntity(
     @PrimaryKey val id: String,
     val epochDay: Long,
@@ -68,11 +99,15 @@ data class FoodLogEntity(
     val foodId: String?,
     val nameSnapshot: String,
     val quantityGrams: Double,
+    // Já multiplicados pela quantidade: são o que este registo vale, não o que valem
+    // 100 g. Somar os dias é somar estas colunas.
     val kcalSnapshot: Int,
     val proteinSnapshot: Double,
     val carbsSnapshot: Double,
     val fatSnapshot: Double,
 
+    // Ao contrário dos macros, os micronutrientes ficam por 100 g e escalam na leitura.
+    // Nulo aqui apaga o registo dos ecrãs de micronutrientes sem o apagar do diário.
     val microsPer100Json: String?,
     val origin: LogOrigin = LogOrigin.MANUAL,
 
@@ -82,6 +117,14 @@ data class FoodLogEntity(
     val dirty: Boolean = true,
 )
 
+/**
+ * A água do dia numa linha só, e daí o índice único: o total substitui-se, não se
+ * acumula em registos.
+ *
+ * O único cuidado é o índice não distinguir lápides. Uma linha apagada continua a ocupar
+ * o dia, e inserir outra para a mesma data falha — quem inserir em massa tem de limpar as
+ * lápides primeiro, como o [DemoDao] faz.
+ */
 @Serializable
 @Entity(
     tableName = "water_log",

@@ -37,6 +37,11 @@ class WorkoutSessionRepository(
 
     suspend fun sessionById(id: String): WorkoutSessionEntity? = withContext(io) { sessionDao.sessionById(id) }
 
+    /**
+     * Devolve o treino a decorrer se houver um, em vez de começar outro. É o que faz sair
+     * da app a meio de um treino e voltar continuar onde se estava — e o que impede dois
+     * treinos abertos ao mesmo tempo, que a base por si não proíbe.
+     */
     suspend fun startOrResume(routineId: String?): String = withContext(io) {
         sessionDao.activeSession()?.let { return@withContext it.id }
         val id = Ids.newUuid()
@@ -90,15 +95,24 @@ class WorkoutSessionRepository(
     suspend fun doneSetsForExercise(exerciseId: String, excludeSessionId: String): List<WorkoutSetEntity> =
         withContext(io) { setDao.doneSetsForExercise(exerciseId, excludeSessionId) }
 
+    /**
+     * Fecha o treino e, se ele valeu alguma coisa, gera a linha de calorias do dia. São
+     * dois passos e não um: o treino fica sempre fechado, mesmo que não conte para o
+     * orçamento.
+     */
     suspend fun finish(sessionId: String) = withContext(io) {
         val s = sessionDao.sessionById(sessionId) ?: return@withContext
         val ended = now()
         sessionDao.upsertSession(s.copy(status = SessionStatus.DONE, endedAt = ended, updatedAt = ended, dirty = true))
 
+        // Um treino aberto por engano e fechado a seguir, ou só com aquecimento, não gera
+        // calorias nenhumas — mas fica gravado, porque aconteceu.
         val durationMin = ((ended - s.startedAt) / 60000L).toInt()
         val workingSets = setDao.setsForSession(sessionId).count { !it.isWarmup }
         if (durationMin < 1 || workingSets == 0) return@withContext
 
+        // MET fixo de 5 para musculação em geral. A app não sabe quanto se descansou entre
+        // séries, e afinar isto daria uma precisão que os dados não sustentam.
         val weightKg = weightLogDao.latest()?.weightKg ?: 70.0
         val kcal = MetCalc.kcal(met = 5.0, weightKg = weightKg, durationMin = durationMin)
 
@@ -106,6 +120,8 @@ class WorkoutSessionRepository(
         exerciseLogDao.upsert(
             ExerciseLogEntity(
                 id = Ids.newUuid(),
+                // O dia é o do início e não o do fim: um treino que atravessa a meia-noite
+                // pertence ao dia em que se começou a treinar.
                 epochDay = epochMillisToLocalDate(s.startedAt).toEpochDay(),
                 origin = ExerciseOrigin.WORKOUT,
                 label = label,

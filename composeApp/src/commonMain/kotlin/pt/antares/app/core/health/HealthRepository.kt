@@ -13,6 +13,8 @@ data class HealthImport(
     val weights: Int = 0,
     val sessions: Int = 0,
 
+    // Contam-se para o ecrã poder explicar uma importação que trouxe pouco: sem este
+    // número, "0 treinos" parecia avaria em vez de trabalho já feito.
     val skippedDuplicates: Int = 0,
 
     val bodyMeasurements: Int = 0,
@@ -20,6 +22,13 @@ data class HealthImport(
     val isEmpty: Boolean get() = weights == 0 && sessions == 0 && bodyMeasurements == 0
 }
 
+/**
+ * Traz para dentro o que outras apps escreveram no Health Connect: pesagens de uma balança
+ * ligada, treinos de um relógio, passos.
+ *
+ * Recebe escritores em vez dos DAOs para poder ser testado sem base de dados — a lógica
+ * que interessa aqui é a de não duplicar, não a de gravar.
+ */
 class HealthRepository(
     private val gateway: HealthGateway,
     private val weights: WeightWriter,
@@ -65,6 +74,7 @@ class HealthRepository(
         if (!gateway.hasReadPermissions()) null else gateway.steps(startOfDayMs, endOfDayMs)
     }
 
+    /** Do mais antigo para o mais recente, e sem incluir hoje — o dia ainda vai a meio. */
     suspend fun stepsPerDay(todayStartMs: Long, days: Int): List<Long> = withContext(io) {
         if (!gateway.hasReadPermissions()) return@withContext emptyList()
         (days downTo 1).mapNotNull { atras ->
@@ -73,12 +83,22 @@ class HealthRepository(
         }
     }
 
+    /**
+     * Importa o que há de novo desde a última vez. Sem serviço ou sem permissão devolve
+     * uma importação vazia em vez de falhar: isto também corre no arranque, sozinho.
+     */
     suspend fun importNow(): HealthImport = withContext(io) {
         if (gateway.availability() != HealthAvailability.AVAILABLE) return@withContext HealthImport()
         if (!gateway.hasReadPermissions()) return@withContext HealthImport()
 
+        // A marca de água é tirada antes de ler, e não depois: entre a leitura e a gravação
+        // pode entrar um registo novo, e assim ele fica para a importação seguinte em vez
+        // de se perder.
         val startedAt = now()
 
+        // Na primeira importação não se traz o histórico todo: podem ser anos de treinos de
+        // outra app, e encher o diário de uma vez não é o que ninguém espera ao dar
+        // permissão.
         val since = lastImportAt().takeIf { it > 0 } ?: (startedAt - FIRST_IMPORT_WINDOW_MS)
 
         val importedWeights = importWeights(since)
@@ -110,6 +130,8 @@ class HealthRepository(
         val known = weights.importedRefs()
         var count = 0
         for (w in gateway.weights(since)) {
+            // Duas defesas: o identificador impede reimportar o mesmo registo, e o dia
+            // impede sobrepor uma pesagem que a pessoa escreveu à mão. A dela ganha.
             if (w.uid in known) continue
             val day = epochDayOf(w.timestampMs)
             if (weights.existsOnDay(day)) continue
@@ -132,6 +154,8 @@ class HealthRepository(
     private suspend fun importSessions(since: Long): Pair<Int, Int> {
         val known = exercise.importedRefs()
 
+        // A folga alarga a janela dos treinos próprios para trás: um relógio pode publicar
+        // horas depois, e sem isso o treino da app já não estaria na lista de comparação.
         val own = ownWindows.since(since - OWN_WINDOW_SLACK_MS)
         val weightKg = latestWeightKg() ?: DEFAULT_WEIGHT_KG
 
@@ -146,11 +170,14 @@ class HealthRepository(
                 continue
             }
 
+            // Sessão de menos de um minuto é engano de arranque, não treino.
             val durationMin = ((s.endMs - s.startMs) / 60_000L).toInt()
             if (durationMin <= 0) continue
 
             val met = s.met
 
+            // As calorias medidas pelo relógio ganham às calculadas: ele tem sensor de
+            // frequência cardíaca, e a tabela de METs é uma média de população.
             val kcal = s.kcal ?: MetCalc.kcal(met ?: 0.0, weightKg, durationMin)
 
             exercise.insert(
@@ -178,8 +205,11 @@ class HealthRepository(
 
         private const val DAY_MS = 24L * 60 * 60 * 1000
 
+        // Duas semanas de passos, que é o que a sugestão de nível de atividade precisa.
         const val ACTIVITY_WINDOW_DAYS = 14
 
+        // Um mês na primeira importação: chega para o histórico recente fazer sentido sem
+        // encher o diário com anos de outra app.
         const val FIRST_IMPORT_WINDOW_MS = 30L * 24 * 60 * 60 * 1000
 
         const val OWN_WINDOW_SLACK_MS = 24L * 60 * 60 * 1000

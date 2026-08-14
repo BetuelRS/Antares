@@ -2,6 +2,13 @@ package pt.antares.app.navigation
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Todos os destinos da app. São tipos e não strings: os argumentos viajam com o tipo certo,
+ * e um destino que deixe de existir dá erro de compilação em vez de um ecrã em branco.
+ *
+ * Os nomes qualificados destas classes são a identidade das rotas em execução — é por eles
+ * que a barra de baixo sabe onde está —, por isso mudar um nome ou o pacote muda a rota.
+ */
 @Serializable
 sealed interface Route {
 

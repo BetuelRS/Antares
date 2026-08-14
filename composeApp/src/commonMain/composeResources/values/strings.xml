@@ -65,8 +65,8 @@
     <string name="progress_milestone_days">%1$d dias com registo</string>
     <string name="progress_milestone_weight">%1$s de mudança</string>
     <string name="progress_milestone_goal">Peso-alvo atingido</string>
-    <string name="progress_weight_lost">Menos %1$s desde a primeira pesagem</string>
-    <string name="progress_weight_gained">Mais %1$s desde a primeira pesagem</string>
+    <string name="progress_weight_lost">Menos %1$s neste período</string>
+    <string name="progress_weight_gained">Mais %1$s neste período</string>
     <string name="progress_weight_same">Igual à primeira pesagem</string>
     <string name="progress_weight_one_point">Uma pesagem só ainda não desenha uma linha. Pesa-te outra vez daqui a uns dias.</string>
 
@@ -578,6 +578,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
     <string name="session_warmup">Aquecimento</string>
+    <string name="session_weight_out_of_range">Peso entre 0 e %1$s kg. Um engano aqui fica como recorde.</string>
+    <string name="session_reps_out_of_range">Repetições entre 1 e %1$s.</string>
+    <string name="session_rpe_out_of_range">RPE vai de 1 a 10.</string>
     <string name="session_ghost">Anterior: %1$s</string>
     <string name="session_no_exercises">Sem exercícios. Adiciona o primeiro.</string>
     <string name="session_rest_running">Descanso: %1$ds</string>
@@ -768,6 +771,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_on_target">%1$d dias dentro da meta</string>
     <string name="coach_weight_trend">Tendência do peso: %1$s kg</string>
     <string name="coach_sparse">Semana com poucos registos — o relatório vale o que vale.</string>
+    <string name="coach_disclaimer">Contas feitas neste telemóvel, a partir do que registaste. Não é aconselhamento médico.</string>
+    <string name="coach_row_summary">%1$d dias registados · média %2$d kcal</string>
     <string name="coach_error">Não deu para gerar o relatório. Tenta outra vez.</string>
 
     <string name="adaptive_title">Nova meta sugerida</string>
@@ -875,6 +880,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_health_goal_remaining">Faltam %1$s kg</string>
     <string name="profile_health_goal_reached">Chegaste ao teu peso-alvo.</string>
     <string name="profile_health_no_goal_weight">Ainda não escolheste um peso-alvo. Podes escolhê-lo em Editar perfil e metas.</string>
+    <string name="profile_health_no_weigh_in">Tens um peso-alvo, mas falta a pesagem de partida. Regista o teu peso para veres o caminho que falta.</string>
     <string name="profile_health_real_expenditure">O teu gasto real: %1$d %2$s</string>
     <string name="profile_health_estimated_expenditure">Gasto estimado: %1$d %2$s</string>
     <string name="profile_health_formula_estimated">A fórmula estimava %1$d</string>

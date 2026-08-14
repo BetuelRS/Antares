@@ -46,6 +46,9 @@ class RunRepository(
         note: String,
     ): String = withContext(io) {
         val now = Clock.System.now().toEpochMilliseconds()
+        // O percurso é reduzido antes de ser codificado: uma hora de GPS a um ponto por
+        // segundo são milhares de coordenadas, e o traço no mapa é o mesmo com uma fração
+        // delas. Os pontos crus continuam na `track_point` para quem os quiser.
         val poly = PolylineCodec.encode(TrackPruner.prune(path))
         val splitsJson = json.encodeToString(ListSerializer(Split.serializer()), splits)
         val id = Ids.newUuid()
@@ -53,6 +56,8 @@ class RunRepository(
             RunEntity(
                 id = id,
                 type = type,
+                // O início deduz-se do fim menos o tempo decorrido, porque a corrida só é
+                // gravada quando termina — a app não guarda nada enquanto ela decorre.
                 startedAt = now - metrics.elapsedMs,
                 endedAt = now,
                 distanceM = metrics.distanceM,
@@ -70,6 +75,8 @@ class RunRepository(
             ),
         )
 
+        // Uma corrida de zero calorias — parada logo a seguir a começar — não entra no
+        // orçamento do dia, mas fica no histórico na mesma.
         if (metrics.kcal > 0) {
             exerciseLogDao.upsert(
                 ExerciseLogEntity(
@@ -79,6 +86,7 @@ class RunRepository(
                     label = name,
                     metId = null,
                     met = null,
+                    // Tempo em movimento e não decorrido: as pausas não gastam calorias.
                     durationMin = (metrics.movingMs / 60_000L).toInt(),
                     kcal = metrics.kcal,
                     refId = id,

@@ -19,6 +19,9 @@ import {
 
 type Admin = any;
 
+// Limites verificados antes de a chamada ao modelo ser cobrada: o custo cresce com o
+// tamanho da entrada, e uma imagem enorme é a maneira mais fácil de gastar a fatura de
+// alguém. Uma refeição fotografada cabe muito abaixo disto.
 const MAX_IMAGE_BYTES = 1_500_000;
 
 const MAX_TEXT_CHARS = 2_000;
@@ -92,6 +95,8 @@ Deno.serve(async (req) => {
   if ((mode === 'photo' || mode === 'label') && !body.imageBase64) {
     return json({ error: 'missing image' }, 400);
   }
+  // O fator 0,75 converte o comprimento do base64 no tamanho real dos bytes, sem ter de
+  // descodificar a imagem para a medir.
   if (body.imageBase64 && body.imageBase64.length * 0.75 > MAX_IMAGE_BYTES) {
     return json({ error: 'image too large', code: 'IMAGE_TOO_LARGE' }, 413);
   }

@@ -26,6 +26,14 @@ import pt.antares.app.generated.resources.nav_run
 import pt.antares.app.generated.resources.nav_today
 import pt.antares.app.generated.resources.nav_workout
 
+/**
+ * Navegação entre separadores. As três opções resolvem o mesmo problema: sem elas, saltar
+ * de separador em separador empilhava ecrãs sem fim, e o botão de voltar percorria toda a
+ * história em vez de sair da app.
+ *
+ * `saveState` e `restoreState` são o que faz cada separador lembrar-se de onde ia — a
+ * posição da lista, o dia aberto no diário.
+ */
 fun NavHostController.navigateToTab(route: Route) {
     navigate(route) {
 
@@ -49,8 +57,6 @@ private val bottomBarItems = listOf(
 
     BottomBarItem(Route.Me, Icons.Default.Person, Res.string.nav_profile),
 )
-
-val hiddenBottomBarRoutes: Set<String> = emptySet()
 
 @Composable
 fun AntaresBottomBar(navController: NavHostController) {

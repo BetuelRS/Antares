@@ -16,6 +16,10 @@ data class IngredientNutrition(
     val microsPer100: Map<String, Double> = emptyMap(),
 )
 
+/**
+ * O resultado da receita. Os totais são da receita inteira; os `per100` derivam deles
+ * pela base, que é o peso depois de cozinhar quando esse valor existe.
+ */
 data class RecipeNutrition(
     val totalKcal: Int,
     val totalProteinG: Double,
@@ -40,8 +44,15 @@ data class RecipeNutrition(
 
 object RecipeCalc {
 
+    // Um nutriente só sai da receita se os ingredientes que o declaram pesarem pelo menos
+    // 60% do total. Abaixo disto o valor descreve parte do prato e passaria por descrever
+    // o prato todo — em micronutrientes, quase sempre por defeito.
     const val MIN_COVERAGE = 0.6
 
+    /**
+     * Soma os ingredientes e reduz a valores por 100 g. `yieldGrams` é o peso final: a
+     * água que evapora concentra tudo, e sem esse valor a receita fica pelo peso cru.
+     */
     fun compute(ingredients: List<IngredientNutrition>, yieldGrams: Double?): RecipeNutrition {
         var kcal = 0.0
         var protein = 0.0
@@ -52,6 +63,8 @@ object RecipeCalc {
         val totals = HashMap<String, Double>()
         val covered = HashMap<String, Double>()
 
+        // `covered` acompanha `totals` para saber sobre que peso da receita cada nutriente
+        // foi de facto declarado. Um ingrediente sem o campo não entra em nenhum dos dois.
         fun add(key: String, per100: Double?, grams: Double) {
             if (per100 == null) return
             totals[key] = (totals[key] ?: 0.0) + per100 * grams / 100.0
@@ -75,12 +88,16 @@ object RecipeCalc {
 
         fun resolve(key: String): Double? {
             if (basis <= 0 || rawGrams <= 0) return null
+            // A cobertura mede-se sobre o peso cru, que é o que os ingredientes somam. O
+            // peso final só entra na divisão, para não penalizar receitas que perdem água.
             if ((covered[key] ?: 0.0) / rawGrams < MIN_COVERAGE) return null
             return (totals[key] ?: return null) / basis * 100
         }
 
         val micros = buildMap {
             for (key in totals.keys) {
+                // Fibra, açúcares, gordura saturada e sódio têm campo próprio no resultado;
+                // deixá-los também no mapa duplicava-os no ecrã dos micronutrientes.
                 if (key in SECONDARY_KEYS) continue
                 resolve(key)?.let { if (it > 0) put(key, it) }
             }
@@ -99,6 +116,8 @@ object RecipeCalc {
         )
     }
 
+    // Prefixo duplo para não colidirem com nenhum código de micronutriente real, já que
+    // partilham o mesmo mapa durante a soma.
     private const val KEY_SUGARS = "__sugars"
     private const val KEY_SATFAT = "__satfat"
     private const val KEY_FIBER = "__fiber"

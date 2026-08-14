@@ -24,6 +24,13 @@ import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.core.util.currentHour
 import pt.antares.app.core.util.todayEpochDay
 
+/**
+ * O widget do ecrã inicial. É `KoinComponent` e não recebe nada por construtor porque o
+ * sistema é que o instancia — não há onde injetar dependências.
+ *
+ * Escreve na base diretamente, sem passar por ViewModel nenhum: aqui não há ecrã nem ciclo
+ * de vida de Compose, só um receptor de broadcast com segundos para viver.
+ */
 class AntaresWidgetProvider : AppWidgetProvider(), KoinComponent {
 
     private val profileRepository: ProfileRepository by inject()
@@ -41,6 +48,9 @@ class AntaresWidgetProvider : AppWidgetProvider(), KoinComponent {
         val acao = intent.action
         if (acao != ACTION_ADD_WATER && acao != ACTION_REPEAT_MEAL) return
 
+        // `goAsync` mantém o processo vivo além do retorno deste método: sem ele o sistema
+        // podia matar a app antes de a escrita na base terminar, e o copo de água
+        // desaparecia. O `finally` garante que a marca é sempre libertada.
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {

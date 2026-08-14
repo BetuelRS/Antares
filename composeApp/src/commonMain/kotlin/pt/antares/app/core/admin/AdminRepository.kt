@@ -23,6 +23,11 @@ private data class AdminUnlockRequest(val code: String, val enable: Boolean)
 @Serializable
 private data class AdminUnlockResponse(val unlimited: Boolean)
 
+/**
+ * Levanta o limite diário de AI para o dono. O código nunca é comparado no telemóvel:
+ * segue para a Edge Function `admin-unlock`, que é quem o conhece. Quem desmontar a app
+ * não encontra código nenhum, e a preferência local guarda só o resultado.
+ */
 class AdminRepository(
     private val container: SupabaseContainer,
     private val prefs: AppPreferences,
@@ -45,6 +50,8 @@ class AdminRepository(
                 body = AdminUnlockRequest(code = code, enable = enable),
                 headers = Headers.build { append(HttpHeaders.ContentType, "application/json") },
             )
+            // Guarda o que o servidor respondeu, não o que se pediu: pôr a preferência a
+            // verdade sem confirmação daria um ecrã desbloqueado e pedidos recusados.
             val result = json.decodeFromString<AdminUnlockResponse>(response.body<String>())
             prefs.setAdminUnlimited(result.unlimited)
             AppResult.Success(result.unlimited)
@@ -62,8 +69,11 @@ private fun Throwable.toAdminError(): AppError {
     }
     return when (status) {
 
+        // Código errado. É o único caso que a pessoa pode corrigir escrevendo outra coisa.
         403 -> AppError.Unauthorized
 
+        // 401 é falta de sessão, não código errado: separa-se para o ecrã não acusar de
+        // engano quem escreveu o código certo sem rede.
         401 -> AppError.Unknown("admin 401 no session")
         null -> AppError.Network
         else -> AppError.Unknown("admin $status")

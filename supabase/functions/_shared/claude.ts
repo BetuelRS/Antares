@@ -1,4 +1,6 @@
 
+// O modelo mais barato e rápido chega para a análise, que é sempre extração estruturada a
+// partir de texto ou imagem — não há aqui raciocínio livre a fazer.
 export const MODEL_ANALYSIS = 'claude-haiku-4-5';
 export const MODEL_COACH = 'claude-sonnet-5';
 
@@ -16,12 +18,23 @@ export type ClaudeCall = {
 
 export type Fetcher = (url: string, init?: RequestInit) => Promise<Response>;
 
+/**
+ * `hard` distingue a falha que é culpa nossa da que é passageira, e decide se a utilização
+ * é devolvida ao utilizador: uma chave em falta não lhe deve custar saldo, um modelo que
+ * respondeu mal já consumiu a chamada.
+ */
 export class ModelError extends Error {
   constructor(message: string, readonly hard: boolean) {
     super(message);
   }
 }
 
+/**
+ * A única porta para a API da Anthropic. A chave vive só aqui, no servidor: é toda a razão
+ * de estas funções existirem em vez de a app chamar o modelo diretamente.
+ *
+ * O `fetcher` é injetável para os testes correrem sem rede nem chave.
+ */
 export async function callClaude<T>(
   call: ClaudeCall,
   fetcher: Fetcher = fetch,
@@ -41,6 +54,9 @@ export async function callClaude<T>(
       max_tokens: call.maxTokens,
       system: call.system,
       messages: [{ role: 'user', content: call.content }],
+      // Esquema JSON imposto na saída: o modelo devolve dados com forma garantida em vez
+      // de texto que fosse preciso interpretar. É o que permite a app tratar a resposta
+      // como qualquer outra fonte de alimentos.
       output_config: { format: { type: 'json_schema', schema: call.schema } },
     }),
   });

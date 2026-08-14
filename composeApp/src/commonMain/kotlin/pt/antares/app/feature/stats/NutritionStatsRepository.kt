@@ -20,21 +20,33 @@ class NutritionStatsRepository(
 
     private var cached: EfsaReference? = null
 
+    /**
+     * Soma os micronutrientes de um período, e ao mesmo tempo mede sobre que parte da
+     * comida cada soma fala. É esse segundo número que impede o ecrã de anunciar falta de
+     * ferro quando o que falta é análise — ver [MicroTotals].
+     */
     suspend fun totals(fromDay: Long, toDay: Long): MicroTotals = withContext(io) {
         val totals = HashMap<String, Double>()
         val measuredKcal = HashMap<String, Double>()
         var totalKcal = 0.0
         var measuredAnyKcal = 0.0
         for (log in foodLogDao.logsInRange(fromDay, toDay)) {
+            // As calorias contam antes do `continue`: um registo sem análise entra no
+            // denominador, e é isso que faz a cobertura descer quando ele existe.
             totalKcal += log.kcalSnapshot
             val per100 = log.microsPer100Json?.let {
                 runCatching { json.decodeFromString<Map<String, Double>>(it) }.getOrNull()
             } ?: continue
 
+            // Só conta como analisado se trouxer mais do que os quatro valores de rótulo,
+            // que qualquer embalagem tem e não provam análise nenhuma.
             if (MicroTotals.hasRealMicros(per100.keys)) measuredAnyKcal += log.kcalSnapshot
+            // Os micronutrientes estão guardados por 100 g, ao contrário dos macros.
             val factor = log.quantityGrams / 100.0
             for ((key, value) in per100) {
                 totals[key] = (totals[key] ?: 0.0) + value * factor
+                // Por nutriente e não só no total: um alimento pode declarar ferro e não
+                // declarar cálcio, e a cobertura de cada um é diferente.
                 measuredKcal[key] = (measuredKcal[key] ?: 0.0) + log.kcalSnapshot
             }
         }

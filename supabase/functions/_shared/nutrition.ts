@@ -200,7 +200,14 @@ export function usdaToPer100g(food: any): Per100g | null {
   };
 }
 
-export const OFF_USER_AGENT = 'Antares/0.7 (betuel801@gmail.com)';
+/**
+ * Quem a Open Food Facts vê a chamar. Identifica o servidor e não a app: quem faz este
+ * pedido é a Edge Function, e ela não sabe de que versão do telemóvel veio o pedido —
+ * qualquer versão aqui seria inventada e envelheceria sozinha.
+ *
+ * A Open Food Facts exige nome e contacto, sob pena de bloquear.
+ */
+export const OFF_USER_AGENT = 'Antares-Server/1 (betuel801@gmail.com)';
 
 export const LOOKUP_TIMEOUT_MS = 6_000;
 
@@ -330,10 +337,25 @@ export async function resolveFromComponents(
   return out;
 }
 
+/**
+ * Transforma o que o modelo identificou em números de verdade. A ordem das tentativas é a
+ * da confiança: cache, tabela americana, Open Food Facts, decomposição em ingredientes, e
+ * só em último recurso a estimativa do próprio modelo.
+ *
+ * É isto que faz a análise por AI não ser um palpite: o modelo diz *o que* é a comida e
+ * quanto pesa; os valores nutricionais vêm de tabelas analisadas. `matchedSource` regista
+ * qual delas ganhou, e a app mostra-o.
+ *
+ * Cada passo tem `.catch(() => null)` porque uma fonte indisponível deve fazer descer ao
+ * degrau seguinte, e não falhar a análise inteira.
+ */
 export async function resolveItem(item: ModelItem, s: Sources): Promise<ResolvedItem> {
   const key = normalizeKey(item.name_en);
   const expected = item.expected_kcal_per_100g;
 
+  // A cache é verificada contra o que o modelo esperava: nomes iguais podem descrever
+  // comidas diferentes — "salada" com e sem molho — e um valor guardado que não bate certo
+  // com a estimativa é descartado em vez de aceite.
   const cached = await s.cacheGet(key).catch(() => null);
   if (cached && hasConsistentMacros(cached, expectedMacros(item))) {
     return { ...scale(cached, item.grams), name: item.name_original, matchedSource: 'CACHE', grams: item.grams, confidence: item.confidence, estimated: false, assumption: item.assumption ?? null };

@@ -15,6 +15,14 @@ import androidx.core.content.getSystemService
 import com.antares.app.R
 import pt.antares.app.MainActivity
 
+/**
+ * Serviço em primeiro plano que mantém o GPS a correr com o ecrã apagado. Não é opção: o
+ * Android suspende uma app em segundo plano em segundos, e sem isto a corrida perdia-se
+ * assim que o telemóvel entrasse no bolso.
+ *
+ * A notificação permanente é a contrapartida exigida pelo sistema — e é justa: é o que diz
+ * à pessoa que a localização está a ser lida.
+ */
 class RunTrackerService : Service() {
 
     private var source: RunLocationSource? = null
@@ -29,10 +37,14 @@ class RunTrackerService : Service() {
         ensureChannel(this)
         startForegroundCompat()
         requestUpdates()
+        // `START_STICKY` para o sistema recriar o serviço se o matar por falta de memória:
+        // uma corrida de uma hora não pode acabar porque outra app precisou de espaço.
         return START_STICKY
     }
 
     private fun requestUpdates() {
+        // O serviço pode receber vários arranques — o sistema reenvia o intent ao recriar —
+        // e sem isto abriam-se várias subscrições de GPS sobre a mesma corrida.
         if (source != null) return
         try {
             source = RunLocationSource.create(this).also { s ->
@@ -43,6 +55,8 @@ class RunTrackerService : Service() {
             }
         } catch (_: SecurityException) {
 
+            // Permissão de localização revogada com o serviço já a correr. Pára-se em
+            // silêncio: insistir seria mostrar uma notificação permanente sem GPS por trás.
             source = null
             stopSelf()
         }
@@ -56,6 +70,8 @@ class RunTrackerService : Service() {
 
     private fun startForegroundCompat() {
         val notif = buildNotification()
+        // A partir do Android 14 é obrigatório declarar o tipo de serviço em primeiro plano;
+        // sem ele o sistema recusa o arranque e mata a app.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(NOTIF_ID, notif, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
         } else {

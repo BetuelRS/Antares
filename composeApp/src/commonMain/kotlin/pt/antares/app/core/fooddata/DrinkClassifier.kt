@@ -2,8 +2,16 @@ package pt.antares.app.core.fooddata
 
 import pt.antares.app.core.util.TextNormalize
 
+/**
+ * Adivinha se um alimento se bebe, pelo nome. Não muda nutrição nenhuma: decide se a app
+ * mostra mililitros em vez de gramas e se o registo conta para a meta de água.
+ *
+ * Por nome porque nenhuma das bases de alimentos declara este facto. Erra por defeito:
+ * classificar um sólido como bebida é pior do que o contrário.
+ */
 object DrinkClassifier {
 
+    // Nos dois idiomas do catálogo, porque um alimento pode ter nome só num deles.
     private val DRINK_TERMS = listOf(
 
         "agua", "sumo", "sumos", "leite", "cafe", "cha", "refrigerante", "cerveja",
@@ -15,6 +23,8 @@ object DrinkClassifier {
         "milkshake", "shake",
     )
 
+    // Estas ganham sempre. Sem elas, "leite condensado", "gelado de café" e "queijo creme"
+    // entravam todos na meta de água por causa de uma palavra no nome.
     private val SOLID_OVERRIDES = listOf(
         "em po", "powder", "powdered", "chocolate", "condensado", "condensed",
         "evaporado", "evaporated", "gelado", "ice cream", "sorvete", "pudim",
@@ -34,7 +44,12 @@ object DrinkClassifier {
         return DRINK_TERMS.any { term -> containsWord(hay, term) }
     }
 
+    /**
+     * Palavra inteira, e não um pedaço qualquer: sem isto, "chá" aparecia dentro de
+     * "chávena" e "cola" dentro de "chocolate".
+     */
     private fun containsWord(haystack: String, term: String): Boolean {
+        // Termos com espaço já são específicos que chegue e procuram-se tal como estão.
         if (term.contains(' ')) return haystack.contains(term)
         var from = 0
         while (true) {

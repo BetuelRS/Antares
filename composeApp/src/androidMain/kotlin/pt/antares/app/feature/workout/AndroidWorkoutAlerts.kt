@@ -16,6 +16,11 @@ import androidx.core.content.getSystemService
 import com.antares.app.R
 import pt.antares.app.MainActivity
 
+/**
+ * Dois canais com importâncias opostas de propósito: o fim do descanso tem de interromper
+ * — é o ponto —, e o aviso de treino em curso é permanente e não pode fazer barulho de
+ * cada vez que se atualiza.
+ */
 internal object WorkoutChannels {
     const val REST = "workout_rest"
     const val SESSION = "workout_session"

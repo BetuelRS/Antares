@@ -30,6 +30,9 @@ data class StatsState(
 
     val measuredAnyPct: Int = 100,
 
+    // Avisa que o período abrange dias registados antes de o catálogo ter sido revisto: os
+    // valores desses dias vieram de uma versão anterior dos alimentos, e comparar a semana
+    // toda sem o dizer misturava duas origens.
     val includesOldCatalogue: Boolean = false,
 ) {
 
@@ -49,6 +52,8 @@ class NutritionStatsViewModel(
     private val profileRepository: ProfileRepository,
 ) : ViewModel() {
 
+    // A tabela da EFSA lê-se de um ficheiro e não muda: fica em memória depois da primeira
+    // leitura, ao contrário do catálogo de METs, que só se usa uma vez por ecrã.
     private var efsa: EfsaReference? = null
     private val period = MutableStateFlow(StatsPeriod.DAY)
 
@@ -61,11 +66,15 @@ class NutritionStatsViewModel(
     private suspend fun compute(p: StatsPeriod): StatsState {
         val reference = efsa ?: statsRepository.loadReference().also { efsa = it }
         val today = todayEpochDay()
-        val from = if (p == StatsPeriod.WEEK) today - 6 else today
+        val dias = if (p == StatsPeriod.WEEK) DAYS_IN_WEEK else 1
+        val from = today - (dias - 1)
         val totals = statsRepository.totals(from, today)
         val perfil = profileRepository.observeProfile().first()
         val sex = perfil?.sex ?: Sex.MALE
-        val coverage = CoverageCalc.compute(totals, sex, reference.all(), perfil?.lifeStage)
+
+        // As referências da EFSA são diárias: sem o `days`, uma semana somada
+        // compara-se com um só dia e lê sete vezes o valor certo.
+        val coverage = CoverageCalc.compute(totals, sex, reference.all(), perfil?.lifeStage, dias)
 
         val rebuiltDay = statsRepository.catalogueRebuiltDay()
         return StatsState(
@@ -76,5 +85,9 @@ class NutritionStatsViewModel(
             measuredAnyPct = totals.measuredAnyPct,
             includesOldCatalogue = rebuiltDay != null && from < rebuiltDay,
         )
+    }
+
+    private companion object {
+        const val DAYS_IN_WEEK = 7
     }
 }

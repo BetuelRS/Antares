@@ -35,24 +35,34 @@ class RoutineRepository(
 
     fun observeRoutines(): Flow<List<RoutineEntity>> = routineDao.observeRoutines()
 
+    /**
+     * A rotina com os nomes dos exercícios já resolvidos. Os nomes vêm do catálogo a cada
+     * emissão em vez de ficarem guardados na rotina: uma tradução corrigida aparece sem
+     * ser preciso reescrever nada.
+     */
     fun observeDetail(routineId: String): Flow<RoutineWithItems?> =
         combine(
             routineDao.observeRoutine(routineId),
             routineDao.observeItems(routineId),
         ) { routine, items -> routine to items }
             .mapLatest { (routine, items) ->
+                // Null quando a rotina foi apagada. O fluxo do DAO emite a linha marcada
+                // de propósito, para o ecrã se poder fechar em vez de ficar suspenso.
                 if (routine == null) return@mapLatest null
 
                 val names = exerciseDao.namesByIds(items.map { it.exerciseId }.distinct())
                     .associate { it.id to it.namePt.ifBlank { it.nameEn } }
                 RoutineWithItems(
                     routine = routine,
+                    // Sem nome no catálogo fica o identificador: feio, mas visível — a
+                    // linha desaparecer escondia que o exercício ainda faz parte do plano.
                     items = items.map { RoutineItemView(it, names[it.exerciseId] ?: it.exerciseId) },
                 )
             }
 
     suspend fun createRoutine(name: String): String = withContext(io) {
         val id = Ids.newUuid()
+        // A posição é a contagem atual, o que põe a rotina nova no fim da lista.
         val position = routineDao.countRoutines()
         routineDao.upsertRoutine(
             RoutineEntity(id = id, name = name, note = null, position = position, updatedAt = now()),
@@ -68,6 +78,8 @@ class RoutineRepository(
     suspend fun deleteRoutine(routineId: String) = withContext(io) {
         routineDao.softDeleteRoutine(routineId, now())
 
+        // Tirar do calendário faz parte de apagar: não há chave estrangeira, e os dias
+        // continuariam a apontar a uma rotina que já não existe.
         scheduleDao.clearByRoutine(routineId, now())
     }
 

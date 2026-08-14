@@ -7,6 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import java.util.Locale
 
+/**
+ * O idioma da app, guardado em `SharedPreferences` e não no DataStore como tudo o resto.
+ * É deliberado: isto é lido no `attachBaseContext`, antes de a app estar montada, e ali
+ * não há como esperar por uma leitura assíncrona.
+ */
 object LocalePrefs {
     private const val FILE = "antares_locale"
     private const val KEY = "app_language"
@@ -28,6 +33,8 @@ object LocalePrefs {
             AppLanguage.PT -> Locale("pt")
             AppLanguage.EN -> Locale("en")
         }
+        // O `Locale` global mexe-se além do contexto porque a formatação de datas e números
+        // fora do Compose o lê a ele, e não à configuração do contexto.
         Locale.setDefault(locale)
         val config = Configuration(base.resources.configuration)
         config.setLocale(locale)
@@ -56,6 +63,8 @@ actual fun rememberLanguageSetter(): (AppLanguage) -> Unit {
     return { language ->
         LocalePrefs.write(context, language)
 
+        // Recriar a atividade é o que faz o idioma novo valer: os recursos já resolvidos
+        // não mudam sozinhos, e sem isto a app só falaria a outra língua ao ser reaberta.
         (context as? Activity)?.recreate()
     }
 }

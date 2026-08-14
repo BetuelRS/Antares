@@ -27,6 +27,7 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.core.util.todayEpochDay
 
+// Antes do Android 13 não havia permissão de notificações: era dada na instalação.
 internal fun canPostNotifications(context: Context): Boolean {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
     return ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
@@ -48,6 +49,8 @@ internal suspend fun inQuietHours(prefs: AppPreferences): Boolean {
 }
 
 internal fun postNotification(context: Context, channel: String, id: Int, title: String, text: String) {
+    // `FLAG_IMMUTABLE` é exigido desde o Android 12 e é o que impede outra app de alterar
+    // o intent; `UPDATE_CURRENT` reaproveita o pendente em vez de acumular um por aviso.
     val tap = PendingIntent.getActivity(
         context, id, Intent(context, MainActivity::class.java),
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,

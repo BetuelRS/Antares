@@ -26,6 +26,8 @@ interface RunDao {
     )
     suspend fun runsBetween(fromMs: Long, toMs: Long): List<RunEntity>
 
+    // Sem filtrar estado nem apagados: é por aqui que uma corrida por terminar, deixada
+    // para trás por a app ter sido morta a meio, se recupera.
     @Query("SELECT * FROM run WHERE id = :id")
     suspend fun byId(id: String): RunEntity?
 
@@ -36,12 +38,19 @@ interface RunDao {
     suspend fun exportRows(): List<RunEntity>
 }
 
+/**
+ * Só inserir, contar e apagar em bloco. Não há leitura de pontos: o percurso desenha-se a
+ * partir da polyline resumida na corrida, e uma corrida de uma hora são milhares de linhas
+ * que nenhum ecrã percorre.
+ */
 @Dao
 interface TrackPointDao {
 
     @Insert
     suspend fun insert(point: TrackPointEntity)
 
+    // A inserção em bloco é o que o registo de GPS usa: gravar ponto a ponto durante uma
+    // hora abriria uma transação por segundo.
     @Insert
     suspend fun insertAll(points: List<TrackPointEntity>)
 

@@ -27,6 +27,11 @@ class FoodRepository(
 
     suspend fun clearSearchMisses() = withContext(io) { searchMissDao.clear() }
 
+    /**
+     * Pesquisa no catálogo local. Devolve vazio para uma pesquisa que só tem pontuação ou
+     * palavras de uma letra: sem isto, a expressão FTS saía malformada e a consulta
+     * rebentava em vez de não encontrar nada.
+     */
     suspend fun search(rawQuery: String): List<FoodEntity> = withContext(io) {
 
         val ftsQuery = FtsQuery.build(rawQuery)
@@ -48,11 +53,17 @@ class FoodRepository(
 
     suspend fun byBarcode(barcode: String): FoodEntity? = withContext(io) { foodDao.byBarcode(barcode) }
 
+    /**
+     * Se vale a pena ir buscar o produto outra vez à Open Food Facts. Só se aplica ao que
+     * veio de lá: um alimento do catálogo ou criado à mão nunca fica velho.
+     */
     fun isBarcodeCacheStale(food: FoodEntity, now: Long): Boolean =
         food.source == FoodSource.OFF && now - food.updatedAt > BARCODE_CACHE_TTL_MS
 
     companion object {
 
+        // Três meses. Os rótulos mudam devagar, e ler o código de barras tem de funcionar
+        // sem rede — o que está em cache é preferível a não ter nada.
         const val BARCODE_CACHE_TTL_MS = 90L * 24 * 60 * 60 * 1000
     }
 
@@ -64,6 +75,10 @@ class FoodRepository(
         foodDao.touchLastUsed(foodId, now(), amountG)
     }
 
+    /**
+     * Guarda um produto vindo da Open Food Facts. A marca entra no texto de pesquisa — é
+     * por ela que se procuram produtos de embalagem, e não pelo nome genérico.
+     */
     suspend fun cacheOnline(food: FoodEntity) = withContext(io) {
         foodDao.upsertWithFts(
             food,
@@ -91,7 +106,12 @@ class FoodRepository(
             id = existing?.id ?: Ids.newUuid(),
             source = FoodSource.CUSTOM,
 
+            // Os campos que se mantêm do que já existia — código de barras, micronutrientes,
+            // favorito, último uso — são os que o formulário não pergunta. Sem isto, editar
+            // o nome de um alimento apagava-lhe a análise e tirava-o dos favoritos.
             sourceRef = barcode ?: existing?.sourceRef,
+            // Um alimento próprio tem um nome só, repetido nos dois campos: o índice de
+            // pesquisa lê ambos, e deixar o inglês vazio tirava-o de metade das pesquisas.
             namePt = namePt,
             nameEn = namePt,
             brand = null,
@@ -108,6 +128,8 @@ class FoodRepository(
             servingGrams = servingGrams,
             isFavorite = existing?.isFavorite ?: false,
             lastUsedAt = existing?.lastUsedAt ?: 0L,
+            // Verificado por definição: os números são da pessoa, e não há mais ninguém a
+            // quem os confirmar.
             verified = true,
             updatedAt = now(),
             dirty = true,

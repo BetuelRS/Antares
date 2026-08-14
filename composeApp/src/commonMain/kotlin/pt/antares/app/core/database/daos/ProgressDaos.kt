@@ -33,6 +33,8 @@ interface GoalHistoryDao {
 @Dao
 interface SearchMissDao {
 
+    // Inserir-ou-incrementar numa instrução só, em vez de ler, decidir e escrever: a
+    // gravação acontece durante a escrita na pesquisa e não pode competir consigo mesma.
     @Query(
         """
         INSERT INTO search_miss (query, count, lastSeenEpochDay)
@@ -54,6 +56,8 @@ interface SearchMissDao {
     suspend fun clear()
 }
 
+// Fotos e ciclos apagam-se a sério, sem lápide: a linha da foto sem o ficheiro não vale
+// nada, e um ciclo apagado tem de libertar o dia para o índice único do `cycle_log`.
 @Dao
 interface ProgressPhotoDao {
     @Upsert

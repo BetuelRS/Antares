@@ -47,6 +47,8 @@ class ExerciseSeeder(
         private set
 
     suspend fun seedIfNeeded() = withContext(io) {
+        // Já semeado: só se relê o endereço das imagens, que é preciso em memória a cada
+        // arranque, e se aplicam as correções de nomes que ainda faltem.
         if (db.dbInfoDao().get(KEY)?.value == DONE) {
             imageBaseUrl = db.dbInfoDao().get(KEY_IMAGE_BASE)?.value ?: DEFAULT_IMAGE_BASE
 
@@ -54,6 +56,8 @@ class ExerciseSeeder(
             return@withContext
         }
 
+        // Falhar a ler ou a interpretar o ficheiro deixa a app sem catálogo de exercícios,
+        // mas a funcionar: a próxima abertura tenta outra vez, porque a marca não foi posta.
         @OptIn(ExperimentalResourceApi::class)
         val bytes = runCatching { Res.readBytes("files/seed_exercises.json") }.getOrNull()
             ?: return@withContext

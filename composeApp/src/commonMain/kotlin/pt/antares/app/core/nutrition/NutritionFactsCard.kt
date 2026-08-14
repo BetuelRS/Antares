@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import pt.antares.app.core.designsystem.components.SplitRow
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.fmtG
@@ -37,6 +36,13 @@ import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 import kotlin.math.roundToInt
 
+/**
+ * A ficha nutricional, usada no alimento, no registo e na receita. Mostra sempre alguma
+ * coisa: sem micronutrientes aparece a explicação do [MicroGap] em vez de um cartão vazio.
+ *
+ * @param expandKey identifica este cartão para o estado de expandido sobreviver à rotação
+ *   e não se confundir com o de outro cartão na mesma lista.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NutritionFactsCard(
@@ -86,10 +92,14 @@ fun NutritionFactsCard(
                     )
                     Spacer(Modifier.height(Spacing.xs))
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                        // Seis chega para duas linhas num telemóvel; mais e o destaque
+                        // deixa de destacar.
                         highlights.take(6).forEach { HighlightChip(it) }
                     }
                 }
 
+                // Fechado por omissão: são umas trinta linhas, e abertas empurram para fora
+                // do ecrã o que a pessoa veio ver.
                 var expanded by rememberSaveable(expandKey) { mutableStateOf(false) }
                 Spacer(Modifier.height(Spacing.sm))
                 TextButton(onClick = { expanded = !expanded }, contentPadding = PaddingValues(0.dp)) {
@@ -176,6 +186,8 @@ private fun HighlightChip(value: MicroValue) {
 
 @Composable
 private fun MicroRow(value: MicroValue, showBar: Boolean = true) {
+    // Acima de 10 as casas decimais não acrescentam nada; abaixo, são a diferença entre
+    // 0,8 mg e nada.
     val amount = if (value.amount >= 10) value.amount.roundToInt().toString() else fmtG(value.amount)
     val pct = value.pctDv
     Column(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
@@ -194,6 +206,8 @@ private fun MicroRow(value: MicroValue, showBar: Boolean = true) {
                 ""
             }
 
+            // Dois nutrientes em que a percentagem alta é má; a cor tem de dizer o
+            // contrário do que diz nos outros.
             val lessIsBetter = value.key == Nutrients.SODIUM || value.key == Nutrients.SAT_FAT
             Text(
                 (pct?.let { "$amount ${value.unit} · $it%" } ?: "$amount ${value.unit}") + salt,
@@ -222,24 +236,6 @@ private fun MicroRow(value: MicroValue, showBar: Boolean = true) {
     }
 }
 
-@Composable
-private fun FactRow(label: String, value: String, pctDv: Int?) {
-    SplitRow(
-        modifier = Modifier.padding(vertical = 2.dp),
-        leading = {
-            Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        },
-        trailing = {
-            Text(
-                value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (pctDv != null && pctDv >= NutrientClaim.HIGH_IN) MaterialTheme.colorScheme.tertiary
-                        else MaterialTheme.colorScheme.onSurface,
-            )
-        },
-    )
-}
-
 fun provenanceRes(p: FoodProvenance, hasMicros: Boolean): StringResource? = when (p) {
     FoodProvenance.CURATED ->
         if (hasMicros) Res.string.nutrition_source_curated
@@ -253,4 +249,6 @@ fun provenanceRes(p: FoodProvenance, hasMicros: Boolean): StringResource? = when
     FoodProvenance.UNKNOWN -> null
 }
 
+// O sal mostra-se ao lado do sódio porque é o que vem nos rótulos e o que as pessoas
+// reconhecem. O fator é a razão entre as massas moleculares do cloreto de sódio e do sódio.
 private const val SALT_PER_SODIUM = 2.5

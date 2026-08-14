@@ -8,12 +8,18 @@ enum class BmiCategory { UNDERWEIGHT, HEALTHY, OVERWEIGHT, OBESE }
 
 enum class WaistRisk { HEALTHY, INCREASED, HIGH }
 
+/**
+ * Retrato do corpo num instante. Todos os campos são anuláveis porque cada um depende
+ * de medidas diferentes, e a app mostra o que tem em vez de exigir o perfil completo.
+ */
 data class BodyStats(
     val bmi: Double?,
     val bmiCategory: BmiCategory?,
 
     val healthyWeightRangeKg: ClosedFloatingPointRange<Double>?,
     val bodyFatPct: Double?,
+    // A origem viaja com o valor porque decide o que se pode fazer com ele: o
+    // [NutritionCalc] recusa massa magra vinda de uma estimativa por IMC.
     val bodyFatSource: BodyFatSource?,
     val leanMassKg: Double?,
     val fatMassKg: Double?,
@@ -25,10 +31,14 @@ data class BodyStats(
 
 object BodyComposition {
 
+    // Cortes da OMS para adultos. Não se ajustam por sexo nem por etnia: o IMC é um
+    // indicador grosseiro, e afinar as fronteiras dava-lhe uma precisão que não tem.
     const val BMI_UNDERWEIGHT = 18.5
     const val BMI_OVERWEIGHT = 25.0
     const val BMI_OBESE = 30.0
 
+    // Cintura a menos de metade da altura. Diz mais sobre gordura visceral do que o IMC
+    // e dispensa tabelas por sexo.
     const val WAIST_HEALTHY = 0.5
     const val WAIST_HIGH = 0.6
 
@@ -45,6 +55,7 @@ object BodyComposition {
         else -> BmiCategory.OBESE
     }
 
+    /** Serve para avisar no ecrã do objetivo, não para o impedir. */
     fun isGoalWeightBelowHealthy(goalWeightKg: Double, heightCm: Int): Boolean {
         val range = healthyWeightRange(heightCm) ?: return false
         return goalWeightKg < range.start
@@ -56,6 +67,10 @@ object BodyComposition {
         return (BMI_UNDERWEIGHT * m2)..(BMI_OVERWEIGHT * m2)
     }
 
+    /**
+     * Massa gorda pelo método da marinha americana, a partir de fita métrica. Precisa de
+     * anca nas mulheres; sem ela devolve null em vez de improvisar com a fórmula masculina.
+     */
     fun navyBodyFat(
         sex: Sex,
         heightCm: Int,
@@ -67,6 +82,8 @@ object BodyComposition {
         val h = log10(heightCm.toDouble())
         val denominator = when (sex) {
             Sex.MALE -> {
+                // Pescoço maior do que a cintura é engano de campo trocado; o log10 de um
+                // número não positivo rebentaria a conta a seguir.
                 val d = waistCm - neckCm
                 if (d <= 0) return null
                 1.0324 - 0.19077 * log10(d) + 0.15456 * h
@@ -83,6 +100,10 @@ object BodyComposition {
         return pct.takeIf { it.isFinite() && it in PLAUSIBLE_BODY_FAT }
     }
 
+    /**
+     * Estimativa de último recurso, a partir do IMC, idade e sexo. Não mede nada de novo,
+     * e é por isso que a sua origem fica marcada como [BodyFatSource.BMI].
+     */
     fun deurenbergBodyFat(sex: Sex, bmi: Double, ageYears: Int): Double? {
         if (bmi <= 0 || ageYears <= 0) return null
         val sexTerm = if (sex == Sex.MALE) 1 else 0
@@ -90,6 +111,7 @@ object BodyComposition {
         return pct.takeIf { it.isFinite() && it in PLAUSIBLE_BODY_FAT }
     }
 
+    /** Índice de massa magra: o IMC sem contar a gordura, para acompanhar ganho de músculo. */
     fun ffmi(leanMassKg: Double, heightCm: Int): Double? {
         if (leanMassKg <= 0 || heightCm <= 0) return null
         val m = heightCm / 100.0
@@ -99,6 +121,8 @@ object BodyComposition {
     fun leanMassKg(weightKg: Double, bodyFatPct: Double): Double? {
         if (weightKg <= 0 || bodyFatPct !in PLAUSIBLE_BODY_FAT) return null
 
+        // Uma casa decimal, a mesma do basal: a massa magra alimenta a Katch-McArdle, e
+        // arredondar só no fim fazia o basal mostrado divergir do guardado.
         return NutritionCalc.roundToTenth(weightKg * (1 - bodyFatPct / 100.0))
     }
 
@@ -121,6 +145,8 @@ object BodyComposition {
     ): BodyStats {
         val bmi = bmi(weightKg, heightCm)
 
+        // Cascata da melhor origem para a pior: valor medido, depois fita métrica, e só
+        // então a estimativa por IMC. Cada degrau só corre se o anterior não deu nada.
         var fat = bodyFatPct?.takeIf { it in PLAUSIBLE_BODY_FAT }
         var source = if (fat != null) bodyFatSource ?: BodyFatSource.MEASURED else null
         if (fat == null && waistCm != null && neckCm != null) {
@@ -149,5 +175,7 @@ object BodyComposition {
         )
     }
 
+    // Fora deste intervalo é engano de digitação ou unidade trocada: 3% é o limite da
+    // sobrevivência e 70% não existe em ninguém que consiga usar a app.
     private val PLAUSIBLE_BODY_FAT = 3.0..70.0
 }

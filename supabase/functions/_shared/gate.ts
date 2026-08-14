@@ -1,14 +1,30 @@
 
 import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
+/**
+ * O porteiro das funções de AI. Cada chamada custa dinheiro real ao dono, e é aqui que se
+ * decide se ela acontece.
+ *
+ * Há quatro tetos independentes, e não um só, porque protegem de coisas diferentes: o da
+ * conta trava o uso normal, o do minuto trava um cliente em ciclo, o do IP trava quem cria
+ * contas anónimas em série, e o global trava a fatura do mês inteira.
+ */
+
+// Saldo total da experiência — não renova com o dia, ao contrário do limite Pro.
 export const TRIAL_LIMIT = 10;
 export const PRO_DAILY_LIMIT = 30;
 export const RATE_PER_MIN = 10;
 
+// As contas são anónimas e criam-se sozinhas: sem um teto por IP, apagar e reinstalar a
+// app dava saldo de experiência infinito.
 export const TRIAL_IP_DAILY = 20;
 
+// Travão de último recurso sobre a oferta toda. Atingido, a experiência entra em pausa e
+// quem já paga continua a funcionar.
 export const GLOBAL_TRIAL_DAILY_DEFAULT = 2_000;
 
+// O dia vem do cliente e serve para contar o uso diário; esta margem aceita qualquer fuso
+// do mundo mais um pouco, sem deixar passar uma data inventada para renovar o saldo.
 export const DAY_SKEW_MS = 26 * 60 * 60 * 1000;
 
 export type Access =
@@ -22,6 +38,9 @@ export type GateOk = {
   admin: SupabaseClient;
   access: Access;
 
+  // A utilização é cobrada antes de o modelo correr, e devolvida se ele falhar. O
+  // contrário — cobrar depois — deixava a porta aberta a pedidos em paralelo que nunca
+  // chegavam a ser contados.
   refund: () => Promise<void>;
 };
 
@@ -57,12 +76,18 @@ export function isProEntitlement(
 }
 
 export function clientIp(req: Request): string {
+  // O cabeçalho da Cloudflare primeiro, que é o único que o cliente não consegue forjar
+  // aqui; `x-forwarded-for` é a alternativa, e dele só o primeiro endereço interessa.
   const cf = req.headers.get('cf-connecting-ip')?.trim();
   if (cf) return cf;
   const fwd = req.headers.get('x-forwarded-for') ?? '';
   return fwd.split(',')[0].trim() || 'unknown';
 }
 
+/**
+ * O IP nunca é guardado: só o resumo com sal. Chega para contar quantas contas vêm do
+ * mesmo sítio e não permite voltar atrás para o endereço.
+ */
 export async function hashIp(ip: string, salt: string): Promise<string> {
   const data = new TextEncoder().encode(`${salt}:${ip}`);
   const digest = await crypto.subtle.digest('SHA-256', data);

@@ -35,9 +35,14 @@ class BodyMeasurementRepository(
         chestCm: Double? = null,
     ) = withContext(io) {
 
+        // Vê as lápides, para reaproveitar a linha do dia — o índice único conta-as.
         val row = dao.byDayForWrite(epochDay)
 
+        // Mas só uma linha viva contribui com valores: reabrir um dia apagado começa
+        // do zero em vez de ressuscitar medidas que a pessoa desfez.
         val existing = row?.takeIf { !it.deleted }
+        // Funde em vez de substituir: cada `?:` deixa passar o que já lá estava. Registar
+        // só a cintura hoje não pode apagar a massa gorda medida no mesmo dia.
         val merged = BodyMeasurementEntity(
             id = row?.id ?: Ids.newUuid(),
             epochDay = epochDay,
@@ -53,6 +58,7 @@ class BodyMeasurementRepository(
             dirty = true,
         )
 
+        // Uma linha sem medida nenhuma não se grava: encheria o histórico de dias vazios.
         if (!merged.isEmpty) dao.upsert(merged)
     }
 

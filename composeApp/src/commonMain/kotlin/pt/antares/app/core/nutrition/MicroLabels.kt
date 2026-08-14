@@ -4,6 +4,14 @@ import org.jetbrains.compose.resources.StringResource
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 
+/**
+ * A etiqueta traduzida de cada nutriente. É um `when` exaustivo à mão e não um mapa
+ * construído por convenção: as chaves são strings guardadas na base, e um nome derivado
+ * automaticamente rebentava assim que um recurso mudasse de nome.
+ *
+ * O `StringResourcesTest` protege o outro lado — que os recursos aqui referidos existem
+ * em todos os idiomas.
+ */
 fun microLabelRes(key: String): StringResource = when (key) {
     "vitA_ug" -> Res.string.stat_micro_vitA_ug
     "vitB1_mg" -> Res.string.stat_micro_vitB1_mg
@@ -31,6 +39,8 @@ fun microLabelRes(key: String): StringResource = when (key) {
     "fiber_g" -> Res.string.stat_micro_fiber_g
     "sodium_mg" -> Res.string.stat_micro_sodium_mg
 
+    // Estes reutilizam os textos da ficha nutricional em vez de terem recurso próprio: é a
+    // mesma palavra, e duplicá-la abriria caminho a duas traduções diferentes.
     "sugars_g" -> Res.string.nutrition_sugar
     "satFat_g" -> Res.string.nutrition_satfat
     "water_g" -> Res.string.stat_micro_water
@@ -39,5 +49,7 @@ fun microLabelRes(key: String): StringResource = when (key) {
     "fatMono_g" -> Res.string.stat_micro_fatmono
     "fatTrans_g" -> Res.string.stat_micro_fattrans
     "fatPoly_g" -> Res.string.stat_micro_fatpoly
+    // Nunca deve acontecer: as chaves vêm do [Nutrients]. Devolve um texto genérico em vez
+    // de rebentar, porque uma chave desconhecida vinda de dados antigos não vale um crash.
     else -> Res.string.stat_title
 }

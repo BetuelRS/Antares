@@ -29,6 +29,8 @@ data class FoodSearchState(
     val results: List<FoodEntity> = emptyList(),
     val searching: Boolean = false,
 
+    // Os resultados de fora são estado à parte, com o seu próprio indicador: chegam muito
+    // depois dos locais, e misturá-los faria a lista saltar debaixo do dedo.
     val onlineResults: List<FoodEntity> = emptyList(),
     val searchingOnline: Boolean = false,
 
@@ -69,6 +71,11 @@ class FoodSearchViewModel(
     val mostLogged: StateFlow<List<FoodEntity>> = repository.observeMostLogged(limit = 20)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
+    /**
+     * As sugestões que aparecem enquanto se escreve. Saem só do que a pessoa já usou, em
+     * memória e sem tocar na base: têm de aparecer a cada tecla, antes de a pesquisa a
+     * sério correr.
+     */
     val suggestions: StateFlow<List<FoodEntity>> =
         combine(_state, mostLogged, recents) { s, top, rec ->
             val procura = TextNormalize.normalize(s.query.trim())
@@ -86,6 +93,10 @@ class FoodSearchViewModel(
 
     init {
 
+        // Duas pesquisas sobre o mesmo texto, com esperas e mínimos diferentes: a local é
+        // barata e responde a partir de duas letras, a de rede custa um pedido a um serviço
+        // de terceiros e só arranca às três. Os dois fluxos são independentes de propósito —
+        // a de rede a falhar não pode levar consigo os resultados que já estão no ecrã.
         queryFlow
             .debounce(300)
             .onEach { q ->
@@ -109,6 +120,8 @@ class FoodSearchViewModel(
 
                     val online = offRepository.searchOnline(q)
 
+                    // Tira da lista de fora o que já está em baixo na local: um produto
+                    // guardado numa leitura anterior aparecia duas vezes.
                     val localIds = _state.value.results.map { it.id }.toSet()
                     _state.update {
                         it.copy(
@@ -122,6 +135,10 @@ class FoodSearchViewModel(
             .launchIn(viewModelScope)
     }
 
+    /**
+     * Regista a pesquisa que não deu nada — nem local nem em linha. É o que diz ao dono
+     * que alimentos faltam ao catálogo. Fica no telemóvel; o ecrã de administração lê-o.
+     */
     private fun recordMissIfWorthIt(query: String, onlineHits: Int?) {
         if (!SearchMissRule.shouldRecord(query, _state.value.results.size, onlineHits)) return
         val canonica = SearchMissRule.normalize(query) ?: return
@@ -135,6 +152,8 @@ class FoodSearchViewModel(
 
     fun setTab(tab: SearchTab) = _state.update { it.copy(tab = tab) }
 
+    // Escolher um resultado de fora guarda-o primeiro no catálogo local: a partir daí é um
+    // alimento como os outros, e o ecrã de detalhe abre sem depender de rede.
     fun selectOnline(food: FoodEntity) {
         viewModelScope.launch {
             repository.cacheOnline(food)
@@ -171,6 +190,8 @@ class FoodSearchViewModel(
         viewModelScope.launch {
             ids.forEach { id ->
                 val food = repository.byId(id) ?: return@forEach
+                // Registo em lote usa a porção habitual de cada alimento — não há campo
+                // onde a escrever quando se marcam vários de uma vez.
                 val gramas = diaryRepository.defaultPortionFor(food)
                 diaryRepository.logFood(food, gramas, slot, epochDay)
                 repository.touchLastUsed(food.id, amountG = gramas)

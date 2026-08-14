@@ -27,7 +27,11 @@ data class FastingSessionEntity(
     @PrimaryKey val id: String,
     val protocolId: String,
     val startedAt: Long,
+    // A hora-alvo fica congelada no início: mudar o protocolo depois não redefine o que
+    // era completar um jejum já a decorrer.
     val targetEndAt: Long,
+    // Nulo enquanto decorre. As estatísticas ignoram sessões abertas, porque ainda não
+    // têm duração — só uma contagem a subir.
     val endedAt: Long?,
     val status: FastingStatus,
     val updatedAt: Long,

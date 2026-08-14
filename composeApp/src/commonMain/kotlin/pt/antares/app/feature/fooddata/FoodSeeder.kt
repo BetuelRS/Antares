@@ -45,6 +45,16 @@ class FoodSeeder(
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
+    /**
+     * Semeia o catálogo e aplica-lhe as correções acumuladas. Corre a cada arranque, e
+     * cada passo verifica primeiro a sua marca na `db_info` — é isso que o torna barato e
+     * seguro de repetir.
+     *
+     * A ordem é a das dependências: importar antes de limpar, limpar antes de deduplicar.
+     * Cada passo é uma correção ao catálogo que já foi distribuído, e por isso não podem
+     * ser fundidos num só nem reordenados — quem tem a app instalada há muito passou por
+     * uns e não por outros.
+     */
     suspend fun seedIfNeeded() = withContext(io) {
 
         val importedAt = importIfNeeded("files/seed_foods.json", KEY, DONE)
@@ -184,6 +194,13 @@ class FoodSeeder(
         db.dbInfoDao().upsert(DbInfo(KEY_PT_MICROS, DONE_PT_MICROS))
     }
 
+    /**
+     * Importa um ficheiro de catálogo se ainda não foi, ou se a sua versão mudou. Devolve
+     * o instante da importação, que serve para limpar o que ficou da versão anterior.
+     *
+     * A marca é chave e versão: subir a versão faz o ficheiro ser reimportado por cima de
+     * quem já o tinha, sem tocar em mais nada.
+     */
     private suspend fun importIfNeeded(file: String, key: String, doneVersion: String): Long? {
         if (db.dbInfoDao().get(key)?.value == doneVersion) return null
 
@@ -225,10 +242,16 @@ class FoodSeeder(
             )
         }
 
+        // Em blocos de 400 por causa do limite de variáveis de uma instrução SQLite: os
+        // ficheiros têm milhares de alimentos, e uma inserção única rebentava.
         foods.chunked(400).forEach { db.foodDao().insertAll(it) }
 
+        // Apagar as linhas de pesquisa antes de as reinserir: o FTS4 não tem chave
+        // primária, e reimportar sem isto duplicava cada alimento nos resultados.
         foods.map { it.id }.chunked(400).forEach { db.foodDao().deleteFtsIn(it) }
         fts.chunked(400).forEach { db.foodDao().insertFtsAll(it) }
+        // A marca fica em último: uma importação interrompida a meio recomeça na abertura
+        // seguinte em vez de dar o catálogo por semeado.
         db.dbInfoDao().upsert(DbInfo(key, doneVersion))
         return now
     }

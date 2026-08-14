@@ -1,6 +1,12 @@
 
 export type Micros = Record<string, number>;
 
+/**
+ * Os códigos de nutriente da tabela americana traduzidos para as chaves canónicas da app.
+ * Os valores à direita têm de bater exatamente com o `Nutrients` do lado Kotlin: são as
+ * chaves que acabam gravadas no JSON de cada registo, e um nome trocado aqui faz o
+ * nutriente desaparecer dos ecrãs sem erro nenhum a avisar.
+ */
 export const USDA_MICRO_IDS: Record<number, string> = {
   1106: "vitA_ug",
   1165: "vitB1_mg",

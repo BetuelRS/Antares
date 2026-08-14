@@ -6,6 +6,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.File
 
+/**
+ * As fotos de progresso em ficheiros, e nunca na base de dados: são imagens de dezenas de
+ * quilobytes cada, e a base ficaria enorme e lenta a copiar.
+ *
+ * Vivem no armazenamento privado da app — não na galeria — e por isso nenhuma outra app as
+ * vê e desaparecem com a desinstalação.
+ */
 actual class LocalPhotoStore(
     private val context: Context,
     private val io: CoroutineDispatcher,
@@ -26,6 +33,9 @@ actual class LocalPhotoStore(
         withContext(io) {
 
             runCatching {
+                // Só apaga dentro da própria pasta. O caminho vem de uma linha da base, e
+                // sem esta verificação um valor adulterado — por exemplo, vindo de uma
+                // cópia de segurança de fora — apagaria ficheiros noutro sítio.
                 val ficheiro = File(path)
                 if (ficheiro.parentFile?.absolutePath == dir().absolutePath) ficheiro.delete()
             }

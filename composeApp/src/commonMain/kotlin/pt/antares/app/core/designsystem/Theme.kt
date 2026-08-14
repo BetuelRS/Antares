@@ -34,6 +34,8 @@ private val LightColors = lightColorScheme(
     outline = AntaresColors.outlineLight,
 )
 
+// O Material não tem cor de sucesso, e usar a primária para isso confundia-a com uma ação.
+// Viaja à parte do esquema, pela composição.
 @Immutable
 data class AntaresExtraColors(val success: Color)
 
@@ -46,8 +48,13 @@ val MaterialTheme.success: Color
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
+// Duas apresentações do resumo do dia, à escolha nas definições. Não muda dados nenhuns.
 enum class HeroStyle { CLASSIC, RING }
 
+/**
+ * Recebe `darkTheme` já resolvido em vez de ler a preferência: o tema pode ser forçado nas
+ * definições, e é acima daqui que a escolha da pessoa vence a do sistema.
+ */
 @Composable
 fun AntaresTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

@@ -67,6 +67,10 @@ import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 
+/**
+ * Chave-valor para marcas da própria base — o que a app precisa de saber sobre os seus
+ * dados e não cabe em nenhuma tabela de domínio, como a versão do catálogo já semeado.
+ */
 @Entity(tableName = "db_info")
 data class DbInfo(
     @PrimaryKey val key: String,
@@ -82,6 +86,15 @@ interface DbInfoDao {
     suspend fun get(key: String): DbInfo?
 }
 
+/**
+ * A base de dados inteira. Vive no telemóvel e mais lado nenhum: não há servidor com uma
+ * cópia, e o `NoSyncTest` falha se voltar a haver.
+ *
+ * Todas as migrações são automáticas, o que impõe uma regra a quem mexer nas entidades:
+ * coluna nova nasce anulável ou com valor por omissão. Uma coluna obrigatória sem
+ * omissão obriga a escrever a migração à mão, e sem ela a app rebenta ao abrir com dados
+ * antigos lá dentro.
+ */
 @Database(
     entities = [
         DbInfo::class,
@@ -116,6 +129,8 @@ interface DbInfoDao {
     ],
 
     version = 21,
+    // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
+    // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -143,6 +158,8 @@ interface DbInfoDao {
 @ConstructedBy(AntaresDbConstructor::class)
 abstract class AntaresDb : RoomDatabase() {
 
+    // Único passo de migração que não é acrescento: apaga a tabela de estado de
+    // sincronização. A app não sincroniza nada, e o `NoSyncTest` garante que continua assim.
     @DeleteTable(tableName = "sync_meta")
     class DropSyncMeta : AutoMigrationSpec
     abstract fun dbInfoDao(): DbInfoDao

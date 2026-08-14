@@ -46,6 +46,8 @@ interface RoutineDao {
     @Query("SELECT * FROM routine WHERE id = :id AND deleted = 0")
     suspend fun routineById(id: String): RoutineEntity?
 
+    // Sem filtro de apagados: quem está no ecrã de uma rotina e a apaga precisa de ver o
+    // fluxo emitir a linha marcada, para fechar o ecrã em vez de ficar num nulo súbito.
     @Query("SELECT * FROM routine WHERE id = :id")
     fun observeRoutine(id: String): Flow<RoutineEntity?>
 
@@ -83,6 +85,8 @@ interface WorkoutSessionDao {
     @Query("SELECT * FROM workout_session WHERE id = :id")
     suspend fun sessionById(id: String): WorkoutSessionEntity?
 
+    // Um treino a decorrer de cada vez. Nada impede a base de ter dois — só o `LIMIT 1` com
+    // a ordem descendente garante que o mais recente ganha se isso acontecer.
     @Query("SELECT * FROM workout_session WHERE status = 'ACTIVE' AND deleted = 0 ORDER BY startedAt DESC LIMIT 1")
     fun observeActive(): Flow<WorkoutSessionEntity?>
 
@@ -107,12 +111,20 @@ interface WorkoutSessionDao {
     suspend fun exportRows(): List<WorkoutSessionEntity>
 }
 
+/**
+ * As consultas de agregação daqui para baixo repetem sempre a mesma cláusula:
+ * `status = 'DONE'`, as duas tabelas não apagadas, e `isWarmup = 0`. É a definição de
+ * trabalho contado na app — treinos por acabar e séries de aquecimento não entram em
+ * volume, recordes nem progresso.
+ */
 @Dao
 interface WorkoutSetDao {
 
     @Upsert
     suspend fun upsertSet(set: WorkoutSetEntity)
 
+    // Agrupa por exercício antes do número da série: a lista do treino mostra-se por
+    // exercício, e a ordem da base poupa o agrupamento em memória a cada emissão.
     @Query("SELECT * FROM workout_set WHERE sessionId = :sessionId AND deleted = 0 ORDER BY exerciseId, setIndex")
     fun observeSetsForSession(sessionId: String): Flow<List<WorkoutSetEntity>>
 
@@ -122,6 +134,11 @@ interface WorkoutSetDao {
     @Query("UPDATE workout_set SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteSet(id: String, now: Long)
 
+    /**
+     * As séries da última vez que este exercício foi feito, para aparecerem a cinzento por
+     * baixo dos campos vazios. A subconsulta encontra essa sessão; excluir a atual é o que
+     * impede o treino em curso de se copiar a si mesmo enquanto se escreve nele.
+     */
     @Query(
         """
         SELECT * FROM workout_set
@@ -146,6 +163,8 @@ interface WorkoutSetDao {
           AND ws.status = 'DONE' AND ws.deleted = 0 AND ws.id != :excludeSessionId
         """,
     )
+    // Alimenta a deteção de recordes: exclui-se a sessão em curso para o recorde anterior
+    // não incluir a série que se acabou de escrever — senão nada seria nunca recorde.
     suspend fun doneSetsForExercise(exerciseId: String, excludeSessionId: String): List<WorkoutSetEntity>
 
     @Query(
@@ -162,6 +181,8 @@ interface WorkoutSetDao {
     )
     suspend fun exerciseProgress(exerciseId: String): List<ExerciseSessionAgg>
 
+    // Junta-se à tabela de exercícios em vez de guardar os músculos na série: o volume por
+    // músculo tem de acompanhar o catálogo, e uma cópia de anos atrás nunca se corrigiria.
     @Query(
         """
         SELECT s.weightKg AS weightKg, s.reps AS reps,

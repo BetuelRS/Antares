@@ -22,10 +22,18 @@ import java.time.Instant
 import java.time.ZoneOffset
 import kotlin.math.roundToInt
 
+/**
+ * A implementação Android do [HealthGateway]. Toda a API do Health Connect fica presa
+ * neste ficheiro: o resto da app fala pela interface e nem sabe que ele existe.
+ */
 class HealthConnectGateway(private val context: Context) : HealthGateway {
 
+    // O próprio pacote serve para reconhecer o que foi esta app a escrever, e não voltar a
+    // importar como se fosse de fora.
     private val selfPackage: String = context.packageName
 
+    // `lazy` porque criar o cliente com o serviço ausente lança: só se tenta depois de a
+    // disponibilidade estar confirmada, e o resultado nulo é um estado válido.
     private val client: HealthConnectClient? by lazy {
         if (availability() == HealthAvailability.AVAILABLE) {
             runCatching { HealthConnectClient.getOrCreate(context) }.getOrNull()
@@ -66,6 +74,11 @@ class HealthConnectGateway(private val context: Context) : HealthGateway {
 
     override suspend fun hasWritePermissions(): Boolean = hasAll(writePermissions)
 
+    /**
+     * Exige o conjunto todo. É mais restritivo do que o necessário — com só a permissão de
+     * peso ainda se poderia importar peso —, mas evita importações meias em que a pessoa
+     * não percebe porque é que os treinos não aparecem.
+     */
     private suspend fun hasAll(required: Set<String>): Boolean {
         val c = client ?: return false
         val granted = runCatching { c.permissionController.getGrantedPermissions() }
@@ -97,6 +110,9 @@ class HealthConnectGateway(private val context: Context) : HealthGateway {
             ).records
         }.getOrDefault(emptyList())
 
+        // Filtrar o próprio pacote é a primeira defesa contra o ciclo: a app publica o que
+        // sabe no Health Connect, e sem isto reimportava o que ela mesma escreveu. O
+        // [HealthDedupe] trata do resto, que vem de outras apps.
         return records
             .filterNot { it.metadata.dataOrigin.packageName == selfPackage }
             .map {

@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pt.antares.app.core.designsystem.Spacing
-import pt.antares.app.core.util.AppError
 
 @Composable
 fun EmptyState(
@@ -33,6 +32,8 @@ fun EmptyState(
 ) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
+        // O campo de estrelas por trás do vazio é decoração e desliga-se: dentro de uma
+        // lista curta ou de um cartão pequeno, ocupa mais atenção do que a mensagem.
         if (starfield) {
             StarField(modifier = Modifier.fillMaxSize())
 
@@ -77,28 +78,6 @@ fun EmptyState(
                 )
             }
             action?.invoke()
-        }
-    }
-}
-
-@Composable
-fun ErrorState(
-    error: AppError,
-    message: String,
-    modifier: Modifier = Modifier,
-    onRetry: (() -> Unit)? = null,
-    retryLabel: String = "Retry",
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(Spacing.xl),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(text = message, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error)
-        if (onRetry != null) {
-            PrimaryButton(text = retryLabel, onClick = onRetry)
         }
     }
 }

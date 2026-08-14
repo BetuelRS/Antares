@@ -33,8 +33,12 @@ data class CoachReportUi(
     val proposalAccepted: Boolean?,
 ) {
 
+    // Só há proposta por responder se ela existe e ainda não foi aceite nem recusada —
+    // `proposalAccepted` a null é "por responder", não "recusada".
     val hasOpenProposal: Boolean get() = proposedKcal != null && proposalAccepted == null
 
+    // Distingue o relatório da semana passada de um antigo aberto no histórico: só o
+    // primeiro é acionável.
     fun isFresh(todayEpochDay: Long): Boolean =
         CoachTrigger.targetWeekStart(todayEpochDay) == weekStartEpochDay
     val deltaKcal: Int? get() = if (proposedKcal != null && previousKcal != null) {
@@ -67,6 +71,8 @@ class CoachViewModel(
     val loading: StateFlow<Boolean> = _loading.asStateFlow()
     val error: StateFlow<AppError?> = _error.asStateFlow()
 
+    // Gerar ignora-se se já estiver a gerar: o relatório escreve por semana, e duas
+    // gerações a correr ao mesmo tempo disputariam a mesma linha.
     fun generate() {
         if (_loading.value) return
         _loading.value = true
@@ -108,6 +114,8 @@ class CoachViewModel(
         observations = decodeList(e.observationsJson),
         adjustments = decodeList(e.adjustmentsJson),
         focus = e.focus,
+        // Um agregado que não desserializa vira null e o ecrã mostra o relatório sem os
+        // números: um relatório escrito por uma versão anterior não pode deitar a lista abaixo.
         aggregate = runCatching { json.decodeFromString<WeeklyAggregate>(e.aggregateJson) }.getOrNull(),
         proposedKcal = e.proposedKcal,
         previousKcal = e.previousKcal,

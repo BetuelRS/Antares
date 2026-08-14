@@ -8,6 +8,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
+/**
+ * Dias desde 1970-01-01, que é a unidade em que toda a app guarda datas: um número inteiro
+ * não tem fuso nem hora, e o mesmo dia continua o mesmo dia depois de uma viagem.
+ */
 fun LocalDate.toEpochDay(): Long {
 
     return this.toEpochDays().toLong()
@@ -21,6 +25,10 @@ fun todayEpochDay(timeZone: TimeZone = TimeZone.currentSystemDefault()): Long =
 fun currentHour(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int =
     Clock.System.now().toLocalDateTime(timeZone).hour
 
+/**
+ * A segunda-feira dessa semana. A app usa a semana ISO em todo o lado — relatório, grelha
+ * de consistência, orçamento semanal — e é o que faz esses três concordarem.
+ */
 fun weekStartEpochDay(epochDay: Long): Long {
     val isoDay = epochDayToLocalDate(epochDay).dayOfWeek.isoDayNumber
     return epochDay - (isoDay - 1)

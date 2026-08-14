@@ -254,7 +254,17 @@ private fun HeroWeight(state: ProgressState) {
                 gridColor = MaterialTheme.colorScheme.outline.copy(alpha = HERO_CHART_ALPHA),
                 modifier = Modifier.fillMaxWidth(),
             )
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // Base por baixo do texto: o gráfico passa-lhe por trás e, mesmo a
+            // 0.35 de alfa, as linhas cruzam os dígitos.
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(HERO_SCRIM_RADIUS_DP.dp))
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = HERO_SCRIM_ALPHA),
+                    )
+                    .padding(horizontal = Spacing.md, vertical = Spacing.sm),
+            ) {
                 Text(
                     "${fmtG(tendencia.display(imperial))} $unidade",
                     style = MaterialTheme.typography.displaySmall,
@@ -704,6 +714,9 @@ private fun List<Pair<Long, Double>>.display(imperial: Boolean): List<Pair<Long,
 private const val HERO_CHART_DP = 120
 
 private const val HERO_CHART_ALPHA = 0.35f
+
+private const val HERO_SCRIM_ALPHA = 0.82f
+private const val HERO_SCRIM_RADIUS_DP = 16
 
 private const val CELL_DP = 14
 private const val LEGEND_DP = 16

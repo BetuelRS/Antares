@@ -40,6 +40,8 @@ import pt.antares.app.generated.resources.adaptive_title
 import pt.antares.app.generated.resources.ai_disclaimer
 import pt.antares.app.generated.resources.coach_adjustments
 import pt.antares.app.generated.resources.coach_avg_kcal
+import pt.antares.app.generated.resources.coach_disclaimer
+import pt.antares.app.generated.resources.coach_row_summary
 import pt.antares.app.generated.resources.coach_error
 import pt.antares.app.generated.resources.coach_focus
 import pt.antares.app.generated.resources.coach_generate
@@ -151,8 +153,11 @@ fun CoachReportScreen(
                     }
 
                     item {
+
+                        // Não é `ai_disclaimer`: este relatório é aritmética local, e o
+                        // AdaptiveTargetsOfflineTest rebenta se a AI voltar a este caminho.
                         Text(
-                            text = stringResource(Res.string.ai_disclaimer),
+                            text = stringResource(Res.string.coach_disclaimer),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -221,12 +226,25 @@ fun CoachHistoryScreen(
                         ),
                         style = MaterialTheme.typography.titleMedium,
                     )
-                    Text(
-                        text = report.focus,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = Spacing.xs),
-                    )
+                    // O `focus` é sempre vazio enquanto o relatório for determinístico
+                    // (AdaptiveTargetsOfflineTest exige-o), por isso a linha cai nos
+                    // números da semana — sem isto o cartão fica só com a data.
+                    val resumo = report.focus.takeIf { it.isNotBlank() }
+                        ?: report.aggregate?.let { agg ->
+                            stringResource(
+                                Res.string.coach_row_summary,
+                                agg.loggedDays,
+                                agg.avgKcal,
+                            )
+                        }
+                    if (resumo != null) {
+                        Text(
+                            text = resumo,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = Spacing.xs),
+                        )
+                    }
                 }
             }
         }

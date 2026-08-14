@@ -65,8 +65,8 @@
     <string name="progress_milestone_days">%1$d days logged</string>
     <string name="progress_milestone_weight">%1$s of change</string>
     <string name="progress_milestone_goal">Target weight reached</string>
-    <string name="progress_weight_lost">%1$s down since your first weigh-in</string>
-    <string name="progress_weight_gained">%1$s up since your first weigh-in</string>
+    <string name="progress_weight_lost">%1$s down in this period</string>
+    <string name="progress_weight_gained">%1$s up in this period</string>
     <string name="progress_weight_same">Same as your first weigh-in</string>
     <string name="progress_weight_one_point">One weigh-in is not a line yet. Step on the scale again in a few days.</string>
 
@@ -577,6 +577,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
     <string name="session_warmup">Warmup</string>
+    <string name="session_weight_out_of_range">Weight between 0 and %1$s kg. A slip here becomes a record.</string>
+    <string name="session_reps_out_of_range">Reps between 1 and %1$s.</string>
+    <string name="session_rpe_out_of_range">RPE runs from 1 to 10.</string>
     <string name="session_ghost">Last: %1$s</string>
     <string name="session_no_exercises">No exercises. Add the first one.</string>
     <string name="session_rest_running">Rest: %1$ds</string>
@@ -767,6 +770,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_on_target">%1$d days on target</string>
     <string name="coach_weight_trend">Weight trend: %1$s kg</string>
     <string name="coach_sparse">Few entries this week — take the report with a pinch of salt.</string>
+    <string name="coach_disclaimer">Worked out on this phone, from what you logged. Not medical advice.</string>
+    <string name="coach_row_summary">%1$d days logged · %2$d kcal average</string>
     <string name="coach_error">Couldn't generate the report. Try again.</string>
 
     <string name="adaptive_title">New target suggested</string>
@@ -874,6 +879,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_health_goal_remaining">%1$s kg to go</string>
     <string name="profile_health_goal_reached">You reached your goal weight.</string>
     <string name="profile_health_no_goal_weight">No goal weight yet. You can pick one in Edit profile and goals.</string>
+    <string name="profile_health_no_weigh_in">You have a goal weight, but no weigh-in to start from. Log your weight to see how far there is to go.</string>
     <string name="profile_health_real_expenditure">Your real expenditure: %1$d %2$s</string>
     <string name="profile_health_estimated_expenditure">Estimated expenditure: %1$d %2$s</string>
     <string name="profile_health_formula_estimated">The formula estimated %1$d</string>

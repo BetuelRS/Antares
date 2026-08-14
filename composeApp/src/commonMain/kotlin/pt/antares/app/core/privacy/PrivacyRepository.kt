@@ -27,12 +27,20 @@ class PrivacyRepository(
     private val io: CoroutineDispatcher,
 ) {
 
+    /**
+     * Apaga tudo e deixa a app como acabada de instalar. É o direito ao apagamento, e é
+     * definitivo: não há cópia num servidor de onde recuperar.
+     */
     suspend fun deleteEverything(): WipeOutcome = withContext(io) {
         try {
             db.clearAllTables()
 
+            // As fotos são ficheiros e não linhas: `clearAllTables` não lhes toca, e ficavam
+            // no telemóvel depois de a pessoa ter mandado apagar tudo.
             photos.deleteAll()
             prefs.clearAll()
+            // Volta a semear o catálogo, que também foi apagado: sem isto a app fica sem
+            // alimentos nem exercícios e não há como voltar a tê-los senão reinstalando.
             foodSeeder.seedIfNeeded()
             exerciseSeeder.seedIfNeeded()
             templateSeeder.seedIfNeeded()

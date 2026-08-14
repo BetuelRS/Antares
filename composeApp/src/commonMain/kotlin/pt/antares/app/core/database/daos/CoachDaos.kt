@@ -20,6 +20,8 @@ interface CoachReportDao {
     @Query("SELECT * FROM coach_report WHERE deleted = 0 AND id = :id")
     suspend fun byId(id: String): CoachReportEntity?
 
+    // Vê as lápides, ao contrário das outras: o índice único na semana conta-as, e gerar o
+    // relatório de uma semana antes apagada falharia contra uma linha invisível.
     @Query("SELECT * FROM coach_report WHERE weekStartEpochDay = :weekStartEpochDay")
     suspend fun byWeekForWrite(weekStartEpochDay: Long): CoachReportEntity?
 

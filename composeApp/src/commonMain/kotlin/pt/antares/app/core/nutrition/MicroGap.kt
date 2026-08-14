@@ -3,6 +3,11 @@ package pt.antares.app.core.nutrition
 import pt.antares.app.core.model.FoodSource
 import pt.antares.app.core.model.LogOrigin
 
+/**
+ * Porque é que um alimento não tem micronutrientes. Existe para o ecrã explicar o vazio em
+ * vez de o deixar por dizer: o rótulo de uma embalagem não é obrigado a declará-los, uma
+ * estimativa de AI não os sabe, e um alimento criado à mão só tem o que se escreveu.
+ */
 enum class MicroGap {
 
     NONE,
@@ -20,6 +25,7 @@ enum class MicroGap {
 
     companion object {
 
+        // Ter micros ganha a tudo o resto: a origem só interessa para explicar a falta.
         fun ofLog(origin: LogOrigin, hasMicros: Boolean): MicroGap = when {
             hasMicros -> NONE
             origin == LogOrigin.BARCODE -> PACKAGED_LABEL

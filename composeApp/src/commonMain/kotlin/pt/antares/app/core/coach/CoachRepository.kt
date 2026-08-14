@@ -11,8 +11,6 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.json.Json
-import pt.antares.app.core.ai.AiClient
-import pt.antares.app.core.ai.CoachAdaptive
 import pt.antares.app.core.nutrition.CoverageCalc
 import pt.antares.app.core.notifications.CoachNotifier
 import pt.antares.app.core.notifications.NoopCoachNotifier
@@ -43,6 +41,14 @@ import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.core.util.weekStartEpochDay
 import kotlin.math.roundToInt
 
+/**
+ * O relatório semanal, do princípio ao fim, dentro do telemóvel. Nada aqui chama a rede:
+ * agrega a semana, avalia a proposta do [AdaptiveTdee] e grava. O texto que o utilizador
+ * lê é montado no ecrã a partir de chaves de tradução — as três listas ficam vazias na
+ * base de propósito.
+ *
+ * O `AdaptiveTargetsOfflineTest` falha se alguma chamada de rede voltar a este caminho.
+ */
 class CoachRepository(
     private val coachDao: CoachReportDao,
     private val foodLogDao: FoodLogDao,
@@ -55,11 +61,10 @@ class CoachRepository(
     private val fastingDao: FastingSessionDao,
     private val runDao: RunDao,
     private val statsRepository: pt.antares.app.feature.stats.NutritionStatsRepository,
-    private val client: AiClient,
     private val prefs: AppPreferences,
 
-    private val ensureAccount: suspend () -> Unit,
-
+    // Sem notificador por omissão: nos testes e no arranque antes das permissões, gerar um
+    // relatório não pode depender de haver como avisar.
     private val notifier: CoachNotifier = NoopCoachNotifier(),
     private val io: CoroutineDispatcher,
     private val lang: () -> String = { "pt" },
@@ -85,6 +90,8 @@ class CoachRepository(
         if (!CoachTrigger.shouldGenerate(today(), lastWeek, aggregate.loggedDays)) {
             return@withContext false
         }
+        // O `runCatching` protege o arranque: isto corre sem ninguém a olhar, e uma falha a
+        // gerar o relatório não pode impedir a app de abrir.
         val ok = runCatching { generate(week, aggregate) }.getOrNull() is AppResult.Success
 
         if (ok) notifier.notifyReportReady()
@@ -111,11 +118,15 @@ class CoachRepository(
 
         val proposal = evaluateAdaptive(aggregate)
 
+        // Reaproveita a linha da semana, viva ou lápide: o índice único não distingue as
+        // duas, e inserir uma nova falharia contra a que já lá está.
         val existing = coachDao.byWeekForWrite(weekStart)
         val entity = CoachReportEntity(
             id = existing?.id ?: newId(),
             weekStartEpochDay = weekStart,
 
+            // Vazias porque nenhum texto é gerado: o ecrã escolhe as frases a partir dos
+            // números do agregado. As colunas ficam para o formato do relatório não mudar.
             winsJson = "[]",
             observationsJson = "[]",
             adjustmentsJson = "[]",
@@ -125,6 +136,8 @@ class CoachRepository(
             previousKcal = proposal?.previousTargetKcal,
             observedTdee = proposal?.observedTdee,
 
+            // A data de criação sobrevive a regerar, mas não a ressuscitar uma lápide: um
+            // relatório apagado e refeito é novo, e a data tem de o dizer.
             createdAt = existing?.takeIf { !it.deleted }?.createdAt ?: now(),
             updatedAt = now(),
         )
@@ -141,10 +154,14 @@ class CoachRepository(
             .atTime(LocalTime(23, 59, 59)).toInstant(zone).toEpochMilliseconds()
 
         val totals = statsRepository.totals(weekStart, weekEnd)
+        // Só se apontam lacunas de micronutrientes se a semana tiver análise que chegue.
+        // Com metade da comida por analisar, todos os nutrientes pareceriam em falta.
         val gaps = if (totals.measuredAnyPct >= MICRO_MIN_COVERAGE) {
             CoverageCalc.compute(totals, profile.sex, statsRepository.loadReference().all(), profile.lifeStage)
                 .filter { it.hasData && !it.isPartial }
 
+                // A cobertura vem da soma da semana contra referências diárias, por isso
+                // divide-se por sete para voltar à média por dia.
                 .map { it.key to it.coveragePct / DAYS_IN_WEEK }
                 .filter { (_, dailyPct) -> dailyPct < MICRO_GAP_BELOW }
                 .toMap()
@@ -158,6 +175,8 @@ class CoachRepository(
             targetKcal = targetKcalFor(weekStart, profile),
             weights = weightDao.range(weekStart, weekEnd),
 
+            // A semana anterior entra só para a tendência ter passado à entrada: sem ela, a
+            // primeira pesagem da semana seria o seu próprio ponto de partida.
             previousWeekWeights = weightDao.range(weekStart - 7, weekStart - 1),
             workouts = workoutSessionDao.sessionsBetween(fromMs, toMs),
             workoutVolumeKg = workoutSetDao.volumeBetween(fromMs, toMs).roundToInt(),
@@ -167,7 +186,10 @@ class CoachRepository(
         ).copy(microGaps = gaps)
     }
 
+    /** A meta que valia nessa semana, e não a de hoje: o relatório descreve o passado. */
     private suspend fun targetKcalFor(weekStart: Long, profile: UserProfileEntity): Int {
+        // Uma meta fixada para o dia manda sobre o cálculo, incluindo a que uma proposta
+        // adaptativa anterior tenha deixado.
         val override = overrideDao.byDay(weekStart)
         if (override != null) return override.kcal
         val weight = weightDao.latest()?.weightKg ?: DEFAULT_WEIGHT_KG
@@ -177,11 +199,15 @@ class CoachRepository(
     suspend fun evaluateAdaptive(aggregate: WeeklyAggregate): AdaptiveTdee.Proposal? =
         withContext(io) {
 
+            // A adaptação é opcional e desligável: quem a desligou não recebe propostas
+            // nenhumas, nem sequer para ver.
             if (!prefs.adaptiveTargets.first()) return@withContext null
 
             val profile = profileDao.get() ?: return@withContext null
             val trend = aggregate.weightTrendDeltaKg ?: return@withContext null
 
+            // O gasto atual deduz-se da meta menos o ritmo, em vez de se recalcular: é o
+            // número que esteve mesmo em vigor, incluindo o de uma proposta já aceite.
             val currentTdee = (aggregate.targetKcal - profile.goalRateKcal).toDouble()
 
             val result = AdaptiveTdee.evaluate(
@@ -198,6 +224,8 @@ class CoachRepository(
                         NutritionCalc.energy(profile, w, today()).bmr
                     },
 
+                    // O histórico todo, e não só a semana: a paragem conta-se para trás e
+                    // pode vir de muito antes desta semana.
                     consecutiveStallWeeks = WeightTrend.consecutiveStallWeeks(
                         weightDao.exportRows()
                             .sortedBy { it.epochDay }
@@ -222,10 +250,14 @@ class CoachRepository(
         val base = NutritionCalc.dailyTargets(profile, weight, today())
         val scaled = scaleMacros(kcal, base.proteinG, base.carbsG, base.fatG)
 
+        // A proposta é sobre a semana a seguir à do relatório, e escreve-se dia a dia: sem
+        // isso, mudar o perfil a meio da semana desfazia a meta aceite.
         val weekStart = report.weekStartEpochDay + 7
         for (d in weekStart until weekStart + 7) {
             overrideDao.upsert(
                 DailyTargetOverrideEntity(
+                    // Identificador derivado do dia: aceitar duas vezes escreve por cima em
+                    // vez de acumular metas para o mesmo dia.
                     id = "adaptive-$d",
                     epochDay = d,
                     kcal = kcal,
@@ -245,10 +277,16 @@ class CoachRepository(
         coachDao.setProposalAccepted(report.id, false, now())
     }
 
+    /**
+     * Ajusta os macros à meta nova mexendo só nos hidratos. Proteína e gordura têm mínimos
+     * fisiológicos e ficam intactas; os hidratos absorvem a diferença, como em [macros].
+     */
     private fun scaleMacros(kcal: Int, protein: Int, carbs: Int, fat: Int): Triple<Int, Int, Int> {
         val fromPF = protein * NutritionCalc.KCAL_PER_G_PROTEIN + fat * NutritionCalc.KCAL_PER_G_FAT
         val carbKcal = (kcal - fromPF).coerceAtLeast(0)
         val newCarbs = carbKcal / NutritionCalc.KCAL_PER_G_CARB
+        // Hidratos a zero seriam uma meta impossível: nesse caso ficam os do cálculo
+        // original, e é o total que fica ligeiramente acima do proposto.
         return Triple(protein, if (newCarbs > 0) newCarbs else carbs, fat)
     }
 
@@ -256,8 +294,11 @@ class CoachRepository(
         const val SOURCE_ADAPTIVE = "ADAPTIVE"
         const val DEFAULT_WEIGHT_KG = 70.0
 
+        // Abaixo de 60% da comida analisada não se fala de micronutrientes de todo.
         const val MICRO_MIN_COVERAGE = 60
 
+        // E dentro dos que se podem avaliar, só se aponta o que fica abaixo de 70% da
+        // referência diária.
         const val MICRO_GAP_BELOW = 70
 
         private const val DAYS_IN_WEEK = 7

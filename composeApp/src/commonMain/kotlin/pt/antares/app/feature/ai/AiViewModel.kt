@@ -17,6 +17,10 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.AppError
 import pt.antares.app.core.util.AppResult
 
+/**
+ * As fases do fluxo de análise. `REVIEW` é a que importa: nada é gravado antes de a pessoa
+ * passar por ela e confirmar — o que a AI devolve é uma proposta, não um registo.
+ */
 enum class AiPhase { INPUT, ANALYZING, REVIEW, ERROR }
 
 data class AiState(
@@ -72,6 +76,8 @@ class AiViewModel(
 
     private fun run(from: LogOrigin, block: suspend () -> AppResult<pt.antares.app.core.ai.FoodAnalysis>) {
         origin = from
+        // Cancela a análise anterior: quem carrega duas vezes não pode ficar com a resposta
+        // mais lenta a escrever por cima da mais recente.
         job?.cancel()
         _state.value = _state.value.copy(phase = AiPhase.ANALYZING, error = null, inputError = false)
         job = viewModelScope.launch {

@@ -8,6 +8,10 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+/**
+ * Como tratar o que já está no telemóvel. `MERGE` mantém os registos locais mais recentes;
+ * `REPLACE` apaga tudo antes de escrever.
+ */
 enum class ImportMode {
 
     MERGE,
@@ -38,6 +42,9 @@ class BackupImporter(
         val raiz = runCatching { json.parseToJsonElement(conteudo).jsonObject }.getOrNull()
             ?: return@withContext ImportResult.NotABackup("não é JSON")
 
+        // Estes dois campos são a assinatura de uma cópia do Antares. Verificam-se antes de
+        // qualquer escrita porque o modo `REPLACE` apaga tudo — um JSON qualquer não pode
+        // chegar para destruir os dados de alguém.
         if (!raiz.containsKey("exportadoEm") || !raiz.containsKey("versaoApp")) {
             return@withContext ImportResult.NotABackup("faltam os campos de um backup do Antares")
         }
@@ -64,6 +71,8 @@ class BackupImporter(
     ): Int {
         val restore = source.restore ?: return 0
 
+        // Linha que não desserializa é saltada: uma cópia de uma versão antiga da app não
+        // pode ficar irrecuperável por causa de um campo que entretanto mudou.
         val doBackup = bruto.mapNotNull { runCatching { json.decodeFromJsonElement(source.serializer, it) }.getOrNull() }
         if (doBackup.isEmpty()) return 0
 
@@ -72,6 +81,8 @@ class BackupImporter(
             ImportMode.REPLACE -> doBackup
             ImportMode.MERGE -> {
 
+                // Ganha o mais recente por `updatedAt`. Empate fica com o local: em caso de
+                // dúvida, o que está no telemóvel é o que a pessoa acabou de ver.
                 val locais = source.rows().associateBy({ idDe(it, source) }, { updatedAtDe(it, source) })
                 doBackup.filter { linha ->
                     val local = locais[idDe(linha, source)]
@@ -88,15 +99,25 @@ class BackupImporter(
     private fun <T : Any> comoJson(valor: T, source: ExportSource<T>): JsonObject =
         json.encodeToJsonElement(source.serializer, valor).jsonObject
 
+    /**
+     * A identidade de uma linha, procurada por JSON porque as tabelas não partilham
+     * interface nenhuma. A ordem dos campos é a das chaves primárias reais: `id` na
+     * maioria, o dia da semana no calendário de rotinas, o dia nas tabelas de um registo
+     * por dia, e o texto na tabela de pesquisas falhadas.
+     */
     private fun <T : Any> idDe(valor: T, source: ExportSource<T>): String {
         val obj = comoJson(valor, source)
         for (campo in listOf("id", "dayOfWeek", "epochDay", "startEpochDay", "query")) {
             obj[campo]?.jsonPrimitive?.content?.let { if (it.isNotEmpty()) return it }
         }
 
+        // Sem nenhum destes campos, a linha inteira serve de identidade: duas linhas
+        // idênticas são a mesma coisa, e é o comportamento certo para tabelas sem chave.
         return obj.toString()
     }
 
+    // Sem `updatedAt` conta como zero, e por isso perde sempre contra o local: as tabelas
+    // que não o têm não sabem dizer qual das versões é mais nova.
     private fun <T : Any> updatedAtDe(valor: T, source: ExportSource<T>): Long =
         comoJson(valor, source)["updatedAt"]?.jsonPrimitive?.content?.toLongOrNull() ?: 0L
 }

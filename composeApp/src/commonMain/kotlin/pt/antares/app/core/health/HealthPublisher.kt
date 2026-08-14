@@ -27,6 +27,11 @@ data class HealthPublish(
     val isEmpty: Boolean get() = nutritionDays == 0 && sessions == 0 && bodyMeasurements == 0
 }
 
+/**
+ * O sentido inverso do [HealthRepository]: escreve no Health Connect o que a app sabe, para
+ * outras apps o poderem ler. É a única saída de dados do telemóvel além da exportação, e
+ * acontece localmente — o Health Connect não é um servidor.
+ */
 class HealthPublisher(
     private val gateway: HealthGateway,
     private val nutrition: NutritionSource,
@@ -89,8 +94,13 @@ class HealthPublisher(
 
     companion object {
 
+        // A nutrição reescreve sempre os últimos dias em vez de seguir a marca de água:
+        // um dia já publicado continua a ser editado, e só reescrevendo é que o valor lá
+        // fora acompanha as correções.
         const val NUTRITION_LOOKBACK_DAYS = 2L
 
+        // Um dia de folga para trás nas sessões: um treino fechado pouco antes da última
+        // publicação ficaria de fora se a janela começasse exatamente nela.
         const val SESSION_SLACK_MS = 24L * 60 * 60 * 1000
     }
 }

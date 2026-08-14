@@ -2,6 +2,13 @@ package pt.antares.app.core.designsystem
 
 import androidx.compose.ui.graphics.Color
 
+/**
+ * A paleta. Duas versões completas — escura e clara — em vez de uma derivada da outra: uma
+ * cor aclarada por cálculo perde contraste sobre fundo branco, e é o `ThemeAwareColorsTest`
+ * que garante que nenhum ecrã fixa uma cor fora daqui.
+ *
+ * O nome vem da estrela: os tons quentes do vermelho ao âmbar são a identidade da app.
+ */
 object AntaresColors {
 
     val backgroundDark = Color(0xFF0A0A0F)
@@ -14,6 +21,8 @@ object AntaresColors {
     val outlineDark = Color(0xFF3A4152)
     val successDark = Color(0xFF4ADE80)
 
+    // As claras não são as escuras aclaradas: escurecem-se para manter contraste sobre
+    // fundo branco. O mesmo vermelho da versão escura seria ilegível aqui.
     val backgroundLight = Color(0xFFFAF7F4)
     val surfaceLight = Color(0xFFFFFFFF)
     val surfaceVariantLight = Color(0xFFF0EBE6)
@@ -24,6 +33,8 @@ object AntaresColors {
     val outlineLight = Color(0xFFD8D0C8)
     val successLight = Color(0xFF1E8E4D)
 
+    // Os macros têm cor própria e igual nos dois temas: é um código que a pessoa aprende a
+    // ler nos gráficos, e mudá-lo com o tema obrigava a reaprendê-lo.
     val macroProtein = Color(0xFFFF7A6E)
     val macroCarbs = Color(0xFFFFC15E)
     val macroFat = Color(0xFF9D7BFF)

@@ -47,6 +47,11 @@ interface FoodDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFts(row: FoodFtsEntity)
 
+    /**
+     * O alimento e o seu índice de pesquisa numa transação só. O FTS4 não tem chave
+     * primária, por isso a atualização é apagar e reinserir — e ficar a meio deixava o
+     * alimento fora da pesquisa ou duplicado nela.
+     */
     @Transaction
     suspend fun upsertWithFts(food: FoodEntity, searchText: String) {
         upsert(food)
@@ -82,6 +87,10 @@ interface FoodDao {
     @Query("SELECT * FROM foods WHERE id = :id AND deleted = 0")
     suspend fun byId(id: String): FoodEntity?
 
+    /**
+     * Alimentos que declaram um micronutriente, para sugerir onde o ir buscar. Procura
+     * dentro do JSON com LIKE — não há índice possível — e daí o limite.
+     */
     @Query(
         """
         SELECT * FROM foods
@@ -95,6 +104,13 @@ interface FoodDao {
     @Query("SELECT * FROM foods WHERE sourceRef = :barcode AND deleted = 0 LIMIT 1")
     suspend fun byBarcode(barcode: String): FoodEntity?
 
+    /**
+     * A pesquisa de alimentos. A ordem é a decisão toda deste ficheiro, e lê-se de cima
+     * para baixo: o que a pessoa marcou vem primeiro, depois o que usou há pouco, e só
+     * então o catálogo — dentro dele, os alimentos portugueses antes dos importados, e
+     * os que trazem micronutrientes antes dos que não trazem. O nome mais curto ganha em
+     * último recurso, porque é quase sempre o genérico e não a variante.
+     */
     @Query(
         """
         SELECT f.* FROM foods f
@@ -124,6 +140,12 @@ interface FoodDao {
     )
     suspend fun cleanUsdaDisplayNames(): Int
 
+    /**
+     * Limpa alimentos importados que a versão nova do catálogo já não traz. As quatro
+     * condições finais repetem-se em todas as limpezas deste ficheiro e são a mesma regra:
+     * nunca apagar um alimento que a pessoa tocou — favorito, usado, com porção guardada,
+     * ou presente em qualquer registo do diário, mesmo apagado.
+     */
     @Query(
         """
         DELETE FROM foods
@@ -137,6 +159,8 @@ interface FoodDao {
     )
     suspend fun pruneStaleUsda(importedAt: Long): Int
 
+    // Quando a mesma comida existe nas duas listas portuguesas, fica a `ptx`, que é a
+    // revista; o nome é o único critério possível porque os identificadores não coincidem.
     @Query(
         """
         DELETE FROM foods
@@ -171,12 +195,16 @@ interface FoodDao {
     @Query("SELECT id, namePt FROM foods WHERE deleted = 0 AND id LIKE 'tca-%'")
     suspend fun tcaIdsAndNames(): List<FoodIdName>
 
+    // O FTS não tem chave estrangeira: apagar um alimento deixa a linha de pesquisa para
+    // trás, e essa linha continuaria a aparecer nos resultados sem alimento por trás.
     @Query("DELETE FROM foods_fts WHERE foodId NOT IN (SELECT id FROM foods)")
     suspend fun pruneOrphanFts(): Int
 
     @Query("DELETE FROM foods_fts WHERE foodId IN (:ids)")
     suspend fun deleteFtsIn(ids: List<String>)
 
+    // Guarda a primeira linha de cada alimento e apaga as outras. O `docid` é a coluna
+    // interna do FTS4, a única identidade que estas linhas têm.
     @Query(
         """
         DELETE FROM foods_fts
@@ -212,6 +240,8 @@ interface FoodDao {
     @Query("UPDATE foods SET isFavorite = :favorite, updatedAt = :now WHERE id = :id")
     suspend fun setFavorite(id: String, favorite: Boolean, now: Long)
 
+    // O COALESCE preserva a última quantidade quando a chamada não traz nenhuma: marcar o
+    // uso não pode apagar a porção que a app tinha aprendido.
     @Query("UPDATE foods SET lastUsedAt = :now, lastAmountG = COALESCE(:amountG, lastAmountG) WHERE id = :id")
     suspend fun touchLastUsed(id: String, now: Long, amountG: Double? = null)
 
@@ -228,12 +258,16 @@ interface FoodLogDao {
     @Upsert
     suspend fun upsert(log: FoodLogEntity)
 
+    // Apagar é marcar. A linha fica, e é por isso que todas as consultas daqui para baixo
+    // filtram `deleted = 0`; esquecer o filtro devolve comida que a pessoa já tirou do dia.
     @Query("UPDATE food_log SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM food_log WHERE id = :id AND deleted = 0")
     suspend fun byId(id: String): FoodLogEntity?
 
+    // Ordena por `updatedAt` e não por hora da refeição: a app não pergunta a que horas se
+    // comeu, e a ordem de registo é a única cronologia que existe.
     @Query("SELECT * FROM food_log WHERE deleted = 0 AND epochDay = :epochDay ORDER BY updatedAt ASC")
     fun observeDay(epochDay: Long): Flow<List<FoodLogEntity>>
 
@@ -266,6 +300,8 @@ interface FoodLogDao {
     @Query("SELECT * FROM food_log WHERE deleted = 0 AND epochDay = :epochDay AND mealSlot = :slot")
     suspend fun mealLogs(epochDay: Long, slot: MealSlot): List<FoodLogEntity>
 
+    // Suporta o "repetir refeição": `< :day` para o dia que se está a preencher nunca se
+    // oferecer a si próprio.
     @Query(
         """
         SELECT MAX(epochDay) FROM food_log
@@ -284,6 +320,8 @@ interface FoodLogDao {
     )
     suspend fun recentDaysWithMeal(slot: MealSlot, day: Long, limit: Int = 10): List<Long>
 
+    // Os COALESCE existem porque SUM devolve NULL num dia sem registos, e [DayTotals] não
+    // tem campos anuláveis — sem eles a leitura de um dia em branco rebentava.
     @Query(
         """
         SELECT COALESCE(SUM(kcalSnapshot), 0) AS kcal,
@@ -331,6 +369,11 @@ interface WaterLogDao {
     @Query("SELECT * FROM water_log WHERE deleted = 0 AND epochDay = :epochDay")
     suspend fun byDay(epochDay: Long): WaterLogEntity?
 
+    /**
+     * A mesma consulta sem filtrar lápides, e é essa a razão de existir. O índice único
+     * em `epochDay` não distingue apagados: quem vai escrever tem de encontrar a linha
+     * morta e reaproveitá-la, senão a inserção falha contra uma linha que já não se vê.
+     */
     @Query("SELECT * FROM water_log WHERE epochDay = :epochDay")
     suspend fun byDayForWrite(epochDay: Long): WaterLogEntity?
 

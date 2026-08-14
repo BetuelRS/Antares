@@ -24,10 +24,20 @@ data class GoalChange(
     val deltaKcal: Int get() = newKcal - oldKcal
 }
 
+/**
+ * Explica a quem já usava a app porque é que a meta mudou sozinha. Sem isto, uma
+ * atualização que melhora o cálculo parece um erro a quem vê o número diferente.
+ */
 object ProfileMigration {
 
+    // Abaixo de 25 kcal não vale a pena interromper ninguém: está dentro do ruído de uma
+    // pesagem diferente.
     const val NOTICE_THRESHOLD_KCAL = 25
 
+    /**
+     * A meta como a versão antiga a calculava: sempre Mifflin, multiplicador antigo de
+     * atividade e só o chão absoluto. Existe para servir de termo de comparação.
+     */
     fun legacyDailyKcal(
         profile: UserProfileEntity,
         weightKg: Double,
@@ -53,6 +63,9 @@ object ProfileMigration {
         val moved = abs(new.kcal - old) >= NOTICE_THRESHOLD_KCAL
 
         val reasons = buildList {
+            // As causas do número só se listam se o número mexeu mesmo: as três podem
+            // aplicar-se e anular-se entre si, e explicar uma mudança que não houve
+            // é pior do que ficar calado.
             if (moved) {
                 val level = profile.activityLevel
                 if (level.multiplier != level.legacyMultiplier) add(GoalChangeReason.ACTIVITY_MEANING_CHANGED)
@@ -60,6 +73,8 @@ object ProfileMigration {
                 if (TargetWarning.BMR_FLOOR_CLAMPED in new.warnings) add(GoalChangeReason.ENERGY_FLOOR_CHANGED)
             }
 
+            // Este avisa-se sempre, mexa ou não a meta: mudou o significado do que se
+            // regista, não o valor. O exercício passou a somar calorias ao dia.
             if (!profile.exerciseAddBack) add(GoalChangeReason.EXERCISE_ADD_BACK_FORCED_ON)
         }
         if (reasons.isEmpty()) return null

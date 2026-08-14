@@ -21,6 +21,8 @@ interface RoutineScheduleDao {
     @Query("UPDATE routine_schedule SET deleted = 1, dirty = 1, updatedAt = :now WHERE dayOfWeek = :dayOfWeek")
     suspend fun clearDay(dayOfWeek: Int, now: Long)
 
+    // Apagar uma rotina tem de a tirar do calendário: não há chave estrangeira, e um dia
+    // apontado a uma rotina que já não existe ficaria vazio sem explicação.
     @Query("UPDATE routine_schedule SET deleted = 1, dirty = 1, updatedAt = :now WHERE routineId = :routineId")
     suspend fun clearByRoutine(routineId: String, now: Long)
 

@@ -63,6 +63,11 @@ import pt.antares.app.feature.workout.ui.WorkoutSessionScreen
 import pt.antares.app.feature.workout.ui.WorkoutStatsScreen
 import pt.antares.app.feature.workout.ui.WorkoutSummaryScreen
 
+/**
+ * O grafo de navegação inteiro, num sítio só. É deliberadamente longo: os ecrãs não
+ * navegam, recebem funções e chamam-nas, e por isso nenhum deles conhece outro. Quem quiser
+ * saber o que leva a onde lê este ficheiro e mais nenhum.
+ */
 @Composable
 fun AntaresNavHost(
     navController: NavHostController,

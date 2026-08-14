@@ -1,5 +1,10 @@
 package pt.antares.app.core.util
 
+/**
+ * Minúsculas e sem acentos, para procurar "acucar" e encontrar "açúcar". Tabela à mão em
+ * vez da normalização Unicode: essa não existe no código comum do Kotlin, e os acentos que
+ * interessam são os de português, espanhol e francês, que são as origens do catálogo.
+ */
 object TextNormalize {
     private val accentMap = mapOf(
         'á' to 'a', 'à' to 'a', 'â' to 'a', 'ã' to 'a', 'ä' to 'a',

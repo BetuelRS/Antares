@@ -15,11 +15,17 @@ import pt.antares.app.core.notifications.NotificationRules
 
 const val MEAL_NAME_MAX = 24
 
+// Uma chave por refeição, derivada do nome da constante da enumeração. Renomear um valor
+// de [MealSlot] faz a app esquecer o nome que a pessoa tinha escolhido.
 private fun mealNameKey(slot: MealSlot) = stringPreferencesKey("meal_name_" + slot.name)
 
 fun createPreferencesDataStore(producePath: () -> String): DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })
 
+/**
+ * A última contagem de AI que o servidor devolveu, guardada para o ecrã não abrir em
+ * branco. Não é a verdade: quem conta é o servidor, e isto é só o que ele disse por último.
+ */
 data class StoredAiUsage(
     val used: Int,
     val limit: Int,
@@ -27,12 +33,23 @@ data class StoredAiUsage(
     val day: String,
 ) {
 
+    /**
+     * O limite diário reinicia à meia-noite, por isso uma contagem de ontem vale zero
+     * usado. A experiência é a exceção: esse saldo é total e não renova com o dia.
+     */
     fun remaining(today: String): Int =
         if (!trial && day != today) limit else (limit - used).coerceAtLeast(0)
 }
 
+/**
+ * Todas as preferências da app num sítio só. Aqui vive o que é escolha e definição; o que
+ * são dados fica na base. Cada leitura tem o valor por omissão embutido — nenhuma devolve
+ * nulo por a chave ainda não existir, e é isso que faz a primeira abertura funcionar.
+ */
 class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
+    // Os nomes das chaves são o formato guardado no disco: mudar um deles apaga a
+    // preferência de quem já tem a app instalada, sem erro nenhum a avisar.
     private object Keys {
         val onboardingDone = booleanPreferencesKey("onboarding_done")
         val waterGoalOverrideMl = androidx.datastore.preferences.core.intPreferencesKey("water_goal_override_ml")
@@ -54,7 +71,6 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         val adaptiveTargets = booleanPreferencesKey("adaptive_targets_enabled")
         val runGoalType = androidx.datastore.preferences.core.stringPreferencesKey("run_goal_type")
         val runGoalValue = androidx.datastore.preferences.core.intPreferencesKey("run_goal_value")
-        val lastSyncAt = androidx.datastore.preferences.core.longPreferencesKey("last_sync_at")
         val lastHealthImportAt =
             androidx.datastore.preferences.core.longPreferencesKey("last_health_import_at")
         val lastHealthPublishAt =
@@ -102,6 +118,8 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    // Anulável de propósito: nulo quer dizer que a meta de água vem do peso, pelo
+    // [DailyGoals]. Um zero seria uma meta de zero mililitros.
     val waterGoalOverrideMl: Flow<Int?> =
         dataStore.data.map { it[Keys.waterGoalOverrideMl] }
 
@@ -139,6 +157,8 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[Keys.fastingNotifications] = enabled }
     }
 
+    // Desligado por omissão, ao contrário dos lembretes: apontar hábitos a quem não os
+    // pediu é opinião, e a app só a dá quando lha pedem. O mesmo vale para a gamificação.
     val patternSuggestions: Flow<Boolean> =
         dataStore.data.map { it[Keys.patternSuggestions] ?: false }
 
@@ -167,6 +187,7 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[Keys.coachReadyNotifEnabled] = enabled }
     }
 
+    // Horas de silêncio ligadas de origem: uma app de nutrição não acorda ninguém.
     val quietHoursEnabled: Flow<Boolean> =
         dataStore.data.map { it[Keys.quietHoursEnabled] ?: true }
 
@@ -180,6 +201,8 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
     val quietEndMin: Flow<Int> =
         dataStore.data.map { it[Keys.quietEndMin] ?: NotificationRules.DEFAULT_QUIET_END_MIN }
 
+    // Escrita conjunta: gravadas em separado, uma leitura pelo meio apanhava o início novo
+    // com o fim antigo, e a janela de silêncio ficava invertida.
     suspend fun setQuietHours(startMin: Int, endMin: Int) {
         dataStore.edit {
             it[Keys.quietStartMin] = startMin
@@ -216,6 +239,8 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
     }
 
     val aiUsage: Flow<StoredAiUsage?> = dataStore.data.map { p ->
+        // O limite é o que decide se já houve alguma resposta do servidor. Sem ele o valor
+        // é nulo, e o ecrã diz que ainda não sabe em vez de mostrar um zero inventado.
         val limit = p[Keys.aiLimit] ?: return@map null
         StoredAiUsage(
             used = p[Keys.aiUsed] ?: 0,
@@ -247,17 +272,14 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    // Chamado ao apagar a conta e ao importar uma cópia de segurança: as preferências têm
+    // de desaparecer com os dados, ou a app volta com metade do estado de outra pessoa.
     suspend fun clearAll() {
         dataStore.edit { it.clear() }
     }
 
-    val lastSyncAt: Flow<Long> =
-        dataStore.data.map { it[Keys.lastSyncAt] ?: 0L }
-
-    suspend fun setLastSyncAt(epochMs: Long) {
-        dataStore.edit { it[Keys.lastSyncAt] = epochMs }
-    }
-
+    // Marcas de água da sincronização com o Health Connect. A zero, a próxima importação
+    // varre o histórico todo em vez de só o que é novo.
     val lastHealthImportAt: Flow<Long> =
         dataStore.data.map { it[Keys.lastHealthImportAt] ?: 0L }
 

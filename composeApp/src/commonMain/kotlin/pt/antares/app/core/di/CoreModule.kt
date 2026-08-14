@@ -74,11 +74,23 @@ import pt.antares.app.feature.workout.data.SessionPickBus
 import pt.antares.app.feature.workout.data.WorkoutHistoryRepository
 import pt.antares.app.feature.workout.data.WorkoutSessionRepository
 
+// Qualificador do dispatcher de entrada e saída. Passa-se explicitamente a tudo o que
+// toca disco ou rede, em vez de cada classe o escolher: é o que permite aos testes
+// substituí-lo por um dispatcher determinista.
 val IoDispatcher = named("io")
 
+/**
+ * Tudo o que vive enquanto a app viver: base de dados, repositórios, rede.
+ *
+ * Os repositórios recebem funções e não outros repositórios sempre que possível — é isso
+ * que os deixa testáveis sem construir meia app à volta, e o que impede o grafo de
+ * dependências de dar voltas sobre si mesmo.
+ */
 val coreModule = module {
     single(IoDispatcher) { Dispatchers.IO }
 
+    // Cada DAO é registado à parte, e não a base inteira: assim uma classe declara os DAOs
+    // de que precisa em vez de receber acesso a tudo.
     single { get<AntaresDb>().userProfileDao() }
     single { get<AntaresDb>().weightLogDao() }
     single { get<AntaresDb>().dailyTargetOverrideDao() }
@@ -156,8 +168,12 @@ val coreModule = module {
     single { WorkoutHistoryRepository(get(), get(), get(), get(IoDispatcher)) }
     single { SessionPickBus() }
 
+    // Um cliente HTTP para a app toda: cada instância abre o seu conjunto de ligações, e
+    // várias delas eram memória e sockets a mais para as duas ou três chamadas que a app faz.
     single { createAntaresHttpClient() }
-    single { OffApi(get()) }
+    // A versão sai do `AppChangelog`, que o `AppChangelogTest` mantém colado ao
+    // `versionName` do build. É o que impede o `User-Agent` de envelhecer sozinho.
+    single { OffApi(get(), userAgent = "Antares/${AppChangelog.CURRENT} (${OffApi.CONTACT})") }
     single { OffRepository(get(), get(), get(IoDispatcher)) }
 
     single { AnonymousSession(get(), get(IoDispatcher)) }
@@ -180,6 +196,8 @@ val coreModule = module {
         AiRepository(
             client = get(),
 
+            // Funções em vez dos DAOs inteiros: a classe da AI fica sem acesso à base, e
+            // o que ela pode escrever está aqui à vista.
             ensureAccount = { sessao.ensure() },
             saveFoodLog = { foodLogDao.upsert(it) },
             latestWeightKg = { weightLogDao.latest()?.weightKg },
@@ -191,7 +209,6 @@ val coreModule = module {
     }
 
     single {
-        val sessao: AnonymousSession = get()
         CoachRepository(
             coachDao = get(),
             foodLogDao = get(),
@@ -204,9 +221,7 @@ val coreModule = module {
             fastingDao = get(),
             runDao = get(),
             statsRepository = get(),
-            client = get(),
             prefs = get(),
-            ensureAccount = { sessao.ensure() },
             notifier = getOrNull() ?: NoopCoachNotifier(),
             io = get(IoDispatcher),
         )
@@ -219,6 +234,9 @@ val coreModule = module {
         val runDao = get<RunDao>()
 
         HealthRepository(
+            // `getOrNull` porque o gateway só existe no módulo Android e só quando o
+            // serviço está instalado. Sem ele, o [NoHealthGateway] devolve vazio em vez de
+            // a app rebentar ao arrancar.
             gateway = getOrNull() ?: NoHealthGateway,
             weights = object : HealthRepository.WeightWriter {
                 override suspend fun importedRefs() = weightDao.importedRefs().toSet()
@@ -230,6 +248,8 @@ val coreModule = module {
                 override suspend fun insert(log: ExerciseLogEntity) = exerciseLogDao.upsert(log)
             },
 
+            // Treinos e corridas juntos: para efeitos de duplicação são a mesma coisa, e
+            // uma corrida da app também é publicada por um relógio que a acompanhe.
             ownWindows = { fromMs ->
                 val workouts = workoutDao.endedSince(fromMs)
                     .mapNotNull { s -> s.endedAt?.let { TimeWindow(s.startedAt, it) } }
@@ -254,6 +274,8 @@ val coreModule = module {
                     .record(
                         epochDay = day,
                         bodyFatPct = pct,
+                        // Vem de uma balança de bioimpedância, e por isso conta como medida:
+                        // é o que a torna utilizável para o basal por massa magra.
                         bodyFatSource = pt.antares.app.core.model.BodyFatSource.MEASURED,
                     )
             },
@@ -292,6 +314,8 @@ val coreModule = module {
                 val workouts = workoutDao.endedSince(fromMs).mapNotNull { s ->
                     val end = s.endedAt ?: return@mapNotNull null
 
+                    // As calorias do treino não estão na sessão: vivem na linha de exercício
+                    // que ela gerou, e é por ali que se vão buscar.
                     val kcal = exerciseLogDao.byRef(s.id)?.kcal ?: 0
                     OutboundSession(
                         clientId = s.id,

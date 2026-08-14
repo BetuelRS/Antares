@@ -14,6 +14,12 @@ import pt.antares.app.core.model.LogOrigin
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
 
+/**
+ * Refeições guardadas para repetir. Um modelo é uma cópia congelada de um dia: guardar
+ * copia os registos para o modelo, aplicar copia-os de volta para outro dia. Em nenhum dos
+ * sentidos se vai buscar nada ao catálogo — é o que faz o modelo dar sempre o mesmo
+ * resultado, mesmo que o alimento mude ou seja apagado.
+ */
 class MealTemplateRepository(
     private val foodLogDao: FoodLogDao,
     private val templateDao: MealTemplateDao,
@@ -30,6 +36,8 @@ class MealTemplateRepository(
 
     suspend fun saveMealAsTemplate(name: String, slot: MealSlot, epochDay: Long): String? =
         withContext(io) {
+            // Null para uma refeição vazia: não há nada que valha a pena guardar, e um
+            // modelo sem itens só ocuparia a lista.
             val logs = foodLogDao.mealLogs(epochDay, slot)
             if (logs.isEmpty()) return@withContext null
 
@@ -82,6 +90,9 @@ class MealTemplateRepository(
                         carbsSnapshot = item.carbsSnapshot,
                         fatSnapshot = item.fatSnapshot,
                         microsPer100Json = item.microsPer100Json,
+                        // Manual e não uma origem própria: aplicar um modelo é o mesmo que
+                        // registar à mão o que já lá estava, e a origem serve para explicar
+                        // a falta de micronutrientes — não a via de entrada.
                         origin = LogOrigin.MANUAL,
                         isLiquid = item.isLiquid,
                         updatedAt = ts,
@@ -93,6 +104,8 @@ class MealTemplateRepository(
 
     suspend fun deleteTemplate(templateId: String) = withContext(io) {
         val ts = now()
+        // Os itens primeiro: não há chave estrangeira a apagá-los em cascata, e ficariam
+        // órfãos a ocupar espaço sem nada que lhes chegue.
         itemDao.forTemplate(templateId).forEach { itemDao.softDelete(it.id, ts) }
         templateDao.softDelete(templateId, ts)
     }

@@ -1,4 +1,17 @@
 
+/**
+ * As instruções dadas ao modelo e os esquemas que impõem a forma da resposta.
+ *
+ * Estão em inglês de propósito, mesmo servindo utilizadores portugueses: é a língua em que
+ * os modelos seguem instruções com mais fiabilidade, e o idioma do utilizador entra como
+ * dado, não como língua da instrução.
+ *
+ * O que se pede ao modelo é deliberadamente estreito: identificar a comida e estimar a
+ * porção. Os valores nutricionais vêm depois, de tabelas analisadas — ver [resolveItem].
+ * O `expected_kcal_per_100g` existe precisamente para desconfiar da tabela, não para
+ * substituir.
+ */
+
 export const SYSTEM_FOOD_TEXT = `You are a nutrition parser for a food diary app.
 
 Identify every food and drink in the user's message and estimate realistic portions.

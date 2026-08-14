@@ -24,6 +24,7 @@ fun MacroBar(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
+    // A barra trava na meta, mas os números por cima dela não: é aí que se vê o excesso.
     val progress = if (targetGrams > 0) (grams / targetGrams).toFloat().coerceIn(0f, 1f) else 0f
     Column(modifier = modifier) {
         SplitRow(

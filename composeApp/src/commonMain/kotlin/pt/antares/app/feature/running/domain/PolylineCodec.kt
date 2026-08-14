@@ -2,6 +2,15 @@ package pt.antares.app.feature.running.domain
 
 import kotlin.math.roundToInt
 
+/**
+ * O formato de polyline codificada dos mapas da Google, implementado à mão por ser preciso
+ * no código comum. Guarda um percurso numa string em vez de milhares de linhas.
+ *
+ * Assenta em duas ideias: só se guarda a diferença para o ponto anterior, que é um número
+ * pequeno, e cada número vai em grupos de cinco bits deslocados para o intervalo
+ * imprimível do ASCII. Cinco casas decimais dão cerca de um metro de resolução, que é o
+ * suficiente para o traço e menos do que o erro do GPS.
+ */
 object PolylineCodec {
 
     fun encode(points: List<Pair<Double, Double>>): String {
@@ -51,6 +60,8 @@ object PolylineCodec {
 
     private fun encodeValue(v: Long, sb: StringBuilder) {
 
+        // Deslocar e inverter põe o sinal no bit mais baixo, o que faz os negativos
+        // pequenos ocuparem tão poucos caracteres como os positivos pequenos.
         var value = if (v < 0) (v shl 1).inv() else (v shl 1)
         while (value >= 0x20) {
             sb.append(((0x20 or (value.toInt() and 0x1f)) + 63).toChar())

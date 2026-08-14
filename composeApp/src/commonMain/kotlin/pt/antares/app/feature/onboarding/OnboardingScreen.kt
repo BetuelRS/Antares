@@ -56,7 +56,9 @@ import pt.antares.app.core.model.GoalType
 import pt.antares.app.core.model.GoalRates
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.model.UnitSystem
+import kotlinx.datetime.LocalDate
 import pt.antares.app.core.util.epochDayToLocalDate
+import pt.antares.app.core.util.toEpochDay
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
@@ -166,8 +168,14 @@ private fun BirthStep(state: OnboardingState, viewModel: OnboardingViewModel) {
     Text(stringResource(Res.string.onb_birth_title), style = MaterialTheme.typography.headlineMedium)
 
     val currentYear = epochDayToLocalDate(todayEpochDay()).year
+
+    // Sem isto o calendário abre no mês corrente, e quem tem 30 anos recua 360
+    // meses a tocar na seta. Ninguém nasce este mês, por isso abrimos numa idade
+    // adulta plausível — o ano continua a um toque no cabeçalho.
     val pickerState = rememberDatePickerState(
         initialSelectedDateMillis = state.birthEpochDay?.times(86_400_000L),
+        initialDisplayedMonthMillis = state.birthEpochDay?.times(86_400_000L)
+            ?: LocalDate(currentYear - DEFAULT_BIRTH_AGE, 1, 1).toEpochDay() * 86_400_000L,
         yearRange = (currentYear - MAX_PLAUSIBLE_AGE)..currentYear,
     )
     LaunchedEffect(pickerState.selectedDateMillis) {
@@ -577,3 +585,6 @@ internal fun SelectableCard(
 private val Int.dp get() = androidx.compose.ui.unit.Dp(this.toFloat())
 
 private const val MAX_PLAUSIBLE_AGE = 110
+
+/** Só decide onde o calendário abre; não pré-preenche data nenhuma. */
+private const val DEFAULT_BIRTH_AGE = 30

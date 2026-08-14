@@ -25,6 +25,8 @@ interface FastingProtocolDao {
     @Query("SELECT COUNT(*) FROM fasting_protocol")
     suspend fun count(): Int
 
+    // A exportação leva só os protocolos criados pelo utilizador: os de origem voltam a ser
+    // semeados ao instalar, e exportá-los duplicava-os na importação.
     @Query("SELECT * FROM fasting_protocol WHERE deleted = 0 AND isCustom = 1")
     suspend fun exportRows(): List<FastingProtocolEntity>
 }
@@ -44,6 +46,8 @@ interface FastingSessionDao {
     @Query("SELECT * FROM fasting_session WHERE status = 'ACTIVE' AND deleted = 0 ORDER BY startedAt DESC LIMIT 1")
     suspend fun activeSession(): FastingSessionEntity?
 
+    // `!= 'ACTIVE'` e não `== 'COMPLETED'`: o histórico mostra também os jejuns
+    // interrompidos, porque é neles que está a informação de que a pessoa precisa.
     @Query("SELECT * FROM fasting_session WHERE status != 'ACTIVE' AND deleted = 0 ORDER BY startedAt DESC")
     fun observeHistory(): Flow<List<FastingSessionEntity>>
 

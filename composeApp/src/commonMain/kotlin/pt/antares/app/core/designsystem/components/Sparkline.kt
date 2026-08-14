@@ -24,6 +24,8 @@ fun Sparkline(
         val min = all.min()
         val max = all.max()
 
+        // As duas séries partilham a escala, calculada sobre as duas juntas: com escalas
+        // separadas, uma linha plana e uma a subir apareciam iguais.
         val span = (max - min).takeIf { it > 0.0 } ?: 1.0
 
         fun buildPath(points: List<Double>): Path {
@@ -33,12 +35,16 @@ fun Sparkline(
                 val x = i * stepX
 
                 val norm = ((v - min) / span).toFloat()
+                // Deixa 8% de margem em cima e em baixo: com o traço grosso e as pontas
+                // redondas, os extremos ficavam cortados contra a borda.
                 val y = size.height * (0.92f - norm * 0.84f)
                 if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
             }
             return path
         }
 
+        // O preenchimento fecha a linha contra o fundo do desenho e leva um gradiente que
+        // se desvanece: dá volume sem competir com o traço.
         val primaryPath = buildPath(primary)
         val fillPath = Path().apply {
             addPath(primaryPath)
@@ -58,6 +64,8 @@ fun Sparkline(
             style = Stroke(width = 3f, cap = StrokeCap.Round),
         )
 
+        // A segunda série é mais grossa e vai por cima, como no [AntaresChart]: é sempre a
+        // tendência, e é a que se deve ler primeiro.
         if (secondary.size >= 2) {
             drawPath(
                 path = buildPath(secondary),

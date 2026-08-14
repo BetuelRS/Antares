@@ -1,6 +1,14 @@
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
+/**
+ * Apaga a conta do lado do servidor, a pedido do utilizador. O que a app tem no telemóvel
+ * é apagado pelo `PrivacyRepository`; isto trata do que ficou aqui.
+ *
+ * As tabelas listadas são as das migrações antigas, de quando a app sincronizava. Já não
+ * recebem escritas nenhumas — o `NoSyncTest` garante-o —, mas quem tenha usado uma versão
+ * anterior pode ter lá linhas, e o direito ao apagamento cobre-as na mesma.
+ */
 const TABLES = [
   'user_profile', 'weight_log', 'daily_target_override',
   'food', 'food_log', 'water_log',

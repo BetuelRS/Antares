@@ -1,5 +1,9 @@
 package pt.antares.app.core.nutrition
 
+/**
+ * O micronutriente que mais falta ao dia. Um só, e não uma lista: quem vê doze lacunas não
+ * corrige nenhuma.
+ */
 data class DailyGap(
     val key: String,
     val consumed: Double,
@@ -11,8 +15,15 @@ data class DailyGap(
 
     companion object {
 
+        // Só se avisa abaixo de metade da referência. Acima disso ainda é uma falha normal
+        // de um dia, e um aviso diário deixaria de ser lido.
         const val LIMIAR = 0.5
 
+        /**
+         * `minMeasuredFraction` é a defesa contra o falso alarme: um nutriente só é
+         * candidato se pelo menos metade das calorias do dia tivessem análise para ele.
+         * Sem isto, a lacuna maior era sempre a do nutriente que menos alimentos declaram.
+         */
         fun worst(
             totals: MicroTotals,
             referenceFor: (String) -> Double?,
@@ -23,6 +34,8 @@ data class DailyGap(
             return totals.byKey.keys
                 .asSequence()
                 .filter { it in Nutrients.VITAMINS || it in Nutrients.MINERALS }
+                // O sódio fica de fora porque a sua referência é um teto: faltar sódio não
+                // é uma lacuna a preencher.
                 .filter { it != Nutrients.SODIUM }
                 .mapNotNull { chave ->
                     val referencia = referenceFor(chave)?.takeIf { it > 0 } ?: return@mapNotNull null
@@ -32,6 +45,8 @@ data class DailyGap(
                     DailyGap(chave, totals.byKey[chave] ?: 0.0, referencia)
                 }
                 .filter { it.fraction < LIMIAR }
+                // A fração e não a quantidade em falta: as unidades são incomparáveis entre
+                // nutrientes, e miligramas nunca se medem contra microgramas.
                 .minByOrNull { it.fraction }
         }
     }

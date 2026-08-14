@@ -37,6 +37,11 @@ import pt.antares.app.navigation.AntaresNavHost
 import pt.antares.app.navigation.Route
 import pt.antares.app.navigation.bottomBarRoutes
 
+/**
+ * O arranque da app. Junta o que tem de estar decidido antes de qualquer ecrã abrir — se o
+ * onboarding já foi feito, o tema, os nomes das refeições — e lança em segundo plano o
+ * trabalho de manutenção que não pode atrasar a primeira pintura.
+ */
 class AppViewModel(
     preferences: AppPreferences,
     foodSeeder: FoodSeeder,
@@ -46,6 +51,11 @@ class AppViewModel(
     coach: CoachRepository,
     goalMigration: GoalMigrationRepository,
 ) : ViewModel() {
+    // Anulável de propósito: null é "ainda não se sabe" e mostra o ecrã de carregamento.
+    // Um `false` por omissão faria a app piscar o onboarding a quem já o fez.
+    //
+    // `Eagerly` nos três: são lidos na primeira composição, e esperar por um subscritor
+    // adiava a decisão de que ecrã abrir.
     val onboardingDone: StateFlow<Boolean?> = preferences.onboardingDone
         .map { it as Boolean? }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
@@ -60,8 +70,12 @@ class AppViewModel(
 
     init {
 
+        // Corrotinas separadas para o arranque não ser uma fila: o catálogo de alimentos é
+        // o mais demorado, e prendia atrás dele coisas que nada têm a ver com ele.
         viewModelScope.launch { foodSeeder.seedIfNeeded() }
 
+        // Estas duas são a exceção, e ficam juntas por ordem: as rotinas de exemplo
+        // apontam a exercícios que têm de existir primeiro.
         viewModelScope.launch {
             exerciseSeeder.seedIfNeeded()
             templateSeeder.seedIfNeeded()
@@ -102,6 +116,8 @@ private fun MainScaffold(startAtOnboarding: Boolean) {
     val navController = rememberNavController()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
+    // A barra de baixo só aparece nos ecrãs de raiz. Percorre-se a hierarquia do destino e
+    // não só o destino em si: um ecrã aninhado dentro de um separador continua a pertencer-lhe.
     val rootRouteNames = bottomBarRoutes.map { it::class.qualifiedName }
     val showBottomBar = backStackEntry?.destination?.hierarchy?.any { dest ->
         dest.route in rootRouteNames

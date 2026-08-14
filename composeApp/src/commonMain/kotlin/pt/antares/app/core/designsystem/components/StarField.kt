@@ -27,11 +27,16 @@ private data class Star(
     val phase: Float,
 )
 
+/**
+ * Fundo estrelado dos ecrãs vazios. Decoração e nada mais — não desenha dado nenhum.
+ */
 @Composable
 fun StarField(
     modifier: Modifier = Modifier,
     starCount: Int = 42,
     twinkle: Boolean = true,
+    // Semente fixa: as estrelas ficam no mesmo sítio a cada recomposição, e uma constelação
+    // que salta a cada mudança de ecrã chamaria a atenção para si.
     seed: Long = 42L,
 ) {
     val stars = remember(starCount, seed) {

@@ -20,6 +20,11 @@ inline fun <T, R> AppResult<T>.map(transform: (T) -> R): AppResult<R> = when (th
     is AppResult.Failure -> this
 }
 
+/**
+ * Traduz exceções para o vocabulário de erros da app. Serve o que vem de bibliotecas e do
+ * sistema; quem já sabe o que correu mal — como o cliente de AI — constrói o [AppError]
+ * diretamente e não passa por aqui.
+ */
 fun Throwable.toAppError(): AppError = when (this) {
     is NoSuchElementException -> AppError.NotFound
     is IllegalStateException -> if (message?.contains("quota", ignoreCase = true) == true) {
@@ -30,6 +35,9 @@ fun Throwable.toAppError(): AppError = when (this) {
     is SecurityException -> AppError.Unauthorized
     is kotlinx.serialization.SerializationException -> AppError.Parsing(message ?: "Parsing error")
     else -> {
+        // Reconhecer a rede pelo nome da classe é a única via que funciona em multiplataforma:
+        // `IOException` não existe no código comum, e sem isto toda a falha de rede saía
+        // como desconhecida e o ecrã não convidaria a tentar outra vez.
         val name = this::class.simpleName.orEmpty()
         if (name.contains("IO") || name.contains("Connect") || name.contains("Timeout")) {
             AppError.Network

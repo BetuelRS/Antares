@@ -25,6 +25,9 @@ fun AntaresScaffold(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
+        // O `imePadding` está aqui e não em cada ecrã: é o que faz o conteúdo subir com o
+        // teclado em vez de ficar escondido por baixo dele. O `KeyboardInsetsTest` falha se
+        // um ecrã com campos de texto usar outro scaffold que não este.
         modifier = modifier.imePadding(),
         topBar = topBar,
         bottomBar = bottomBar,
@@ -47,6 +50,8 @@ fun AntaresTopBar(
             if (onBack != null) {
                 IconButton(onClick = onBack) {
 
+                    // Versão espelhada da seta: em idiomas escritos da direita para a
+                    // esquerda ela tem de apontar ao contrário.
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(Res.string.common_back),

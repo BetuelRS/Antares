@@ -23,6 +23,11 @@ data class MealTemplateEntity(
     tableName = "meal_template_item",
     indices = [Index("templateId"), Index("foodId")],
 )
+/**
+ * Item de uma refeição guardada. Copia a nutrição como o `food_log`, e não por referência
+ * como a receita: aplicar o modelo tem de dar o mesmo resultado de sempre, e é uma cópia
+ * de um registo que se faz.
+ */
 data class MealTemplateItemEntity(
     @PrimaryKey val id: String,
     val templateId: String,

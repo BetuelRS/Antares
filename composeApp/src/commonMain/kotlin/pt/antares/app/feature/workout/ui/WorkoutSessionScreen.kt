@@ -36,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.calc.SetLimits
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -207,12 +208,23 @@ private fun NewSetRow(prefill: WorkoutSetEntity?, onLog: (Double, Int, Double?, 
     var rpe by remember { mutableStateOf("") }
     var warmup by remember { mutableStateOf(false) }
 
+    val w = weight.replace(',', '.').toDoubleOrNull()
+    val r = reps.toIntOrNull()
+    val rp = rpe.replace(',', '.').toDoubleOrNull()
+
+    // Só marcamos erro no que a pessoa já escreveu: um campo ainda vazio não é
+    // um erro, é um campo por preencher.
+    val pesoMau = weight.isNotBlank() && (w == null || !SetLimits.isWeightValid(w))
+    val repsMau = reps.isNotBlank() && (r == null || !SetLimits.isRepsValid(r))
+    val rpeMau = rpe.isNotBlank() && !SetLimits.isRpeValid(rp)
+
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
         OutlinedTextField(
             value = weight,
             onValueChange = { weight = it.filter { c -> c.isDigit() || c == '.' || c == ',' }.take(6) },
             label = { Text(stringResource(Res.string.session_weight)) },
             singleLine = true,
+            isError = pesoMau,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.width(96.dp),
         )
@@ -221,6 +233,7 @@ private fun NewSetRow(prefill: WorkoutSetEntity?, onLog: (Double, Int, Double?, 
             onValueChange = { reps = it.filter(Char::isDigit).take(3) },
             label = { Text(stringResource(Res.string.session_reps)) },
             singleLine = true,
+            isError = repsMau,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.width(80.dp),
         )
@@ -229,23 +242,43 @@ private fun NewSetRow(prefill: WorkoutSetEntity?, onLog: (Double, Int, Double?, 
             onValueChange = { rpe = it.filter { c -> c.isDigit() || c == '.' || c == ',' }.take(4) },
             label = { Text(stringResource(Res.string.session_rpe)) },
             singleLine = true,
+            isError = rpeMau,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.width(72.dp),
         )
-        val w = weight.replace(',', '.').toDoubleOrNull()
-        val r = reps.toIntOrNull()
+        val podeGravar = SetLimits.isSetValid(w, r, rp)
         IconButton(
             onClick = {
-                if (w != null && r != null) {
-                    onLog(w, r, rpe.replace(',', '.').toDoubleOrNull(), warmup)
+                if (podeGravar) {
+                    onLog(w!!, r!!, rp, warmup)
                     rpe = ""
                 }
             },
-            enabled = w != null && r != null,
+            enabled = podeGravar,
         ) {
             Icon(Icons.Default.Check, contentDescription = stringResource(Res.string.session_add_set))
         }
     }
+
+    // Dizer porquê, em vez de deixar o botão cinzento sem explicação.
+    if (pesoMau || repsMau || rpeMau) {
+        Text(
+            text = when {
+                pesoMau -> stringResource(
+                    Res.string.session_weight_out_of_range,
+                    SetLimits.MAX_WEIGHT_KG.toInt().toString(),
+                )
+                repsMau -> stringResource(
+                    Res.string.session_reps_out_of_range,
+                    SetLimits.MAX_REPS.toString(),
+                )
+                else -> stringResource(Res.string.session_rpe_out_of_range)
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.error,
+        )
+    }
+
     FilterChip(
         selected = warmup,
         onClick = { warmup = !warmup },

@@ -24,6 +24,11 @@ internal interface RunLocationSource {
 
         const val INTERVAL_MS = 1_000L
 
+        /**
+         * Duas implementações: a dos serviços da Google, que funde GPS com sensores e dá
+         * posições melhores, e a do sistema, para telemóveis que não os têm — o que inclui
+         * boa parte dos Huawei e as versões sem Google.
+         */
         fun create(context: Context): RunLocationSource {
             val available = GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
@@ -42,7 +47,11 @@ private class FusedLocationSource(context: Context) : RunLocationSource {
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, RunLocationSource.INTERVAL_MS)
             .setMinUpdateIntervalMillis(RunLocationSource.INTERVAL_MS)
 
+            // Espera pela primeira posição boa em vez de entregar logo uma da rede móvel,
+            // que viria com quilómetros de erro e sujaria o início do percurso.
             .setWaitForAccurateLocation(true)
+            // Sem distância mínima: o filtro de ruído é do [RunEngine], que precisa de ver
+            // as amostras todas para distinguir parado de a andar devagar.
             .setMinUpdateDistanceMeters(0f)
             .build()
 

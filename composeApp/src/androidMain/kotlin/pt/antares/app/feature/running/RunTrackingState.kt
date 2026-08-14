@@ -6,6 +6,11 @@ import pt.antares.app.feature.running.domain.GeoSample
 import pt.antares.app.feature.running.domain.RunEngine
 import pt.antares.app.feature.running.domain.RunResult
 
+/**
+ * O estado da corrida em curso, num objeto de processo. É deliberado e não um descuido: o
+ * serviço em primeiro plano e o ecrã têm ciclos de vida independentes — o ecrã pode morrer
+ * e voltar enquanto a corrida continua —, e um ViewModel não sobreviveria a isso.
+ */
 internal object RunTrackingState {
     val live = MutableStateFlow(RunLiveState())
     val last = MutableStateFlow<RunResult?>(null)
@@ -24,6 +29,9 @@ internal object RunTrackingState {
         val e = engine ?: return
         val metrics = e.onSample(sample)
 
+        // O mesmo limite de erro do [RunEngine], aplicado aqui outra vez porque o percurso
+        // desenhado é guardado à parte das métricas: um ponto mau desenharia um risco a
+        // atravessar o mapa mesmo sem contar para a distância.
         val usable = sample.accM <= 30.0
         if (usable) path.add(sample.lat to sample.lon)
         live.value = live.value.copy(

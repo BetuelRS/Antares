@@ -15,6 +15,11 @@ import pt.antares.app.feature.fasting.domain.FastingMachine
 import pt.antares.app.feature.fasting.domain.FastingResult
 import pt.antares.app.feature.fasting.domain.FastingSnapshot
 
+/**
+ * Jejum. As transições de estado não estão aqui: vivem na [FastingMachine], que é pura e
+ * testável. Este repositório só grava o resultado e trata dos alarmes — a máquina não sabe
+ * de base de dados nem de notificações.
+ */
 class FastingRepository(
     private val protocolDao: FastingProtocolDao,
     private val sessionDao: FastingSessionDao,
@@ -33,6 +38,8 @@ class FastingRepository(
 
     fun observeFinished(): Flow<List<FastingSessionEntity>> = sessionDao.observeFinished()
 
+    // Como nos treinos: havendo um jejum a decorrer, devolve-se esse. Dois jejuns abertos
+    // ao mesmo tempo não fazem sentido, e a base por si não os impede.
     suspend fun startOrResume(protocolId: String): String = withContext(io) {
         sessionDao.activeSession()?.let { return@withContext it.id }
         val protocol = protocolDao.byId(protocolId) ?: error("protocolo inexistente: $protocolId")
@@ -48,6 +55,8 @@ class FastingRepository(
             is FastingResult.Ok -> {
                 sessionDao.upsert(r.value.toEntity(updatedAt = now()))
 
+                // Corrigir a hora de início muda a hora-alvo, por isso o alarme antigo tem
+                // de morrer antes de se marcar o novo — senão ficavam dois avisos.
                 notifier.cancel(r.value.id)
                 notifier.scheduleGoal(r.value.id, r.value.targetEndAt)
                 true
@@ -88,6 +97,8 @@ fun FastingSnapshot.toEntity(updatedAt: Long) = FastingSessionEntity(
 
 fun FastingSessionEntity.toFinishedFast(): FinishedFast = FinishedFast(
     startedAt = startedAt,
+    // Duração zero para uma sessão sem fim. Só devia acontecer com um jejum a decorrer,
+    // que as estatísticas já filtram antes de chegar aqui.
     endedAt = endedAt ?: startedAt,
     completed = status == pt.antares.app.core.model.FastingStatus.COMPLETED,
 )

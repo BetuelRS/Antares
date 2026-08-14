@@ -26,10 +26,13 @@ fun StatRing(
     color: Color = MaterialTheme.colorScheme.primary,
     trackColor: Color = MaterialTheme.colorScheme.surfaceVariant,
 ) {
+    // Trava em 100%: passar a meta dava mais de uma volta e o anel voltava a parecer vazio.
+    // Quem passou vê-o cheio, e o número ao centro é que diz quanto.
     val clamped = progress.coerceIn(0f, 1f)
     Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.size(size)) {
             val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
+            // -90° põe o início no topo: a zero graus o arco começava à direita.
             drawArc(
                 color = trackColor,
                 startAngle = -90f,

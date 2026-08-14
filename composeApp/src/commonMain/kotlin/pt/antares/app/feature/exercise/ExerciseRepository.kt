@@ -49,6 +49,11 @@ class ExerciseRepository(
 
     suspend fun delete(id: String) = withContext(io) { dao.softDelete(id, now()) }
 
+    /**
+     * A tabela de METs, lida do ficheiro empacotado a cada chamada. Não fica em memória
+     * porque só o ecrã de registar exercício a usa, e são umas centenas de linhas — guardá-la
+     * custaria mais do que voltar a lê-la.
+     */
     suspend fun loadCatalog(): MetCatalog = withContext(io) {
         @OptIn(ExperimentalResourceApi::class)
         val bytes = Res.readBytes("files/seed_mets.csv")

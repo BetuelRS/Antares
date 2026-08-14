@@ -71,6 +71,12 @@ class ProgressRepository(
             )
         }
 
+    /**
+     * O histórico de objetivos, com os que já foram atingidos fechados à passagem. É o
+     * único ponto da app onde ler grava: a data de conclusão só se pode saber comparando
+     * o objetivo com as pesagens que vieram depois, e persistir isso evita que uma
+     * pesagem apagada mais tarde desfaça um objetivo que a pessoa cumpriu.
+     */
     suspend fun goalTimeline(): List<GoalHistoryCalc.Goal> = withContext(io) {
         val pesagens = weightDao.exportRows()
             .sortedBy { it.epochDay }
@@ -86,8 +92,10 @@ class ProgressRepository(
         }
         val fechados = GoalHistoryCalc.settle(objetivos, pesagens)
 
+        // O índice serve para casar de volta porque o `settle` preserva a ordem da lista.
         fechados.forEachIndexed { i, goal ->
             val linha = linhas[i]
+            // Só se grava a transição de por-atingir para atingido; nunca o contrário.
             if (goal.reachedOnEpochDay != null && linha.reachedOnEpochDay == null) {
                 goalDao.upsert(
                     linha.copy(
@@ -103,6 +111,8 @@ class ProgressRepository(
 
     suspend fun milestones(today: Long = todayEpochDay()): List<ProgressCalc.Milestone> =
         withContext(io) {
+            // Desde o dia zero da era: os marcos contam a vida toda de uso da app, e uma
+            // janela recente perderia o marco dos 365 dias de quem já lá vai há mais tempo.
             val dias = foodLogDao.loggedDaysSince(0).toSet()
             val pesagens = weighIns()
             (ProgressCalc.loggingMilestones(dias) + ProgressCalc.weightMilestones(pesagens))

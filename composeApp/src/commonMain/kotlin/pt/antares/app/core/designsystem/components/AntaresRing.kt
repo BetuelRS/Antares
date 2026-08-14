@@ -38,6 +38,10 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * Um macro no anel. Traz os textos já formatados e traduzidos: o desenho não sabe formatar
+ * números nem escolher idioma.
+ */
 data class MacroArc(
     val value: Float,
     val goal: Float,
@@ -47,6 +51,8 @@ data class MacroArc(
     val goalLabel: String,
 )
 
+// Arco aberto em baixo, e não círculo fechado: a abertura é onde entram as etiquetas, e um
+// anel completo não tem princípio nem fim visíveis para se ler o progresso.
 private const val START_ANGLE = 130f
 private const val SWEEP_TOTAL = 280f
 

@@ -32,6 +32,11 @@ data class RecipeSummary(
     val ingredientCount: Int,
 )
 
+/**
+ * Receitas. A nutrição nunca é gravada: recalcula-se sempre a partir dos ingredientes, e é
+ * isso que faz corrigir um alimento corrigir todas as receitas que o usam — ao contrário
+ * do diário, onde o registo guarda uma cópia.
+ */
 class RecipeRepository(
     private val recipeDao: RecipeDao,
     private val ingredientDao: RecipeIngredientDao,
@@ -106,11 +111,21 @@ class RecipeRepository(
         recipeDao.softDelete(id, now())
     }
 
+    /**
+     * Regista uma porção da receita no diário. A receita é convertida num alimento
+     * temporário que nunca é gravado no catálogo: serve só para o registo copiar dele os
+     * seus valores, e a partir daí o diário é dono do que ficou lá.
+     *
+     * É isto que reconcilia as duas regras: a receita continua viva e a recalcular-se,
+     * mas o que já foi comido fica congelado como qualquer outro registo.
+     */
     suspend fun logRecipe(recipeId: String, grams: Double, slot: MealSlot, epochDay: Long) = withContext(io) {
         val recipe = recipeDao.byId(recipeId) ?: return@withContext
         val n = nutritionOf(ingredientRows(recipeId), recipe.yieldGrams)
 
         val asFood = FoodEntity(
+            // Identificador derivado da receita, e não aleatório: o registo aponta-lhe, e
+            // o prefixo distingue-o de qualquer alimento verdadeiro.
             id = "recipe_$recipeId",
             source = FoodSource.CUSTOM,
             sourceRef = null,
@@ -145,6 +160,8 @@ class RecipeRepository(
 
     private fun nutritionOf(rows: List<IngredientRow>, yieldGrams: Double?): RecipeNutrition {
         val ingredients = rows.mapNotNull { row ->
+            // Ingrediente cujo alimento desapareceu do catálogo é saltado: a receita
+            // continua a somar o resto, com menos, em vez de deixar de ter valores.
             val f = row.food ?: return@mapNotNull null
             IngredientNutrition(
                 kcalPer100 = f.kcal,

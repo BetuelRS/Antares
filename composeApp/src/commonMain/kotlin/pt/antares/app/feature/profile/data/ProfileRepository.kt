@@ -21,6 +21,10 @@ import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.todayEpochDay
 import kotlin.math.roundToInt
 
+/**
+ * O perfil, o peso e as metas. Junta os três porque nenhum deles se lê sozinho: uma meta
+ * depende do perfil e da última pesagem, e mudar qualquer um recalcula-a.
+ */
 class ProfileRepository(
     private val profileDao: UserProfileDao,
     private val weightDao: WeightLogDao,
@@ -69,6 +73,9 @@ class ProfileRepository(
 
         val existing = weightDao.byDayForWrite(epochDay)
 
+        // Duas pesagens no mesmo dia dão a média, e não a última: quem se pesa de manhã e
+        // à noite tem duas medições igualmente válidas do mesmo dia. O parâmetro deixa a
+        // importação e a correção manual substituírem em vez de misturar.
         val vivo = existing?.takeIf { !it.deleted }
         val value = if (averageWithExisting && vivo != null) {
             (vivo.weightKg + weightKg) / 2.0
@@ -87,7 +94,12 @@ class ProfileRepository(
         )
     }
 
+    /**
+     * Devolve o peso anterior quando o novo parece um engano de digitação — um zero a mais,
+     * ou libras onde deviam ser quilos. Só avisa: quem confirma é a pessoa.
+     */
     suspend fun weightLooksLikeTypo(weightKg: Double): Double? = withContext(io) {
+        // Sem histórico não há como suspeitar de nada, e a primeira pesagem passa sempre.
         val reference = weightDao.latest()?.weightKg ?: return@withContext null
         val ratio = weightKg / reference
         if (ratio < TYPO_LOW_RATIO || ratio > TYPO_HIGH_RATIO) reference else null
@@ -104,7 +116,11 @@ class ProfileRepository(
             overrideDao.observeByDay(epochDay),
         ) { profile, weight, override ->
             when {
+                // Sem perfil não há metas nenhumas: é o que mantém a app no onboarding.
                 profile == null -> null
+                // Uma meta fixada para o dia manda sobre o cálculo — vem de uma proposta
+                // adaptativa aceite. Note-se que sai sem [Targets.energy]: o desdobramento
+                // da conta não se aplica a um número que não foi calculado agora.
                 override != null -> Targets(
                     kcal = override.kcal,
                     proteinG = override.proteinG,
@@ -128,9 +144,15 @@ class ProfileRepository(
         NutritionCalc.dailyTargets(profile = profile, weightKg = weight, todayEpochDay = epochDay)
     }
 
+    /**
+     * O gasto que a app aprendeu com o histórico, ou null se a meta deste dia não veio de
+     * uma proposta adaptativa. Deduz-se da meta menos o ritmo, porque é assim que ele foi
+     * gravado — ver [AdaptiveTdee.Proposal].
+     */
     suspend fun learnedTdee(epochDay: Long = todayEpochDay()): Int? = withContext(io) {
         val profile = profileDao.get() ?: return@withContext null
         val override = overrideDao.byDay(epochDay) ?: return@withContext null
+        // A origem tem de ser verificada: uma meta fixada à mão não ensinou nada à app.
         if (override.source != CoachRepository.SOURCE_ADAPTIVE) return@withContext null
         override.kcal - profile.goalRateKcal
     }
@@ -148,9 +170,12 @@ class ProfileRepository(
         weightDao.exportRows().sortedBy { it.epochDay }.map { it.epochDay to it.weightKg }
     }
 
+    /** Quantas semanas distintas já tiveram uma proposta aceite. Vai para o ecrã "Sobre". */
     suspend fun adaptiveWeeks(): Int = withContext(io) {
         overrideDao.exportRows()
             .filter { it.source == CoachRepository.SOURCE_ADAPTIVE }
+            // Divisão inteira por sete agrupa por semana. Não coincide com a segunda-feira
+            // do calendário, mas conta cada semana uma vez, que é o que interessa.
             .map { it.epochDay / 7 }
             .distinct()
             .size
@@ -160,6 +185,8 @@ class ProfileRepository(
 
         const val DEFAULT_WEIGHT_KG = 70.0
 
+        // Um quarto do peso para cima ou para baixo. Nenhuma pessoa muda tanto entre duas
+        // pesagens, e o intervalo é largo que chegue para não incomodar quem perdeu muito.
         const val TYPO_LOW_RATIO = 0.75
         const val TYPO_HIGH_RATIO = 1.25
     }

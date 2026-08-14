@@ -14,12 +14,18 @@ import androidx.compose.ui.unit.dp
 import pt.antares.app.core.calc.BodyComposition
 import pt.antares.app.core.designsystem.success
 
+/**
+ * O IMC numa régua de zonas, em vez de um número solto. Mostra onde a pessoa está e
+ * quanto falta para a zona seguinte — sozinho, um número como 27,4 não diz nada.
+ */
 @Composable
 fun BmiScale(
     bmi: Double,
     modifier: Modifier = Modifier,
 ) {
 
+    // As cores são lidas fora do canvas porque `MaterialTheme` é composição e o corpo de um
+    // `Canvas` já não o é.
     val caution = MaterialTheme.colorScheme.secondary
     val healthy = MaterialTheme.success
     val obese = MaterialTheme.colorScheme.error

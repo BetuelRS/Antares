@@ -13,6 +13,12 @@ import androidx.work.WorkManager
 import com.antares.app.R
 import java.util.concurrent.TimeUnit
 
+/**
+ * Um canal por tipo de lembrete, e não um só: é o que permite à pessoa silenciar os avisos
+ * de refeição nas definições do Android sem perder o do relatório semanal. Os
+ * identificadores são o formato guardado pelo sistema — mudá-los cria canais novos e
+ * ressuscita o que ela já tinha desligado.
+ */
 object AppNotificationChannels {
     const val MEAL = "meal_reminders"
     const val WEIGH_IN = "weigh_in_reminder"
@@ -49,9 +55,16 @@ object NotificationScheduler {
     fun scheduleAll(context: Context) {
         AppNotificationChannels.ensureAll(context)
 
+        // Trabalho periódico, e não alarmes exatos: o Android reserva os alarmes exatos
+        // para despertadores, e uma app de nutrição não os justifica. A contrapartida é que
+        // o lembrete chega perto da hora e não à hora — daí a periodicidade curta, com o
+        // próprio trabalhador a decidir se é altura de avisar.
         val meal = PeriodicWorkRequestBuilder<MealReminderWorker>(3, TimeUnit.HOURS)
+            // Sem restrições: um lembrete não precisa de rede nem de bateria carregada.
             .setConstraints(Constraints.NONE)
             .build()
+        // `KEEP` para não reiniciar o ciclo a cada arranque da app: com `REPLACE`, quem abre
+        // a app todos os dias nunca chegaria a receber lembrete nenhum.
         WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(MEAL_WORK, ExistingPeriodicWorkPolicy.KEEP, meal)
 

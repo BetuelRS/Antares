@@ -1,6 +1,13 @@
 
 import { adminClient, json } from '../_shared/gate.ts';
 
+/**
+ * Levanta o limite de AI para o dono. O código vive só na configuração do servidor: a app
+ * envia o que a pessoa escreveu e nunca o conhece, e por isso desmontar o APK não o revela.
+ */
+
+// Uma tentativa por segundo, por instância. É pouco contra um ataque distribuído, mas
+// chega para tornar impraticável adivinhar o código à força a partir de um cliente.
 let lastAttemptAt = 0;
 
 Deno.serve(async (req) => {
@@ -30,6 +37,8 @@ Deno.serve(async (req) => {
 
   const expected = Deno.env.get('ADMIN_CODE');
 
+  // Sem código configurado, ninguém entra: um servidor mal preparado tem de recusar toda a
+  // gente em vez de deixar entrar quem enviar vazio.
   if (!expected || body.code !== expected) {
     return json({ error: 'forbidden', code: 'BAD_CODE' }, 403);
   }

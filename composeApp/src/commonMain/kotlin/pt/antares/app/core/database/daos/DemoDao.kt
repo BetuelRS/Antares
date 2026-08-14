@@ -14,6 +14,16 @@ import pt.antares.app.core.database.entities.WeightLogEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 
+/**
+ * Escrita e remoção em massa dos dados de demonstração, para o ecrã de administração.
+ *
+ * Tudo aqui assenta numa convenção só: os registos de demonstração têm o identificador a
+ * começar por `demo-`. É isso que permite apagá-los todos sem tocar em nada da pessoa, e
+ * é por isso que o motor que os gera nunca pode escrever um identificador sem esse prefixo.
+ *
+ * As inserções abortam em conflito em vez de substituírem: uma colisão significa que
+ * havia lá alguma coisa, e substituir apagaria dados reais em silêncio.
+ */
 @Dao
 interface DemoDao {
 
@@ -41,6 +51,8 @@ interface DemoDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertFasts(rows: List<FastingSessionEntity>)
 
+    // As remoções são a sério e não em suave, ao contrário de todo o resto da app: uma
+    // lápide de demonstração continuaria a ocupar o dia nos índices únicos.
     @Query("DELETE FROM weight_log WHERE id LIKE 'demo-%'") suspend fun deleteWeights()
 
     @Query("DELETE FROM body_measurement_log WHERE id LIKE 'demo-%'") suspend fun deleteMeasurements()
@@ -57,6 +69,35 @@ interface DemoDao {
 
     @Query("DELETE FROM fasting_session WHERE id LIKE 'demo-%'") suspend fun deleteFasts()
 
+    @Query("DELETE FROM weight_log WHERE deleted = 1") suspend fun purgeWeightTombstones()
+
+    @Query("DELETE FROM water_log WHERE deleted = 1") suspend fun purgeWaterTombstones()
+
+    @Query("DELETE FROM body_measurement_log WHERE deleted = 1")
+    suspend fun purgeMeasurementTombstones()
+
+    /**
+     * Apaga as lápides das três tabelas que têm índice único num dia
+     * (`weight_log`, `water_log` e `body_measurement_log`).
+     *
+     * O índice é `Index(value = ["epochDay"], unique = true)` e não sabe nada da
+     * coluna `deleted`: uma linha apagada em suave continua a ocupar o dia. Como
+     * o motor escreve uma linha por dia dos últimos 730 com `OnConflictStrategy.ABORT`,
+     * uma só lápide chega para abortar a geração inteira.
+     *
+     * Só é seguro porque quem chama já confirmou que `realCount()` é zero: sem
+     * linhas vivas, uma lápide não é dado de ninguém. E não há sincronização a
+     * precisar delas (ver `AntaresDb.DropSyncMeta` e o `NoSyncTest`).
+     */
+    @Transaction
+    suspend fun purgeTombstonesBlockingDemo() {
+        purgeWeightTombstones()
+        purgeWaterTombstones()
+        purgeMeasurementTombstones()
+    }
+
+    // As séries antes das sessões: nada as liga na base, mas apagar pela ordem inversa
+    // deixaria séries órfãs se a transação falhasse a meio.
     @Transaction
     suspend fun deleteAllDemo() {
         deleteWeights()
@@ -97,6 +138,8 @@ interface DemoDao {
             (SELECT COUNT(*) FROM fasting_session WHERE id LIKE 'demo-%' AND dirty = 1)
         """,
     )
+    // Serve os testes: os registos de demonstração nascem com `dirty` a zero, e um valor
+    // diferente de zero denuncia que a app os tratou como escritos pela pessoa.
     suspend fun sujosDeDemo(): Int
 
     @Query(
@@ -113,7 +156,27 @@ interface DemoDao {
     )
     suspend fun realCount(): Int
 
-    @Query("SELECT * FROM foods WHERE deleted = 0 AND kcal > 0 ORDER BY id LIMIT :limite")
+    /**
+     * Alimentos para a demonstração.
+     *
+     * Exige `microsJson` porque sem micros os ecrãs de nutrição não têm o que
+     * mostrar, e põe as tabelas portuguesas à frente para a demonstração parecer
+     * uma semana de alguém. O `ORDER BY` é estável, portanto a mesma semente dá
+     * sempre a mesma demonstração.
+     */
+    @Query(
+        """
+        SELECT * FROM foods
+        WHERE deleted = 0 AND kcal > 0 AND microsJson IS NOT NULL
+        ORDER BY
+            (CASE
+                WHEN id LIKE 'ptx%' OR id LIKE 'pt-%' OR id LIKE 'tca-%' THEN 0
+                ELSE 1
+             END) ASC,
+            id ASC
+        LIMIT :limite
+        """,
+    )
     suspend fun catalogoParaDemo(limite: Int): List<pt.antares.app.core.database.entities.FoodEntity>
 
     @Query("SELECT id FROM exercise WHERE deleted = 0 ORDER BY id LIMIT :limite")

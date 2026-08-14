@@ -80,9 +80,16 @@ class WorkoutHistoryRepository(
         setDao.exerciseProgress(exerciseId).map { it.volume.toFloat() }
     }
 
+    /**
+     * O melhor 1RM estimado de cada exercício, os mais pesados primeiro. Ordenar por carga
+     * absoluta faz o agachamento e o peso morto ficarem sempre no topo — é a ordem certa
+     * para um quadro de recordes, mas não diz nada sobre onde houve mais progresso.
+     */
     suspend fun records(limit: Int = 12): List<ExerciseRecord> = withContext(io) {
         val byExercise = setDao.allDoneWorkingSets().groupBy { it.exerciseId }
         val bests = byExercise.mapNotNull { (exId, rows) ->
+            // Exercícios cujas séries passam todas das doze repetições ficam de fora: a
+            // Epley não os estima, e um 1RM inventado dali não valeria nada.
             val best = rows.mapNotNull { OneRepMax.epley(it.weightKg, it.reps) }.maxOrNull()
             best?.let { exId to it }
         }

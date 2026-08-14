@@ -78,6 +78,10 @@ class WorkoutSessionViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SessionUiState(loading = true))
 
+    /**
+     * Monta a lista de exercícios do treino em curso, juntando três origens: o plano da
+     * rotina, o que se acrescentou a meio, e o que já tem séries escritas.
+     */
     private suspend fun buildState(
         sessionId: String,
         routineId: String?,
@@ -85,10 +89,15 @@ class WorkoutSessionViewModel(
         extras: List<String>,
     ): SessionUiState {
 
+        // `LinkedHashSet` porque a ordem é o plano e as repetições têm de desaparecer: um
+        // exercício da rotina que já tem séries não pode aparecer duas vezes. A ordem de
+        // inserção é a que a pessoa espera — primeiro o planeado, depois o improvisado.
         val routineItems = routineId?.let { routineDao.itemsOf(it) }.orEmpty()
         val orderedIds = LinkedHashSet<String>()
         routineItems.forEach { orderedIds.add(it.exerciseId) }
         extras.forEach { orderedIds.add(it) }
+        // A terceira volta apanha o que sobrou de uma rotina entretanto editada: as séries
+        // ficaram e o exercício já não está no plano.
         sets.map { it.exerciseId }.forEach { orderedIds.add(it) }
 
         val names = exerciseDao.namesByIds(orderedIds.toList())
@@ -101,6 +110,8 @@ class WorkoutSessionViewModel(
             SessionExerciseUi(
                 exerciseId = exId,
                 name = names[exId] ?: exId,
+                // Alvos de recurso para exercícios fora do plano: 3×8-12 com 90 s é o
+                // esquema mais comum, e serve de ponto de partida em vez de campos vazios.
                 targetSets = item?.targetSets ?: 3,
                 repsMin = item?.targetRepsMin ?: 8,
                 repsMax = item?.targetRepsMax ?: 12,
@@ -120,6 +131,11 @@ class WorkoutSessionViewModel(
         }
     }
 
+    /**
+     * O descanso entre séries é contado em dois sítios: aqui, para o número no ecrã, e no
+     * sistema, para a notificação. O ecrã pode morrer com a app em segundo plano; o alarme
+     * do sistema não.
+     */
     private fun startRest(seconds: Int) {
         if (seconds <= 0) return
         restJob?.cancel()
@@ -152,6 +168,8 @@ class WorkoutSessionViewModel(
                 id = Ids.newUuid(),
                 sessionId = sessionId,
                 exerciseId = exercise.exerciseId,
+                // O índice sai do número de séries já feitas, e é por isso que apagar uma
+                // série a meio deixa o próximo índice a repetir um número já usado.
                 setIndex = exercise.sets.size,
                 weightKg = weightKg,
                 reps = reps,
@@ -160,6 +178,8 @@ class WorkoutSessionViewModel(
             )
         }
 
+        // Nem o aquecimento nem os exercícios em supersérie disparam descanso: no superset
+        // passa-se logo ao exercício seguinte, que é o que o torna um superset.
         if (!warmup && exercise.supersetGroup == null) startRest(exercise.restSec)
     }
 

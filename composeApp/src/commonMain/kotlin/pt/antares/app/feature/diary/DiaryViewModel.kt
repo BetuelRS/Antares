@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pt.antares.app.core.calc.DailyGoals
 import pt.antares.app.core.calc.Targets
 import pt.antares.app.core.database.daos.DayTotals
 import pt.antares.app.core.database.entities.ExerciseLogEntity
@@ -25,7 +26,6 @@ import pt.antares.app.core.model.Sex
 import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.nutrition.EfsaReference
 import pt.antares.app.feature.profile.data.ProfileRepository
-import kotlin.math.roundToInt
 
 data class DiaryState(
     val epochDay: Long,
@@ -76,6 +76,8 @@ class DiaryViewModel(
 
     init {
 
+        // O diário acompanha a viragem do dia só se estiver em hoje: quem foi rever a
+        // semana passada não pode ver o ecrã saltar debaixo dos olhos à meia-noite.
         viewModelScope.launch {
             var lastToday = DayTicker.today.value
             DayTicker.today.collect { newToday ->
@@ -96,7 +98,10 @@ class DiaryViewModel(
                 preferences.waterGoalOverrideMl,
                 profileRepository.observeLatestWeight(),
             ) { water, override, weight ->
-                val goal = override ?: (((weight?.weightKg ?: 70.0) * 35 / 50).roundToInt() * 50)
+                // A mesma regra do ecrã de hoje, e pela mesma função: repetir a conta aqui
+                // fazia os dois ecrãs discordarem assim que a constante mudasse.
+                val goal = override
+                    ?: DailyGoals.waterMl(weight?.weightKg ?: ProfileRepository.DEFAULT_WEIGHT_KG)
                 WaterInfo(ml = water?.ml ?: 0, goalMl = goal)
             },
 
@@ -134,6 +139,8 @@ class DiaryViewModel(
     fun nextDay() = goToDay(selectedDay.value + 1)
     fun goToToday() = goToDay(todayEpochDay())
 
+    // Todas as ações leem o dia selecionado antes de lançar a corrotina. Lê-lo lá dentro
+    // deixava a escrita cair no dia errado se a pessoa mudasse de data entretanto.
     fun addWater(deltaMl: Int) {
         val day = selectedDay.value
         viewModelScope.launch { diaryRepository.addWater(day, deltaMl) }
@@ -156,6 +163,8 @@ class DiaryViewModel(
     val repeatable: StateFlow<Map<MealSlot, pt.antares.app.feature.diary.RepeatableMeal>> =
         selectedDay.flatMapLatest { day ->
             diaryRepository.observeDay(day).map { logs ->
+                // Só se oferece repetir as refeições que ainda não têm nada: a sugestão
+                // desaparece assim que a pessoa regista alguma coisa nesse período.
                 val jaRegistadas = logs.map { it.mealSlot }.toSet()
                 MealSlot.entries
                     .filter { it !in jaRegistadas }
@@ -202,6 +211,8 @@ class DiaryViewModel(
     }
 
     fun quickAddCalories(kcal: Int, name: String, slot: MealSlot) {
+        // Zero calorias não é um registo; recusa-se em silêncio em vez de gravar uma linha
+        // vazia que a pessoa depois tem de apagar.
         if (kcal <= 0) return
         val day = selectedDay.value
         viewModelScope.launch { diaryRepository.logQuickCalories(kcal, name, slot, day) }

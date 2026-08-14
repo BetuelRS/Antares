@@ -18,6 +18,8 @@ interface ExerciseLogDao {
     @Query("SELECT * FROM exercise_log WHERE id = :id AND deleted = 0")
     suspend fun byId(id: String): ExerciseLogEntity?
 
+    // Encontra a linha de calorias que um treino ou corrida gerou, para a atualizar quando
+    // a origem muda em vez de acumular duas contagens do mesmo esforço.
     @Query("SELECT * FROM exercise_log WHERE refId = :refId AND deleted = 0 LIMIT 1")
     suspend fun byRef(refId: String): ExerciseLogEntity?
 
@@ -30,6 +32,8 @@ interface ExerciseLogDao {
     @Query("SELECT * FROM exercise_log WHERE deleted = 0 AND epochDay BETWEEN :from AND :to")
     suspend fun logsInRange(from: Long, to: Long): List<ExerciseLogEntity>
 
+    // Sem filtrar apagados, e de propósito: um treino importado e depois apagado à mão não
+    // pode voltar na sincronização seguinte com o Health Connect.
     @Query("SELECT refId FROM exercise_log WHERE origin = 'HEALTH_CONNECT' AND refId IS NOT NULL")
     suspend fun importedRefs(): List<String>
 

@@ -17,9 +17,16 @@ import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.onSuccess
 import kotlin.math.roundToInt
 
+/**
+ * Entre os ecrãs e o [AiClient]. Recebe funções em vez de repositórios para não depender
+ * da base de dados: o que a AI devolve tem de poder ser mostrado e descartado sem nunca
+ * chegar a ser gravado — só o [confirmFood] escreve, e só depois de a pessoa confirmar.
+ */
 class AiRepository(
     private val client: AiClient,
 
+    // Garante que há sessão antes de cada chamada. A conta é anónima e cria-se sozinha:
+    // existe para o servidor poder contar utilizações, não para identificar ninguém.
     private val ensureAccount: suspend () -> Unit,
     private val saveFoodLog: suspend (FoodLogEntity) -> Unit,
     private val latestWeightKg: suspend () -> Double?,
@@ -32,6 +39,8 @@ class AiRepository(
     private val now: () -> Long = { Clock.System.now().toEpochMilliseconds() },
 ) {
 
+    // A contagem que o servidor devolve em cada resposta. Nula até à primeira chamada do
+    // arranque: a app não adivinha o que resta, mostra o que lhe foi dito.
     private val _usage = MutableStateFlow<AiUsage?>(null)
 
     val usage: StateFlow<AiUsage?> = _usage
@@ -59,6 +68,8 @@ class AiRepository(
 
     suspend fun analyzeExercise(text: String): AppResult<ExerciseAnalysis> = withContext(io) {
         ensureAccount()
+        // O peso vai junto porque o gasto de um exercício depende dele. Sem pesagem usa-se
+        // um valor de recurso: uma estimativa aproximada é melhor do que recusar o pedido.
         val weight = latestWeightKg() ?: DEFAULT_WEIGHT_KG
         client.analyzeExercise(text, weight, lang(), today())
             .onSuccess { rememberUsage(it.usage) }
@@ -69,15 +80,22 @@ class AiRepository(
         persistUsage(usage, today())
     }
 
+    /**
+     * Grava o que a pessoa confirmou. Único ponto deste ficheiro que escreve na base, e
+     * corre depois de o ecrã ter deixado rever e corrigir cada item.
+     */
     suspend fun confirmFood(
         items: List<AiFoodItem>,
         mealSlot: MealSlot,
         epochDay: Long,
         origin: LogOrigin,
     ) = withContext(io) {
+        // Um instante só para todos os itens, para a refeição ficar junta na ordem do dia.
         val timestamp = now()
         items.forEach { item ->
 
+            // A AI devolve os micronutrientes da porção; a base guarda-os por 100 g. Sem
+            // esta conversão, editar as gramas depois escalava valores já escalados.
             val micros = item.micros
                 ?.takeIf { it.isNotEmpty() && item.grams > 0 }
                 ?.mapValues { (_, v) -> v * 100.0 / item.grams }

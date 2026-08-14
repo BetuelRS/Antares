@@ -36,12 +36,16 @@ class ExerciseLibraryRepository(
             secondaryMuscles = ExerciseSeeder.unwrap(secondaryMuscles),
             instructionsEn = decode(instructionsEnJson),
             instructionsPt = decode(instructionsPtJson),
+            // Caminhos relativos ganham o prefixo à leitura; um endereço completo passa
+            // intacto. É o que permite mudar a origem das imagens sem reescrever a base.
             imageUrls = decode(imagesJson).map { path -> if (path.startsWith("http")) path else base + path },
             isCustom = isCustom,
             verified = verified,
         )
     }
 
+    // Lista vazia em vez de exceção: um exercício com instruções malformadas continua
+    // utilizável, só fica sem elas.
     private fun decode(jsonArray: String): List<String> =
         runCatching { json.decodeFromString<List<String>>(jsonArray) }.getOrDefault(emptyList())
 
@@ -67,6 +71,8 @@ class ExerciseLibraryRepository(
         dao.upsert(
             ExerciseEntity(
                 id = id,
+                // Um nome só preenche os dois campos: o filtro do catálogo procura em
+                // ambos, e deixar um vazio escondia o exercício de metade das pesquisas.
                 nameEn = nameEn.ifBlank { namePt },
                 namePt = namePt.ifBlank { nameEn },
                 searchText = TextNormalize.normalize("$nameEn $namePt"),

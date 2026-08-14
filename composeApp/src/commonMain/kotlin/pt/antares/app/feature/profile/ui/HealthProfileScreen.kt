@@ -381,9 +381,18 @@ private fun GoalCard(state: HealthProfileState) {
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         val goal = state.goalWeightKg
         val current = state.latestWeightKg
+
+        // Duas mensagens porque faltam duas coisas diferentes: sem pesagem não há
+        // ponto de partida, mesmo com o alvo escolhido.
         if (goal == null || current == null) {
             Text(
-                stringResource(Res.string.profile_health_no_goal_weight),
+                stringResource(
+                    if (goal == null) {
+                        Res.string.profile_health_no_goal_weight
+                    } else {
+                        Res.string.profile_health_no_weigh_in
+                    },
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

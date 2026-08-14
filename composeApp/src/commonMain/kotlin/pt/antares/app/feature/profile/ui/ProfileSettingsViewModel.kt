@@ -61,6 +61,8 @@ class ProfileSettingsViewModel(
 
     init {
 
+        // Os fluxos são juntos em três andares porque o `combine` do Kotlin só aceita cinco
+        // de cada vez, e aqui há treze. Os agrupamentos são por tema, não por conveniência.
         val base = combine(
             repository.observeProfile(),
             repository.observeLatestWeight(),
@@ -102,6 +104,9 @@ class ProfileSettingsViewModel(
                 quietHours = flags.quiet,
             )
         }
+            // `saved` sobrevive à emissão nova: é o aviso de "guardado" no ecrã, e vem de
+            // uma ação e não da base. Sem isto, gravar o perfil apagava o próprio aviso,
+            // porque a alteração dispara logo uma emissão que o levaria consigo.
             .onEach { fresh -> _state.update { fresh.copy(saved = it.saved) } }
             .launchIn(viewModelScope)
     }
@@ -141,6 +146,10 @@ class ProfileSettingsViewModel(
         viewModelScope.launch { preferences.setAdaptiveTargets(enabled) }
     }
 
+    /**
+     * Todas as alterações ao perfil passam por aqui. Cada uma grava logo, sem botão de
+     * confirmar: são definições, e o ecrã mostra o efeito na meta em tempo real.
+     */
     private fun save(transform: (UserProfileEntity) -> UserProfileEntity) {
         val current = _state.value.profile ?: return
         viewModelScope.launch {
@@ -156,6 +165,8 @@ class ProfileSettingsViewModel(
 
     fun setActivity(level: ActivityLevel) = save { it.copy(activityLevel = level) }
 
+    // Mudar de objetivo repõe o ritmo por omissão desse objetivo. Manter o anterior daria
+    // um défice a quem acabou de escolher ganhar peso.
     fun setGoal(goal: GoalType) = save {
 
         val rate = when (goal) {
@@ -171,6 +182,8 @@ class ProfileSettingsViewModel(
     fun setWeeklyRate(kgPerWeek: Double) = save { profile ->
         val magnitude = abs(kgPerWeek)
 
+        // A recomposição conta como perda: o défice é pequeno, mas é défice — o que muda é
+        // a composição, e não a direção.
         val losing = profile.goalType == GoalType.LOSE || profile.goalType == GoalType.RECOMP
         val signed = if (losing) -magnitude else magnitude
         profile.copy(goalRateKcal = NutritionCalc.kcalPerDayFromWeeklyKg(signed))
@@ -183,6 +196,8 @@ class ProfileSettingsViewModel(
     fun setStrategy(strategy: MacroStrategy) = save { profile ->
         if (strategy == MacroStrategy.CUSTOM) {
 
+            // Passar a manual arranca com os números que estavam a valer, em vez de campos
+            // vazios: dá um ponto de partida a quem só quer mexer num dos três.
             val t = _state.value.targets
             profile.copy(
                 macroStrategy = strategy,
@@ -243,6 +258,9 @@ class ProfileSettingsViewModel(
             ageYears = NutritionCalc.ageYears(p.birthEpochDay, today),
             confirmedEpochDay = p.heightConfirmedEpochDay,
 
+            // Milissegundos para dias por divisão inteira, sem passar pelo fuso: o que
+            // interessa é a distância entre duas datas, e um dia de erro não muda nada
+            // numa verificação que acontece de dois em dois anos.
             profileUpdatedEpochDay = p.updatedAt / MS_PER_DAY,
             todayEpochDay = today,
         )
@@ -260,6 +278,8 @@ class ProfileSettingsViewModel(
 
     companion object {
 
+        // Valores fora destes intervalos são engano de digitação, e são descartados em
+        // silêncio: o campo volta ao que estava em vez de aceitar um objetivo impossível.
         private val PLAUSIBLE_GOAL_WEIGHT_KG = 30.0..300.0
 
         private val PLAUSIBLE_BODY_FAT_PCT = 3.0..60.0

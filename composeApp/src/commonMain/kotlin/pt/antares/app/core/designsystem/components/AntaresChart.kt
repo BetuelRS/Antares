@@ -17,6 +17,14 @@ import androidx.compose.ui.unit.dp
 import pt.antares.app.core.calc.ChartScale
 import pt.antares.app.core.calc.TimeAxis
 
+/**
+ * O gráfico de peso e medidas. Desenha duas séries sobrepostas: os valores registados a
+ * traço fino e esbatido, e a tendência a cheio por cima. É essa distinção que impede a
+ * pessoa de reagir a uma pesagem isolada.
+ *
+ * As etiquetas ficam fora do canvas e recebem a escala, para o texto ser desenhado pelo
+ * sistema — com fonte, idioma e leitura por voz — em vez de pintado à mão.
+ */
 @Composable
 fun AntaresChart(
 
@@ -25,6 +33,7 @@ fun AntaresChart(
 
     trend: List<Pair<Long, Double>> = emptyList(),
 
+    // Linha tracejada do objetivo, quando existe.
     targetValue: Double? = null,
     height: Int = DEFAULT_HEIGHT_DP,
     pointColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -37,11 +46,15 @@ fun AntaresChart(
     if (points.isEmpty()) return
     val crus = points.sortedBy { it.first }
     val linha = trend.sortedBy { it.first }
+    // A escala considera as duas séries e o objetivo ao mesmo tempo: calculada só sobre os
+    // pontos, a linha do objetivo podia cair fora do gráfico.
     val scale = ChartScale.of(crus.map { it.second } + linha.map { it.second } + listOfNotNull(targetValue))
     val eixo = TimeAxis.of(crus.map { it.first } + linha.map { it.first }) ?: return
 
     Column(modifier) {
         Canvas(Modifier.fillMaxWidth().height(height.dp)) {
+            // O eixo vertical é invertido: no canvas o zero é em cima, e sem esta
+            // subtração o gráfico saía de cabeça para baixo.
             fun y(value: Double): Float =
                 size.height - (scale.fraction(value) * size.height).toFloat()
             fun x(day: Long): Float = (eixo.fraction(day) * size.width).toFloat()
@@ -79,8 +92,11 @@ fun AntaresChart(
 
             drawSeries(crus, ::x, ::y, pointColor.copy(alpha = RAW_ALPHA), strokeWidth = 2.5f)
 
+            // A tendência desenha-se depois dos pontos crus e mais grossa, para ficar por
+            // cima: é a linha que a pessoa deve ler.
             if (linha.isNotEmpty()) {
                 drawSeries(linha, ::x, ::y, trendColor, strokeWidth = 5f)
+                // Um ponto no fim marca onde está hoje, que é o que se procura primeiro.
                 val ultimo = linha.last()
                 drawCircle(trendColor, radius = 7f, center = Offset(x(ultimo.first), y(ultimo.second)))
             }
@@ -98,6 +114,8 @@ private fun DrawScope.drawSeries(
 ) {
     if (values.isEmpty()) return
 
+    // Um ponto só não faz linha nenhuma: desenha-se um círculo, ou o gráfico ficava vazio
+    // para quem tem uma única pesagem.
     if (values.size == 1) {
         drawCircle(
             color,

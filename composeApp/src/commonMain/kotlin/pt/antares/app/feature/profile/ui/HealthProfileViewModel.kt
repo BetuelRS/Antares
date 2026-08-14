@@ -63,6 +63,9 @@ data class HealthProfileState(
 
     val maintenanceKcal: Int? get() = targets?.energy?.tdee?.roundToInt()
 
+    // O ecrã só apresenta o gasto aprendido como número de confiança ao fim de um mês de
+    // correções: antes disso é uma estimativa a assentar, e mostrá-la com ar de facto
+    // convidava a pessoa a reagir a ruído.
     val adaptiveIsConfident: Boolean
         get() = learnedTdeeKcal != null && adaptiveWeeks >= CONFIDENT_WEEKS
 
@@ -72,6 +75,8 @@ data class HealthProfileState(
         get() = profile?.sex == Sex.FEMALE && latestWeightKg != null
     val goalWeightKg: Double? get() = profile?.goalWeightKg
 
+    // Distingue medidas da pessoa de uma estimativa por IMC. É o que permite ao ecrã dizer
+    // se a composição corporal foi medida ou calculada a partir do peso e da altura.
     val hasOwnComposition: Boolean
         get() = profile?.bodyFatPct != null ||
             (profile?.waistCm != null && profile?.neckCm != null)
@@ -134,6 +139,8 @@ class HealthProfileViewModel(
             )
         }
             .onEach { fresh ->
+                // Os campos preservados aqui vêm de leituras pontuais, não do fluxo: sem
+                // isto, cada emissão do peso apagaria o que já tinha sido carregado.
                 _state.update {
                     fresh.copy(
                         learnedTdeeKcal = it.learnedTdeeKcal,
@@ -144,6 +151,8 @@ class HealthProfileViewModel(
                     )
                 }
 
+                // Os dias registados só se contam durante a paragem: é isso que separa
+                // adaptação metabólica de registo em falta — ver [AdaptiveTdee.assessPlateau].
                 if (fresh.stallWeeks > 0) {
                     val dias = repository.loggedDaysPerWeek(fresh.stallWeeks)
                     _state.update { it.copy(loggedDaysPerWeek = dias) }
@@ -176,6 +185,8 @@ class HealthProfileViewModel(
         }
     }
 
+    // A sugestão de nível de atividade nunca se aplica sozinha: mexeria na meta de calorias
+    // sem a pessoa saber porquê.
     fun acceptActivitySuggestion() {
         val sugestao = _state.value.activitySuggestion ?: return
         viewModelScope.launch {
