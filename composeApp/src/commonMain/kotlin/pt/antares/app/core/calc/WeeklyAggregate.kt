@@ -79,8 +79,8 @@ object WeeklyAggregator {
     ): WeeklyAggregate {
         val weekEnd = weekStartEpochDay + 6
 
-        // Todas as contagens filtram `deleted`: o apagado fica na tabela como lápide para
-        // a sincronização de dispositivos, e somá-lo dava dias que a pessoa já desfez.
+        // Todas as contagens filtram `deleted`: o apagado fica na tabela como lápide, para
+        // a linha do dia poder ser reaproveitada, e somá-lo dava dias que a pessoa já desfez.
         val byDay = foodLogs.filter { !it.deleted }.groupBy { it.epochDay }
         val dayKcal = byDay.mapValues { (_, logs) -> logs.sumOf { it.kcalSnapshot } }
         val loggedDays = dayKcal.size

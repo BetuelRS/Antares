@@ -88,4 +88,6 @@ O que é partilhado está em `supabase/functions/_shared/`: a chamada ao modelo 
 controlo de quota e de abuso (`gate.ts`), a nutrição (`nutrition.ts`, `nutrients.ts`) e os textos
 de sistema (`prompts.ts`).
 
-O modelo está numa constante só, em `supabase/functions/_shared/claude.ts`.
+Os nomes dos modelos vivem só em `supabase/functions/_shared/claude.ts`, em duas constantes:
+`MODEL_ANALYSIS`, que é a usada, e `MODEL_COACH`, que **não tem chamador** — sobra do relatório
+semanal gerado por modelo, que passou a ser calculado no telemóvel.

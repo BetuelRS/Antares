@@ -60,5 +60,5 @@ Não conta:
   escreveu e nunca o conhece — desmontar o APK não o revela.
 - Os endereços IP das chamadas de análise são guardados em resumo criptográfico, com sal, e nunca
   em claro.
-- A app pede ao sistema apenas as permissões que usa, e o `ManifestPermissionsTest` falha se
-  alguma sobrar.
+- A app declara as suas permissões em vez de as herdar de uma dependência, e o
+  `ManifestPermissionsTest` falha se a localização em segundo plano voltar ao manifesto.

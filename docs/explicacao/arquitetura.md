@@ -21,9 +21,13 @@ composeApp/src/androidMain/
                  widget, Health Connect, câmara
 ```
 
-Não há camada de domínio separada nem *use cases*. Um ViewModel fala com um repositório, o
+Não há *use cases* nem uma camada de domínio transversal: um ViewModel fala com um repositório, o
 repositório fala com o DAO, e a aritmética vive à parte, em funções puras. Para uma app de uma
 pessoa, uma camada a mais custa mais do que dá.
+
+Duas funcionalidades fogem a isto e têm um pacote `domain` próprio — o jejum e a corrida. São as
+duas que têm uma máquina de estados a sério (uma janela a contar, uma corrida a decorrer), e essa
+lógica não cabe nem no ViewModel nem no repositório.
 
 ## As decisões que moldaram tudo o resto
 
@@ -73,8 +77,9 @@ acidente.
 | `viewModelModule` | `composeApp/src/commonMain/kotlin/pt/antares/app/core/di/ViewModelModule.kt` | um por ecrã |
 | `databaseModule` | `composeApp/src/androidMain/kotlin/pt/antares/app/core/di/DatabaseModule.kt` | a base, que precisa do contexto do Android |
 
-O `KoinGraphTest` resolve o grafo inteiro. Uma dependência em falta rebenta no teste, e não na
-primeira vez que alguém abre o ecrã.
+O `KoinGraphTest` constrói os repositórios todos e rebenta no teste, em vez de rebentar na
+primeira vez que alguém abre o ecrã. Percorre uma **lista escrita à mão**: um serviço novo só é
+coberto depois de ser acrescentado a essa lista.
 
 ## Sem rede
 

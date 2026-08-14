@@ -80,9 +80,9 @@ nenhuma.
 
 ## O Health Connect
 
-A app lê e escreve no Health Connect, se lhe deres autorização no sistema. Lê peso, massa gorda,
-massa magra, passos, exercício e calorias ativas; escreve nutrição, exercício, massa gorda e massa
-magra.
+A app lê e escreve no Health Connect, se lhe deres autorização no sistema. **Lê** peso, massa
+gorda, massa magra, passos, exercício e calorias ativas; **escreve** nutrição, exercício, massa
+gorda, massa magra e calorias ativas.
 
 É uma troca dentro do teu telemóvel, entre a Antares e as outras apps que autorizaste. Nada disto
 passa por servidor nenhum.
@@ -98,6 +98,11 @@ passa por servidor nenhum.
 | `POST_NOTIFICATIONS` | lembretes de refeição, de pesagem e o fim do descanso |
 | `SCHEDULE_EXACT_ALARM` | o descanso entre séries acabar à hora certa |
 | `VIBRATE` | o aviso do fim do descanso |
+| `START_VIEW_PERMISSION_USAGE` | mostrar ao Health Connect o ecrã que explica para que servem as permissões de saúde |
+
+São estas dez, e mais nenhuma. **`ACCESS_BACKGROUND_LOCATION` não está na lista**, e o
+`ManifestPermissionsTest` falha se entrar: a app segue-te enquanto corres e com o ecrã apagado,
+mas nunca quando não lhe pediste nada.
 
 A localização só é pedida quando arrancas uma corrida, e a câmara quando abres o leitor.
 
@@ -114,8 +119,8 @@ Devolve os cinco destinos acima, e mais nada.
 |---|---|
 | `NoSyncTest` | a biblioteca que sincronizaria não está no *build* |
 | `AdaptiveTargetsOfflineTest` | o relatório semanal não chama a rede |
-| `GdprTableParityTest` | nenhuma tabela fica de fora da exportação nem do apagamento |
-| `ManifestPermissionsTest` | não há permissões declaradas sem uso |
+| `GdprTableParityTest` | nenhuma tabela de dados teus fica de fora da exportação |
+| `ManifestPermissionsTest` | a localização em segundo plano continua fora do manifesto |
 
 E, sem ler código nenhum: põe o telemóvel em modo de avião. Tudo funciona menos a pesquisa em
 linha, a análise, o mapa e as imagens dos exercícios.

@@ -6,15 +6,15 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 
 | Teste | O que impede | Se falhar |
 |---|---|---|
-| `NoSyncTest` | que a sincronização volte pela porta das dependências | alguém acrescentou o `postgrest`. Ver [a decisão](../explicacao/decisoes/0001-a-app-nao-sincroniza.md) |
+| `NoSyncTest` | que a sincronização volte — pelas dependências, pelo login com Google, pelo manifesto, ou por um texto que a prometa a quem usa a app | alguém acrescentou o `postgrest`, ou um ecrã voltou a falar de conta. Ver [a decisão](../explicacao/decisoes/0001-a-app-nao-sincroniza.md) |
 | `TombstoneCollisionTest` | que uma escrita por dia volte a colidir com uma lápide | falta um `byDayForWrite` num caminho novo |
 | `AdaptiveTargetsOfflineTest` | que uma chamada de rede entre no relatório semanal | o relatório deixou de ser calculado no telemóvel |
 | `DeadCodeSweepTest` | código sem chamador, que descreve funcionalidades inexistentes | há código órfão: apagar, não comentar |
-| `KoinGraphTest` | uma dependência em falta rebentar no ecrã em vez de no teste | falta um `single` ou um `viewModel` no módulo |
-| `GdprTableParityTest` | uma tabela nova ficar de fora da exportação e do apagamento | criaste uma tabela e esqueceste o `DataExporter` ou o `PrivacyRepository` |
-| `HealthPermissionsParityTest` | pedir ao Health Connect o que o manifesto não declara | o pedido e o manifesto discordam |
-| `ManifestPermissionsTest` | pedir ao sistema mais do que a app usa | há uma permissão declarada sem uso |
-| `StringResourcesTest` | texto visível escrito à mão em vez de vir dos recursos | há uma cadeia literal num ecrã |
+| `KoinGraphTest` | uma dependência em falta rebentar no ecrã em vez de no teste | falta um `single` no módulo. Atenção: percorre uma **lista escrita à mão** de repositórios, e não o grafo todo — um serviço novo só é coberto se for acrescentado à lista |
+| `GdprTableParityTest` | uma tabela de dados da pessoa ficar de fora da **exportação** | criaste uma tabela e esqueceste o `sources` do `CoreModule`. Não verifica o apagamento: verifica que nada é apagado sem antes poder ser exportado |
+| `HealthPermissionsParityTest` | pedir ao Health Connect o que o manifesto não declara, e declarar o que ninguém pede | o pedido e o manifesto discordam |
+| `ManifestPermissionsTest` | a app **herdar** de uma dependência as permissões de que precisa, em vez de as declarar; e a localização em segundo plano voltar | falta uma das sete permissões obrigatórias, ou entrou `ACCESS_BACKGROUND_LOCATION` |
+| `StringResourcesTest` | os textos português e inglês descolarem: chaves diferentes, argumentos de formato diferentes, ou numerados com saltos | acrescentaste uma chave numa língua só, ou mudaste os argumentos de uma delas |
 | `AccessibilityTest` | elementos sem descrição para o leitor de ecrã | falta um `contentDescription` |
 | `ThemeAwareColorsTest` | cores fixas que quebram no tema claro | há uma cor escrita à mão |
 | `KeyboardInsetsTest` | o teclado tapar os botões | falta o tratamento de *insets* num ecrã novo |

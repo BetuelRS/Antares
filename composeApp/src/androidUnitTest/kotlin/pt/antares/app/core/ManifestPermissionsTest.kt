@@ -9,7 +9,7 @@ class ManifestPermissionsTest {
     private val manifest = File("src/androidMain/AndroidManifest.xml").readText()
 
     private val obrigatorias = mapOf(
-        "INTERNET" to "pesquisa online, sincronização e AI",
+        "INTERNET" to "pesquisa online, análise por AI, mapa das corridas e imagens dos exercícios",
         "CAMERA" to "scanner de código de barras e foto da refeição",
         "POST_NOTIFICATIONS" to "lembretes de refeição, jejum e descanso",
         "VIBRATE" to "fim do temporizador de descanso",

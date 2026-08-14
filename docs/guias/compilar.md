@@ -20,13 +20,23 @@ cd Antares
 ./gradlew :composeApp:assembleDebug
 ```
 
-O APK fica em `composeApp/build/outputs/apk/debug/`.
+Saem **quatro** APKs para `composeApp/build/outputs/apk/debug/`, um por arquitetura e um
+universal — a configuração de `splits` divide-os:
+
+```
+composeApp-arm64-v8a-debug.apk      telemóveis modernos
+composeApp-armeabi-v7a-debug.apk    telemóveis antigos, 32 bits
+composeApp-x86_64-debug.apk         emuladores
+composeApp-universal-debug.apk      as três juntas, maior
+```
 
 ## Instalar num telemóvel
 
 ```bash
-adb install -r composeApp/build/outputs/apk/debug/composeApp-debug.apk
+adb install -r composeApp/build/outputs/apk/debug/composeApp-arm64-v8a-debug.apk
 ```
+
+Num emulador, o `x86_64`. Se não souberes qual, o `universal` serve em qualquer caso.
 
 A app corre a partir do **Android 8.0** (`minSdk 26`).
 
@@ -56,8 +66,7 @@ di-lo em vez de falhar em silêncio.
 O `release` está assinado com a chave de depuração. Isso chega para instalar à mão e **não chega**
 para publicar numa loja.
 
-Saem quatro APKs, um por arquitetura (`arm64-v8a`, `armeabi-v7a`, `x86_64`) e um universal. Para
-um telemóvel moderno, o `arm64-v8a`; para um emulador, o `x86_64`.
+Saem os mesmos quatro APKs, em `composeApp/build/outputs/apk/release/`.
 
 ## Quando corre mal
 
