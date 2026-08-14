@@ -678,16 +678,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_delete_confirm_server">This deletes your account and ALL your data — on this phone and on the server. There is no undo.</string>
     <string name="privacy_delete_cta">Delete permanently</string>
     <string name="privacy_error">Could not delete on the server: %1$s. Nothing was deleted on the phone.</string>
-    <string name="settings_gamification">Achievements</string>
-    <string name="settings_gamification_desc">Show badges for workouts, runs, fasts, weigh-ins and what changes in your body.</string>
-    <string name="ach_title">Achievements</string>
-    <string name="ach_summary">%1$d of %2$d unlocked</string>
-    <string name="ach_cat_workouts">Workouts</string>
-    <string name="ach_cat_run">Distance (km)</string>
-    <string name="ach_cat_fasts">Fasts</string>
-    <string name="ach_cat_weighins">Weigh-ins</string>
-    <string name="ach_cat_waist">Waist lost (cm)</string>
-    <string name="ach_cat_body_fat">Body fat lost (% points)</string>
     <string name="today_fasting_title">Fasting</string>
     <string name="today_fasting_none">No active fast</string>
 

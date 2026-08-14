@@ -22,9 +22,6 @@ class SettingsViewModel(
         preferences.setMealName(slot, name)
     }
 
-    val gamification: StateFlow<Boolean> = preferences.gamificationEnabled
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
-
     val adaptiveTargets: StateFlow<Boolean> = preferences.adaptiveTargets
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
@@ -42,10 +39,6 @@ class SettingsViewModel(
 
     fun setHeroStyle(style: HeroStyle) = viewModelScope.launch {
         preferences.setHeroStyle(style.name)
-    }
-
-    fun setGamification(enabled: Boolean) = viewModelScope.launch {
-        preferences.setGamificationEnabled(enabled)
     }
 
     fun setAdaptiveTargets(enabled: Boolean) = viewModelScope.launch {

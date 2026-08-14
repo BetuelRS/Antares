@@ -66,7 +66,6 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         val quietStartMin = androidx.datastore.preferences.core.intPreferencesKey("notif_quiet_start")
         val quietEndMin = androidx.datastore.preferences.core.intPreferencesKey("notif_quiet_end")
         val runOemWarningShown = booleanPreferencesKey("run_oem_warning_shown")
-        val gamificationEnabled = booleanPreferencesKey("gamification_enabled")
         val adminUnlimited = booleanPreferencesKey("admin_unlimited")
         val adaptiveTargets = booleanPreferencesKey("adaptive_targets_enabled")
         val runGoalType = androidx.datastore.preferences.core.stringPreferencesKey("run_goal_type")
@@ -215,13 +214,6 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setRunOemWarningShown() {
         dataStore.edit { it[Keys.runOemWarningShown] = true }
-    }
-
-    val gamificationEnabled: Flow<Boolean> =
-        dataStore.data.map { it[Keys.gamificationEnabled] ?: false }
-
-    suspend fun setGamificationEnabled(enabled: Boolean) {
-        dataStore.edit { it[Keys.gamificationEnabled] = enabled }
     }
 
     val adminUnlimited: Flow<Boolean> =

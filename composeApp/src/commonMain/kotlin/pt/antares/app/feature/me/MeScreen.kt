@@ -42,12 +42,8 @@ fun MeScreen(
     onPhotosClick: () -> Unit,
     onStatsClick: () -> Unit,
     onRichInClick: () -> Unit,
-    onAchievementsClick: () -> Unit,
     onCoachClick: () -> Unit,
-    viewModel: MeViewModel = org.koin.compose.viewmodel.koinViewModel(),
 ) {
-    val showAchievements by viewModel.gamificationEnabled.collectAsState()
-
     Scaffold(
         topBar = {
             AntaresTopBar(
@@ -83,10 +79,6 @@ fun MeScreen(
             MeItem(Res.string.more_nutrition_stats, Icons.Default.BarChart, onStatsClick)
             MeItem(Res.string.rich_title, Icons.Default.Search, onRichInClick)
             MeItem(Res.string.coach_history_title, Icons.Default.AutoAwesome, onCoachClick)
-
-            if (showAchievements) {
-                MeItem(Res.string.ach_title, Icons.Default.EmojiEvents, onAchievementsClick)
-            }
         }
     }
 }

@@ -148,9 +148,6 @@ sealed interface Route {
     data object WorkoutSchedule : Route
 
     @Serializable
-    data object Achievements : Route
-
-    @Serializable
     data object Fasting : Route
 
     @Serializable

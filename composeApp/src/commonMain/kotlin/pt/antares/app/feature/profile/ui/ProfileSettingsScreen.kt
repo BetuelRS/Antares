@@ -460,25 +460,6 @@ fun ProfileSettingsScreen(
                 onChange = viewModel::setQuietHours,
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-            ) {
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(Res.string.settings_gamification), style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        stringResource(Res.string.settings_gamification_desc),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Switch(
-                    checked = state.gamificationEnabled,
-                    onCheckedChange = viewModel::setGamificationEnabled,
-                )
-            }
-
             state.aiUsage?.let { usage ->
                 SectionHeader(title = stringResource(Res.string.settings_section_ai))
                 AiQuotaMeter(usage)

@@ -42,7 +42,6 @@ fun SettingsScreen(
     onAdminClick: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
-    val gamification by viewModel.gamification.collectAsState()
     val adaptive by viewModel.adaptiveTargets.collectAsState()
     val mealNames by viewModel.mealNames.collectAsState()
 
@@ -134,12 +133,6 @@ fun SettingsScreen(
                         desc = stringResource(Res.string.settings_adaptive_desc),
                         checked = adaptive,
                         onChange = viewModel::setAdaptiveTargets,
-                    )
-                    ToggleRow(
-                        title = stringResource(Res.string.settings_gamification),
-                        desc = stringResource(Res.string.settings_gamification_desc),
-                        checked = gamification,
-                        onChange = viewModel::setGamification,
                     )
                 }
             }

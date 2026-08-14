@@ -23,8 +23,6 @@ import pt.antares.app.feature.recipe.RecipePickViewModel
 import pt.antares.app.feature.stats.NutritionStatsViewModel
 import pt.antares.app.feature.profile.ui.WeightViewModel
 import pt.antares.app.core.privacy.PrivacyViewModel
-import pt.antares.app.feature.achievements.AchievementsViewModel
-import pt.antares.app.feature.me.MeViewModel
 import pt.antares.app.feature.today.TodayViewModel
 import pt.antares.app.feature.workout.ui.ExerciseCreateViewModel
 import pt.antares.app.feature.workout.ui.ExerciseDetailViewModel
@@ -58,12 +56,10 @@ val viewModelModule = module {
     viewModel { pt.antares.app.feature.profile.ui.ShowMathsViewModel(get()) }
     viewModel { pt.antares.app.feature.profile.ui.MeasurementHistoryViewModel(get()) }
     viewModel { pt.antares.app.feature.profile.ui.DietBreakViewModel(get()) }
-    viewModel { MeViewModel(get()) }
     viewModel { pt.antares.app.feature.settings.SettingsViewModel(get()) }
     viewModel { pt.antares.app.feature.admin.AdminViewModel(get()) }
     viewModel { pt.antares.app.feature.admin.DemoViewModel(get()) }
     viewModel { pt.antares.app.feature.crash.CrashViewModel(get(), get(IoDispatcher)) }
-    viewModel { AchievementsViewModel(get(), get(), get(), get(), get()) }
     viewModel { pt.antares.app.feature.progress.ProgressViewModel(get(), get(), get(), get()) }
     viewModel { pt.antares.app.feature.progress.ProgressPhotosViewModel(get()) }
     viewModel { pt.antares.app.feature.profile.ui.CycleViewModel(get()) }

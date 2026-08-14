@@ -27,7 +27,6 @@ import pt.antares.app.feature.recipe.RecipePickViewModel
 import pt.antares.app.feature.settings.AttributionsScreen
 import pt.antares.app.feature.stats.NutritionStatsScreen
 import pt.antares.app.feature.about.AboutScreen
-import pt.antares.app.feature.achievements.AchievementsScreen
 import pt.antares.app.feature.me.AppMenuScreen
 import pt.antares.app.feature.me.MeScreen
 import pt.antares.app.feature.onboarding.OnboardingScreen
@@ -181,7 +180,6 @@ fun AntaresNavHost(
                 onPhotosClick = { navController.navigate(Route.ProgressPhotos) },
                 onStatsClick = { navController.navigate(Route.NutritionStats) },
                 onRichInClick = { navController.navigate(Route.RichIn()) },
-                onAchievementsClick = { navController.navigate(Route.Achievements) },
                 onCoachClick = { navController.navigate(Route.CoachHistory) },
             )
         }
@@ -205,10 +203,6 @@ fun AntaresNavHost(
         composable<Route.Admin> {
             pt.antares.app.feature.admin.AdminScreen(onBack = { navController.popBackStack() })
         }
-        composable<Route.Achievements> {
-            AchievementsScreen(onBack = { navController.popBackStack() })
-        }
-
         composable<Route.Onboarding> {
             OnboardingScreen(
                 onFinished = {

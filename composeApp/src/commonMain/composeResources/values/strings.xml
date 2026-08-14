@@ -679,16 +679,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_delete_confirm_server">Isto apaga a tua conta e TODOS os teus dados — neste telemóvel e no servidor. Não há como desfazer.</string>
     <string name="privacy_delete_cta">Apagar definitivamente</string>
     <string name="privacy_error">Não foi possível apagar no servidor: %1$s. Nada foi apagado no telemóvel.</string>
-    <string name="settings_gamification">Conquistas</string>
-    <string name="settings_gamification_desc">Mostra medalhas por treinos, corridas, jejuns, pesagens e pelo que muda no corpo.</string>
-    <string name="ach_title">Conquistas</string>
-    <string name="ach_summary">%1$d de %2$d desbloqueadas</string>
-    <string name="ach_cat_workouts">Treinos</string>
-    <string name="ach_cat_run">Distância (km)</string>
-    <string name="ach_cat_fasts">Jejuns</string>
-    <string name="ach_cat_weighins">Pesagens</string>
-    <string name="ach_cat_waist">Cintura perdida (cm)</string>
-    <string name="ach_cat_body_fat">Gordura perdida (pontos %)</string>
     <string name="today_fasting_title">Jejum</string>
     <string name="today_fasting_none">Sem jejum ativo</string>
 

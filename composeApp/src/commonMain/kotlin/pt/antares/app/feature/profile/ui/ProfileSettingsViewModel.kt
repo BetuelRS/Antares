@@ -37,7 +37,6 @@ data class ProfileSettingsState(
 
     val targets: Targets? = null,
     val fastingNotifications: Boolean = true,
-    val gamificationEnabled: Boolean = false,
     val adaptiveTargets: Boolean = true,
 
     val patternSuggestions: Boolean = false,
@@ -68,15 +67,13 @@ class ProfileSettingsViewModel(
             repository.observeLatestWeight(),
             repository.observeTargets(),
             preferences.fastingNotifications,
-            preferences.gamificationEnabled,
-        ) { profile, weight, targets, fastingNotif, gamification ->
+        ) { profile, weight, targets, fastingNotif ->
             ProfileSettingsState(
                 loading = false,
                 profile = profile,
                 latestWeightKg = weight?.weightKg,
                 targets = targets,
                 fastingNotifications = fastingNotif,
-                gamificationEnabled = gamification,
             )
         }
 
@@ -132,10 +129,6 @@ class ProfileSettingsViewModel(
 
     fun setFastingNotifications(enabled: Boolean) {
         viewModelScope.launch { preferences.setFastingNotifications(enabled) }
-    }
-
-    fun setGamificationEnabled(enabled: Boolean) {
-        viewModelScope.launch { preferences.setGamificationEnabled(enabled) }
     }
 
     fun setPatternSuggestions(enabled: Boolean) {

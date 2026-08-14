@@ -49,8 +49,6 @@ interface SearchMissDao {
     @Query("SELECT * FROM search_miss ORDER BY count DESC, lastSeenEpochDay DESC LIMIT :limit")
     suspend fun top(limit: Int = 100): List<SearchMissEntity>
 
-    @Query("SELECT COUNT(*) FROM search_miss")
-    suspend fun total(): Int
 
     @Query("DELETE FROM search_miss")
     suspend fun clear()

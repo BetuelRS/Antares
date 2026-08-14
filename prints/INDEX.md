@@ -37,7 +37,7 @@ O `80` e o `81` são a fronteira: o desbloqueio do administrador e a geração d
 | `80`, `81` | o seletor de nascimento depois de corrigido; o admin desbloqueado |
 | `82` a `93` | com dados: 11 432 registos, Hoje cheio, históricos, recordes, detalhe de corrida |
 | `94` a `99` | relatório semanal com números a sério, diário cheio |
-| `100` a `108` | jejum, estatísticas de nutrição com micronutrientes, conquistas |
+| `100` a `107` | jejum, estatísticas de nutrição com micronutrientes |
 
 ## O que foi apagado, e porquê
 
@@ -46,6 +46,8 @@ O `80` e o `81` são a fronteira: o desbloqueio do administrador e a geração d
 - `15-adicionar-exercicio.png` era **byte a byte igual** a `13-diario-com-registo.png`. Estava mal
   etiquetado: mostrava o diário, e não o ecrã que o nome anuncia. O ecrã verdadeiro é o `17`.
 - `26b-sessao-treino.png` era cópia exata do `26`.
+
+**Mais um, a 2026-08-15**: o `108-conquistas.png` mostrava um ecrã que a app deixou de ter.
 
 **Mais seis**, que estavam no repositório e já não estavam em disco: quatro imagens de WhatsApp e
 um `arro.jpeg`, de 2026-07-10, tiradas num telemóvel a sério. Não eram do percurso — eram relatos
