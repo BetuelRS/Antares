@@ -18,3 +18,4 @@ ficheiro fica e passa a **Substituída**, com o apontador para a que a substitui
 | [0003](0003-contas-em-funcoes-puras.md) | A aritmética vive em funções puras, longe do Android | Aceite |
 | [0004](0004-versionamento-derivado-do-nome.md) | O `versionCode` deriva do `versionName` | Aceite |
 | [0005](0005-documentacao-verificada-por-testes.md) | A documentação é verificada por testes | Aceite |
+| [0006](0006-sem-minificacao.md) | A app compila sem R8 | Aceite |
