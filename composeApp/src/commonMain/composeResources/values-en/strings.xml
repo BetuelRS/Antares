@@ -232,7 +232,7 @@
     <string name="settings_language_system">System language</string>
     <string name="settings_language_pt">Português</string>
     <string name="settings_language_en">English</string>
-    <string name="settings_language_hint">Changing the language restarts the app to apply it.</string>
+    <string name="settings_language_hint">The screen reloads to apply the language. Nothing is lost.</string>
     <string name="settings_general_behaviour">Behaviour</string>
     <string name="settings_section_body">Body</string>
     <string name="settings_section_goal">Goal</string>

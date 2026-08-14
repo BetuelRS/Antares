@@ -232,7 +232,7 @@
     <string name="settings_language_system">Idioma do sistema</string>
     <string name="settings_language_pt">Português</string>
     <string name="settings_language_en">English</string>
-    <string name="settings_language_hint">Ao mudar de idioma a app reinicia para aplicar.</string>
+    <string name="settings_language_hint">O ecrã volta a abrir para aplicar o idioma. Nada se perde.</string>
     <string name="settings_general_behaviour">Comportamento</string>
     <string name="settings_section_body">Corpo</string>
     <string name="settings_section_goal">Objetivo</string>
