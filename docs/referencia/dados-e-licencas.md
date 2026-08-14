@@ -67,9 +67,8 @@ Estão em `composeApp/src/commonMain/composeResources/files/`:
 | `seed_exercises.json` | free-exercise-db, via `tools/exercise-importer/` |
 | `seed_efsa_drv.csv` | valores de referência da EFSA |
 
-O `tools/seed-generator/` também escreve `seed_foods.json`, a partir do USDA em bruto. É o caminho
-antigo, anterior à CIQUAL passar a ser a base — o `seed_foods.json` que a app traz hoje veio do
-`ciqual-importer`, e vê-se pelo campo `origin` de cada registo.
+O campo `origin` de cada registo diz de onde veio: hoje o `seed_foods.json` tem 3385 `CIQUAL`,
+2940 `USDA` e 17 `PT_EXTRA`.
 
 Os conjuntos em bruto de que partem **não estão no repositório** — são grandes e voltam a
 descarregar-se. Ver [tools/README.md](../../tools/README.md).

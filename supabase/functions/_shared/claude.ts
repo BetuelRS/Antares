@@ -2,7 +2,6 @@
 // O modelo mais barato e rápido chega para a análise, que é sempre extração estruturada a
 // partir de texto ou imagem — não há aqui raciocínio livre a fazer.
 export const MODEL_ANALYSIS = 'claude-haiku-4-5';
-export const MODEL_COACH = 'claude-sonnet-5';
 
 export type ContentBlock =
   | { type: 'text'; text: string }

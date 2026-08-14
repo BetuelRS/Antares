@@ -99,5 +99,3 @@ Ver [Privacidade](privacidade.md) para o que sai e para onde.
 - O gerador de dados de demonstração calcula a carga a partir do código do exercício, sem olhar ao
   equipamento — daí aparecerem recordes de 155 kg em exercícios de mobilidade.
 - O resumo de uma corrida sem percurso deixa dois terços do ecrã vazios.
-- `supabase/functions/_shared/coach.ts` não tem chamador: sobra do relatório semanal gerado por
-  modelo, que passou a ser calculado no telemóvel.
