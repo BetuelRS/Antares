@@ -109,7 +109,7 @@ function kcalAgrees(a, b) {
 
 for (const f of ["alim.xml", "compo.xml"]) {
   if (!existsSync(join(DATA, f))) {
-    console.error(`Falta ${join(DATA, f)} — ver o README deste importador.`);
+    console.error(`Falta ${join(DATA, f)} — descarregar da CIQUAL; ver tools/README.md.`);
     process.exit(1);
   }
 }
