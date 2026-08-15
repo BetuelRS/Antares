@@ -49,6 +49,19 @@ object ProteinFloor {
     }
 
     /**
+     * Quantas semanas de histórico se olham, e quantos treinos acabados dentro delas contam
+     * como treinar força.
+     *
+     * Seis em quatro semanas é uma vez e meia por semana em média. Menos do que isto não é
+     * um hábito de treino — é ter ido ao ginásio —, e o intervalo de Helms fala de pessoas
+     * treinadas. A média perdoa uma semana falhada, que é o que acontece na vida real.
+     */
+    const val TRAINED_WINDOW_WEEKS = 4
+    const val TRAINED_MIN_SESSIONS = 6
+
+    fun treinaForca(sessoesAcabadas: Int): Boolean = sessoesAcabadas >= TRAINED_MIN_SESSIONS
+
+    /**
      * A fração do gasto que um défice representa. Sai zero quando não há défice ou quando o
      * gasto ainda não é conhecido — e zero cai no extremo leve, que é o lado seguro de errar.
      */

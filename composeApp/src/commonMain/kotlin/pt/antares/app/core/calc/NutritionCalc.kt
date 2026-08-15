@@ -108,7 +108,8 @@ object NutritionCalc {
 
     // Chão de proteína. Em défice sobe porque a proteína é o que impede o corpo de ir
     // buscar músculo à falta de calorias.
-    const val PROTEIN_FLOOR_PER_KG_LEAN_DEFICIT = 1.8
+    // Em défice o chão por massa magra vive no [ProteinFloor], que o faz escalar com o
+    // treino de força e com a profundidade do défice.
     const val PROTEIN_FLOOR_PER_KG_LEAN = 1.2
     const val PROTEIN_FLOOR_PER_KG_DEFICIT = 1.4
 
@@ -263,6 +264,10 @@ object NutritionCalc {
         profile: UserProfileEntity,
         weightKg: Double,
         todayEpochDay: Long,
+        // Sai do histórico de treinos, e não do nível de atividade: um trabalhador da
+        // construção é muito ativo e não treina força, e o intervalo de Helms fala de
+        // treino de resistência. Falso por omissão — quem chama sem saber não sobe nada.
+        treinaForca: Boolean = false,
     ): Targets {
         val warnings = mutableListOf<TargetWarning>()
 
@@ -306,7 +311,7 @@ object NutritionCalc {
             kcal = maxOf(absoluteFloor, bmrFloor)
         }
 
-        return macros(profile, weightKg, kcal, estimate, warnings, ageYears = age)
+        return macros(profile, weightKg, kcal, estimate, warnings, ageYears = age, treinaForca = treinaForca)
     }
 
     /**
@@ -320,12 +325,20 @@ object NutritionCalc {
         estimate: EnergyEstimate,
         warnings: MutableList<TargetWarning>,
         ageYears: Int,
+        treinaForca: Boolean,
     ): Targets {
         val lean = estimate.leanMassKg
         // Basta o ritmo ser negativo: quem escolheu manter mas pôs um défice manual está
         // em défice para efeitos de proteína.
         val inDeficit = profile.goalType == GoalType.LOSE || profile.goalRateKcal < 0
-        val proteinFloorG = proteinFloorG(weightKg, lean, inDeficit, ageYears)
+        val proteinFloorG = proteinFloorG(
+            weightKg = weightKg,
+            leanMassKg = lean,
+            inDeficit = inDeficit,
+            ageYears = ageYears,
+            treinaForca = treinaForca,
+            deficitFraction = ProteinFloor.deficitFraction(profile.goalRateKcal, estimate.tdee),
+        )
 
         if (profile.macroStrategy == MacroStrategy.CUSTOM) {
 
@@ -401,6 +414,10 @@ object NutritionCalc {
         leanMassKg: Double?,
         inDeficit: Boolean,
         ageYears: Int? = null,
+        // Quem treina força em défice precisa de mais — ver [ProteinFloor]. Por omissão
+        // falso: os dois só sobem o chão de quem tem as duas coisas comprovadas.
+        treinaForca: Boolean = false,
+        deficitFraction: Double = 0.0,
     ): Int {
 
         val rdaPerKg = if (ageYears != null && ageYears >= PROTEIN_OLDER_ADULT_AGE) {
@@ -410,12 +427,15 @@ object NutritionCalc {
         }
         val fromLeanOrWeight = if (leanMassKg != null) {
             val perKg = if (inDeficit) {
-                PROTEIN_FLOOR_PER_KG_LEAN_DEFICIT
+                ProteinFloor.perKgLean(treinaForca, deficitFraction)
             } else {
                 PROTEIN_FLOOR_PER_KG_LEAN
             }
             perKg * leanMassKg
         } else {
+            // Sem massa magra o chão não escala com o treino: o intervalo de Helms é por
+            // quilo de massa magra, e aplicá-lo ao peso todo dava mais proteína a quem tem
+            // mais gordura — exatamente ao contrário do que ele diz.
             val perKg = if (inDeficit) PROTEIN_FLOOR_PER_KG_DEFICIT else rdaPerKg
             perKg * weightKg
         }

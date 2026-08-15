@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
 import pt.antares.app.core.calc.GoalHistoryCalc
 import pt.antares.app.core.calc.NutritionCalc
+import pt.antares.app.core.calc.ProteinFloor
 import pt.antares.app.core.calc.Targets
 import pt.antares.app.core.coach.CoachRepository
 import pt.antares.app.core.database.daos.DailyTargetOverrideDao
@@ -13,6 +14,7 @@ import pt.antares.app.core.database.daos.FoodLogDao
 import pt.antares.app.core.database.daos.GoalHistoryDao
 import pt.antares.app.core.database.daos.UserProfileDao
 import pt.antares.app.core.database.daos.WeightLogDao
+import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.entities.GoalHistoryEntity
 import pt.antares.app.core.database.entities.UserProfileEntity
 import pt.antares.app.core.database.entities.WeightLogEntity
@@ -31,10 +33,17 @@ class ProfileRepository(
     private val overrideDao: DailyTargetOverrideDao,
     private val foodLogDao: FoodLogDao,
     private val goalDao: GoalHistoryDao,
+    // Só para saber se há hábito de treino de força, que sobe o chão de proteína em
+    // défice — ver [ProteinFloor]. O nível de atividade não serve: um trabalhador da
+    // construção é muito ativo e não treina.
+    private val workoutSessionDao: WorkoutSessionDao,
     private val io: CoroutineDispatcher,
 ) {
 
     private fun now(): Long = Clock.System.now().toEpochMilliseconds()
+
+    private fun inicioDaJanelaDeTreino(): Long =
+        now() - ProteinFloor.TRAINED_WINDOW_WEEKS * DAYS_PER_WEEK * MS_PER_DAY
 
     fun observeProfile(): Flow<UserProfileEntity?> = profileDao.observe()
 
@@ -113,7 +122,8 @@ class ProfileRepository(
             profileDao.observe(),
             weightDao.observeLatest(),
             overrideDao.observeByDay(epochDay),
-        ) { profile, weight, override ->
+            workoutSessionDao.observeFinishedSince(inicioDaJanelaDeTreino()),
+        ) { profile, weight, override, treinos ->
             when {
                 // Sem perfil não há metas nenhumas: é o que mantém a app no onboarding.
                 profile == null -> null
@@ -130,6 +140,7 @@ class ProfileRepository(
                     profile = profile,
                     weightKg = weight?.weightKg ?: DEFAULT_WEIGHT_KG,
                     todayEpochDay = epochDay,
+                    treinaForca = ProteinFloor.treinaForca(treinos),
                 )
             }
         }
@@ -140,7 +151,14 @@ class ProfileRepository(
             return@withContext Targets(kcal = it.kcal, proteinG = it.proteinG, carbsG = it.carbsG, fatG = it.fatG)
         }
         val weight = weightDao.latest()?.weightKg ?: DEFAULT_WEIGHT_KG
-        NutritionCalc.dailyTargets(profile = profile, weightKg = weight, todayEpochDay = epochDay)
+        NutritionCalc.dailyTargets(
+            profile = profile,
+            weightKg = weight,
+            todayEpochDay = epochDay,
+            treinaForca = ProteinFloor.treinaForca(
+                workoutSessionDao.finishedSince(inicioDaJanelaDeTreino()),
+            ),
+        )
     }
 
     /**
@@ -188,5 +206,8 @@ class ProfileRepository(
         // pesagens, e o intervalo é largo que chegue para não incomodar quem perdeu muito.
         const val TYPO_LOW_RATIO = 0.75
         const val TYPO_HIGH_RATIO = 1.25
+
+        private const val DAYS_PER_WEEK = 7L
+        private const val MS_PER_DAY = 86_400_000L
     }
 }

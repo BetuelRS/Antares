@@ -43,6 +43,7 @@ object Fabricas {
         db.dailyTargetOverrideDao(),
         db.foodLogDao(),
         db.goalHistoryDao(),
+        db.workoutSessionDao(),
         io,
     )
 

@@ -36,6 +36,7 @@ class PlateauHonestyTest {
             db.dailyTargetOverrideDao(),
             db.foodLogDao(),
             db.goalHistoryDao(),
+            db.workoutSessionDao(),
             Dispatchers.Default,
         )
     }

@@ -126,7 +126,7 @@ val coreModule = module {
 
     single { pt.antares.app.core.demo.DemoDataWriter(get(), get(IoDispatcher)) }
 
-    single { ProfileRepository(get(), get(), get(), get(), get(), get(IoDispatcher)) }
+    single { ProfileRepository(get(), get(), get(), get(), get(), get(), get(IoDispatcher)) }
     single {
         pt.antares.app.feature.profile.data.BodyMeasurementRepository(
             dao = get(),

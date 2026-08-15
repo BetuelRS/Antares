@@ -101,6 +101,20 @@ interface WorkoutSessionDao {
     @Query("SELECT * FROM workout_session WHERE deleted = 0 AND endedAt IS NOT NULL AND endedAt >= :fromMs")
     suspend fun endedSince(fromMs: Long): List<WorkoutSessionEntity>
 
+    // Contar em SQL e não trazer as sessões para memória: a pergunta é «treina força?» e é
+    // feita a cada recálculo da meta.
+    @Query(
+        "SELECT COUNT(*) FROM workout_session " +
+            "WHERE deleted = 0 AND status = 'DONE' AND endedAt IS NOT NULL AND endedAt >= :fromMs",
+    )
+    fun observeFinishedSince(fromMs: Long): Flow<Int>
+
+    @Query(
+        "SELECT COUNT(*) FROM workout_session " +
+            "WHERE deleted = 0 AND status = 'DONE' AND endedAt IS NOT NULL AND endedAt >= :fromMs",
+    )
+    suspend fun finishedSince(fromMs: Long): Int
+
     @Query(
         "SELECT * FROM workout_session WHERE deleted = 0 AND status = 'DONE' " +
             "AND startedAt BETWEEN :fromMs AND :toMs",
