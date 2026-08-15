@@ -25,6 +25,9 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `BackupRulesTest` | a cópia de segurança do Android levar o que não deve | as regras XML mudaram |
 | `NumericFieldsTest` | campos numéricos abrirem o teclado errado | falta o `KeyboardType` |
 | `WeightDisplayTest` | o peso aparecer na unidade errada | a conversão saiu do sítio |
+| `IndicesQuentesTest` | perder um índice de que uma consulta repetida depende | apagaste um `Index` a pensar que sobrava. A app continua certa e passa a varrer a tabela toda — o custo só aparece a quem já tem anos de dados |
+| `SeedFalhadoDeixaRastoTest` | um catálogo que falha a semear ficar vazio em silêncio | a leitura do seed deixou de registar no `CrashStore` |
+| `BackupImportRollbackTest` | uma importação falhada deixar a pessoa sem os dados velhos e com metade dos novos | o restauro saiu da transação. Ver [a decisão](../explicacao/decisoes/0002-lapides-e-indices-unicos.md) |
 
 ## Onde estão
 
