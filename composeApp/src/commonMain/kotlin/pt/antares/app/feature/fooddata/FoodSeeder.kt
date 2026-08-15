@@ -12,6 +12,8 @@ import pt.antares.app.core.database.AntaresDb
 import pt.antares.app.core.database.DbInfo
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodFtsEntity
+import pt.antares.app.core.database.entities.FoodNutrientEntity
+import pt.antares.app.core.nutrition.microsDeJson
 import pt.antares.app.core.fooddata.DrinkClassifier
 import pt.antares.app.core.fooddata.UsdaNameCleaner
 import pt.antares.app.core.model.FoodSource
@@ -79,7 +81,33 @@ class FoodSeeder(
         markAnalysedVerifiedIfNeeded()
         enrichCuratedWithMicrosIfNeeded()
         stampCatalogueRebuildIfNeeded()
+        indexarMicrosIfNeeded()
     }
+
+    /**
+     * Enche a `food_nutrient` a partir do JSON que já está no catálogo.
+     *
+     * Corre **depois** de todos os passos que mexem em alimentos, porque é deles que
+     * copia. A tabela é derivada: se a marca sumir, reconstrói-se sem perder nada.
+     */
+    private suspend fun indexarMicrosIfNeeded() {
+        if (db.dbInfoDao().get(KEY_MICROS_INDEXADOS)?.value == DONE_MICROS_INDEXADOS) return
+
+        db.foodNutrientDao().clearAll()
+        db.foodDao().microsParaIndexar()
+            .flatMap { linha -> linhasDe(linha.id, linha.microsJson) }
+            .chunked(LOTE_DE_ESCRITA)
+            .forEach { db.foodNutrientDao().upsertAll(it) }
+
+        db.dbInfoDao().upsert(DbInfo(KEY_MICROS_INDEXADOS, DONE_MICROS_INDEXADOS))
+    }
+
+    // Valores a zero ficam de fora: um nutriente declarado a zero não é o alimento ser
+    // rico nele, e enchia a tabela com linhas que nenhuma pergunta quer.
+    private fun linhasDe(foodId: String, microsJson: String?): List<FoodNutrientEntity> =
+        microsDeJson(microsJson)
+            .filterValues { it > 0 }
+            .map { (chave, valor) -> FoodNutrientEntity(foodId = foodId, key = chave, value = valor) }
 
     private suspend fun stampCatalogueRebuildIfNeeded() {
         if (db.dbInfoDao().get(KEY_REBUILT_DAY) != null) return
@@ -311,6 +339,13 @@ class FoodSeeder(
         const val KEY_REBUILT_DAY = "catalogue_rebuilt_day"
 
         private const val KEY_PT_MICROS = "curated_micros_enriched"
+
+        private const val KEY_MICROS_INDEXADOS = "micros_indexed"
+        private const val DONE_MICROS_INDEXADOS = "v1"
+
+        // Lotes de escrita, para não montar uma instrução com dezenas de milhares de
+        // parâmetros de uma vez.
+        private const val LOTE_DE_ESCRITA = 500
 
         private const val DONE_PT_MICROS = "v2"
 

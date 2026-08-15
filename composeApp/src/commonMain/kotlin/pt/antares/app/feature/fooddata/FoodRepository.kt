@@ -12,9 +12,14 @@ import pt.antares.app.core.util.FtsQuery
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.core.util.todayEpochDay
+import pt.antares.app.core.database.daos.FoodNutrientDao
+import pt.antares.app.core.database.entities.FoodNutrientEntity
+import pt.antares.app.core.nutrition.NutrientDensity
+import pt.antares.app.core.nutrition.microsDeJson
 
 class FoodRepository(
     private val foodDao: FoodDao,
+    private val nutrientDao: FoodNutrientDao,
     private val searchMissDao: SearchMissDao,
     private val io: CoroutineDispatcher,
 ) {
@@ -48,8 +53,25 @@ class FoodRepository(
 
     suspend fun byId(id: String): FoodEntity? = withContext(io) { foodDao.byId(id) }
 
-    suspend fun foodsWithNutrient(key: String): List<FoodEntity> =
-        withContext(io) { foodDao.foodsWithNutrient(key) }
+    /**
+     * Alimentos ricos num nutriente, já ordenados por densidade e já sem os que a regra
+     * exclui. Antes disto vinham até 1500 alimentos inteiros para memória, a filtrar com
+     * `LIKE` dentro do JSON; agora é uma junção por índice, e o limite passa a ser o
+     * comprimento da lista que se mostra em vez de um teto para a memória aguentar.
+     *
+     * Os cortes vêm das constantes do [NutrientDensity], convertidos aqui em valores
+     * absolutos porque dependem da referência diária de quem está a perguntar.
+     */
+    suspend fun foodsWithNutrient(key: String, drv: Double, limit: Int): List<FoodEntity> =
+        withContext(io) {
+            if (drv <= 0) return@withContext emptyList()
+            nutrientDao.richIn(
+                key = key,
+                minPer100Kcal = drv * NutrientDensity.MIN_PER_KCAL_PCT / 100.0,
+                maxPer100g = drv * NutrientDensity.MAX_PER_100G_PCT / 100.0,
+                limit = limit,
+            )
+        }
 
     suspend fun byBarcode(barcode: String): FoodEntity? = withContext(io) { foodDao.byBarcode(barcode) }
 
@@ -80,10 +102,26 @@ class FoodRepository(
      * por ela que se procuram produtos de embalagem, e não pelo nome genérico.
      */
     suspend fun cacheOnline(food: FoodEntity) = withContext(io) {
-        foodDao.upsertWithFts(
+        guardarComIndice(
             food,
             TextNormalize.normalize("${food.namePt} ${food.nameEn} ${food.brand.orEmpty()}"),
         )
+    }
+
+    /**
+     * Grava o alimento e reescreve as linhas dele na `food_nutrient`.
+     *
+     * Existe para o índice não descolar do JSON: um produto lido de um código de barras
+     * traz micronutrientes, e sem isto ficava fora do «rico em» até à próxima sementeira
+     * — ou seja, para sempre.
+     */
+    private suspend fun guardarComIndice(food: FoodEntity, searchText: String) {
+        foodDao.upsertWithFts(food, searchText)
+        nutrientDao.clearFood(food.id)
+        val linhas = microsDeJson(food.microsJson)
+            .filterValues { it > 0 }
+            .map { (chave, valor) -> FoodNutrientEntity(food.id, chave, valor) }
+        if (linhas.isNotEmpty()) nutrientDao.upsertAll(linhas)
     }
 
     suspend fun upsertCustom(
@@ -134,7 +172,7 @@ class FoodRepository(
             updatedAt = now(),
             dirty = true,
         )
-        foodDao.upsertWithFts(food, TextNormalize.normalize("${food.namePt} ${food.nameEn}"))
+        guardarComIndice(food, TextNormalize.normalize("${food.namePt} ${food.nameEn}"))
         food
     }
 }

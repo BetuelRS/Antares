@@ -25,6 +25,11 @@ class GdprTableParityTest {
     private val naoSaoDaPessoa = mapOf(
         "db_info" to "flags internas do seeder e da app; não é dado de ninguém",
         "foods_fts" to "índice de pesquisa do catálogo, reconstruído a partir do `foods`",
+        "food_nutrient" to
+            "os mesmos micronutrientes do `microsJson`, virados ao contrário para se " +
+            "poder perguntar que alimentos têm um nutriente. O `foods` **vai** na " +
+            "exportação, e é dele que esta tabela se reconstrói — exportá-la seria " +
+            "mandar duas vezes a mesma informação",
         "track_point" to
             "pontos crus do GPS, podados assim que o resumo da corrida grava — " +
             "o percurso vive na polyline do `run`, que **vai** na exportação",

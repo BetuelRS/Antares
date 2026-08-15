@@ -88,18 +88,11 @@ interface FoodDao {
     suspend fun byId(id: String): FoodEntity?
 
     /**
-     * Alimentos que declaram um micronutriente, para sugerir onde o ir buscar. Procura
-     * dentro do JSON com LIKE — não há índice possível — e daí o limite.
+     * Só o que é preciso para encher a `food_nutrient`. Trazer os alimentos inteiros para
+     * memória para ler duas colunas é exatamente o que essa tabela existe para evitar.
      */
-    @Query(
-        """
-        SELECT * FROM foods
-        WHERE deleted = 0 AND kcal > 0
-          AND microsJson LIKE '%"' || :key || '":%'
-        LIMIT :limit
-        """,
-    )
-    suspend fun foodsWithNutrient(key: String, limit: Int = 1500): List<FoodEntity>
+    @Query("SELECT id, microsJson FROM foods WHERE microsJson IS NOT NULL AND deleted = 0")
+    suspend fun microsParaIndexar(): List<FoodMicrosRow>
 
     @Query("SELECT * FROM foods WHERE sourceRef = :barcode AND deleted = 0 LIMIT 1")
     suspend fun byBarcode(barcode: String): FoodEntity?
@@ -382,3 +375,5 @@ interface WaterLogDao {
 }
 
 data class FoodIdName(val id: String, val namePt: String)
+
+data class FoodMicrosRow(val id: String, val microsJson: String?)

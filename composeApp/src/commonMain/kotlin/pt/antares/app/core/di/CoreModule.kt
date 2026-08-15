@@ -97,6 +97,7 @@ val coreModule = module {
     single { get<AntaresDb>().dailyTargetOverrideDao() }
     single { get<AntaresDb>().foodDao() }
     single { get<AntaresDb>().foodLogDao() }
+    single { get<AntaresDb>().foodNutrientDao() }
 
     single { get<AntaresDb>().dbInfoDao() }
     single { get<AntaresDb>().waterLogDao() }
@@ -140,7 +141,7 @@ val coreModule = module {
             io = get(IoDispatcher),
         )
     }
-    single { FoodRepository(get(), get(), get(IoDispatcher)) }
+    single { FoodRepository(get(), get(), get(), get(IoDispatcher)) }
     single { DiaryRepository(get(), get(), get(IoDispatcher)) }
     single {
         pt.antares.app.feature.templates.MealTemplateRepository(

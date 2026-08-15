@@ -139,7 +139,7 @@ class FoodDaosTest {
 
     @Test
     fun `reimportar nao duplica o alimento na pesquisa`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
         val f = food("1", "Pão de centeio")
         insertSearchable(f)
 
@@ -154,7 +154,7 @@ class FoodDaosTest {
 
     @Test
     fun `dedupeFts repara um indice que ja ficou duplicado`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
         val f = food("1", "Pão de centeio")
         insertSearchable(f)
 
@@ -170,7 +170,7 @@ class FoodDaosTest {
 
     @Test
     fun `pesquisa sem acentos encontra com acentos`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
         insertSearchable(food("1", "Pão de centeio"))
         insertSearchable(food("2", "Maçã reineta"))
 
@@ -181,7 +181,7 @@ class FoodDaosTest {
 
     @Test
     fun `ranking favorito antes de recente antes de alfabetico`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
         insertSearchable(food("b", "Arroz basmati"))
         insertSearchable(food("i", "Arroz integral", lastUsed = 100L))
         insertSearchable(food("w", "Arroz branco", favorite = true))
@@ -192,7 +192,7 @@ class FoodDaosTest {
 
     @Test
     fun `curados PT aparecem antes dos USDA na pesquisa`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
 
         insertSearchable(food("usda-1", "Beverages, cafe substitute, cereal grain, powder"))
         insertSearchable(food("ptx_cafe_leite", "Café com leite"))
@@ -222,7 +222,7 @@ class FoodDaosTest {
 
     @Test
     fun `limpeza mantem pesquisa PT via indice FTS intacto`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
 
         insertSearchable(
             food("usda-5", namePt = "Leite dessert, congelado", nameEn = "Milk dessert, frozen"),
@@ -237,7 +237,7 @@ class FoodDaosTest {
 
     @Test
     fun `barcode cacheado resolve sem rede no segundo scan`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
 
         val product = food("off_560123", "Água com gás").copy(
             source = pt.antares.app.core.model.FoodSource.OFF,
@@ -321,7 +321,7 @@ class FoodDaosTest {
         foods.chunked(400).forEach { db.foodDao().insertAll(it) }
         fts.chunked(400).forEach { db.foodDao().insertFtsAll(it) }
 
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
 
         repeat(5) { repo.search(categorias[it % categorias.size]) }
 
@@ -340,7 +340,7 @@ class FoodDaosTest {
     @Test
     fun `touchLastUsed guarda a quantidade usada`() = runTest {
         db.foodDao().insertAll(listOf(food("f1", "Arroz")))
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
 
         repo.touchLastUsed("f1", amountG = 85.0)
 
@@ -350,7 +350,7 @@ class FoodDaosTest {
     @Test
     fun `touchLastUsed sem quantidade NAO apaga a que la estava`() = runTest {
         db.foodDao().insertAll(listOf(food("f1", "Arroz")))
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
         repo.touchLastUsed("f1", amountG = 85.0)
 
         repo.touchLastUsed("f1")
@@ -361,7 +361,7 @@ class FoodDaosTest {
     @Test
     fun `registar outra vez substitui a quantidade anterior`() = runTest {
         db.foodDao().insertAll(listOf(food("f1", "Arroz")))
-        val repo = FoodRepository(db.foodDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
 
         repo.touchLastUsed("f1", amountG = 85.0)
         repo.touchLastUsed("f1", amountG = 120.0)

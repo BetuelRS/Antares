@@ -24,6 +24,7 @@ import pt.antares.app.core.database.daos.ExerciseLogDao
 import pt.antares.app.core.database.daos.FastingProtocolDao
 import pt.antares.app.core.database.daos.FastingSessionDao
 import pt.antares.app.core.database.daos.FoodDao
+import pt.antares.app.core.database.daos.FoodNutrientDao
 import pt.antares.app.core.database.daos.FoodLogDao
 import pt.antares.app.core.database.daos.MealTemplateDao
 import pt.antares.app.core.database.daos.MealTemplateItemDao
@@ -48,6 +49,7 @@ import pt.antares.app.core.database.entities.DailyTargetOverrideEntity
 import pt.antares.app.core.database.entities.ExerciseLogEntity
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodFtsEntity
+import pt.antares.app.core.database.entities.FoodNutrientEntity
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.database.entities.MealTemplateEntity
 import pt.antares.app.core.database.entities.MealTemplateItemEntity
@@ -104,6 +106,7 @@ interface DbInfoDao {
         BodyMeasurementEntity::class,
         FoodEntity::class,
         FoodFtsEntity::class,
+        FoodNutrientEntity::class,
         FoodLogEntity::class,
         WaterLogEntity::class,
         RecipeEntity::class,
@@ -128,7 +131,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 22,
+    version = 23,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -154,6 +157,7 @@ interface DbInfoDao {
         AutoMigration(from = 19, to = 20),
         AutoMigration(from = 20, to = 21, spec = AntaresDb.DropSyncMeta::class),
         AutoMigration(from = 21, to = 22),
+        AutoMigration(from = 22, to = 23),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)
@@ -173,6 +177,7 @@ abstract class AntaresDb : RoomDatabase() {
     abstract fun progressPhotoDao(): ProgressPhotoDao
     abstract fun cycleDao(): CycleDao
     abstract fun foodDao(): FoodDao
+    abstract fun foodNutrientDao(): FoodNutrientDao
     abstract fun foodLogDao(): FoodLogDao
     abstract fun waterLogDao(): WaterLogDao
     abstract fun recipeDao(): RecipeDao

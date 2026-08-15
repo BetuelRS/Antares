@@ -43,7 +43,7 @@ class RichInViewModel(
             val perfil = profileRepository.observeProfile().first()
             val sex = perfil?.sex ?: Sex.MALE
             val drv = statsRepository.loadReference().forKey(key)?.forPerson(sex, perfil?.lifeStage) ?: 0.0
-            val candidates = foodRepository.foodsWithNutrient(key)
+            val candidates = foodRepository.foodsWithNutrient(key, drv, NutrientDensity.LIST_LIMIT)
 
             val micros = candidates.associate { food ->
                 food.id to microsDeJson(food.microsJson)

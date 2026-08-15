@@ -23,13 +23,17 @@ object NutrientDensity {
     // densíssimos e ganhariam sempre, mas ninguém come 100 g de canela.
     const val MAX_PER_100G_PCT = 400
 
+    // O comprimento da lista que o ecrã mostra. Não é um teto para a memória aguentar:
+    // a consulta já sai ordenada por densidade, e daqui para baixo ninguém desce.
+    const val LIST_LIMIT = 40
+
     /** `foods` são triplos de identificador, nome e calorias por 100 g. */
     fun rank(
         foods: List<Triple<String, String, Int>>,
         microsByFood: Map<String, Map<String, Double>>,
         key: String,
         drv: Double,
-        limit: Int = 40,
+        limit: Int = LIST_LIMIT,
     ): List<NutrientRich> {
         if (drv <= 0) return emptyList()
         return foods.mapNotNull { (id, name, kcal) ->
