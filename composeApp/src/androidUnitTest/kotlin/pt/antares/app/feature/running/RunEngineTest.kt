@@ -91,4 +91,42 @@ class RunEngineTest {
         assertTrue(r.metrics.elevGainM > 0.0)
         assertTrue(r.metrics.elevGainM < 20.0, "ganho=${r.metrics.elevGainM}")
     }
+
+    @Test
+    fun `as calorias da corrida descontam o repouso do periodo`() {
+        val engine = RunEngine(ActivityType.RUN, weightKg = 70.0)
+        feed(engine, GpxTestReader.read("clean_run.gpx"))
+        val r = engine.finish()
+
+        // Um quilómetro a 70 kg custa cerca de 70 kcal em bruto. Estar vivo durante os
+        // mesmos oito minutos custa cerca de 9, e essas já estão na meta do dia.
+        val bruto = 1.0 * 70.0 * (r.metrics.distanceM / 1000.0)
+        val repouso = 70.0 * (r.metrics.movingMs / 3_600_000.0)
+
+        assertPerto((bruto - repouso).toInt(), r.metrics.kcal, tolerancia = 1)
+        assertTrue(
+            r.metrics.kcal < bruto.toInt(),
+            "somar o valor bruto ao orçamento contava o repouso duas vezes",
+        )
+    }
+
+    @Test
+    fun `os parciais somam o total`() {
+        val engine = RunEngine(ActivityType.RUN, weightKg = 70.0)
+        feed(engine, GpxTestReader.read("clean_run.gpx"))
+        val r = engine.finish()
+
+        // O desconto aplica-se aos dois pela mesma via; se se aplicasse só ao total, os
+        // quilómetros no ecrã deixavam de somar o número grande.
+        assertPerto(r.metrics.kcal, r.splits.sumOf { it.kcal }, tolerancia = r.splits.size + 1)
+    }
+}
+
+// Arredondamento por parcial: cada quilómetro arredonda o seu, e a soma pode afastar-se do
+// total em uma caloria por parcial.
+private fun assertPerto(esperado: Int, obtido: Int, tolerancia: Int) {
+    kotlin.test.assertTrue(
+        kotlin.math.abs(esperado - obtido) <= tolerancia,
+        "esperava $esperado ± $tolerancia, veio $obtido",
+    )
 }

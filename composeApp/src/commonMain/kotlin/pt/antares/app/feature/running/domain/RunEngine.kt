@@ -1,5 +1,6 @@
 package pt.antares.app.feature.running.domain
 
+import pt.antares.app.core.calc.MetCalc
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -35,6 +36,13 @@ class RunEngine(
         const val AUTO_PAUSE_HOLD_MS = 10_000L
         const val ELEV_WINDOW = 5
         const val EARTH_R = 6_371_000.0
+
+        // Correr custa cerca de uma caloria por quilo e por quilómetro, quase
+        // independentemente do ritmo; andar custa pouco mais de metade. De bicicleta não há
+        // regra por distância — a resistência do ar domina —, e por isso essa passa pelo MET
+        // da velocidade. Os três valores são brutos: o repouso sai depois, no `liquido`.
+        const val RUN_KCAL_PER_KG_KM = 1.0
+        const val WALK_KCAL_PER_KG_KM = 0.53
     }
 
     // Teto de velocidade plausível, em metros por segundo: acima disto é um salto do GPS e
@@ -185,23 +193,41 @@ class RunEngine(
         smoothedAlt = avg
     }
 
-    // Correr custa cerca de uma caloria por quilo e por quilómetro, quase independentemente
-    // do ritmo; andar custa pouco mais de metade. De bicicleta não há regra por distância —
-    // a resistência do ar domina — e por isso essa passa pelo MET da velocidade.
-    private fun splitKcal(distM: Double, movingMsSeg: Long): Double = when (type) {
-        ActivityType.RUN -> 1.0 * weightKg * (distM / 1000.0)
-        ActivityType.WALK -> 0.53 * weightKg * (distM / 1000.0)
+    private fun splitKcal(distM: Double, movingMsSeg: Long): Double {
+        val bruto = when (type) {
+            ActivityType.RUN -> RUN_KCAL_PER_KG_KM * weightKg * (distM / 1000.0)
+            ActivityType.WALK -> WALK_KCAL_PER_KG_KM * weightKg * (distM / 1000.0)
 
-        ActivityType.RIDE -> {
-            val speed = if (movingMsSeg > 0) distM / (movingMsSeg / 1000.0) else 0.0
-            metForCycling(speed) * weightKg * (movingMsSeg / 3_600_000.0)
+            ActivityType.RIDE -> {
+                val speed = if (movingMsSeg > 0) distM / (movingMsSeg / 1000.0) else 0.0
+                metForCycling(speed) * weightKg * (movingMsSeg / 3_600_000.0)
+            }
         }
+        return liquido(bruto, movingMsSeg)
     }
 
-    private fun totalKcal(): Int = when (type) {
-        ActivityType.RUN -> (1.0 * weightKg * (distanceM / 1000.0)).roundToInt()
-        ActivityType.WALK -> (0.53 * weightKg * (distanceM / 1000.0)).roundToInt()
-        ActivityType.RIDE -> kcalRide.roundToInt()
+    private fun totalKcal(movingMsVal: Long): Int {
+        val bruto = when (type) {
+            ActivityType.RUN -> RUN_KCAL_PER_KG_KM * weightKg * (distanceM / 1000.0)
+            ActivityType.WALK -> WALK_KCAL_PER_KG_KM * weightKg * (distanceM / 1000.0)
+            ActivityType.RIDE -> kcalRide
+        }
+        return liquido(bruto, movingMsVal).roundToInt()
+    }
+
+    /**
+     * O que a corrida gastou **a mais** do que estar parado.
+     *
+     * As contas por quilómetro e por MET dão o gasto total do período, repouso incluído, e
+     * o repouso já está na meta diária — somá-lo ao orçamento contava-o duas vezes. Num
+     * quilómetro a correr o desconto anda pelos 9%; a andar, mais.
+     *
+     * Aplica-se aos parciais e ao total pela mesma via, senão os quilómetros no ecrã
+     * deixavam de somar o número grande.
+     */
+    private fun liquido(bruto: Double, movingMsSeg: Long): Double {
+        val repouso = MetCalc.REST_MET * weightKg * (movingMsSeg / 3_600_000.0)
+        return max(0.0, bruto - repouso)
     }
 
     private fun metrics(): RunMetrics {
@@ -215,7 +241,7 @@ class RunEngine(
             movingMs = moving,
             avgPaceSecPerKm = paceSecPerKm(distanceM, moving),
             curSpeedMps = curSpeedMps,
-            kcal = totalKcal(),
+            kcal = totalKcal(moving),
             elevGainM = elevGainM,
             paused = paused,
         )
