@@ -134,6 +134,48 @@ Dois pormenores que custam tempo a descobrir:
   segundo argumento o alimento existe e não se encontra.
 - O `FoodLogDao` não tem `byDay`. É `dayLogs(epochDay)`.
 
+## Escrever um teste de fluxo pela interface
+
+O `FluxoUiHarness` monta o que um ecrã precisa para correr a sério: base em memória,
+`DataStore` temporário, os recursos do Compose e um Koin mínimo. Todos os ecrãs aceitam o
+ViewModel por parâmetro, e é assim que se lhes dá o do teste em vez do da app.
+
+```kotlin
+@OptIn(ExperimentalTestApi::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class, qualifiers = "w411dp-h891dp")
+class TreinoSerieUiTest : FluxoUiHarness() {
+
+    @Test
+    fun `gravar uma serie poe o descanso a andar`() = runComposeUiTest {
+        arrancaKoin()
+        val vm = WorkoutSessionViewModel(...)
+        setContent { WorkoutSessionScreen(routineId = "r1", ..., viewModel = vm) }
+
+        waitUntil("o exercício nunca apareceu", 5_000) { ... }
+    }
+}
+```
+
+Cinco coisas que custam uma tarde a descobrir:
+
+- **A janela por omissão do Robolectric tem 320 dp**, mais estreita do que qualquer
+  telemóvel atual. Numa linha larga, o último botão fica com **zero de largura** e o
+  `performClick` não faz nada — sem erro nenhum. Daí o `qualifiers = "w411dp-h891dp"`.
+- **O rótulo de uma caixa de texto é um nó ao lado dela.** `onNodeWithText(rótulo)` encontra
+  o rótulo, e escrever nele não escreve no campo. Procurar por `hasSetTextAction()`.
+- **O despachante é o `Unconfined`, não um de teste.** O `runComposeUiTest` traz o seu
+  próprio relógio, e dois relógios a controlar as mesmas corrotinas travam-se um ao outro.
+- **O Room recusa o `Unconfined`** — pede-lhe `limitedParallelism`. A base do harness fica
+  com o `Default`, e por isso as afirmações sobre ela usam `waitUntil` em vez de assumir.
+- **Afirmar sobre texto visível, nunca sobre posição.** E ler o texto com `Textos` dentro do
+  `setContent`: um teste que escreva a frase à mão passa a falhar quando alguém lhe corrigir
+  uma vírgula.
+
+Para uma base de dados a sério montada como na app — as 26 fontes de exportação incluídas —
+troca-se só a base no Koin, como no `RestaurarBackupTest`: a verdadeira usa SQLite nativo,
+que não existe num teste de JVM.
+
 ## Como se escrevem os nomes
 
 Frases em português, a afirmar o comportamento que se perde se partir:

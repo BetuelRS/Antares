@@ -77,103 +77,21 @@ abstract class ViewModelHarness {
         prefsFile.delete()
     }
 
-    protected fun diaryRepository() = DiaryRepository(db.foodLogDao(), db.waterLogDao(), dispatcher)
+    protected fun diaryRepository() = Fabricas.diaryRepository(db, dispatcher)
 
-    protected fun profileRepository() = ProfileRepository(
-        db.userProfileDao(),
-        db.weightLogDao(),
-        db.dailyTargetOverrideDao(),
-        db.foodLogDao(),
-        db.goalHistoryDao(),
-        dispatcher,
-    )
+    protected fun profileRepository() = Fabricas.profileRepository(db, dispatcher)
 
-    protected fun statsRepository() =
-        NutritionStatsRepository(db.foodLogDao(), db.dbInfoDao(), dispatcher)
+    protected fun statsRepository() = Fabricas.statsRepository(db, dispatcher)
 
     protected fun diaryViewModel() = DiaryViewModel(
         diaryRepository = diaryRepository(),
         profileRepository = profileRepository(),
         exerciseRepository = ExerciseRepository(db.exerciseLogDao(), dispatcher),
         preferences = prefs,
-        templateRepository = MealTemplateRepository(
-            db.foodLogDao(),
-            db.mealTemplateDao(),
-            db.mealTemplateItemDao(),
-            dispatcher,
-        ),
+        templateRepository = Fabricas.mealTemplateRepository(db, dispatcher),
         statsRepository = statsRepository(),
     )
 
-    protected fun todayViewModel(
-        gateway: HealthGateway = CountingHealthGateway(),
-    ): TodayViewModel {
-        var lastImport = 0L
-        var lastPublish = 0L
-        val health = HealthRepository(
-            gateway = gateway,
-            weights = object : HealthRepository.WeightWriter {
-                override suspend fun importedRefs() = emptySet<String>()
-                override suspend fun existsOnDay(epochDay: Long) = false
-                override suspend fun insert(entry: WeightLogEntity) = db.weightLogDao().upsert(entry)
-            },
-            exercise = object : HealthRepository.ExerciseWriter {
-                override suspend fun importedRefs() = emptySet<String>()
-                override suspend fun insert(log: ExerciseLogEntity) = db.exerciseLogDao().upsert(log)
-            },
-            ownWindows = { emptyList() },
-            latestWeightKg = { db.weightLogDao().latest()?.weightKg },
-            lastImportAt = { lastImport },
-            setLastImportAt = { lastImport = it },
-            io = dispatcher,
-            now = { Clock.System.now().toEpochMilliseconds() },
-            epochDayOf = { it / 86_400_000L },
-        )
-        val publisher = HealthPublisher(
-            gateway = gateway,
-            nutrition = { emptyList() },
-            sessions = { emptyList() },
-            bodyComposition = { emptyList() },
-            lastPublishAt = { lastPublish },
-            setLastPublishAt = { lastPublish = it },
-            io = dispatcher,
-            now = { Clock.System.now().toEpochMilliseconds() },
-        )
-        return TodayViewModel(
-            profileRepository = profileRepository(),
-            diaryRepository = diaryRepository(),
-            exerciseRepository = ExerciseRepository(db.exerciseLogDao(), dispatcher),
-            workoutSessionRepository = WorkoutSessionRepository(
-                db.workoutSessionDao(),
-                db.workoutSetDao(),
-                db.exerciseLogDao(),
-                db.weightLogDao(),
-                db.routineDao(),
-                dispatcher,
-            ),
-            workoutHistoryRepository = WorkoutHistoryRepository(
-                db.workoutSessionDao(),
-                db.workoutSetDao(),
-                db.exerciseLibraryDao(),
-                dispatcher,
-            ),
-            routineRepository = RoutineRepository(
-                db.routineDao(),
-                db.exerciseLibraryDao(),
-                db.routineScheduleDao(),
-                dispatcher,
-            ),
-            fastingRepository = FastingRepository(
-                db.fastingProtocolDao(),
-                db.fastingSessionDao(),
-                NoopFastingNotifier(),
-                dispatcher,
-            ),
-            runRepository = RunRepository(db.runDao(), db.exerciseLogDao(), dispatcher),
-            preferences = prefs,
-            statsRepository = statsRepository(),
-            health = health,
-            healthPublisher = publisher,
-        )
-    }
+    protected fun todayViewModel(gateway: HealthGateway = CountingHealthGateway()): TodayViewModel =
+        Fabricas.todayViewModel(db, prefs, dispatcher, gateway)
 }
