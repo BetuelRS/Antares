@@ -35,7 +35,8 @@ class RichInViewModel(
     suspend fun searchableKeys(): List<String> =
         statsRepository.loadReference().all().map { it.key }
 
-            .filter { (it in Nutrients.VITAMINS || it in Nutrients.MINERALS) && it != Nutrients.SODIUM }
+            .filter { it in Nutrients.VITAMINS || it in Nutrients.MINERALS }
+            .filter { it !in Nutrients.TETOS }
 
     fun pick(key: String) {
         _state.update { it.copy(loading = true, key = key, results = emptyList()) }

@@ -36,8 +36,19 @@ fun microLabelRes(key: String): StringResource = when (key) {
     "phosphorus_mg" -> Res.string.stat_micro_phosphorus_mg
     "manganese_mg" -> Res.string.stat_micro_manganese_mg
     "iodine_ug" -> Res.string.stat_micro_iodine_ug
+    "chloride_mg" -> Res.string.stat_micro_chloride_mg
     "fiber_g" -> Res.string.stat_micro_fiber_g
     "sodium_mg" -> Res.string.stat_micro_sodium_mg
+
+    "omega3_g" -> Res.string.stat_micro_omega3_g
+    "omega6_g" -> Res.string.stat_micro_omega6_g
+    "epa_g" -> Res.string.stat_micro_epa_g
+    "dha_g" -> Res.string.stat_micro_dha_g
+    "starch_g" -> Res.string.stat_micro_starch_g
+    "lactose_g" -> Res.string.stat_micro_lactose_g
+    "polyols_g" -> Res.string.stat_micro_polyols_g
+    "retinol_ug" -> Res.string.stat_micro_retinol_ug
+    "betaCarotene_ug" -> Res.string.stat_micro_betaCarotene_ug
 
     // Estes reutilizam os textos da ficha nutricional em vez de terem recurso próprio: é a
     // mesma palavra, e duplicá-la abriria caminho a duas traduções diferentes.

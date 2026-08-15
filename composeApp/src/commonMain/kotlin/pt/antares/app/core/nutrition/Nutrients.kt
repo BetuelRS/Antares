@@ -31,6 +31,7 @@ object Nutrients {
     const val PHOSPHORUS = "phosphorus_mg"
     const val MANGANESE = "manganese_mg"
     const val IODINE = "iodine_ug"
+    const val CHLORIDE = "chloride_mg"
 
     const val FIBER = "fiber_g"
     const val SUGARS = "sugars_g"
@@ -44,6 +45,25 @@ object Nutrients {
 
     const val FAT_TRANS = "fatTrans_g"
 
+    // Os ácidos gordos ficam em gramas, e não em miligramas como se lê nos rótulos, porque é
+    // assim que as três tabelas os publicam. Converter aqui era abrir a porta ao erro de mil
+    // vezes que não dá erro nenhum: 0,1 g de EPA e 100 mg de EPA são o mesmo número escrito
+    // ao contrário, e nenhum teste distingue um do outro depois de gravado.
+    const val OMEGA3 = "omega3_g"
+    const val OMEGA6 = "omega6_g"
+    const val EPA = "epa_g"
+    const val DHA = "dha_g"
+
+    const val STARCH = "starch_g"
+    const val LACTOSE = "lactose_g"
+    const val POLYOLS = "polyols_g"
+
+    // Retinol e beta-caroteno já entram no `vitA_ug`, que é o equivalente de retinol. Ficam à
+    // parte porque a conversão não tem volta: quem quer saber se a vitamina A veio de fígado
+    // ou de cenoura não o consegue tirar do total.
+    const val RETINOL = "retinol_ug"
+    const val BETA_CAROTENE = "betaCarotene_ug"
+
     val VITAMINS = listOf(
         VIT_A, VIT_B1, VIT_B2, VIT_B3, VIT_B5, VIT_B6,
         VIT_B9, VIT_B12, VIT_C, VIT_D, VIT_E, VIT_K,
@@ -51,15 +71,28 @@ object Nutrients {
 
     val MINERALS = listOf(
         CALCIUM, IRON, MAGNESIUM, PHOSPHORUS, POTASSIUM, SODIUM,
-        ZINC, COPPER, MANGANESE, SELENIUM, IODINE,
+        ZINC, COPPER, MANGANESE, SELENIUM, IODINE, CHLORIDE,
     )
 
-    val OTHERS = listOf(FAT_MONO, FAT_POLY, FAT_TRANS, CHOLESTEROL, WATER, ALCOHOL)
+    val OTHERS = listOf(
+        FAT_MONO, FAT_POLY, FAT_TRANS, OMEGA3, OMEGA6, EPA, DHA,
+        CHOLESTEROL, STARCH, LACTOSE, POLYOLS, RETINOL, BETA_CAROTENE, WATER, ALCOHOL,
+    )
 
     // O que vem no rótulo das embalagens. O sódio aparece aqui e nos minerais: é a mesma
     // substância, mas no rótulo lê-se como limite a não passar e nos minerais como dose a
     // atingir.
     val LABEL = listOf(SUGARS, FIBER, SAT_FAT, SODIUM)
+
+    /**
+     * Minerais cuja referência da EFSA é um teto e não uma meta. Faltar não é uma lacuna a
+     * preencher, e por isso ficam de fora tanto do aviso do dia como da procura por
+     * alimentos ricos — sugerir a alguém que coma mais sal seria o contrário do que se quer.
+     *
+     * O cloro entra por vir sempre acompanhado: os 3,1 g da EFSA são a outra metade dos 5 g
+     * de sal, e quem os atinge atingiu o sódio pelo mesmo caminho.
+     */
+    val TETOS = setOf(SODIUM, CHLORIDE)
 
     // A ordem das listas é a ordem em que os nutrientes aparecem no ecrã, e por isso são
     // listas e não conjuntos: as vitaminas seguem a ordem convencional dos rótulos, A a K.
@@ -113,6 +146,23 @@ object Nutrients {
         alias(PHOSPHORUS, "phosphorus", "p")
         alias(MANGANESE, "manganese", "mn")
         alias(IODINE, "iodine", "iodide", "i")
+        alias(CHLORIDE, "chloride", "chlorine", "cld")
+
+        // As tabelas nomeiam os ácidos gordos pela cadeia — «18:3 n-3» — e os rótulos pelo
+        // nome comum. O `squash` já apaga os dois pontos e os hífenes, por isso «FA 18:3
+        // c9,c12,c15 (n-3)» chega aqui como `fa183c9c12c15n3` e não como uma das entradas.
+        // As siglas de três letras ficam de fora de propósito: `ALA` também é alanina e `LA`
+        // não é nada em particular. Um alias errado é pior do que nenhum — atribui o número
+        // à substância errada em vez de o descartar.
+        alias(OMEGA3, "omega3", "omega3fat", "alphalinolenicacid", "f18d3n3")
+        alias(OMEGA6, "omega6", "omega6fat", "linoleicacid", "f18d2cn6")
+        alias(EPA, "epa", "eicosapentaenoicacid", "f20d5n3")
+        alias(DHA, "dha", "docosahexaenoicacid", "f22d6n3")
+        alias(STARCH, "starch", "amido")
+        alias(LACTOSE, "lactose")
+        alias(POLYOLS, "polyols", "polyol", "sugaralcohols")
+        alias(RETINOL, "retinol", "retol")
+        alias(BETA_CAROTENE, "betacarotene", "carotene", "cartb")
     }
 
     // Reduz a comparação ao essencial: "Vitamin B-12", "vitamin_b12" e "VitaminB12" ficam

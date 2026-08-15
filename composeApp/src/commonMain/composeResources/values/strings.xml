@@ -349,6 +349,16 @@
     <string name="stat_micro_fatmono">Gordura monoinsaturada</string>
     <string name="stat_micro_fattrans">Gordura trans</string>
     <string name="stat_micro_fatpoly">Gordura poliinsaturada</string>
+    <string name="stat_micro_chloride_mg">Cloro</string>
+    <string name="stat_micro_omega3_g">Ómega-3 (ALA)</string>
+    <string name="stat_micro_omega6_g">Ómega-6 (linoleico)</string>
+    <string name="stat_micro_epa_g">EPA</string>
+    <string name="stat_micro_dha_g">DHA</string>
+    <string name="stat_micro_starch_g">Amido</string>
+    <string name="stat_micro_lactose_g">Lactose</string>
+    <string name="stat_micro_polyols_g">Polióis</string>
+    <string name="stat_micro_retinol_ug">Retinol</string>
+    <string name="stat_micro_betaCarotene_ug">Beta-caroteno</string>
     <string name="nutrition_gap_label">Os rótulos não são obrigados a declarar vitaminas e minerais (Reg. UE 1169/2011), por isso a maioria dos produtos embalados não os traz.</string>
     <string name="nutrition_gap_ai">Valores estimados, sem correspondência numa base de dados analisada — por isso não há vitaminas nem minerais.</string>
     <string name="nutrition_gap_custom">Alimento criado por ti: mostra só o que preencheste.</string>

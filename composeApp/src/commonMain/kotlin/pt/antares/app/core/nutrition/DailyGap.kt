@@ -34,9 +34,7 @@ data class DailyGap(
             return totals.byKey.keys
                 .asSequence()
                 .filter { it in Nutrients.VITAMINS || it in Nutrients.MINERALS }
-                // O sódio fica de fora porque a sua referência é um teto: faltar sódio não
-                // é uma lacuna a preencher.
-                .filter { it != Nutrients.SODIUM }
+                .filter { it !in Nutrients.TETOS }
                 .mapNotNull { chave ->
                     val referencia = referenceFor(chave)?.takeIf { it > 0 } ?: return@mapNotNull null
 

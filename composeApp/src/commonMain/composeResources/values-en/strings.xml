@@ -349,6 +349,16 @@
     <string name="stat_micro_fatmono">Monounsaturated fat</string>
     <string name="stat_micro_fattrans">Trans fat</string>
     <string name="stat_micro_fatpoly">Polyunsaturated fat</string>
+    <string name="stat_micro_chloride_mg">Chloride</string>
+    <string name="stat_micro_omega3_g">Omega-3 (ALA)</string>
+    <string name="stat_micro_omega6_g">Omega-6 (linoleic)</string>
+    <string name="stat_micro_epa_g">EPA</string>
+    <string name="stat_micro_dha_g">DHA</string>
+    <string name="stat_micro_starch_g">Starch</string>
+    <string name="stat_micro_lactose_g">Lactose</string>
+    <string name="stat_micro_polyols_g">Polyols</string>
+    <string name="stat_micro_retinol_ug">Retinol</string>
+    <string name="stat_micro_betaCarotene_ug">Beta-carotene</string>
     <string name="nutrition_gap_label">Labels aren’t required to declare vitamins and minerals (EU Reg. 1169/2011), so most packaged products don’t carry them.</string>
     <string name="nutrition_gap_ai">Estimated values, with no match in an analysed database — so there are no vitamins or minerals.</string>
     <string name="nutrition_gap_custom">A food you created: it shows only what you filled in.</string>

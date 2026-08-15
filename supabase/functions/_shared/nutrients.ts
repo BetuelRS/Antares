@@ -30,6 +30,18 @@ export const USDA_MICRO_IDS: Record<number, string> = {
   1100: "iodine_ug",
   1101: "manganese_mg",
   1103: "selenium_ug",
+  1088: "chloride_mg",
+
+  // Os ácidos gordos e os açúcares individuais ficam na unidade em que a tabela americana os
+  // publica — gramas — e a chave diz `_g` por isso mesmo. O `factorForKey` não lhes toca.
+  1404: "omega3_g",
+  1269: "omega6_g",
+  1278: "epa_g",
+  1272: "dha_g",
+  1009: "starch_g",
+  1013: "lactose_g",
+  1105: "retinol_ug",
+  1107: "betaCarotene_ug",
 };
 
 export const USDA_MACRO_IDS = {
@@ -68,6 +80,19 @@ export const OFF_MICRO_KEYS: Record<string, string> = {
   "iodine": "iodine_ug",
   "manganese": "manganese_mg",
   "selenium": "selenium_ug",
+  "chloride": "chloride_mg",
+
+  // Só o ácido concreto, e não o `omega-3-fat` que o Open Food Facts também traz: esse é a
+  // soma de todos os n-3, e gravá-lo na mesma chave fazia o número mudar de significado
+  // conforme o produto declarasse um ou outro.
+  "alpha-linolenic-acid": "omega3_g",
+  "linoleic-acid": "omega6_g",
+  "eicosapentaenoic-acid": "epa_g",
+  "docosahexaenoic-acid": "dha_g",
+  "starch": "starch_g",
+  "lactose": "lactose_g",
+  "polyols": "polyols_g",
+  "beta-carotene": "betaCarotene_ug",
 };
 
 export function factorForKey(key: string): number {
