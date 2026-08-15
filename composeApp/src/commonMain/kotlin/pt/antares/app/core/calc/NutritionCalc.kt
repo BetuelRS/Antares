@@ -27,6 +27,11 @@ enum class TargetWarning {
 
     PROTEIN_BELOW_FLOOR,
 
+    // O chão de proteína subiu porque há treino de força e há défice. Existe para o
+    // «Mostra-me a conta» poder dizer porquê: uma meta que sobe sem explicação lida é uma
+    // meta em que ninguém confia.
+    PROTEIN_FLOOR_TRAINED,
+
     GOAL_WEIGHT_REACHED,
 
     NO_DEFICIT_IN_PREGNANCY,
@@ -364,7 +369,12 @@ object NutritionCalc {
             (proteinPerKgWeight(profile.macroStrategy, profile.goalType) * weightKg).roundToInt()
         }.let { computed ->
             if (computed < proteinFloorG) {
+                // Dois avisos e não um: o primeiro diz que o chão mandou, o segundo diz
+                // porque é que o chão está mais alto do que o de toda a gente.
                 warnings += TargetWarning.PROTEIN_BELOW_FLOOR
+                if (treinaForca && inDeficit && lean != null) {
+                    warnings += TargetWarning.PROTEIN_FLOOR_TRAINED
+                }
                 proteinFloorG
             } else {
                 computed

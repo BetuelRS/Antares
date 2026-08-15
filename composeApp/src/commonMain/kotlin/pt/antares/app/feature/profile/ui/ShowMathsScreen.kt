@@ -119,5 +119,8 @@ private fun stepText(step: TargetBreakdown.Step): String {
             stringResource(Res.string.show_maths_rate, a[0], a[1], a[2])
 
         TargetBreakdown.Kind.FLOOR -> stringResource(Res.string.onb_rate_floor_warning)
+
+        TargetBreakdown.Kind.PROTEIN_TRAINED ->
+            stringResource(Res.string.show_maths_protein_trained, a[0], a[1], a[2])
     }
 }

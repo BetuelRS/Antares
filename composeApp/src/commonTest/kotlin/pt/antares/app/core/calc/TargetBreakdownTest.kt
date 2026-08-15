@@ -133,4 +133,32 @@ class TargetBreakdownTest {
         val b = breakdown(profile())
         assertTrue(b.steps.none { it.kind == TargetBreakdown.Kind.FLOOR })
     }
+
+    @Test
+    fun `a proteina que sobe por causa do treino diz-se na conta`() {
+        val p = profile(rate = -600, bodyFatPct = 20.0)
+        val t = NutritionCalc.dailyTargets(p, 80.0, today, treinaForca = true)
+        val b = TargetBreakdownCalc.of(p, t, 80.0, today)!!
+
+        val passo = b.steps.single { it.kind == TargetBreakdown.Kind.PROTEIN_TRAINED }
+        assertEquals(
+            t.proteinG,
+            passo.result,
+            "o passo tem de mostrar a meta que saiu, e não um número parecido",
+        )
+        assertTrue(
+            passo.values[0] > ProteinFloor.UNTRAINED_DEFICIT,
+            "a linha existe para explicar uma subida; sem subida não tem nada para dizer",
+        )
+        assertEquals(t.energy!!.leanMassKg!!, passo.values[1])
+    }
+
+    @Test
+    fun `quem nao treina ve a conta que sempre viu`() {
+        val p = profile(rate = -600, bodyFatPct = 20.0)
+        val t = NutritionCalc.dailyTargets(p, 80.0, today)
+        val b = TargetBreakdownCalc.of(p, t, 80.0, today)!!
+
+        assertTrue(b.steps.none { it.kind == TargetBreakdown.Kind.PROTEIN_TRAINED })
+    }
 }

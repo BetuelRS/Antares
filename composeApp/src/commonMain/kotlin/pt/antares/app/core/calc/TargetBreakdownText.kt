@@ -57,6 +57,14 @@ object TargetBreakdownText {
         // O passo do chão não tem parcelas: a frase traduzida já diz tudo, e os números
         // que interessam são os do passo anterior e o final.
         TargetBreakdown.Kind.FLOOR -> emptyList()
+
+        // Gramas por quilo com uma casa, massa magra com o mínimo de casas, e o total em
+        // gramas inteiras: é a conta que a pessoa pode refazer de cabeça.
+        TargetBreakdown.Kind.PROTEIN_TRAINED -> listOf(
+            fixedDecimals(step.values[0], 1, comma),
+            trimmedDecimal(step.values[1], comma = comma),
+            step.result.toString(),
+        )
     }
 
     // O sinal sai à frente do número em vez de colado a ele, para a linha se ler como uma

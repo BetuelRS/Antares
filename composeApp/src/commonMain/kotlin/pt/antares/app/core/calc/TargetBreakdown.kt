@@ -32,6 +32,8 @@ data class TargetBreakdown(
         RATE,
 
         FLOOR,
+
+        PROTEIN_TRAINED,
     }
 }
 
@@ -94,6 +96,21 @@ object TargetBreakdownCalc {
                 kind = TargetBreakdown.Kind.FLOOR,
                 values = listOf(afterRate.toDouble()),
                 exact = targets.kcal.toDouble(),
+            )
+        }
+
+        // A proteína não sai das calorias, e por isso vem no fim e não na cadeia. Só aparece
+        // quando subiu por causa do treino: quem não treina vê a conta que sempre viu.
+        if (TargetWarning.PROTEIN_FLOOR_TRAINED in targets.warnings) {
+            val lean = e.leanMassKg ?: 0.0
+            val perKg = ProteinFloor.perKgLean(
+                treinaForca = true,
+                deficitFraction = ProteinFloor.deficitFraction(profile.goalRateKcal, e.tdee),
+            )
+            steps += TargetBreakdown.Step(
+                kind = TargetBreakdown.Kind.PROTEIN_TRAINED,
+                values = listOf(perKg, lean),
+                exact = targets.proteinG.toDouble(),
             )
         }
 
