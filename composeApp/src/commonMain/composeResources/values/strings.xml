@@ -489,7 +489,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exercise_section_title">Exercício</string>
     <string name="exercise_add_cta">Adicionar exercício</string>
     <string name="exercise_empty">Sem exercício registado.</string>
-    <string name="exercise_addback_note">Somado ao orçamento do dia</string>
+    <string name="exercise_addback_note">Somado ao orçamento: é o que gastaste a mais do que se tivesses estado sentado. O repouso já está na meta.</string>
     <string name="exercise_workout_label">Treino de força</string>
     <string name="today_workout_title">Treino</string>
     <string name="today_workout_active">Treino em curso — toca para retomar</string>
