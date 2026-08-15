@@ -699,6 +699,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_misses_desc">Alimentos que pesquisaste e que nem o catálogo nem a Open Food Facts tinham. Serve para saber o que falta acrescentar. Fica só no telemóvel — nunca é enviado para lado nenhum.</string>
     <string name="privacy_misses_empty">Nada até agora: tudo o que procuraste foi encontrado.</string>
     <string name="privacy_misses_row">%1$s · %2$d vezes</string>
+    <string name="privacy_misses_create">Criar</string>
     <string name="privacy_misses_clear">Apagar esta lista</string>
     <string name="privacy_export_desc">Guarda um ficheiro com o teu perfil, diário, treinos, corridas, jejuns e as fotos de progresso. É este ficheiro que podes voltar a abrir aqui. O catálogo que vem com a app não vai incluído.</string>
     <string name="privacy_delete">Apagar tudo</string>

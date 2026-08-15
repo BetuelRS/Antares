@@ -14,6 +14,7 @@ import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.core.database.daos.FoodNutrientDao
 import pt.antares.app.core.database.entities.FoodNutrientEntity
+import pt.antares.app.core.database.entities.SearchMissEntity
 import pt.antares.app.core.nutrition.NutrientDensity
 import pt.antares.app.core.nutrition.microsDeJson
 
@@ -28,9 +29,20 @@ class FoodRepository(
     suspend fun recordSearchMiss(canonicalQuery: String, today: Long = todayEpochDay()) =
         withContext(io) { searchMissDao.record(canonicalQuery, today) }
 
-    suspend fun topSearchMisses(limit: Int = 20) = withContext(io) { searchMissDao.top(limit) }
+    fun observeSearchMisses(limit: Int = 20): Flow<List<SearchMissEntity>> =
+        searchMissDao.observeTop(limit)
 
     suspend fun clearSearchMisses() = withContext(io) { searchMissDao.clear() }
+
+    /**
+     * Tira uma pesquisa da lista das que não deram nada. A chave da lista é o texto já
+     * normalizado, por isso o nome tem de passar pela mesma regra que o gravou — «Bacalhau
+     * à Brás» e `bacalhau a bras` são a mesma linha.
+     */
+    suspend fun forgetSearchMiss(name: String) = withContext(io) {
+        val chave = SearchMissRule.normalize(name) ?: return@withContext
+        searchMissDao.delete(chave)
+    }
 
     /**
      * Pesquisa no catálogo local. Devolve vazio para uma pesquisa que só tem pontuação ou

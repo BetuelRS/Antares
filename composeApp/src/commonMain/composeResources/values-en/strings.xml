@@ -698,6 +698,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_misses_desc">Foods you searched for that neither the catalogue nor Open Food Facts had. It shows what is missing. It stays on your phone — it is never sent anywhere.</string>
     <string name="privacy_misses_empty">Nothing so far: everything you looked for was found.</string>
     <string name="privacy_misses_row">%1$s · %2$d times</string>
+    <string name="privacy_misses_create">Create</string>
     <string name="privacy_misses_clear">Clear this list</string>
     <string name="privacy_export_desc">Saves a file with your profile, diary, workouts, runs, fasts and progress photos. This is the file you can open again here. The catalog that ships with the app is not included.</string>
     <string name="privacy_delete">Delete everything</string>

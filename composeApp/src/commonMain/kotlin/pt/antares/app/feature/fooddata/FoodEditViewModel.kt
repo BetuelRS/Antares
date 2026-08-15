@@ -147,8 +147,9 @@ class FoodEditViewModel(
         else -> roundToInt().toString()
     }
 
-    fun start(foodId: String?, barcode: String?) {
+    fun start(foodId: String?, barcode: String?, nomeInicial: String? = null) {
         this.barcode = barcode
+        if (foodId == null && !nomeInicial.isNullOrBlank()) setName(nomeInicial)
         load(foodId)
     }
 
@@ -214,6 +215,10 @@ class FoodEditViewModel(
                 servingGrams = num(s.servingGrams),
                 barcode = barcode,
             )
+            // A falha deixou de ser uma falha. A lista existe para dizer o que falta ao
+            // catálogo, e deixar lá o que já foi criado tornava-a uma lista de tarefas
+            // repetidas.
+            repository.forgetSearchMiss(s.name)
             _state.update { it.copy(saved = true) }
         }
     }

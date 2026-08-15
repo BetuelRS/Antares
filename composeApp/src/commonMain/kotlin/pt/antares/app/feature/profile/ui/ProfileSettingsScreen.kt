@@ -65,6 +65,7 @@ import pt.antares.app.generated.resources.*
 @Composable
 fun ProfileSettingsScreen(
     onBack: () -> Unit,
+    onCreateFood: ((String) -> Unit)? = null,
     viewModel: ProfileSettingsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -488,7 +489,7 @@ fun ProfileSettingsScreen(
             }
 
             SectionHeader(title = stringResource(Res.string.settings_section_privacy))
-            PrivacySection()
+            PrivacySection(onCreateFood = onCreateFood)
         }
     }
 }

@@ -45,6 +45,7 @@ import pt.antares.app.generated.resources.*
 fun FoodEditScreen(
     foodId: String?,
     barcode: String?,
+    initialName: String? = null,
     onSaved: () -> Unit,
     onBack: () -> Unit,
     // Nulo quando o ecrã foi aberto de um sítio que não sabe a refeição nem o dia. Nesse
@@ -54,7 +55,7 @@ fun FoodEditScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(foodId, barcode) { viewModel.start(foodId, barcode) }
+    LaunchedEffect(foodId, barcode) { viewModel.start(foodId, barcode, initialName) }
     LaunchedEffect(state.saved) { if (state.saved) onSaved() }
 
     Scaffold(

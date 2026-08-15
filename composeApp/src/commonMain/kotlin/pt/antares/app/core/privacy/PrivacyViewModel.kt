@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.antares.app.core.database.entities.SearchMissEntity
@@ -34,17 +36,16 @@ class PrivacyViewModel(
     private val _state = MutableStateFlow(PrivacyUiState())
     val state: StateFlow<PrivacyUiState> = _state.asStateFlow()
 
-    fun refresh() {
-        viewModelScope.launch {
-            _state.update { it.copy(searchMisses = foods.topSearchMisses()) }
-        }
+    init {
+        // Observado e não lido uma vez: criar o alimento que faltava apaga a linha noutro
+        // ecrã, e quem volta a este tem de a ver desaparecida sem nada a pedir.
+        foods.observeSearchMisses()
+            .onEach { falhas -> _state.update { it.copy(searchMisses = falhas) } }
+            .launchIn(viewModelScope)
     }
 
     fun clearSearchMisses() {
-        viewModelScope.launch {
-            foods.clearSearchMisses()
-            _state.update { it.copy(searchMisses = emptyList()) }
-        }
+        viewModelScope.launch { foods.clearSearchMisses() }
     }
 
     fun exportData(onReady: (zipName: String, entries: Map<String, ByteArray>) -> Unit) {

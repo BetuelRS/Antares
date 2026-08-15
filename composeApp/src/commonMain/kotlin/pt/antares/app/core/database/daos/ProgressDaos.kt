@@ -49,6 +49,17 @@ interface SearchMissDao {
     @Query("SELECT * FROM search_miss ORDER BY count DESC, lastSeenEpochDay DESC LIMIT :limit")
     suspend fun top(limit: Int = 100): List<SearchMissEntity>
 
+    // A mesma consulta, mas a observar: quem cria o alimento que faltava sai deste ecrã e
+    // volta a ele, e um `LaunchedEffect(Unit)` já não corre outra vez.
+    @Query("SELECT * FROM search_miss ORDER BY count DESC, lastSeenEpochDay DESC LIMIT :limit")
+    fun observeTop(limit: Int = 100): Flow<List<SearchMissEntity>>
+
+
+    // Apagar uma só, para a falha sair da lista assim que o alimento que faltava é criado.
+    // Sem lápide: a lista existe para dizer o que falta ao catálogo, e o que já não falta
+    // não tem de ficar registado em lado nenhum.
+    @Query("DELETE FROM search_miss WHERE query = :query")
+    suspend fun delete(query: String)
 
     @Query("DELETE FROM search_miss")
     suspend fun clear()

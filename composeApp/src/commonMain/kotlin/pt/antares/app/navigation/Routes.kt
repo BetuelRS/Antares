@@ -88,6 +88,9 @@ sealed interface Route {
         val barcode: String? = null,
         val slot: String? = null,
         val epochDay: Long? = null,
+        // Preenchido quando se vem de uma pesquisa que não deu nada: é o que faltava ao
+        // catálogo, e reescrevê-lo à mão era o passo que fazia desistir.
+        val name: String? = null,
     ) : Route
 
     @Serializable

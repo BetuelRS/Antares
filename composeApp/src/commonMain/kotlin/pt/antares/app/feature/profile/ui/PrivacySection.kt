@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -28,11 +29,12 @@ import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 
 @Composable
-internal fun PrivacySection(viewModel: PrivacyViewModel = koinViewModel()) {
+internal fun PrivacySection(
+    onCreateFood: ((String) -> Unit)? = null,
+    viewModel: PrivacyViewModel = koinViewModel(),
+) {
     val state by viewModel.state.collectAsState()
     var confirming by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) { viewModel.refresh() }
 
     BackupActions(viewModel, state.busy, state.importDone)
 
@@ -54,10 +56,24 @@ internal fun PrivacySection(viewModel: PrivacyViewModel = koinViewModel()) {
         )
     } else {
         state.searchMisses.forEach { falha ->
-            Text(
-                stringResource(Res.string.privacy_misses_row, falha.query, falha.count),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    stringResource(Res.string.privacy_misses_row, falha.query, falha.count),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                // A lista dizia o que faltava e não deixava fazer nada quanto a isso. O
+                // botão abre a criação com o nome já lá, que era o passo que fazia desistir.
+                onCreateFood?.let { criar ->
+                    TextButton(onClick = { criar(falha.query) }) {
+                        Text(stringResource(Res.string.privacy_misses_create))
+                    }
+                }
+            }
         }
         SecondaryButton(
             text = stringResource(Res.string.privacy_misses_clear),

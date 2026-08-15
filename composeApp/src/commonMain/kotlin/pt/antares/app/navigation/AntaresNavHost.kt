@@ -238,7 +238,12 @@ fun AntaresNavHost(
             BodyCompositionScreen(onBack = { navController.popBackStack() })
         }
         composable<Route.ProfileSettings> {
-            ProfileSettingsScreen(onBack = { navController.popBackStack() })
+            ProfileSettingsScreen(
+                onBack = { navController.popBackStack() },
+                // Sem refeição nem dia: este ecrã não regista nada no diário, e criar aqui
+                // é encher o catálogo, não a refeição de hoje.
+                onCreateFood = { nome -> navController.navigate(Route.FoodEdit(name = nome)) },
+            )
         }
         composable<Route.WeightHistory> {
             WeightHistoryScreen(onBack = { navController.popBackStack() })
@@ -283,6 +288,7 @@ fun AntaresNavHost(
             FoodEditScreen(
                 foodId = route.foodId,
                 barcode = route.barcode,
+                initialName = route.name,
                 onSaved = { navController.popBackStack() },
                 onBack = { navController.popBackStack() },
                 // Sai do ecrã de criação antes de abrir o alimento: quem escolheu usar um
