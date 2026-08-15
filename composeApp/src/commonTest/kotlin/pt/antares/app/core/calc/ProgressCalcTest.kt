@@ -45,6 +45,41 @@ class ProgressCalcTest {
     }
 
     @Test
+    fun `quem comecou ontem nao falhou as onze semanas anteriores`() {
+        // O caso do achado: a grelha tem 84 dias, e quem instalou a app ontem e registou
+        // ontem lia «1%» — uma percentagem sobre um tempo em que não havia ninguém.
+        val grid = ProgressCalc.consistencyGrid(setOf(quinta - 1), today = quinta, weeks = 12)
+
+        assertEquals(
+            50,
+            ProgressCalc.consistencyPct(grid),
+            "contam dois dias: o de ontem, registado, e o de hoje, ainda por registar",
+        )
+    }
+
+    @Test
+    fun `os dias anteriores ao primeiro registo ficam marcados`() {
+        val grid = ProgressCalc.consistencyGrid(setOf(quinta), today = quinta, weeks = 2)
+
+        val antes = grid.filter { it.antesDeComecar }
+        assertTrue(antes.isNotEmpty(), "há treze dias antes do primeiro registo nesta grelha")
+        assertTrue(antes.none { it.logged }, "um dia antes de começar não pode ter registo")
+        assertTrue(antes.all { it.epochDay < quinta })
+    }
+
+    @Test
+    fun `sem registo nenhum nada e marcado como antes de comecar`() {
+        val grid = ProgressCalc.consistencyGrid(emptySet(), today = quinta, weeks = 2)
+
+        assertTrue(
+            grid.none { it.antesDeComecar },
+            "sem primeiro registo não há de onde contar, e marcar tudo dava 0% sobre zero " +
+                "dias — que é uma divisão por nada",
+        )
+        assertEquals(0, ProgressCalc.consistencyPct(grid))
+    }
+
+    @Test
     fun `zero semanas da grelha vazia`() {
         assertEquals(emptyList(), ProgressCalc.consistencyGrid(emptySet(), quinta, weeks = 0))
     }

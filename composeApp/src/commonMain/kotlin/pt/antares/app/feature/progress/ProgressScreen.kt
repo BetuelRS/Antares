@@ -520,8 +520,12 @@ private fun ConsistencyCard(state: ProgressState) {
                                 .clip(RoundedCornerShape(2.dp))
                                 .background(
                                     when {
-
-                                        dia.inFuture -> vazio.copy(alpha = 0.3f)
+                                        // O futuro e o que veio antes do primeiro registo
+                                        // são o mesmo tom apagado: nenhum dos dois é uma
+                                        // falha, e pintá-los como as falhas fazia a grelha
+                                        // de quem começou ontem parecer onze semanas
+                                        // perdidas.
+                                        dia.inFuture || dia.antesDeComecar -> vazio.copy(alpha = 0.3f)
                                         dia.logged -> marcado
                                         else -> vazio
                                     },

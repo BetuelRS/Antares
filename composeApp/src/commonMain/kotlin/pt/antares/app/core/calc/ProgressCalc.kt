@@ -7,7 +7,16 @@ object ProgressCalc {
 
     // `inFuture` distingue-se de `logged = false`: os dias que ainda não chegaram são
     // desenhados a vazio mas não contam como falha.
-    data class DayCell(val epochDay: Long, val logged: Boolean, val inFuture: Boolean)
+    /**
+     * Um dia da grelha. [antesDeComecar] é para os dias anteriores ao primeiro registo: a
+     * grelha mostra doze semanas, e quem instalou a app ontem não falhou as onze anteriores.
+     */
+    data class DayCell(
+        val epochDay: Long,
+        val logged: Boolean,
+        val inFuture: Boolean,
+        val antesDeComecar: Boolean = false,
+    )
 
     /**
      * A grelha de consistência, sempre a começar numa segunda-feira e a terminar no
@@ -20,6 +29,10 @@ object ProgressCalc {
     ): List<DayCell> {
         if (weeks <= 0) return emptyList()
 
+        // O primeiro dia com registo é o dia em que a pessoa começou. Antes dele não há
+        // falha nenhuma a contar — havia app, não havia esta pessoa.
+        val comecou = loggedDays.minOrNull()
+
         // O dia 0 da era é uma quinta-feira; somar 3 antes do resto põe a segunda em zero.
         // O segundo `% 7` existe para datas anteriores a 1970, onde o resto sai negativo.
         val diaDaSemana = ((today + 3) % 7 + 7) % 7
@@ -31,16 +44,26 @@ object ProgressCalc {
                 epochDay = dia,
                 logged = dia in loggedDays,
                 inFuture = dia > today,
+                antesDeComecar = comecou != null && dia < comecou,
             )
         }
     }
 
+    /**
+     * A percentagem de dias com registo **desde que a pessoa começou**.
+     *
+     * Os dias por vir saem da conta: incluí-los fazia a percentagem cair todas as
+     * segundas-feiras e recuperar ao longo da semana sem nada ter mudado.
+     *
+     * Os dias anteriores ao primeiro registo saem também, e essa é a correção que importa.
+     * A grelha tem 84 dias; quem instalou a app ontem e registou o dia de ontem lia «1%» —
+     * um número sobre onze semanas em que não havia ninguém para falhar. Agora lê 100%,
+     * que é o que aconteceu.
+     */
     fun consistencyPct(grid: List<DayCell>): Int {
-        // Os dias por vir saem da conta: incluí-los fazia a percentagem cair todas as
-        // segundas-feiras e recuperar ao longo da semana sem nada ter mudado.
-        val passados = grid.filterNot { it.inFuture }
-        if (passados.isEmpty()) return 0
-        return (passados.count { it.logged } * 100.0 / passados.size).roundToInt()
+        val contam = grid.filterNot { it.inFuture || it.antesDeComecar }
+        if (contam.isEmpty()) return 0
+        return (contam.count { it.logged } * 100.0 / contam.size).roundToInt()
     }
 
     data class Comparison(
