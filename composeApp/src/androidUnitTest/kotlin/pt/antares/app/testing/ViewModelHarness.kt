@@ -86,6 +86,7 @@ abstract class ViewModelHarness {
     protected fun diaryViewModel() = DiaryViewModel(
         diaryRepository = diaryRepository(),
         profileRepository = profileRepository(),
+        fastingRepository = Fabricas.fastingRepository(db, dispatcher),
         exerciseRepository = ExerciseRepository(db.exerciseLogDao(), dispatcher),
         preferences = prefs,
         templateRepository = Fabricas.mealTemplateRepository(db, dispatcher),

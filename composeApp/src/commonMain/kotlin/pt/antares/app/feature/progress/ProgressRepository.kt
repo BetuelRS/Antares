@@ -50,6 +50,7 @@ class ProgressRepository(
                         proteinG = logs.sumOf { it.proteinSnapshot },
                         kcalBySlot = logs.groupBy { it.mealSlot.name }
                             .mapValues { (_, l) -> l.sumOf { it.kcalSnapshot }.toDouble() },
+                        horas = logs.map { it.eatenAtMin },
                     )
                 }
                 .sortedBy { it.epochDay }

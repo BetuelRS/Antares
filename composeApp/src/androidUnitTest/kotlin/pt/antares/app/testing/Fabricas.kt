@@ -107,12 +107,7 @@ object Fabricas {
             workoutSessionRepository = workoutSessionRepository(db, io),
             workoutHistoryRepository = workoutHistoryRepository(db, io),
             routineRepository = routineRepository(db, io),
-            fastingRepository = FastingRepository(
-                db.fastingProtocolDao(),
-                db.fastingSessionDao(),
-                NoopFastingNotifier(),
-                io,
-            ),
+            fastingRepository = fastingRepository(db, io),
             runRepository = RunRepository(db.runDao(), db.exerciseLogDao(), io),
             preferences = prefs,
             statsRepository = statsRepository(db, io),
@@ -120,6 +115,13 @@ object Fabricas {
             healthPublisher = publisher,
         )
     }
+
+    fun fastingRepository(db: AntaresDb, io: CoroutineDispatcher) = FastingRepository(
+        db.fastingProtocolDao(),
+        db.fastingSessionDao(),
+        NoopFastingNotifier(),
+        io,
+    )
 
     fun mealTemplateRepository(db: AntaresDb, io: CoroutineDispatcher) = MealTemplateRepository(
         db.foodLogDao(),

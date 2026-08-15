@@ -1,5 +1,6 @@
 package pt.antares.app.core.calc
 
+import pt.antares.app.core.util.MINUTES_PER_HOUR
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -26,6 +27,14 @@ object EatingPatterns {
     // proteína ao longo do dia, não porque a hora engorde.
     const val CONCENTRATION_THRESHOLD = 0.45
 
+    // Uma janela acima disto é larga o suficiente para se notar. Não é um limite de saúde
+    // — é onde a descrição deixa de ser trivial: quase toda a gente come dentro de 12 h.
+    const val JANELA_LONGA_MIN = 14 * MINUTES_PER_HOUR
+
+    // Última refeição a partir das 22h. Também não é um juízo: é a hora a partir da qual
+    // vale a pena dizer o número, porque quem come tarde raramente sabe quão tarde.
+    const val ULTIMA_REFEICAO_TARDIA_MIN = 22 * MINUTES_PER_HOUR
+
     enum class Kind {
 
         WEEKEND_HIGHER,
@@ -35,6 +44,10 @@ object EatingPatterns {
         WEEKEND_PROTEIN_DROP,
 
         MEAL_CONCENTRATION,
+
+        LONG_EATING_WINDOW,
+
+        LATE_LAST_MEAL,
     }
 
     data class Pattern(
@@ -49,6 +62,10 @@ object EatingPatterns {
         val proteinG: Double,
 
         val kcalBySlot: Map<String, Double> = emptyMap(),
+
+        // As horas a que se comeu nesse dia, nulos incluídos. Vazia em todo o histórico
+        // anterior à coluna, e é isso que faz os padrões por hora calarem-se sozinhos.
+        val horas: List<Int?> = emptyList(),
     )
 
     // O dia 0 da era é uma quinta-feira; somar 3 põe a segunda em zero, e 5 e 6 ficam a
@@ -84,6 +101,26 @@ object EatingPatterns {
         }
 
         concentration(comRegisto)?.let { out += it }
+        out += porHora(comRegisto)
+        return out
+    }
+
+    /**
+     * Os padrões que só a hora revela. Calam-se sozinhos enquanto não houver uma semana
+     * de dias com hora — que é o caso de todo o histórico anterior à coluna [Day.horas].
+     *
+     * Descrevem, não julgam: a app diz a que horas a pessoa come e quanto tempo dura a
+     * janela, e é ela que decide se quer mudar alguma coisa.
+     */
+    private fun porHora(days: List<Day>): List<Pattern> {
+        val tipica = EatingWindow.tipica(days.map { it.horas }) ?: return emptyList()
+        val out = mutableListOf<Pattern>()
+        if (tipica.duracaoMin >= JANELA_LONGA_MIN) {
+            out += Pattern(Kind.LONG_EATING_WINDOW, tipica.duracaoMin)
+        }
+        if (tipica.ultimaMin >= ULTIMA_REFEICAO_TARDIA_MIN) {
+            out += Pattern(Kind.LATE_LAST_MEAL, tipica.ultimaMin)
+        }
         return out
     }
 

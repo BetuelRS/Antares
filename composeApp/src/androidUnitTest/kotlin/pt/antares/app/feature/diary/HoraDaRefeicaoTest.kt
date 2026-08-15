@@ -15,6 +15,8 @@ import pt.antares.app.core.util.currentMinuteOfDay
 import pt.antares.app.core.util.todayEpochDay
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -90,6 +92,42 @@ class HoraDaRefeicaoTest {
             "pôs a hora de agora num registo de ontem — a janela alimentar passaria a medir " +
                 "quando a pessoa se lembrou de registar, e não quando comeu",
         )
+    }
+
+    @Test
+    fun `corrigir a hora de um registo antigo enche o buraco`() = runTest {
+        repo.logFood(aveia, quantityGrams = 50.0, slot = MealSlot.DINNER, epochDay = todayEpochDay() - 3)
+        val id = db.foodLogDao().exportRows().single().id
+
+        repo.updateEatenAt(id, 20 * 60 + 30)
+
+        assertEquals(
+            1230,
+            db.foodLogDao().exportRows().single().eatenAtMin,
+            "não deu para pôr a hora à mão num registo que nasceu sem ela",
+        )
+    }
+
+    @Test
+    fun `apagar a hora deixa o registo sem hora, e nao a zero`() = runTest {
+        repo.logFood(aveia, quantityGrams = 50.0, slot = MealSlot.LUNCH, epochDay = todayEpochDay())
+        val id = db.foodLogDao().exportRows().single().id
+
+        repo.updateEatenAt(id, null)
+
+        assertNull(
+            db.foodLogDao().exportRows().single().eatenAtMin,
+            "apagar a hora pôs meia-noite — que é uma hora, e das piores para a janela",
+        )
+    }
+
+    @Test
+    fun `uma hora fora do dia e recusada, em vez de ficar gravada`() = runTest {
+        repo.logFood(aveia, quantityGrams = 50.0, slot = MealSlot.LUNCH, epochDay = todayEpochDay())
+        val id = db.foodLogDao().exportRows().single().id
+
+        assertFailsWith<IllegalArgumentException> { repo.updateEatenAt(id, MINUTES_PER_DAY) }
+        assertFailsWith<IllegalArgumentException> { repo.updateEatenAt(id, -1) }
     }
 
     @Test

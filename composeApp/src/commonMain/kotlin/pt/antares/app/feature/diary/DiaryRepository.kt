@@ -16,6 +16,7 @@ import pt.antares.app.core.database.entities.WaterLogEntity
 import pt.antares.app.core.model.LogOrigin
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
+import pt.antares.app.core.util.MINUTES_PER_DAY
 import pt.antares.app.core.util.currentMinuteOfDay
 import pt.antares.app.core.util.todayEpochDay
 import kotlin.math.roundToInt
@@ -153,6 +154,19 @@ class DiaryRepository(
                 dirty = true,
             ),
         )
+    }
+
+    /**
+     * Corrige a hora a que se comeu. Aceita nulo, que é como se apaga uma hora errada: a
+     * app trata «nunca houve hora» e «apagaram a hora» da mesma maneira — sem hora, sem
+     * janela alimentar —, e por isso não vale a pena distingui-los.
+     */
+    suspend fun updateEatenAt(logId: String, eatenAtMin: Int?) = withContext(io) {
+        require(eatenAtMin == null || eatenAtMin in 0 until MINUTES_PER_DAY) {
+            "hora fora do dia: $eatenAtMin"
+        }
+        val log = foodLogDao.byId(logId) ?: return@withContext
+        foodLogDao.upsert(log.copy(eatenAtMin = eatenAtMin, updatedAt = now(), dirty = true))
     }
 
     suspend fun move(logId: String, newSlot: MealSlot) = withContext(io) {

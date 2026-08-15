@@ -63,6 +63,13 @@ import pt.antares.app.core.util.dayShort
 import pt.antares.app.core.util.epochDayToLocalDate
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
+import pt.antares.app.core.util.MINUTES_PER_HOUR
+import pt.antares.app.core.util.formatMinuteOfDay
+import pt.antares.app.core.calc.Janela
+import pt.antares.app.core.util.formatDurationMin
 
 @Composable
 fun DiaryScreen(
@@ -189,6 +196,10 @@ fun DiaryScreen(
             }
         }
 
+        state.quebraDoJejum?.let { quebra ->
+            item(key = "jejum-quebrado") { QuebraDoJejumCartao(quebra) }
+        }
+
         item(key = "quick-log") {
             pt.antares.app.feature.fooddata.QuickLogBar(
                 onSubmit = { q ->
@@ -272,6 +283,11 @@ fun DiaryScreen(
                             targetGrams = t.fatG,
                             color = AntaresColors.macroFat,
                         )
+                    }
+
+                    state.janela?.let { janela ->
+                        Spacer(Modifier.height(Spacing.md))
+                        JanelaAlimentarLinha(janela)
                     }
                 }
             }
@@ -414,10 +430,11 @@ fun DiaryScreen(
     }
 
     editLog?.let { log ->
-        EditQuantityDialog(
+        EditLogDialog(
             log = log,
-            onSave = { grams ->
+            onSave = { grams, hora ->
                 viewModel.updateLogQuantity(log.id, grams)
+                if (hora != log.eatenAtMin) viewModel.updateLogEatenAt(log.id, hora)
                 editLog = null
             },
             onDismiss = { editLog = null },
@@ -695,9 +712,12 @@ private fun LogRow(
                     .semantics { contentDescription = openLabel },
             ) {
                 Text(log.nameSnapshot, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
+                // A hora só aparece quando existe: um registo de um dia passado não a tem,
+                // e escrever «sem hora» em cada linha do histórico seria ruído.
+                val hora = log.eatenAtMin?.let { " · ${formatMinuteOfDay(it)}" }.orEmpty()
                 Text(
                     "${log.quantityGrams.toInt()} ${stringResource(if (log.isLiquid) Res.string.common_ml else Res.string.common_grams_short)}" +
-                        " · ${log.kcalSnapshot} ${stringResource(Res.string.common_kcal)}",
+                        " · ${log.kcalSnapshot} ${stringResource(Res.string.common_kcal)}$hora",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -764,16 +784,20 @@ private fun ExerciseRow(entry: ExerciseLogEntity, onDelete: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EditQuantityDialog(
+private fun EditLogDialog(
     log: FoodLogEntity,
-    onSave: (Double) -> Unit,
+    onSave: (Double, Int?) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var text by remember { mutableStateOf(log.quantityGrams.toInt().toString()) }
     val parsed = text.replace(',', '.').toDoubleOrNull()?.takeIf { it in 1.0..5000.0 }
 
     val previewKcal = parsed?.let { (log.kcalSnapshot * it / log.quantityGrams).toInt() }
+
+    var hora by remember { mutableStateOf(log.eatenAtMin) }
+    var relogioAberto by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -795,12 +819,40 @@ private fun EditQuantityDialog(
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        hora?.let {
+                            "${stringResource(Res.string.diary_eaten_at)} ${formatMinuteOfDay(it)}"
+                        } ?: stringResource(Res.string.diary_eaten_at_unknown),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Row {
+                        if (hora != null) {
+                            TextButton(onClick = { hora = null }) {
+                                Text(stringResource(Res.string.diary_eaten_at_clear))
+                            }
+                        }
+                        TextButton(onClick = { relogioAberto = true }) {
+                            Text(stringResource(Res.string.diary_eaten_at_set))
+                        }
+                    }
+                }
+                Text(
+                    stringResource(Res.string.diary_eaten_at_help),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         },
         confirmButton = {
             PrimaryButton(
                 text = stringResource(Res.string.common_save),
-                onClick = { onSave(parsed!!) },
+                onClick = { onSave(parsed!!, hora) },
                 enabled = parsed != null,
             )
         },
@@ -808,7 +860,106 @@ private fun EditQuantityDialog(
             SecondaryButton(text = stringResource(Res.string.common_cancel), onClick = onDismiss)
         },
     )
+
+    if (relogioAberto) {
+        // Abre na hora que o registo já tem; sem nenhuma, na hora a que a refeição costuma
+        // acontecer, que é sempre melhor palpite do que a meia-noite.
+        val inicial = hora ?: (log.mealSlot.typicalHours.first * MINUTES_PER_HOUR)
+        val estado = rememberTimePickerState(
+            initialHour = inicial / MINUTES_PER_HOUR,
+            initialMinute = inicial % MINUTES_PER_HOUR,
+            is24Hour = true,
+        )
+        AlertDialog(
+            onDismissRequest = { relogioAberto = false },
+            title = { Text(stringResource(Res.string.diary_eaten_at)) },
+            text = { TimePicker(state = estado) },
+            confirmButton = {
+                PrimaryButton(
+                    text = stringResource(Res.string.common_save),
+                    onClick = {
+                        hora = estado.hour * MINUTES_PER_HOUR + estado.minute
+                        relogioAberto = false
+                    },
+                )
+            },
+            dismissButton = {
+                SecondaryButton(
+                    text = stringResource(Res.string.common_cancel),
+                    onClick = { relogioAberto = false },
+                )
+            },
+        )
+    }
 }
 
 @Composable
 internal fun slotLabel(slot: MealSlot): String = mealSlotLabel(slot)
+
+/**
+ * A janela alimentar do dia, com o jejum que sobra dela.
+ *
+ * É o número que o botão do jejum não sabe dar: mede o que foi registado ter-se comido, e
+ * não o que alguém se lembrou de declarar. Quando faltam horas a registos do dia, isso vem
+ * dito ao lado — uma janela feita sobre metade do dia não é a janela do dia.
+ */
+@Composable
+private fun JanelaAlimentarLinha(janela: Janela) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            stringResource(Res.string.diary_window),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            stringResource(
+                Res.string.diary_window_value,
+                formatMinuteOfDay(janela.primeiraMin),
+                formatMinuteOfDay(janela.ultimaMin),
+                formatDurationMin(janela.duracaoMin),
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            stringResource(Res.string.diary_window_fasting, formatDurationMin(janela.jejumMin)),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (janela.semHora > 0) {
+            Text(
+                stringResource(Res.string.diary_window_partial, janela.semHora),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+/**
+ * Diz que se comeu com o jejum a correr.
+ *
+ * Não julga e não propõe nada: o contador do jejum continua a subir, e a app limita-se a
+ * pôr as duas coisas na mesma frase para a pessoa decidir. Quem quiser terminar o jejum
+ * tem o botão no ecrã dele — repeti-lo aqui era transformar um facto numa ordem.
+ */
+@Composable
+private fun QuebraDoJejumCartao(quebra: QuebraDoJejum) {
+    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            stringResource(Res.string.diary_fast_clash_title),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        Text(
+            stringResource(
+                Res.string.diary_fast_clash_body,
+                formatMinuteOfDay(quebra.inicioMin),
+                quebra.registos,
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}

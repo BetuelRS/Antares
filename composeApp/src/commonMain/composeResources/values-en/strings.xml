@@ -38,6 +38,10 @@
     <string name="patterns_tip_weekend_lower">Eating far less on two days and making up for it on the other five gives the same average with more hunger. If it is not deliberate, it is worth bringing the days closer together.</string>
     <string name="patterns_tip_weekend_protein">Protein is what best protects lean mass in a deficit. Having a source ready for Saturday usually sorts it.</string>
     <string name="patterns_tip_concentration">Concentrating the day into one meal is fine if it suits you. If you arrive at it very hungry, moving some protein earlier helps.</string>
+    <string name="patterns_long_window">You eat across %1$s a day, from first to last meal.</string>
+    <string name="patterns_late_meal">Your last meal is typically at %1$s.</string>
+    <string name="patterns_tip_long_window">There is nothing wrong with a wide window. It is just where a fast would shorten from, if you ever want to try one.</string>
+    <string name="patterns_tip_late_meal">Eating late does not make you gain more — the day total is what counts. Some people sleep worse with dinner close to bedtime; if that is you, now you have the number.</string>
     <string name="settings_pattern_suggestions">Suggestions in patterns</string>
     <string name="settings_pattern_suggestions_desc">By default the app only shows the numbers from what you logged. With this on, it adds what you can do with them.</string>
     <string name="photos_title">Progress photos</string>
@@ -267,6 +271,18 @@
     <string name="diary_water">Water</string>
     <string name="diary_duplicate">Duplicate</string>
     <string name="diary_move">Move</string>
+    <string name="diary_eaten_at">Eaten at</string>
+    <string name="diary_eaten_at_unknown">No time</string>
+    <string name="diary_eaten_at_set">Set the time</string>
+    <string name="diary_eaten_at_clear">Remove the time</string>
+    <string name="diary_eaten_at_help">Only logs with a time count towards your eating window.</string>
+    <string name="diary_window">Eating window</string>
+    <string name="diary_window_value">%1$s to %2$s · %3$s</string>
+    <string name="diary_window_partial">%1$d without a time</string>
+    <string name="diary_window_fasting">Actual fast: %1$s</string>
+    <string name="diary_fast_clash_title">Fast in progress</string>
+    <string name="diary_fast_clash_body">It started at %1$s. Since then %2$d entries were logged — the counter keeps running all the same.</string>
+    <string name="diary_fast_clash_end">End the fast</string>
     <string name="diary_copy_yesterday">Copy yesterday</string>
 
     <string name="meal_breakfast">Breakfast</string>

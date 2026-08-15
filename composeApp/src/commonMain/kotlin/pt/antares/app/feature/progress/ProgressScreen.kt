@@ -64,6 +64,8 @@ import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import pt.antares.app.core.util.formatDurationMin
+import pt.antares.app.core.util.formatMinuteOfDay
 
 @Composable
 fun ProgressSections(
@@ -696,6 +698,13 @@ private fun patternFact(p: EatingPatterns.Pattern): String = when (p.kind) {
             p.value,
             mealSlotLabel(p.label),
         )
+
+    // Os dois de baixo trazem minutos, e não uma contagem: um é uma duração, o outro uma
+    // hora do dia.
+    EatingPatterns.Kind.LONG_EATING_WINDOW ->
+        stringResource(Res.string.patterns_long_window, formatDurationMin(p.value))
+    EatingPatterns.Kind.LATE_LAST_MEAL ->
+        stringResource(Res.string.patterns_late_meal, formatMinuteOfDay(p.value))
 }
 
 private fun patternTip(kind: EatingPatterns.Kind) = when (kind) {
@@ -703,6 +712,8 @@ private fun patternTip(kind: EatingPatterns.Kind) = when (kind) {
     EatingPatterns.Kind.WEEKEND_LOWER -> Res.string.patterns_tip_weekend_lower
     EatingPatterns.Kind.WEEKEND_PROTEIN_DROP -> Res.string.patterns_tip_weekend_protein
     EatingPatterns.Kind.MEAL_CONCENTRATION -> Res.string.patterns_tip_concentration
+    EatingPatterns.Kind.LONG_EATING_WINDOW -> Res.string.patterns_tip_long_window
+    EatingPatterns.Kind.LATE_LAST_MEAL -> Res.string.patterns_tip_late_meal
 }
 
 private fun Double.display(imperial: Boolean): Double =

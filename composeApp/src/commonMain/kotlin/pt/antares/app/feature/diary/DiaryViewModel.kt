@@ -26,6 +26,13 @@ import pt.antares.app.core.model.Sex
 import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.nutrition.EfsaReference
 import pt.antares.app.feature.profile.data.ProfileRepository
+import pt.antares.app.core.calc.EatingWindow
+import pt.antares.app.core.calc.Janela
+import kotlinx.datetime.Clock
+import pt.antares.app.core.calc.FastingClash
+import pt.antares.app.core.database.entities.FastingSessionEntity
+import pt.antares.app.core.util.epochMillisAt
+import pt.antares.app.core.util.minuteOfDayAt
 
 data class DiaryState(
     val epochDay: Long,
@@ -38,7 +45,27 @@ data class DiaryState(
     val waterGoalMl: Int = 2000,
     val exerciseEntries: List<ExerciseLogEntity> = emptyList(),
     val exerciseKcal: Int = 0,
-)
+
+    // Quando existe, houve comida registada depois de o jejum ter começado. É o único
+    // sítio da app onde as duas funcionalidades se falam.
+    val quebraDoJejum: QuebraDoJejum? = null,
+) {
+
+    /**
+     * Da primeira à última refeição com hora. Nulo quando o dia não tem horas que cheguem
+     * — todo o histórico anterior à coluna cai aqui, e o ecrã limita-se a não mostrar
+     * a linha em vez de mostrar uma janela inventada.
+     */
+    val janela: Janela? get() = EatingWindow.doDia(logsBySlot.values.flatten().map { it.eatenAtMin })
+}
+
+/**
+ * Comida registada depois de um jejum ter começado, e ele ainda a correr.
+ *
+ * Só conta registos com hora: sem ela não se sabe se foram antes ou depois, e acusar sem
+ * prova é pior do que calar.
+ */
+data class QuebraDoJejum(val inicioMin: Int, val registos: Int)
 
 data class NutritionRef(
     val reference: EfsaReference,
@@ -47,12 +74,19 @@ data class NutritionRef(
 )
 
 private data class WaterInfo(val ml: Int, val goalMl: Int)
-private data class ExerciseInfo(val entries: List<ExerciseLogEntity>, val kcal: Int)
+// Junta o exercício e o jejum do dia numa fonte só. O `combine` tipado do Flow leva cinco
+// fontes, e sem este agrupamento a sexta não caberia.
+private data class ExerciseInfo(
+    val entries: List<ExerciseLogEntity>,
+    val kcal: Int,
+    val jejum: pt.antares.app.core.database.entities.FastingSessionEntity?,
+)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DiaryViewModel(
     private val diaryRepository: DiaryRepository,
     private val profileRepository: ProfileRepository,
+    private val fastingRepository: pt.antares.app.feature.fasting.data.FastingRepository,
     private val exerciseRepository: ExerciseRepository,
     private val preferences: AppPreferences,
     private val templateRepository: pt.antares.app.feature.templates.MealTemplateRepository,
@@ -108,8 +142,9 @@ class DiaryViewModel(
             combine(
                 exerciseRepository.observeDay(day),
                 exerciseRepository.observeDayKcal(day),
-            ) { entries, kcal ->
-                ExerciseInfo(entries, kcal)
+                fastingRepository.observeActive(),
+            ) { entries, kcal, jejum ->
+                ExerciseInfo(entries, kcal, jejum)
             },
         ) { logs, totals, targets, waterInfo, exerciseInfo ->
             DiaryState(
@@ -123,6 +158,7 @@ class DiaryViewModel(
                 waterGoalMl = waterInfo.goalMl,
                 exerciseEntries = exerciseInfo.entries,
                 exerciseKcal = exerciseInfo.kcal,
+                quebraDoJejum = quebraDoJejum(day, logs, exerciseInfo.jejum),
             )
         }
     }.stateIn(
@@ -130,6 +166,34 @@ class DiaryViewModel(
         SharingStarted.WhileSubscribed(5_000),
         DiaryState(epochDay = todayEpochDay(), isToday = true),
     )
+
+    /**
+     * O aviso de que se comeu com o jejum a correr, ou `null` se não houver o que dizer.
+     *
+     * Cala-se em três casos, e todos são o mesmo cuidado: sem jejum ativo não há nada a
+     * cruzar; num dia que não é hoje o jejum a decorrer não lhe diz respeito; e um registo
+     * sem hora não prova nada, porque tanto pode ter sido antes como depois.
+     */
+    private fun quebraDoJejum(
+        day: Long,
+        logs: List<FoodLogEntity>,
+        jejum: FastingSessionEntity?,
+    ): QuebraDoJejum? {
+        if (jejum == null || day != todayEpochDay()) return null
+        val instantes = logs.mapNotNull { log ->
+            log.eatenAtMin?.let { epochMillisAt(log.epochDay, it) }
+        }
+        val depois = FastingClash.dentroDoJejum(
+            instantesMs = instantes,
+            inicioMs = jejum.startedAt,
+            agoraMs = Clock.System.now().toEpochMilliseconds(),
+        )
+        if (depois.isEmpty()) return null
+        return QuebraDoJejum(
+            inicioMin = minuteOfDayAt(jejum.startedAt),
+            registos = depois.size,
+        )
+    }
 
     fun goToDay(epochDay: Long) {
         selectedDay.value = epochDay
@@ -151,6 +215,9 @@ class DiaryViewModel(
     fun deleteLog(logId: String) = viewModelScope.launch { diaryRepository.delete(logId) }
     fun updateLogQuantity(logId: String, grams: Double) =
         viewModelScope.launch { diaryRepository.updateQuantity(logId, grams) }
+
+    fun updateLogEatenAt(logId: String, eatenAtMin: Int?) =
+        viewModelScope.launch { diaryRepository.updateEatenAt(logId, eatenAtMin) }
 
     fun duplicateLog(logId: String) = viewModelScope.launch { diaryRepository.duplicate(logId) }
     fun moveLog(logId: String, slot: MealSlot) = viewModelScope.launch { diaryRepository.move(logId, slot) }

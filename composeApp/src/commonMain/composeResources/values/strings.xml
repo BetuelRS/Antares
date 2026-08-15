@@ -38,6 +38,10 @@
     <string name="patterns_tip_weekend_lower">Comer bastante menos em dois dias e compensar nos outros cinco dá a mesma média com mais fome. Se não for de propósito, vale a pena aproximar os dias.</string>
     <string name="patterns_tip_weekend_protein">A proteína é o que mais protege a massa magra em défice. Deixar uma fonte pronta para sábado costuma resolver.</string>
     <string name="patterns_tip_concentration">Concentrar o dia numa refeição não tem problema nenhum se te souber bem. Se chegas a ela com muita fome, adiantar parte da proteína ajuda.</string>
+    <string name="patterns_long_window">Comes ao longo de %1$s por dia, da primeira à última refeição.</string>
+    <string name="patterns_late_meal">A tua última refeição é tipicamente às %1$s.</string>
+    <string name="patterns_tip_long_window">Não há nada de errado numa janela larga. Só vale a pena saber que é daqui que o jejum encurta, se algum dia quiseres experimentar.</string>
+    <string name="patterns_tip_late_meal">Comer tarde não engorda mais — o que conta é o total do dia. Há quem durma pior com o jantar em cima da hora; se for o teu caso, já sabes o número.</string>
     <string name="settings_pattern_suggestions">Sugestões nos padrões</string>
     <string name="settings_pattern_suggestions_desc">Por omissão a app só mostra os números do que registaste. Com isto ligado, acrescenta o que podes fazer com eles.</string>
     <string name="photos_title">Fotos de progresso</string>
@@ -267,6 +271,18 @@
     <string name="diary_water">Água</string>
     <string name="diary_duplicate">Duplicar</string>
     <string name="diary_move">Mover</string>
+    <string name="diary_eaten_at">Comido às</string>
+    <string name="diary_eaten_at_unknown">Sem hora</string>
+    <string name="diary_eaten_at_set">Pôr a hora</string>
+    <string name="diary_eaten_at_clear">Tirar a hora</string>
+    <string name="diary_eaten_at_help">Só os registos com hora contam para a janela alimentar.</string>
+    <string name="diary_window">Janela alimentar</string>
+    <string name="diary_window_value">%1$s às %2$s · %3$s</string>
+    <string name="diary_window_partial">%1$d sem hora</string>
+    <string name="diary_window_fasting">Jejum de facto: %1$s</string>
+    <string name="diary_fast_clash_title">Jejum a decorrer</string>
+    <string name="diary_fast_clash_body">Começou às %1$s. Depois disso ficaram %2$d registos no diário — o contador continua a subir na mesma.</string>
+    <string name="diary_fast_clash_end">Terminar o jejum</string>
     <string name="diary_copy_yesterday">Copiar dia de ontem</string>
 
     <string name="meal_breakfast">Pequeno-almoço</string>
