@@ -72,6 +72,11 @@ import pt.antares.app.generated.resources.weight_how_to_body
 import pt.antares.app.generated.resources.weight_how_to_title
 import pt.antares.app.generated.resources.weight_next_day
 import pt.antares.app.generated.resources.weight_prev_day
+import pt.antares.app.generated.resources.weight_second_average
+import pt.antares.app.generated.resources.weight_second_body
+import pt.antares.app.generated.resources.weight_second_keep
+import pt.antares.app.generated.resources.weight_second_replace
+import pt.antares.app.generated.resources.weight_second_title
 import pt.antares.app.generated.resources.weight_delete_confirm_title
 import pt.antares.app.generated.resources.weight_dialog_title
 import pt.antares.app.generated.resources.weight_empty_subtitle
@@ -105,6 +110,16 @@ fun WeightHistoryScreen(
             onDismiss = viewModel::dismissPending,
         )
     }
+    val segundaPesagem by viewModel.segundaPesagem.collectAsState()
+    segundaPesagem?.let { p ->
+        SegundaPesagemDialog(
+            anterior = fmtG(p.anteriorKg),
+            novo = fmtG(p.novoKg),
+            onEscolha = viewModel::resolverSegundaPesagem,
+            onDismiss = viewModel::dispensarSegundaPesagem,
+        )
+    }
+
     var showAddDialog by remember { mutableStateOf(false) }
     var pendingDelete by remember { mutableStateOf<WeightLogEntity?>(null) }
 
@@ -418,3 +433,37 @@ private const val FAB_SPACE_DP = 80
 private const val MIN_POINTS_FOR_CHART = 2
 
 private const val DELTA_EPSILON_KG = 0.05
+
+/**
+ * Pergunta o que fazer com a segunda pesagem do dia, com os dois valores à vista.
+ *
+ * Três botões e não dois: o `ConfirmDialog` do sistema de desenho tem confirmar e cancelar,
+ * e aqui nenhuma das três respostas é um cancelamento — manter a anterior é uma escolha
+ * tão deliberada como as outras.
+ */
+@Composable
+private fun SegundaPesagemDialog(
+    anterior: String,
+    novo: String,
+    onEscolha: (EscolhaDaSegundaPesagem) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.weight_second_title)) },
+        text = { Text(stringResource(Res.string.weight_second_body, anterior, novo)) },
+        confirmButton = {
+            Column {
+                TextButton(onClick = { onEscolha(EscolhaDaSegundaPesagem.SUBSTITUIR) }) {
+                    Text(stringResource(Res.string.weight_second_replace, novo))
+                }
+                TextButton(onClick = { onEscolha(EscolhaDaSegundaPesagem.MEDIA) }) {
+                    Text(stringResource(Res.string.weight_second_average))
+                }
+                TextButton(onClick = { onEscolha(EscolhaDaSegundaPesagem.MANTER_A_ANTERIOR) }) {
+                    Text(stringResource(Res.string.weight_second_keep, anterior))
+                }
+            }
+        },
+    )
+}

@@ -72,6 +72,14 @@ class ProfileRepository(
 
     fun observeLatestWeight(): Flow<WeightLogEntity?> = weightDao.observeLatest()
 
+    /**
+     * A pesagem que já existe nesse dia, ou nulo. Serve para perguntar antes de escrever:
+     * a segunda pesagem do dia não pode ser resolvida em silêncio.
+     */
+    suspend fun weightOnDay(epochDay: Long): WeightLogEntity? = withContext(io) {
+        weightDao.byDayForWrite(epochDay)?.takeIf { !it.deleted }
+    }
+
     suspend fun upsertWeight(
         epochDay: Long,
         weightKg: Double,

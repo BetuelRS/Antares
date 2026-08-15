@@ -999,6 +999,11 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_goal_reached_cta">Switch to maintenance</string>
     <string name="weight_how_to_title">How to weigh yourself</string>
     <string name="weight_how_to_body">In the morning, after the bathroom, before eating or drinking, and always on the same scale. This is not fussiness: half the variation between weigh-ins is the time of day and your clothes, and the app uses these numbers to work out your target.</string>
+    <string name="weight_second_title">You already weighed in today</string>
+    <string name="weight_second_body">You had %1$s kg and now the scale says %2$s kg. Which one should today keep?</string>
+    <string name="weight_second_replace">Keep %1$s kg</string>
+    <string name="weight_second_average">Average the two</string>
+    <string name="weight_second_keep">Keep the earlier %1$s kg</string>
     <string name="weight_confirm_title">Is this weight right?</string>
     <string name="weight_confirm_body">%1$s kg is a long way from your usual weight (%2$s kg). It could be a typo — or it could be right, in which case save it.</string>
     <string name="weight_confirm_save">It is right, save it</string>

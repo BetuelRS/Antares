@@ -1000,6 +1000,11 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_goal_reached_cta">Passar a manutenção</string>
     <string name="weight_how_to_title">Como pesar-te</string>
     <string name="weight_how_to_body">De manhã, depois da casa de banho, antes de comer ou beber, e sempre na mesma balança. Não é mania: metade da variação entre pesagens é a hora do dia e a roupa, e a app usa estes números para te calcular a meta.</string>
+    <string name="weight_second_title">Já te pesaste hoje</string>
+    <string name="weight_second_body">Tinhas %1$s kg e agora marcaste %2$s kg. O que queres guardar para hoje?</string>
+    <string name="weight_second_replace">Ficar com %1$s kg</string>
+    <string name="weight_second_average">Média das duas</string>
+    <string name="weight_second_keep">Manter os %1$s kg de antes</string>
     <string name="weight_confirm_title">Confirmas este peso?</string>
     <string name="weight_confirm_body">%1$s kg afasta-se muito do teu peso habitual (%2$s kg). Pode ser um erro de escrita — ou pode estar certo, e nesse caso guarda-o.</string>
     <string name="weight_confirm_save">Está certo, guarda</string>
