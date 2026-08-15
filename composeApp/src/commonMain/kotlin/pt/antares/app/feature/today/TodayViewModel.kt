@@ -26,7 +26,6 @@ import pt.antares.app.core.database.daos.DayTotals
 import pt.antares.app.core.database.entities.FastingSessionEntity
 import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.datastore.AppPreferences
-import pt.antares.app.core.designsystem.HeroStyle
 import pt.antares.app.core.health.HealthPublisher
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.nutrition.DailyGap
@@ -146,10 +145,6 @@ class TodayViewModel(
 
     private val _celebration = MutableStateFlow<Int?>(null)
     val celebration: StateFlow<Int?> = _celebration.asStateFlow()
-
-    val heroStyle: StateFlow<HeroStyle> = preferences.heroStyle
-        .map { runCatching { HeroStyle.valueOf(it) }.getOrDefault(HeroStyle.CLASSIC) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HeroStyle.CLASSIC)
 
     init {
 

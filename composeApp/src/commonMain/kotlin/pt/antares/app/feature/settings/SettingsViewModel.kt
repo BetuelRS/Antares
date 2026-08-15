@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.antares.app.core.datastore.AppPreferences
-import pt.antares.app.core.designsystem.HeroStyle
 import pt.antares.app.core.designsystem.ThemeMode
 
 class SettingsViewModel(
@@ -31,14 +30,6 @@ class SettingsViewModel(
 
     fun setThemeMode(mode: ThemeMode) = viewModelScope.launch {
         preferences.setThemeMode(mode.name)
-    }
-
-    val heroStyle: StateFlow<HeroStyle> = preferences.heroStyle
-        .map { runCatching { HeroStyle.valueOf(it) }.getOrDefault(HeroStyle.CLASSIC) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HeroStyle.CLASSIC)
-
-    fun setHeroStyle(style: HeroStyle) = viewModelScope.launch {
-        preferences.setHeroStyle(style.name)
     }
 
     fun setAdaptiveTargets(enabled: Boolean) = viewModelScope.launch {

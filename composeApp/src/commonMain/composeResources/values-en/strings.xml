@@ -872,9 +872,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_theme_system">Follow system</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
-    <string name="settings_hero_style">Today screen</string>
-    <string name="settings_hero_classic">Classic</string>
-    <string name="settings_hero_ring">Antares Ring</string>
 
     <string name="add_entry_title">Add</string>
     <string name="add_entry_search">Search</string>

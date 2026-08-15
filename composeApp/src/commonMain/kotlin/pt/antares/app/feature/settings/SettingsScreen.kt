@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pt.antares.app.core.designsystem.HeroStyle
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.ThemeMode
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -104,23 +103,6 @@ fun SettingsScreen(
                         label = stringResource(Res.string.settings_theme_dark),
                         selected = themeMode == ThemeMode.DARK,
                         onClick = { viewModel.setThemeMode(ThemeMode.DARK) },
-                    )
-                }
-            }
-
-            val heroStyle by viewModel.heroStyle.collectAsState()
-            SectionHeader(title = stringResource(Res.string.settings_hero_style))
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Column {
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_hero_classic),
-                        selected = heroStyle == HeroStyle.CLASSIC,
-                        onClick = { viewModel.setHeroStyle(HeroStyle.CLASSIC) },
-                    )
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_hero_ring),
-                        selected = heroStyle == HeroStyle.RING,
-                        onClick = { viewModel.setHeroStyle(HeroStyle.RING) },
                     )
                 }
             }

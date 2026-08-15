@@ -49,7 +49,6 @@ val MaterialTheme.success: Color
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
 // Duas apresentações do resumo do dia, à escolha nas definições. Não muda dados nenhuns.
-enum class HeroStyle { CLASSIC, RING }
 
 /**
  * Recebe `darkTheme` já resolvido em vez de ler a preferência: o tema pode ser forçado nas

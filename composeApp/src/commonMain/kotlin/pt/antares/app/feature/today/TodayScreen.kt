@@ -42,7 +42,6 @@ import pt.antares.app.core.nutrition.DailyGap
 import pt.antares.app.core.nutrition.Nutrients
 import pt.antares.app.core.nutrition.microLabelRes
 import pt.antares.app.core.designsystem.AntaresColors
-import pt.antares.app.core.designsystem.HeroStyle
 import pt.antares.app.core.designsystem.cascadeIn
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.model.UnitSystem
@@ -56,8 +55,6 @@ import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import pt.antares.app.core.designsystem.components.AntaresRing
-import pt.antares.app.core.designsystem.components.MacroArc
 import pt.antares.app.core.designsystem.components.StatRing
 import pt.antares.app.core.designsystem.components.SupernovaCelebration
 import pt.antares.app.feature.fasting.data.toSnapshot
@@ -88,7 +85,6 @@ fun TodayScreen(
     val steps by viewModel.steps.collectAsState()
     val streak by viewModel.loggingStreak.collectAsState()
     val celebration by viewModel.celebration.collectAsState()
-    val heroStyle by viewModel.heroStyle.collectAsState()
     val weeklyBudget by viewModel.weeklyBudget.collectAsState()
     val dailyGap by viewModel.dailyGap.collectAsState()
     val aguaDaComidaMl by viewModel.aguaDaComidaMl.collectAsState()
@@ -168,43 +164,16 @@ fun TodayScreen(
                     exercise = state.exerciseKcal,
                 )
 
-                when (heroStyle) {
-                    HeroStyle.RING -> AntaresRing(
-                        centerValue = "${budget.remaining}",
-                        centerLabel = stringResource(Res.string.diary_remaining_kcal),
-                        centerColor = if (budget.remaining < 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                        protein = MacroArc(
-                            value = state.consumed.proteinG.toFloat(),
-                            goal = targets.proteinG.toFloat(),
-                            color = AntaresColors.macroProtein,
-                            initial = stringResource(Res.string.macro_p),
-                            consumedLabel = state.consumed.proteinG.roundToInt().toString(),
-                            goalLabel = "${targets.proteinG}",
-                        ),
-                        carbs = MacroArc(
-                            value = state.consumed.carbsG.toFloat(),
-                            goal = targets.carbsG.toFloat(),
-                            color = AntaresColors.macroCarbs,
-                            initial = stringResource(Res.string.macro_c),
-                            consumedLabel = state.consumed.carbsG.roundToInt().toString(),
-                            goalLabel = "${targets.carbsG}",
-                        ),
-                        fat = MacroArc(
-                            value = state.consumed.fatG.toFloat(),
-                            goal = targets.fatG.toFloat(),
-                            color = AntaresColors.macroFat,
-                            initial = stringResource(Res.string.macro_f),
-                            consumedLabel = state.consumed.fatG.roundToInt().toString(),
-                            goalLabel = "${targets.fatG}",
-                        ),
-                    )
-                    HeroStyle.CLASSIC -> StatRing(
-                        progress = if (budget.budget > 0) budget.consumed.toFloat() / budget.budget else 0f,
-                        centerValue = "${budget.remaining}",
-                        centerTitle = stringResource(Res.string.diary_remaining_kcal),
-                        color = if (budget.remaining < 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                    )
-                }
+                StatRing(
+                    progress = if (budget.budget > 0) budget.consumed.toFloat() / budget.budget else 0f,
+                    centerValue = "${budget.remaining}",
+                    centerTitle = stringResource(Res.string.diary_remaining_kcal),
+                    color = if (budget.remaining < 0) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+                )
                 Spacer(Modifier.height(Spacing.sm))
                 Text(
                     "${budget.consumed} / ${budget.budget} ${stringResource(Res.string.common_kcal)}",
@@ -220,16 +189,14 @@ fun TodayScreen(
                     )
                 }
 
-                if (heroStyle == HeroStyle.CLASSIC) {
-                    Spacer(Modifier.height(Spacing.md))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                    ) {
-                        MacroChip(stringResource(Res.string.onb_plan_protein), state.consumed.proteinG, targets.proteinG)
-                        MacroChip(stringResource(Res.string.onb_plan_carbs), state.consumed.carbsG, targets.carbsG)
-                        MacroChip(stringResource(Res.string.onb_plan_fat), state.consumed.fatG, targets.fatG)
-                    }
+                Spacer(Modifier.height(Spacing.md))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    MacroChip(stringResource(Res.string.onb_plan_protein), state.consumed.proteinG, targets.proteinG)
+                    MacroChip(stringResource(Res.string.onb_plan_carbs), state.consumed.carbsG, targets.carbsG)
+                    MacroChip(stringResource(Res.string.onb_plan_fat), state.consumed.fatG, targets.fatG)
                 }
                 Spacer(Modifier.height(Spacing.md))
                 PrimaryButton(

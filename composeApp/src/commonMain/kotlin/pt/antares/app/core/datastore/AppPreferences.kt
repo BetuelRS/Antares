@@ -55,7 +55,6 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         val waterGoalOverrideMl = androidx.datastore.preferences.core.intPreferencesKey("water_goal_override_ml")
         val lastCelebratedStreak = androidx.datastore.preferences.core.intPreferencesKey("last_celebrated_streak")
         val themeMode = androidx.datastore.preferences.core.stringPreferencesKey("theme_mode")
-        val heroStyle = androidx.datastore.preferences.core.stringPreferencesKey("hero_style")
         val fastingNotifications = booleanPreferencesKey("fasting_notifications_enabled")
         val patternSuggestions = booleanPreferencesKey("pattern_suggestions")
 
@@ -140,13 +139,6 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setThemeMode(mode: String) {
         dataStore.edit { it[Keys.themeMode] = mode }
-    }
-
-    val heroStyle: Flow<String> =
-        dataStore.data.map { it[Keys.heroStyle] ?: "CLASSIC" }
-
-    suspend fun setHeroStyle(style: String) {
-        dataStore.edit { it[Keys.heroStyle] = style }
     }
 
     val fastingNotifications: Flow<Boolean> =
