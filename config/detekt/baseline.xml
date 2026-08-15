@@ -1,0 +1,529 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:DemoDataEngine.kt$DemoDataEngine$protocoloJejumId != null &amp;&amp; i &gt; 400 &amp;&amp; diaDaSemana in setOf(2, 4) &amp;&amp; r.chance(0.5)</ID>
+    <ID>ComplexCondition:WeightViewModel.kt$WeightViewModel$before != null &amp;&amp; after != null &amp;&amp; before.kcal != after.kcal &amp;&amp; previousWeight != null</ID>
+    <ID>CyclomaticComplexMethod:AdminScreen.kt$@Composable fun AdminScreen( onBack: () -&gt; Unit, viewModel: AdminViewModel = koinViewModel(), demoViewModel: DemoViewModel = koinViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:DiaryScreen.kt$@Composable fun DiaryScreen( onAddFood: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode) -&gt; Unit, onAddExercise: (Long) -&gt; Unit, onQuickLog: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -&gt; Unit, viewModel: DiaryViewModel = koinViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:FoodSearchScreen.kt$@OptIn(ExperimentalLayoutApi::class) @Composable fun FoodSearchScreen( onBack: () -&gt; Unit, onFoodSelected: (String) -&gt; Unit, onCreateCustom: () -&gt; Unit, onScan: () -&gt; Unit, pickMode: Boolean = false, onRecipeSelected: (String) -&gt; Unit = {}, onEditRecipe: (String) -&gt; Unit = {}, onNewRecipe: () -&gt; Unit = {}, aiSlot: MealSlot? = null, aiEpochDay: Long? = null, initialMode: String = "SEARCH", initialQuery: String = "", viewModel: FoodSearchViewModel = koinViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:MicroLabels.kt$fun microLabelRes(key: String): StringResource</ID>
+    <ID>CyclomaticComplexMethod:NutritionFactsCard.kt$@OptIn(ExperimentalLayoutApi::class) @Composable fun NutritionFactsCard( breakdown: NutritionBreakdown?, gap: MicroGap, expandKey: String, modifier: Modifier = Modifier, source: StringResource? = null, sourceLabel: StringResource = Res.string.nutrition_source_label, )</ID>
+    <ID>CyclomaticComplexMethod:ProfileSettingsScreen.kt$@Composable fun ProfileSettingsScreen( onBack: () -&gt; Unit, viewModel: ProfileSettingsViewModel = koinViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:TodayScreen.kt$@Composable fun TodayScreen( onLogWeight: () -&gt; Unit, onAddMeal: () -&gt; Unit, onOpenWorkout: () -&gt; Unit, onOpenFasting: () -&gt; Unit, onOpenRun: () -&gt; Unit, onOpenCoach: () -&gt; Unit, onQuickLog: (pt.antares.app.core.model.MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -&gt; Unit, onOpenGap: (String) -&gt; Unit, viewModel: TodayViewModel = koinViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:WorkoutSessionScreen.kt$@Composable private fun NewSetRow(prefill: WorkoutSetEntity?, onLog: (Double, Int, Double?, Boolean) -&gt; Unit)</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:GpxTestReader.kt$GpxTestReader$val (lat, lon, ele, time) = m.destructured</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:TargetBreakdownSweepTest.kt$TargetBreakdownSweepTest$val (peso, altura, idade, sexo) = passo.values</ID>
+    <ID>EmptyFunctionBlock:CoachNotifier.kt$NoopCoachNotifier${}</ID>
+    <ID>EmptyFunctionBlock:FastingNotifier.kt$NoopFastingNotifier${}</ID>
+    <ID>EmptyFunctionBlock:RunController.kt$NoopRunController${}</ID>
+    <ID>EmptyFunctionBlock:WorkoutAlerts.kt$NoopWorkoutAlerts${}</ID>
+    <ID>ForEachOnRange:RoutineEditScreen.kt$1..3</ID>
+    <ID>LongMethod:AntaresNavHost.kt$@Composable fun AntaresNavHost( navController: NavHostController, startDestination: Route, )</ID>
+    <ID>LongMethod:BodyCompositionScreen.kt$@Composable fun BodyCompositionScreen( onBack: () -&gt; Unit, viewModel: BodyCompositionViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:DiaryScreen.kt$@Composable fun DiaryScreen( onAddFood: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode) -&gt; Unit, onAddExercise: (Long) -&gt; Unit, onQuickLog: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -&gt; Unit, viewModel: DiaryViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:FoodSearchScreen.kt$@OptIn(ExperimentalLayoutApi::class) @Composable fun FoodSearchScreen( onBack: () -&gt; Unit, onFoodSelected: (String) -&gt; Unit, onCreateCustom: () -&gt; Unit, onScan: () -&gt; Unit, pickMode: Boolean = false, onRecipeSelected: (String) -&gt; Unit = {}, onEditRecipe: (String) -&gt; Unit = {}, onNewRecipe: () -&gt; Unit = {}, aiSlot: MealSlot? = null, aiEpochDay: Long? = null, initialMode: String = "SEARCH", initialQuery: String = "", viewModel: FoodSearchViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:ProfileSettingsScreen.kt$@Composable fun ProfileSettingsScreen( onBack: () -&gt; Unit, viewModel: ProfileSettingsViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:RecipeEditScreen.kt$@Composable fun RecipeEditScreen( recipeId: String?, onAddIngredient: (String) -&gt; Unit, onDone: () -&gt; Unit, onBack: () -&gt; Unit, viewModel: RecipeEditViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:SettingsScreen.kt$@Composable fun SettingsScreen( onBack: () -&gt; Unit, onAdminClick: () -&gt; Unit, viewModel: SettingsViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:TodayScreen.kt$@Composable fun TodayScreen( onLogWeight: () -&gt; Unit, onAddMeal: () -&gt; Unit, onOpenWorkout: () -&gt; Unit, onOpenFasting: () -&gt; Unit, onOpenRun: () -&gt; Unit, onOpenCoach: () -&gt; Unit, onQuickLog: (pt.antares.app.core.model.MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -&gt; Unit, onOpenGap: (String) -&gt; Unit, viewModel: TodayViewModel = koinViewModel(), )</ID>
+    <ID>LongMethod:WeightHistoryScreen.kt$@Composable fun WeightHistoryScreen( onBack: () -&gt; Unit, viewModel: WeightViewModel = koinViewModel(), )</ID>
+    <ID>LongParameterList:CoachRepository.kt$CoachRepository$( private val coachDao: CoachReportDao, private val foodLogDao: FoodLogDao, private val weightDao: WeightLogDao, private val profileDao: UserProfileDao, private val overrideDao: DailyTargetOverrideDao, private val workoutSessionDao: WorkoutSessionDao, private val workoutSetDao: WorkoutSetDao, private val exerciseLogDao: ExerciseLogDao, private val fastingDao: FastingSessionDao, private val runDao: RunDao, private val statsRepository: pt.antares.app.feature.stats.NutritionStatsRepository, private val prefs: AppPreferences, // Sem notificador por omissão: nos testes e no arranque antes das permissões, gerar um // relatório não pode depender de haver como avisar. private val notifier: CoachNotifier = NoopCoachNotifier(), private val io: CoroutineDispatcher, private val lang: () -&gt; String = { "pt" }, private val zone: TimeZone = TimeZone.currentSystemDefault(), private val json: Json = Json, private val newId: () -&gt; String = { Ids.newUuid() }, private val now: () -&gt; Long = { Clock.System.now().toEpochMilliseconds() }, private val today: () -&gt; Long = { todayEpochDay(zone) }, )</ID>
+    <ID>LongParameterList:FoodRepository.kt$FoodRepository$( existingId: String?, namePt: String, kcal: Int, proteinG: Double, carbsG: Double, fatG: Double, sugarsG: Double?, satFatG: Double?, fiberG: Double?, sodiumMg: Int?, servingName: String?, servingGrams: Double?, barcode: String? = null, )</ID>
+    <ID>LongParameterList:TodayViewModel.kt$TodayViewModel$( private val profileRepository: ProfileRepository, private val diaryRepository: DiaryRepository, exerciseRepository: ExerciseRepository, workoutSessionRepository: WorkoutSessionRepository, workoutHistoryRepository: WorkoutHistoryRepository, routineRepository: RoutineRepository, fastingRepository: FastingRepository, runRepository: RunRepository, preferences: AppPreferences, private val statsRepository: pt.antares.app.feature.stats.NutritionStatsRepository, private val health: HealthRepository, private val healthPublisher: HealthPublisher, )</ID>
+    <ID>LoopWithTooManyJumpStatements:DemoDataEngine.kt$DemoDataEngine$for</ID>
+    <ID>LoopWithTooManyJumpStatements:FoodSeeder.kt$FoodSeeder$for</ID>
+    <ID>LoopWithTooManyJumpStatements:HealthRepository.kt$HealthRepository$for</ID>
+    <ID>LoopWithTooManyJumpStatements:Nutrients.kt$Nutrients$for</ID>
+    <ID>MagicNumber:AdaptiveTdee.kt$AdaptiveTdee$7.0</ID>
+    <ID>MagicNumber:AddExerciseViewModel.kt$AddExerciseViewModel$600</ID>
+    <ID>MagicNumber:AdminRepository.kt$401</ID>
+    <ID>MagicNumber:AdminRepository.kt$403</ID>
+    <ID>MagicNumber:AiClient.kt$401</ID>
+    <ID>MagicNumber:AiClient.kt$402</ID>
+    <ID>MagicNumber:AiClient.kt$403</ID>
+    <ID>MagicNumber:AiClient.kt$429</ID>
+    <ID>MagicNumber:AiClient.kt$503</ID>
+    <ID>MagicNumber:AiSheet.kt$10</ID>
+    <ID>MagicNumber:AndroidNotificationScheduler.kt$NotificationScheduler$10</ID>
+    <ID>MagicNumber:AndroidNotificationScheduler.kt$NotificationScheduler$1000L</ID>
+    <ID>MagicNumber:AndroidNotificationScheduler.kt$NotificationScheduler$24</ID>
+    <ID>MagicNumber:AndroidNotificationScheduler.kt$NotificationScheduler$3</ID>
+    <ID>MagicNumber:AndroidNotificationScheduler.kt$NotificationScheduler$30</ID>
+    <ID>MagicNumber:AndroidNotificationScheduler.kt$NotificationScheduler$60</ID>
+    <ID>MagicNumber:AndroidRunController.kt$AndroidRunController$70.0</ID>
+    <ID>MagicNumber:AndroidWorkoutAlerts.kt$400</ID>
+    <ID>MagicNumber:AndroidWorkoutAlerts.kt$AndroidWorkoutAlerts$1000L</ID>
+    <ID>MagicNumber:AndroidWorkoutAlerts.kt$RestEndReceiver$400</ID>
+    <ID>MagicNumber:BackupPicker.android.kt$4</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$0.15456</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$0.19077</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$0.22100</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$0.23</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$0.35004</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$1.0324</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$1.20</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$1.29579</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$10.8</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$450.0</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$495.0</ID>
+    <ID>MagicNumber:BodyComposition.kt$BodyComposition$5.4</ID>
+    <ID>MagicNumber:ChartScale.kt$ChartScale.Companion$1e-9</ID>
+    <ID>MagicNumber:ChartScale.kt$ChartScale.Companion$5</ID>
+    <ID>MagicNumber:CoachRepository.kt$CoachRepository$23</ID>
+    <ID>MagicNumber:CoachRepository.kt$CoachRepository$59</ID>
+    <ID>MagicNumber:CoachRepository.kt$CoachRepository$6</ID>
+    <ID>MagicNumber:CoachRepository.kt$CoachRepository$7</ID>
+    <ID>MagicNumber:CoachTrigger.kt$CoachTrigger$7</ID>
+    <ID>MagicNumber:DateFormat.kt$7</ID>
+    <ID>MagicNumber:DayTicker.kt$DayTicker$250</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.12</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.22</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.23</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.32</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.34</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.35</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.4</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.45</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.5</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.55</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.6</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.72</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.75</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.8</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.85</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.88</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.9</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$0.93</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$1.07</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$1.15</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$1.20</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$10</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$1000</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$110</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$12</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$14</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$1400</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$15.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$16</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$16.2</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$18</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$2.5</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$20</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$20.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$240</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$3</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$3.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$3.5</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$33</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$36</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$3_600_000L</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$4</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$400</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$4000</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$45</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$45.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$450</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$5</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$5.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$56</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$6</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$6.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$6.25</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$60</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$600.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$60_000L</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$7</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$7.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$70</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$72</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$730.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$8</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$8.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$80</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$9</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$9.5</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$90</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$90.0</ID>
+    <ID>MagicNumber:DemoDataEngine.kt$DemoDataEngine$94</ID>
+    <ID>MagicNumber:DemoRandom.kt$DemoRandom$11</ID>
+    <ID>MagicNumber:DemoRandom.kt$DemoRandom$13</ID>
+    <ID>MagicNumber:DemoRandom.kt$DemoRandom$17</ID>
+    <ID>MagicNumber:DemoRandom.kt$DemoRandom$53</ID>
+    <ID>MagicNumber:DemoRandom.kt$DemoRandom$7</ID>
+    <ID>MagicNumber:EatingPatterns.kt$EatingPatterns$3</ID>
+    <ID>MagicNumber:EatingPatterns.kt$EatingPatterns$5</ID>
+    <ID>MagicNumber:EatingPatterns.kt$EatingPatterns$7</ID>
+    <ID>MagicNumber:ExerciseSeeder.kt$ExerciseSeeder$300</ID>
+    <ID>MagicNumber:FastingProtocolSeeder.kt$FastingProtocolSeeder$16</ID>
+    <ID>MagicNumber:FastingProtocolSeeder.kt$FastingProtocolSeeder$18</ID>
+    <ID>MagicNumber:FastingProtocolSeeder.kt$FastingProtocolSeeder$20</ID>
+    <ID>MagicNumber:FastingProtocolSeeder.kt$FastingProtocolSeeder$23</ID>
+    <ID>MagicNumber:FoodDetailViewModel.kt$FoodDetailViewModel$6</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditState$4</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditState$9</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditViewModel$10</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditViewModel$10.0</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditViewModel$4</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditViewModel$40</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditViewModel$7</ID>
+    <ID>MagicNumber:FoodEditViewModel.kt$FoodEditViewModel$80</ID>
+    <ID>MagicNumber:FoodSearchViewModel.kt$FoodSearchViewModel$3</ID>
+    <ID>MagicNumber:FoodSearchViewModel.kt$FoodSearchViewModel$300</ID>
+    <ID>MagicNumber:FoodSearchViewModel.kt$FoodSearchViewModel$400</ID>
+    <ID>MagicNumber:FoodSeeder.kt$FoodSeeder$400</ID>
+    <ID>MagicNumber:GpxWriter.kt$GpxWriter$1_000_000</ID>
+    <ID>MagicNumber:GpxWriter.kt$GpxWriter$1_000_000.0</ID>
+    <ID>MagicNumber:GpxWriter.kt$GpxWriter$6</ID>
+    <ID>MagicNumber:HealthConnectBodyWrite.kt$12</ID>
+    <ID>MagicNumber:HealthConnectBodyWrite.kt$3600L</ID>
+    <ID>MagicNumber:HealthConnectBodyWrite.kt$86_400L</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$2.5</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$24L</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$3.0</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$3.5</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$4.0</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$5.0</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$5.3</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$6.0</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$6.5</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$60</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$7.0</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$7.3</ID>
+    <ID>MagicNumber:HealthConnectGateway.android.kt$HealthConnectGateway$8.0</ID>
+    <ID>MagicNumber:HealthRepository.kt$HealthRepository$60_000L</ID>
+    <ID>MagicNumber:Ids.kt$Ids$12</ID>
+    <ID>MagicNumber:Ids.kt$Ids$16</ID>
+    <ID>MagicNumber:Ids.kt$Ids$3</ID>
+    <ID>MagicNumber:Ids.kt$Ids$4</ID>
+    <ID>MagicNumber:Ids.kt$Ids$8</ID>
+    <ID>MagicNumber:ImagePicker.android.kt$15</ID>
+    <ID>MagicNumber:ImagePicker.android.kt$40</ID>
+    <ID>MagicNumber:ImagePicker.android.kt$85</ID>
+    <ID>MagicNumber:MealSlot.kt$MealSlot.Companion$10</ID>
+    <ID>MagicNumber:MealSlot.kt$MealSlot.Companion$11</ID>
+    <ID>MagicNumber:MealSlot.kt$MealSlot.Companion$15</ID>
+    <ID>MagicNumber:MealSlot.kt$MealSlot.Companion$18</ID>
+    <ID>MagicNumber:MealSlot.kt$MealSlot.Companion$22</ID>
+    <ID>MagicNumber:MealSlot.kt$MealSlot.Companion$5</ID>
+    <ID>MagicNumber:MetCalc.kt$MetCalc$60.0</ID>
+    <ID>MagicNumber:MetCatalog.kt$MetCatalog.Companion$3</ID>
+    <ID>MagicNumber:MetCatalog.kt$MetCatalog.Companion$5</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$60</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$MealReminderWorker$10</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$MealReminderWorker$12</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$MealReminderWorker$14</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$MealReminderWorker$19</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$MealReminderWorker$21</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$MealReminderWorker$60</ID>
+    <ID>MagicNumber:NotificationWorkers.kt$MealReminderWorker$8</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$0.40</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$0.8</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$1.8</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$10</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$10.0</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$161.0</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$2.2</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$2.4</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$2.6</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$25</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$365.2425</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$5.0</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$6.25</ID>
+    <ID>MagicNumber:NutritionCalc.kt$NutritionCalc$7.0</ID>
+    <ID>MagicNumber:NutritionStats.kt$EfsaReference.Companion$3</ID>
+    <ID>MagicNumber:NutritionStats.kt$EfsaReference.Companion$4</ID>
+    <ID>MagicNumber:OffMapper.kt$OffMapper$1000</ID>
+    <ID>MagicNumber:OffMapper.kt$OffMapper$1_000.0</ID>
+    <ID>MagicNumber:OffMapper.kt$OffMapper$1_000_000.0</ID>
+    <ID>MagicNumber:OnboardingInput.kt$OnboardingInput$11</ID>
+    <ID>MagicNumber:OnboardingViewModel.kt$OnboardingState$4</ID>
+    <ID>MagicNumber:OnboardingViewModel.kt$OnboardingState$9</ID>
+    <ID>MagicNumber:OnboardingViewModel.kt$OnboardingViewModel$3</ID>
+    <ID>MagicNumber:OnboardingViewModel.kt$OnboardingViewModel$6</ID>
+    <ID>MagicNumber:PolylineCodec.kt$PolylineCodec$0x20</ID>
+    <ID>MagicNumber:PolylineCodec.kt$PolylineCodec$1e5</ID>
+    <ID>MagicNumber:PolylineCodec.kt$PolylineCodec$5</ID>
+    <ID>MagicNumber:PolylineCodec.kt$PolylineCodec$63</ID>
+    <ID>MagicNumber:ProfileRepository.kt$ProfileRepository$7</ID>
+    <ID>MagicNumber:ProfileRepository.kt$ProfileRepository$7L</ID>
+    <ID>MagicNumber:ProgressCalc.kt$ProgressCalc$3</ID>
+    <ID>MagicNumber:ProgressCalc.kt$ProgressCalc$7</ID>
+    <ID>MagicNumber:ProgressCalc.kt$ProgressCalc$7L</ID>
+    <ID>MagicNumber:ProgressViewModel.kt$ProgressViewModel$29</ID>
+    <ID>MagicNumber:ProgressViewModel.kt$ProgressViewModel$30</ID>
+    <ID>MagicNumber:ProgressViewModel.kt$ProgressViewModel$59</ID>
+    <ID>MagicNumber:RecipeDetailViewModel.kt$RecipeDetailViewModel$6</ID>
+    <ID>MagicNumber:RecipeEditViewModel.kt$RecipeEditViewModel$6</ID>
+    <ID>MagicNumber:RecipeEditViewModel.kt$RecipeEditViewModel$80</ID>
+    <ID>MagicNumber:RunEngine.kt$10.0</ID>
+    <ID>MagicNumber:RunEngine.kt$12.0</ID>
+    <ID>MagicNumber:RunEngine.kt$15.8</ID>
+    <ID>MagicNumber:RunEngine.kt$16</ID>
+    <ID>MagicNumber:RunEngine.kt$180.0</ID>
+    <ID>MagicNumber:RunEngine.kt$19</ID>
+    <ID>MagicNumber:RunEngine.kt$22</ID>
+    <ID>MagicNumber:RunEngine.kt$25</ID>
+    <ID>MagicNumber:RunEngine.kt$3.6</ID>
+    <ID>MagicNumber:RunEngine.kt$30</ID>
+    <ID>MagicNumber:RunEngine.kt$4.0</ID>
+    <ID>MagicNumber:RunEngine.kt$6.8</ID>
+    <ID>MagicNumber:RunEngine.kt$6_371_000.0</ID>
+    <ID>MagicNumber:RunEngine.kt$8.0</ID>
+    <ID>MagicNumber:RunEngine.kt$RunEngine$0.53</ID>
+    <ID>MagicNumber:RunEngine.kt$RunEngine$1000.0</ID>
+    <ID>MagicNumber:RunEngine.kt$RunEngine$3_600_000.0</ID>
+    <ID>MagicNumber:RunPrCalc.kt$RunPrCalc$999.0</ID>
+    <ID>MagicNumber:RunTrackerService.kt$10</ID>
+    <ID>MagicNumber:RunTrackerService.kt$3600</ID>
+    <ID>MagicNumber:RunTrackerService.kt$60</ID>
+    <ID>MagicNumber:RunTrackerService.kt$RunTrackerService$1000</ID>
+    <ID>MagicNumber:RunTrackerService.kt$RunTrackerService$1000.0</ID>
+    <ID>MagicNumber:RunTrackingState.kt$RunTrackingState$30.0</ID>
+    <ID>MagicNumber:TargetBreakdownText.kt$TargetBreakdownText$10</ID>
+    <ID>MagicNumber:TargetBreakdownText.kt$TargetBreakdownText$21.6</ID>
+    <ID>MagicNumber:TargetBreakdownText.kt$TargetBreakdownText$22.0</ID>
+    <ID>MagicNumber:TargetBreakdownText.kt$TargetBreakdownText$3</ID>
+    <ID>MagicNumber:TargetBreakdownText.kt$TargetBreakdownText$370.0</ID>
+    <ID>MagicNumber:TargetBreakdownText.kt$TargetBreakdownText$5</ID>
+    <ID>MagicNumber:TargetBreakdownText.kt$TargetBreakdownText$6.25</ID>
+    <ID>MagicNumber:UnitConversions.kt$UnitConversions$12</ID>
+    <ID>MagicNumber:WeeklyAggregate.kt$WeeklyAggregator$10.0</ID>
+    <ID>MagicNumber:WeeklyAggregate.kt$WeeklyAggregator$3_600_000.0</ID>
+    <ID>MagicNumber:WeeklyAggregate.kt$WeeklyAggregator$6</ID>
+    <ID>MagicNumber:WeeklyBudget.kt$WeeklyBudget.Companion$7</ID>
+    <ID>MagicNumber:WeightTrend.kt$WeightTrend$7.0</ID>
+    <ID>MagicNumber:WeightTrend.kt$WeightTrend$7L</ID>
+    <ID>MagicNumber:WorkoutCalc.kt$10</ID>
+    <ID>MagicNumber:WorkoutCalc.kt$10.0</ID>
+    <ID>MagicNumber:WorkoutCalc.kt$OneRepMax$12</ID>
+    <ID>MagicNumber:WorkoutCalc.kt$OneRepMax$30.0</ID>
+    <ID>MagicNumber:WorkoutHistoryRepository.kt$WorkoutHistoryRepository$60000L</ID>
+    <ID>MagicNumber:WorkoutSessionRepository.kt$WorkoutSessionRepository$60000L</ID>
+    <ID>MagicNumber:WorkoutSessionRepository.kt$WorkoutSessionRepository$70.0</ID>
+    <ID>MatchingDeclarationName:AddEntrySheet.kt$AddMode</ID>
+    <ID>MatchingDeclarationName:AiSheet.kt$AiMode</ID>
+    <ID>MatchingDeclarationName:AntaresRing.kt$MacroArc</ID>
+    <ID>MatchingDeclarationName:App.kt$AppViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:CameraSupport.kt$CameraPermissionState</ID>
+    <ID>MatchingDeclarationName:CoachDaos.kt$CoachReportDao</ID>
+    <ID>MatchingDeclarationName:CoachEntities.kt$CoachReportEntity</ID>
+    <ID>MatchingDeclarationName:Color.kt$AntaresColors</ID>
+    <ID>MatchingDeclarationName:DietBreakScreen.kt$DietBreakViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:ExerciseDaos.kt$ExerciseLogDao</ID>
+    <ID>MatchingDeclarationName:ExerciseEntities.kt$ExerciseLogEntity</ID>
+    <ID>MatchingDeclarationName:GoalChangeNotice.kt$GoalChangeViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:ImagePicker.android.kt$ImagePickerController</ID>
+    <ID>MatchingDeclarationName:LanguageController.android.kt$LocalePrefs</ID>
+    <ID>MatchingDeclarationName:MacroLabels.kt$MacroInitials</ID>
+    <ID>MatchingDeclarationName:MeasurementHistoryScreen.kt$MeasurementHistoryViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:Routes.kt$Route</ID>
+    <ID>MatchingDeclarationName:ShowMathsScreen.kt$ShowMathsViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:VoiceInput.android.kt$VoiceInputController</ID>
+    <ID>MatchingDeclarationName:VoiceInput.kt$VoiceInputController</ID>
+    <ID>MaxLineLength:AboutScreen.kt$Text(stringResource(Res.string.about_current), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:AddEntrySheet.kt$private</ID>
+    <ID>MaxLineLength:AddExerciseScreen.kt$"${stringResource(Res.string.exercise_burned)}: ${state.previewKcal} ${stringResource(Res.string.common_kcal)}"</ID>
+    <ID>MaxLineLength:AdminScreen.kt$color</ID>
+    <ID>MaxLineLength:AdminScreen.kt$color = if (unlimited) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant</ID>
+    <ID>MaxLineLength:AndroidFastingNotifier.kt$FastingChannel$NotificationChannel(ID, context.getString(R.string.notif_channel_fasting_name), NotificationManager.IMPORTANCE_DEFAULT)</ID>
+    <ID>MaxLineLength:AndroidFastingNotifier.kt$FastingGoalWorker$ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED</ID>
+    <ID>MaxLineLength:AndroidNotificationScheduler.kt$AppNotificationChannels$NotificationChannel(COACH, context.getString(R.string.notif_channel_coach_name), NotificationManager.IMPORTANCE_DEFAULT)</ID>
+    <ID>MaxLineLength:AndroidNotificationScheduler.kt$AppNotificationChannels$NotificationChannel(MEAL, context.getString(R.string.notif_channel_meal_name), NotificationManager.IMPORTANCE_DEFAULT)</ID>
+    <ID>MaxLineLength:AndroidNotificationScheduler.kt$AppNotificationChannels$NotificationChannel(WEIGH_IN, context.getString(R.string.notif_channel_weighin_name), NotificationManager.IMPORTANCE_DEFAULT)</ID>
+    <ID>MaxLineLength:AndroidWorkoutAlerts.kt$WorkoutChannels$NotificationChannel(REST, context.getString(R.string.notif_channel_rest_name), NotificationManager.IMPORTANCE_HIGH)</ID>
+    <ID>MaxLineLength:AndroidWorkoutAlerts.kt$WorkoutChannels$NotificationChannel(SESSION, context.getString(R.string.notif_channel_session_name), NotificationManager.IMPORTANCE_LOW)</ID>
+    <ID>MaxLineLength:AntaresNavHost.kt$onAddExercise = { rid -&gt; navController.navigate(Route.ExerciseLibrary(pickMode = true, routineId = rid)) }</ID>
+    <ID>MaxLineLength:AntaresNavHost.kt$onFoodSelected = { id -&gt; navController.navigate(Route.FoodDetail(id, MealSlot.SNACK.name, pt.antares.app.core.util.todayEpochDay())) }</ID>
+    <ID>MaxLineLength:AntaresRing.kt$val hot = if (over &gt; 1f) lerp(arc.color, Color.White, (over - 1f).coerceAtMost(0.35f)) else arc.color</ID>
+    <ID>MaxLineLength:AppChangelog.kt$AppChangelog$"**Backup** now has its own place in Settings, one tap away — it was buried at the bottom of «Details and goals»"</ID>
+    <ID>MaxLineLength:AppChangelog.kt$AppChangelog$"Backup is now a file you own: **export it, keep it where you like, restore it** — and it carries your progress photos"</ID>
+    <ID>MaxLineLength:AppChangelog.kt$AppChangelog$"Body composition: you know the value, estimate from measurements or from BMI — and the app always says which"</ID>
+    <ID>MaxLineLength:AppChangelog.kt$AppChangelog$"Goal weight with a date projected from your real rate — and the app stays quiet when the data is not enough"</ID>
+    <ID>MaxLineLength:AppChangelog.kt$AppChangelog$"O **Backup** tem lugar próprio nas Definições, a um toque — estava escondido no fim de «Detalhes e metas»"</ID>
+    <ID>MaxLineLength:AppChangelog.kt$AppChangelog$"O backup passou a ser um ficheiro teu: **exportas, guardas onde quiseres, e restauras** — e leva as fotos de progresso"</ID>
+    <ID>MaxLineLength:BackupImporter.kt$BackupImporter$val doBackup = bruto.mapNotNull { runCatching { json.decodeFromJsonElement(source.serializer, it) }.getOrNull() }</ID>
+    <ID>MaxLineLength:BodyCards.kt$Text("${fmtG(weight)} kg", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md))</ID>
+    <ID>MaxLineLength:Charts.kt$Text(valueText, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.BodyMeasurementDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.ExerciseLibraryDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.FastingProtocolDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.FastingSessionDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.FoodDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.GoalHistoryDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.MealTemplateDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.MealTemplateItemDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.RecipeDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.RecipeIngredientDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.RoutineScheduleDao&gt;().upsert(it) } }</ID>
+    <ID>MaxLineLength:CoreModule.kt$restore = { linhas -&gt; linhas.forEach { get&lt;pt.antares.app.core.database.daos.WorkoutSetDao&gt;().upsertSet(it) } }</ID>
+    <ID>MaxLineLength:DataExporter.kt$DataExporter$put("nota", "Dados pessoais exportados do Antares. O catálogo de alimentos e a biblioteca de exercícios que vêm com a app não estão incluídos.")</ID>
+    <ID>MaxLineLength:DemoDataEngine.kt$DemoDataEngine$endedAt = if (cumpriu) alvo + r.inteiroEntre(0, 90) * 60_000L else inicio + r.inteiroEntre(9, 14) * 3_600_000L</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$"${entry.durationMin} ${stringResource(Res.string.exercise_min)} · ${entry.kcal} ${stringResource(Res.string.common_kcal)}"</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$"${log.quantityGrams.toInt()} ${stringResource(if (log.isLiquid) Res.string.common_ml else Res.string.common_grams_short)}"</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.cd_previous_day))</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = stringResource(Res.string.cd_next_day))</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$Icon(Icons.Default.CalendarToday, contentDescription = stringResource(Res.string.diary_today))</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$Text(stringResource(Res.string.exercise_section_title), style = MaterialTheme.typography.titleMedium)</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$Text(stringResource(if (log.isLiquid) Res.string.food_quantity_ml else Res.string.food_quantity_g))</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$color = if (budget.remaining &lt; 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary</ID>
+    <ID>MaxLineLength:DiaryScreen.kt$if (entry.origin == ExerciseOrigin.WORKOUT) stringResource(Res.string.exercise_workout_label) else ""</ID>
+    <ID>MaxLineLength:EatingPatternsTest.kt$EatingPatternsTest$private</ID>
+    <ID>MaxLineLength:EatingPatternsTest.kt$EatingPatternsTest$val poucos = (0 until 5).map { dia(it.toLong(), if (EatingPatterns.isWeekend(segunda + it)) 3000.0 else 1800.0) }</ID>
+    <ID>MaxLineLength:ExerciseDetailScreen.kt$Text(stringResource(Res.string.exdetail_no_instructions), color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:ExerciseDetailScreen.kt$Text(stringResource(label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:ExerciseLibraryDaoTest.kt$ExerciseLibraryDaoTest$dao.upsert(ex("mine", "Meu Exercício", listOf("chest"), "barbell", "beginner").copy(isCustom = true, namePt = "Meu Exercício"))</ID>
+    <ID>MaxLineLength:ExerciseLibraryDaoTest.kt$ExerciseLibraryDaoTest$dao.upsert(ex("s1", "Barbell Squat", listOf("quadriceps"), "barbell", "beginner").copy(namePt = "Barra Agachamento"))</ID>
+    <ID>MaxLineLength:ExerciseLibraryDaoTest.kt$ExerciseLibraryDaoTest$dao.upsert(ex("s2", "Car Deadlift", listOf("hamstrings"), "barbell", "expert").copy(namePt = "Car Levantamento Terra"))</ID>
+    <ID>MaxLineLength:FastingHistoryScreen.kt$StatTile(stringResource(Res.string.fasting_avg_duration), FastingFormat.hm(s.averageDurationMs), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FastingHistoryScreen.kt$StatTile(stringResource(Res.string.fasting_completion_rate), "${(s.completionRate * 100).roundToInt()}%", Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FastingHistoryScreen.kt$StatTile(stringResource(Res.string.fasting_streak_best), "${s.longestStreak}${stringResource(Res.string.fasting_days_unit)}", Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FastingHistoryScreen.kt$StatTile(stringResource(Res.string.fasting_streak_current), "${s.currentStreak}${stringResource(Res.string.fasting_days_unit)}", Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FastingHistoryScreen.kt$color = if (completed) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant</ID>
+    <ID>MaxLineLength:FastingHistoryScreen.kt$stringResource(if (completed) Res.string.fasting_status_completed else Res.string.fasting_status_broken)</ID>
+    <ID>MaxLineLength:FastingScreen.kt$Icon(Icons.Default.History, contentDescription = stringResource(Res.string.fasting_history_title))</ID>
+    <ID>MaxLineLength:FastingScreen.kt$SecondaryButton(stringResource(Res.string.fasting_adjust_minus_15m), { onShiftStart(-15 * MIN_MS) }, Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FastingScreen.kt$SecondaryButton(stringResource(Res.string.fasting_adjust_minus_1h), { onShiftStart(-60 * MIN_MS) }, Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FastingScreen.kt$SecondaryButton(stringResource(Res.string.fasting_adjust_plus_15m), { onShiftStart(15 * MIN_MS) }, Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FastingScreen.kt$Text(stringResource(Res.string.fasting_goal_reached), style = MaterialTheme.typography.titleMedium)</ID>
+    <ID>MaxLineLength:FoodDetailScreen.kt$"${m.p} ${fmtG(state.previewP)} g · ${m.c} ${fmtG(state.previewC)} g · ${m.f} ${fmtG(state.previewF)} g"</ID>
+    <ID>MaxLineLength:FoodDetailScreen.kt$AssistChip(onClick = { viewModel.setQuick(15.0) }, label = { Text(stringResource(Res.string.food_tbsp)) })</ID>
+    <ID>MaxLineLength:FoodDetailScreen.kt$label = { Text("${food.servingName ?: stringResource(Res.string.food_serving)} (${grams.roundToInt()} $unit)") }</ID>
+    <ID>MaxLineLength:FoodDetailScreen.kt$tint = if (food.isFavorite) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant</ID>
+    <ID>MaxLineLength:FoodEditScreen.kt$NumField(state.carbs, viewModel::setCarbs, stringResource(Res.string.food_edit_carbs), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FoodEditScreen.kt$NumField(state.fiber, viewModel::setFiber, stringResource(Res.string.food_edit_fiber), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FoodEditScreen.kt$NumField(state.protein, viewModel::setProtein, stringResource(Res.string.food_edit_protein), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FoodEditScreen.kt$NumField(state.satFat, viewModel::setSatFat, stringResource(Res.string.food_edit_satfat), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FoodEditScreen.kt$NumField(state.sodium, viewModel::setSodium, stringResource(Res.string.food_edit_sodium), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FoodEditScreen.kt$NumField(state.sugars, viewModel::setSugars, stringResource(Res.string.food_edit_sugars), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:FoodSearchScreen.kt$"${food.kcal} ${stringResource(Res.string.common_kcal)} / 100 ${stringResource(Res.string.common_grams_short)}"</ID>
+    <ID>MaxLineLength:FoodSearchScreen.kt$Row</ID>
+    <ID>MaxLineLength:FoodSearchScreen.kt$Text(food.namePt.ifBlank { food.nameEn }, maxLines = 2, modifier = Modifier.weight(1f, fill = false))</ID>
+    <ID>MaxLineLength:FoodSearchScreen.kt$item { SectionHeader(title = stringResource(Res.string.search_section_local), modifier = Modifier.padding(Spacing.sm)) }</ID>
+    <ID>MaxLineLength:FoodSearchScreen.kt$item { SectionHeader(title = stringResource(Res.string.search_section_online), modifier = Modifier.padding(Spacing.sm)) }</ID>
+    <ID>MaxLineLength:GpxWriter.kt$GpxWriter$sb.append(" &lt;metadata&gt;&lt;name&gt;").append(safeName).append("&lt;/name&gt;&lt;time&gt;").append(time).append("&lt;/time&gt;&lt;/metadata&gt;\n")</ID>
+    <ID>MaxLineLength:GpxWriter.kt$GpxWriter$sb.append(" &lt;trk&gt;&lt;name&gt;").append(safeName).append("&lt;/name&gt;&lt;type&gt;").append(type.name).append("&lt;/type&gt;&lt;trkseg&gt;\n")</ID>
+    <ID>MaxLineLength:LocationPermission.android.kt$ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED</ID>
+    <ID>MaxLineLength:Migration2to3Test.kt$Migration2to3Test$"CREATE TABLE IF NOT EXISTS `daily_target_override` (`id` TEXT NOT NULL, `epochDay` INTEGER NOT NULL, "</ID>
+    <ID>MaxLineLength:Migration2to3Test.kt$Migration2to3Test$"CREATE UNIQUE INDEX IF NOT EXISTS `index_daily_target_override_epochDay` ON `daily_target_override` (`epochDay`)"</ID>
+    <ID>MaxLineLength:Migration2to3Test.kt$Migration2to3Test$"INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6a803e686776f085390383c36cf81e29')"</ID>
+    <ID>MaxLineLength:Migration2to3Test.kt$Migration2to3Test$"`kcal` INTEGER NOT NULL, `proteinG` INTEGER NOT NULL, `carbsG` INTEGER NOT NULL, `fatG` INTEGER NOT NULL, "</ID>
+    <ID>MaxLineLength:Migration2to3Test.kt$Migration2to3Test$"`source` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `deleted` INTEGER NOT NULL, `dirty` INTEGER NOT NULL, "</ID>
+    <ID>MaxLineLength:Migration2to3Test.kt$Migration2to3Test$"`updatedAt` INTEGER NOT NULL, `deleted` INTEGER NOT NULL, `dirty` INTEGER NOT NULL, PRIMARY KEY(`id`))"</ID>
+    <ID>MaxLineLength:Migration2to3Test.kt$Migration2to3Test$"`weightKg` REAL NOT NULL, `note` TEXT, `updatedAt` INTEGER NOT NULL, `deleted` INTEGER NOT NULL, "</ID>
+    <ID>MaxLineLength:NutritionStatsScreen.kt$if (c.coveragePct &gt;= 100) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary</ID>
+    <ID>MaxLineLength:OnboardingScreen.kt$Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:OnboardingViewModel.kt$OnboardingViewModel$else</ID>
+    <ID>MaxLineLength:OnboardingViewModel.kt$OnboardingViewModel$fun editCarbs(text: String)</ID>
+    <ID>MaxLineLength:OnboardingViewModel.kt$OnboardingViewModel$fun editProtein(text: String)</ID>
+    <ID>MaxLineLength:ProfileSettingsScreen.kt$Text("${t.kcal} $kcalLabel", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)</ID>
+    <ID>MaxLineLength:ProfileSettingsScreen.kt$Text(stringResource(Res.string.settings_current_targets), style = MaterialTheme.typography.titleMedium)</ID>
+    <ID>MaxLineLength:ProfileSettingsScreen.kt$label = { Text("${stringResource(Res.string.settings_height)} (${stringResource(Res.string.common_cm)})") }</ID>
+    <ID>MaxLineLength:RecipeDetailScreen.kt$"${m.p} ${fmtG(state.previewP)} g · ${m.c} ${fmtG(state.previewC)} g · ${m.f} ${fmtG(state.previewF)} g"</ID>
+    <ID>MaxLineLength:RoutineEditScreen.kt$DropdownMenuItem(text = { Text(stringResource(Res.string.common_delete)) }, onClick = { menu = false; onDelete() })</ID>
+    <ID>MaxLineLength:RoutineEditScreen.kt$DropdownMenuItem(text = { Text(stringResource(Res.string.common_edit)) }, onClick = { menu = false; onEdit() })</ID>
+    <ID>MaxLineLength:RoutineEditScreen.kt$DropdownMenuItem(text = { Text(stringResource(Res.string.routine_superset)) }, onClick = { menu = false; ssMenu = true })</ID>
+    <ID>MaxLineLength:RoutineEditScreen.kt$IconButton(onClick = onMoveDown) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(Res.string.routine_move_down)) }</ID>
+    <ID>MaxLineLength:RoutineEditScreen.kt$IconButton(onClick = onMoveUp) { Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(Res.string.routine_move_up)) }</ID>
+    <ID>MaxLineLength:RoutineEditScreen.kt$IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.cd_more_options)) }</ID>
+    <ID>MaxLineLength:RunComponents.kt$Text("${s.kcal} kcal", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:RunDaoTest.kt$RunDaoTest$TrackPointEntity(runId = "r1", tMs = i.toLong(), lat = 38.72 + i * 1e-4, lon = -9.13, altM = null, accM = 5.0, speedMps = null)</ID>
+    <ID>MaxLineLength:RunDetailScreen.kt$Row</ID>
+    <ID>MaxLineLength:RunDetailScreen.kt$modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(Spacing.lg)</ID>
+    <ID>MaxLineLength:RunDetailScreen.kt$topBar = { AntaresTopBar(title = state.run?.name?.ifBlank { null } ?: stringResource(Res.string.run_summary_title), onBack = onBack) }</ID>
+    <ID>MaxLineLength:RunEngineTest.kt$RunEngineTest$assertTrue(r.metrics.movingMs &lt; r.metrics.elapsedMs, "moving=${r.metrics.movingMs} elapsed=${r.metrics.elapsedMs}")</ID>
+    <ID>MaxLineLength:RunHistoryScreen.kt$PrTile(stringResource(Res.string.run_pr_10k), state.pr10kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:RunHistoryScreen.kt$PrTile(stringResource(Res.string.run_pr_1k), state.pr1kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:RunHistoryScreen.kt$PrTile(stringResource(Res.string.run_pr_5k), state.pr5kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:RunHistoryScreen.kt$PrTile(stringResource(Res.string.run_totals_time), RunFormat.clock(state.totalMovingS * 1000), Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:RunLiveScreen.kt$contentDescription = stringResource(if (locked) Res.string.run_live_unlock else Res.string.run_live_lock)</ID>
+    <ID>MaxLineLength:RunSummaryScreen.kt$PrimaryButton(stringResource(Res.string.run_summary_save), { viewModel.save(name, "", onSaved) }, Modifier.fillMaxWidth())</ID>
+    <ID>MaxLineLength:RunSummaryScreen.kt$Row</ID>
+    <ID>MaxLineLength:RunSummaryScreen.kt$SecondaryButton(stringResource(Res.string.run_summary_discard), { viewModel.discard(onDiscarded) }, Modifier.fillMaxWidth())</ID>
+    <ID>MaxLineLength:RunSummaryScreen.kt$modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(Spacing.lg)</ID>
+    <ID>MaxLineLength:RunTrackerService.kt$RunTrackerService.Companion$NotificationChannel(CHANNEL, context.getString(R.string.notif_channel_run_name), NotificationManager.IMPORTANCE_LOW)</ID>
+    <ID>MaxLineLength:SupernovaCelebration.kt$burst.animateTo(1f, animationSpec = tween(durationMillis = 1500, easing = pt.antares.app.core.designsystem.AntaresMotion.Orbit))</ID>
+    <ID>MaxLineLength:TargetBreakdownSweepTest.kt$TargetBreakdownSweepTest$assertTrue(ok, "passo ${b.steps[i].kind} entra em $entrada, anterior acabou em ${anterior.exact} — ${c.label}")</ID>
+    <ID>MaxLineLength:TodayScreen.kt$"${FastingFormat.hm(progress.remainingMs)} ${stringResource(Res.string.fasting_remaining)}"</ID>
+    <ID>MaxLineLength:TodayScreen.kt$"${stringResource(Res.string.fasting_state_active)} · ${FastingFormat.hm(progress.elapsedMs)}"</ID>
+    <ID>MaxLineLength:TodayScreen.kt$AntaresCard</ID>
+    <ID>MaxLineLength:TodayScreen.kt$MacroChip(stringResource(Res.string.onb_plan_protein), state.consumed.proteinG, targets.proteinG)</ID>
+    <ID>MaxLineLength:TodayScreen.kt$Row</ID>
+    <ID>MaxLineLength:TodayScreen.kt$centerColor = if (budget.remaining &lt; 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary</ID>
+    <ID>MaxLineLength:TodayScreen.kt$color = if (budget.remaining &lt; 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary</ID>
+    <ID>MaxLineLength:TodayScreen.kt$color = if (workout.hasActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant</ID>
+    <ID>MaxLineLength:TodayScreen.kt$workout.lastVolume != null -&gt; stringResource(Res.string.today_workout_last, workout.lastVolume!!.roundToInt())</ID>
+    <ID>MaxLineLength:WeeklyScheduleScreen.kt$"• ${item.exerciseName} — ${item.item.targetSets}×${item.item.targetRepsMin}-${item.item.targetRepsMax}"</ID>
+    <ID>MaxLineLength:WeeklyScheduleScreen.kt$PrimaryButton(text = stringResource(Res.string.schedule_confirm_cta), onClick = viewModel::confirmSchedule)</ID>
+    <ID>MaxLineLength:WorkoutDaosTest.kt$WorkoutDaosTest$private</ID>
+    <ID>MaxLineLength:WorkoutHistoryRepositoryTest.kt$WorkoutHistoryRepositoryTest$repo = WorkoutHistoryRepository(db.workoutSessionDao(), db.workoutSetDao(), db.exerciseLibraryDao(), Dispatchers.Default)</ID>
+    <ID>MaxLineLength:WorkoutHistoryScreen.kt$Text(dayShort(epochMillisToLocalDate(s.startedAt)), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md))</ID>
+    <ID>MaxLineLength:WorkoutSessionRepository.kt$WorkoutSessionRepository$sessionDao.upsertSession(s.copy(status = SessionStatus.DISCARDED, endedAt = now(), updatedAt = now(), dirty = true))</ID>
+    <ID>MaxLineLength:WorkoutSessionScreen.kt$"${set.weightKg.toInt()} ${stringResource(Res.string.session_weight)} × ${set.reps} ${stringResource(Res.string.session_reps)}"</ID>
+    <ID>MaxLineLength:WorkoutSessionScreen.kt$AntaresCard</ID>
+    <ID>MaxLineLength:WorkoutSessionScreen.kt$Row</ID>
+    <ID>MaxLineLength:WorkoutStatsScreen.kt$Text("${r.oneRm.roundToInt()} kg", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)</ID>
+    <ID>MaxLineLength:WorkoutStatsScreen.kt$Text(r.name, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md))</ID>
+    <ID>MaxLineLength:WorkoutStatsScreen.kt$Text(stringResource(Res.string.workout_stats_no_records), color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:WorkoutStatsScreen.kt$Text(stringResource(Res.string.workout_stats_no_volume), color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MayBeConst:Type.kt$val TabularNumbersFeature = "tnum"</ID>
+    <ID>NestedBlockDepth:LoggingStreak.kt$LoggingStreak$fun currentWithFreeze(loggedDays: Set&lt;Long&gt;, today: Long): StreakResult</ID>
+    <ID>NestedBlockDepth:TargetBreakdownSweepTest.kt$TargetBreakdownSweepTest$private fun cases(): List&lt;Case&gt;</ID>
+    <ID>NestedBlockDepth:TargetBreakdownTextTest.kt$TargetBreakdownTextTest$private fun forEachStep(body: (TargetBreakdown.Step) -&gt; Unit)</ID>
+    <ID>ReturnCount:OnboardingViewModel.kt$OnboardingViewModel$private fun draftProfile(s: OnboardingState): UserProfileEntity?</ID>
+    <ID>TooGenericExceptionThrown:CrashCatcherTest.kt$CrashCatcherTest.&lt;no name provided&gt;$throw RuntimeException("disco cheio")</ID>
+    <ID>TooManyFunctions:NutritionCalc.kt$NutritionCalc</ID>
+    <ID>TooManyFunctions:ProfileSettingsViewModel.kt$ProfileSettingsViewModel : ViewModel</ID>
+    <ID>UnusedParameter:AntaresRing.kt$trackColor: Color = MaterialTheme.colorScheme.onSurfaceVariant</ID>
+    <ID>UnusedParameter:DiaryScreen.kt$slot: MealSlot</ID>
+    <ID>UnusedParameter:ProgressRepository.kt$ProgressRepository$today: Long = todayEpochDay()</ID>
+    <ID>UnusedPrivateProperty:CoachRepository.kt$CoachRepository$private val lang: () -&gt; String = { "pt" }</ID>
+    <ID>UnusedPrivateProperty:HealthProfileScreen.kt$private const val GOAL_REACHED_TOLERANCE_KG = 0.3</ID>
+    <ID>WildcardImport:AddEntrySheet.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:AddExerciseScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:AppMenuScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:AttributionsScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:BarcodeScanScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:BodyCards.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:BodyCompositionScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:CycleScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:DiaryScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:DietBreakScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:ExerciseCreateScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:ExerciseDetailScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:ExerciseLibraryScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:FoodDetailScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:FoodEditScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:FoodSearchScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:GoalChangeNotice.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:GoalSections.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:HealthProfileScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:LogDetailSheet.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:MeScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:MealDetailSheet.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:MeasurementHistoryScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:MicroLabels.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:NutritionFactsCard.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:NutritionStatsScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:NutritionStatsViewModel.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:OnboardingScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:PrivacySection.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:ProfileSettingsScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:ProgressPhotosScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:ProgressScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:RecipeDetailScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:RecipeEditScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:RichInScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:RoutineEditScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:SettingsScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:ShowMathsScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:TodayScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:WorkoutDetailScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:WorkoutHistoryScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:WorkoutLabels.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:WorkoutScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:WorkoutSessionScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:WorkoutStatsScreen.kt$import pt.antares.app.generated.resources.*</ID>
+    <ID>WildcardImport:WorkoutSummaryScreen.kt$import pt.antares.app.generated.resources.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -1,0 +1,81 @@
+# Configuração do detekt. Assenta sobre a de omissão (`buildUponDefaultConfig`), por isso
+# aqui só está o que se **afasta** dela — e cada afastamento traz a razão.
+
+build:
+  # A linha de base já trava o que existe. Um teto de avisos por cima disso só serviria
+  # para o CI falhar por uma razão que não se lê no relatório.
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    # Um ecrã Compose é uma árvore, não um procedimento: parti-lo em funções de 60 linhas
+    # espalha a leitura sem a melhorar. As funções de lógica que crescerem assim aparecem
+    # na linha de base e corrigem-se lá.
+    active: true
+    threshold: 120
+  LongParameterList:
+    # Um `@Composable` recebe uma chamada de retorno por ação do ecrã, e são muitas.
+    functionThreshold: 10
+    constructorThreshold: 12
+    ignoreDefaultParameters: true
+  TooManyFunctions:
+    # Os DAOs e os ViewModels são listas de operações; contá-las não diz nada.
+    thresholdInFiles: 30
+    thresholdInClasses: 30
+    thresholdInInterfaces: 40
+    ignorePrivate: true
+    ignoreOverridden: true
+  CyclomaticComplexMethod:
+    threshold: 20
+
+style:
+  MagicNumber:
+    # Em código de interface os números são medidas — pesos de coluna, graus de um arco,
+    # milissegundos de uma animação — e nomeá-los todos daria constantes com o nome do
+    # valor. Nas contas de nutrição a regra vale, e é por isso que só os ecrãs saem: essas
+    # vivem em funções puras, onde um número sem nome é mesmo um número por explicar.
+    # A lista repõe os testes, que a configuração de omissão já excluía: escrever
+    # `excludes` substitui-a em vez de a acrescentar.
+    excludes:
+      - "**/test/**"
+      - "**/androidTest/**"
+      - "**/commonTest/**"
+      - "**/androidUnitTest/**"
+      - "**/jvmTest/**"
+      - "**/ui/**"
+      - "**/designsystem/**"
+      - "**/navigation/**"
+      - "**/*Screen*.kt"
+      - "**/*Card*.kt"
+      - "**/*Bar*.kt"
+    ignoreNumbers: ["-1", "0", "1", "2", "100"]
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: true
+    ignoreEnums: true
+  ReturnCount:
+    # As funções de análise saem cedo em cada caso que não serve, e é isso que as torna
+    # legíveis.
+    max: 6
+  MaxLineLength:
+    maxLineLength: 120
+  UnusedPrivateMember:
+    # Os `@Preview` e os `@Composable` privados usados só por outros do mesmo ficheiro
+    # dão falsos positivos.
+    active: true
+
+naming:
+  FunctionNaming:
+    # Um `@Composable` chama-se como um tipo, em maiúscula. É a convenção do Compose.
+    ignoreAnnotated: ["Composable"]
+  TopLevelPropertyNaming:
+    constantPattern: "[A-Z][_A-Z0-9]*"
+
+exceptions:
+  TooGenericExceptionCaught:
+    # Apanhar `Throwable` é deliberado nos sítios em que a alternativa é a app morrer:
+    # a importação de uma cópia, a leitura de um seed, a chamada à rede. Os que não têm
+    # essa razão estão listados no I2 e passam a registar no `CrashStore`.
+    active: false
+  SwallowedException:
+    active: false

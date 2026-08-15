@@ -27,6 +27,47 @@ em `composeApp/build/reports/tests/`(HTML).
 > que os testes correram — se a tarefa estiver `UP-TO-DATE`, nenhum correu. Para ter a certeza,
 > `--rerun-tasks`, e confirmar a hora em que os XML foram escritos.
 
+## Os dois analisadores
+
+Além dos testes, o CI corre o **detekt** sobre o Kotlin e o **lint do Android** sobre o módulo:
+
+```bash
+./gradlew :composeApp:detekt
+./gradlew :composeApp:lintDebug
+```
+
+Os dois assentam numa **linha de base**: um ficheiro com tudo o que já estava assinalado no dia em
+que foram ligados. O que lá está não faz o CI falhar; só código novo é que faz.
+
+| | Configuração | Linha de base |
+|---|---|---|
+| detekt | `config/detekt/detekt.yml` | `config/detekt/baseline.xml` |
+| lint | bloco `lint` do `composeApp/build.gradle.kts` | `composeApp/lint-baseline.xml` |
+
+A configuração do detekt assenta na de omissão e só escreve o que se afasta dela, com a razão de
+cada afastamento. Duas notas que valem a pena saber:
+
+- Escrever `excludes` numa regra **substitui** a lista de omissão, não a acrescenta. Foi como o
+  `MagicNumber` passou a assinalar os testes por engano, e por isso a lista repõe as pastas de
+  teste antes de acrescentar as dos ecrãs.
+- Um número sem nome num ecrã é uma medida; numa função pura é um limiar por explicar. Só os
+  ecrãs saem da regra.
+
+### Refazer uma linha de base
+
+**Refazer uma linha de base apaga o registo do que estava por corrigir.** Faz-se quando se
+corrigiu de facto o que lá estava, e nunca para calar um aviso novo — para esse, ou se corrige o
+código, ou se escreve a razão na configuração.
+
+```bash
+./gradlew :composeApp:detektBaseline
+
+rm composeApp/lint-baseline.xml && ./gradlew :composeApp:lintDebug
+```
+
+O lint **falha de propósito** na corrida em que cria a linha de base — «Aborting build since new
+baseline file was created». Correr outra vez passa.
+
 ## As Edge Functions
 
 ```bash

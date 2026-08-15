@@ -44,6 +44,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.room)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -175,6 +176,16 @@ android {
         }
     }
 
+    lint {
+        // Mesma ideia do detekt: a linha de base guarda o que já estava aqui, e só o
+        // código novo faz o CI falhar. Para a refazer, apagar o ficheiro e correr
+        // ./gradlew :composeApp:lintDebug depois de apagar o ficheiro.
+        baseline = file("lint-baseline.xml")
+        abortOnError = true
+        warningsAsErrors = false
+        checkDependencies = false
+    }
+
     splits {
         abi {
             isEnable = true
@@ -203,4 +214,33 @@ dependencies {
     add("kspAndroid", libs.room.compiler)
 
     debugImplementation(libs.compose.ui.test.manifest)
+}
+
+detekt {
+    // A análise corre sobre `src` inteiro e não por conjunto de fontes: num projeto
+    // multiplataforma cada conjunto teria a sua tarefa, e o que interessa é uma só.
+    source.setFrom("src")
+    parallel = true
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+
+    // A linha de base guarda o que já estava mal no dia em que isto foi ligado. Só
+    // código novo faz o CI falhar; o que está aqui dentro corrige-se por vontade, não
+    // por bloqueio. Para a refazer: `./gradlew detektBaseline`.
+    baseline = rootProject.file("config/detekt/baseline.xml")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = JavaVersion.VERSION_17.toString()
+    reports {
+        html.required = true
+        xml.required = false
+        txt.required = false
+        sarif.required = false
+        md.required = false
+    }
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+    jvmTarget = JavaVersion.VERSION_17.toString()
 }

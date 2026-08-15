@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -26,6 +26,15 @@ jobs:
 
       - name: Build + testes unitários
         run: ./gradlew build --console=plain
+
+      # Os dois assentam numa linha de base com o que já existia à data em que foram
+      # ligados: só código novo faz o CI falhar. Refazer uma linha de base é decisão
+      # consciente, e o guia dos testes diz como.
+      - name: detekt
+        run: ./gradlew :composeApp:detekt --console=plain
+
+      - name: Lint do Android
+        run: ./gradlew :composeApp:lintDebug --console=plain
 
   functions:
     name: Edge Functions — testes Deno

@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.9.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.9.2)" variant="all" version="8.9.2">
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="    NotificationManagerCompat.from(context).notify(id, notif)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/notifications/NotificationWorkers.kt"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ImplicitSamInstance"
+        message="This argument is a new instance so `stopService` will not remove anything"
+        errorLine1="        context.stopService(Intent(context, RunTrackerService::class.java))"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/running/AndroidRunController.kt"
+            line="45"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `previewLayout` is only used in API level 31 and higher (current min is 26)"
+        errorLine1="    android:previewLayout=&quot;@layout/widget_antares&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/xml/antares_widget_info.xml"
+            line="7"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="AppBundleLocaleChanges"
+        message="Found dynamic locale changes, but did not find corresponding Play Core library calls for downloading languages and splitting by language is not disabled in the `bundle` configuration"
+        errorLine1="        config.setLocale(locale)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/locale/LanguageController.android.kt"
+            line="40"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.9.2 is available: 9.3.1. (There is also a newer version of 8.9.𝑥 available, if upgrading to 9.3.1 is difficult: 8.9.3)"
+        errorLine1="agp = &quot;8.9.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="4"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.9.2 is available: 9.3.1. (There is also a newer version of 8.9.𝑥 available, if upgrading to 9.3.1 is difficult: 8.9.3)"
+        errorLine1="agp = &quot;8.9.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="4"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.9.2 is available: 9.3.1. (There is also a newer version of 8.9.𝑥 available, if upgrading to 9.3.1 is difficult: 8.9.3)"
+        errorLine1="agp = &quot;8.9.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="4"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-compiler than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-compiler than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-compiler than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-runtime than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-runtime than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-runtime than 2.7.1 is available: 2.8.4"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="7"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.sqlite:sqlite-bundled than 2.5.1 is available: 2.7.0"
+        errorLine1="sqlite = &quot;2.5.1&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="8"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.sqlite:sqlite-bundled than 2.5.1 is available: 2.7.0"
+        errorLine1="sqlite = &quot;2.5.1&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="8"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.sqlite:sqlite-bundled than 2.5.1 is available: 2.7.0"
+        errorLine1="sqlite = &quot;2.5.1&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="8"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.datastore:datastore-preferences-core than 1.1.6 is available: 1.2.1"
+        errorLine1="datastore = &quot;1.1.6&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="9"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.datastore:datastore-preferences-core than 1.1.6 is available: 1.2.1"
+        errorLine1="datastore = &quot;1.1.6&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="9"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.datastore:datastore-preferences-core than 1.1.6 is available: 1.2.1"
+        errorLine1="datastore = &quot;1.1.6&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="9"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.13.0"
+        errorLine1="androidx-activity = &quot;1.9.3&quot;"
+        errorLine2="                    ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="18"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.13.0"
+        errorLine1="androidx-activity = &quot;1.9.3&quot;"
+        errorLine2="                    ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="18"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.13.0"
+        errorLine1="androidx-activity = &quot;1.9.3&quot;"
+        errorLine2="                    ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="18"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.19.0"
+        errorLine1="androidx-core = &quot;1.13.1&quot;"
+        errorLine2="                ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="19"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.19.0"
+        errorLine1="androidx-core = &quot;1.13.1&quot;"
+        errorLine2="                ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="19"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.19.0"
+        errorLine1="androidx-core = &quot;1.13.1&quot;"
+        errorLine2="                ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="19"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-camera2 than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-camera2 than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-camera2 than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-core than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-core than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-core than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-lifecycle than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-lifecycle than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-lifecycle than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-view than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-view than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-view than 1.4.2 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.2&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.work:work-runtime-ktx than 2.10.0 is available: 2.11.2"
+        errorLine1="work = &quot;2.10.0&quot;"
+        errorLine2="       ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="23"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.work:work-runtime-ktx than 2.10.0 is available: 2.11.2"
+        errorLine1="work = &quot;2.10.0&quot;"
+        errorLine2="       ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="23"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.work:work-runtime-ktx than 2.10.0 is available: 2.11.2"
+        errorLine1="work = &quot;2.10.0&quot;"
+        errorLine2="       ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="23"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.gms:play-services-location than 21.3.0 is available: 21.4.0"
+        errorLine1="play-services-location = &quot;21.3.0&quot;"
+        errorLine2="                         ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="25"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.gms:play-services-location than 21.3.0 is available: 21.4.0"
+        errorLine1="play-services-location = &quot;21.3.0&quot;"
+        errorLine2="                         ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="25"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.gms:play-services-location than 21.3.0 is available: 21.4.0"
+        errorLine1="play-services-location = &quot;21.3.0&quot;"
+        errorLine2="                         ~~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="25"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0"
+        errorLine1="androidx-test-junit = { module = &quot;androidx.test.ext:junit&quot;, version = &quot;1.2.1&quot; }"
+        errorLine2="                                                                      ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="78"
+            column="71"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0"
+        errorLine1="androidx-test-junit = { module = &quot;androidx.test.ext:junit&quot;, version = &quot;1.2.1&quot; }"
+        errorLine2="                                                                      ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="78"
+            column="71"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0"
+        errorLine1="androidx-test-junit = { module = &quot;androidx.test.ext:junit&quot;, version = &quot;1.2.1&quot; }"
+        errorLine2="                                                                      ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="78"
+            column="71"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose.ui:ui-test-manifest than 1.8.1 is available: 1.12.0"
+        errorLine1="compose-ui-test-manifest = { module = &quot;androidx.compose.ui:ui-test-manifest&quot;, version = &quot;1.8.1&quot; }"
+        errorLine2="                                                                                        ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="80"
+            column="89"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose.ui:ui-test-manifest than 1.8.1 is available: 1.12.0"
+        errorLine1="compose-ui-test-manifest = { module = &quot;androidx.compose.ui:ui-test-manifest&quot;, version = &quot;1.8.1&quot; }"
+        errorLine2="                                                                                        ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="80"
+            column="89"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose.ui:ui-test-manifest than 1.8.1 is available: 1.12.0"
+        errorLine1="compose-ui-test-manifest = { module = &quot;androidx.compose.ui:ui-test-manifest&quot;, version = &quot;1.8.1&quot; }"
+        errorLine2="                                                                                        ~~~~~~~">
+        <location
+            file="$HOME/Antares/gradle/libs.versions.toml"
+            line="80"
+            column="89"/>
+    </issue>
+
+    <issue
+        id="LockedOrientationActivity"
+        message="Expecting `android:screenOrientation=&quot;unspecified&quot;` or `&quot;fullSensor&quot;` for this activity so the user can use the application in any orientation and provide a great experience on Chrome OS devices"
+        errorLine1="            android:screenOrientation=&quot;portrait&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/AndroidManifest.xml"
+            line="53"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ComposableNaming"
+        message="Composable functions that return Unit should start with an uppercase letter"
+        errorLine1="        fun ler() {"
+        errorLine2="            ~~~">
+        <location
+            file="src/androidUnitTest/kotlin/pt/antares/app/ui/QuickLogBarUiTest.kt"
+            line="113"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed."
+        errorLine1="            android:screenOrientation=&quot;portrait&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/AndroidManifest.xml"
+            line="53"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="StringFormatMatches"
+        message="Wrong argument type for formatting argument &apos;#1&apos; in `widget_kcal_remaining`: conversion is &apos;`d`&apos;, received `Void` (argument #2 in method call)"
+        errorLine1="                    remaining?.let { lctx.getString(R.string.widget_kcal_remaining, it) }"
+        errorLine2="                                                                                    ~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/widget/AntaresWidgetProvider.kt"
+            line="94"
+            column="85"/>
+        <location
+            file="src/androidMain/res/values-en/strings.xml"
+            line="38"
+            column="5"
+            message="Conflicting argument declaration here"/>
+    </issue>
+
+    <issue
+        id="StringFormatMatches"
+        message="Wrong argument type for formatting argument &apos;#1&apos; in `widget_kcal_remaining`: conversion is &apos;`d`&apos;, received `Void` (argument #2 in method call)"
+        errorLine1="                    remaining?.let { lctx.getString(R.string.widget_kcal_remaining, it) }"
+        errorLine2="                                                                                    ~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/widget/AntaresWidgetProvider.kt"
+            line="94"
+            column="85"/>
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="39"
+            column="5"
+            message="Conflicting argument declaration here"/>
+    </issue>
+
+    <issue
+        id="StringFormatMatches"
+        message="Wrong argument type for formatting argument &apos;#1&apos; in `notif_protein_text`: conversion is &apos;`d`&apos;, received `Void` (argument #2 in method call)"
+        errorLine1="            text = ctx.getString(R.string.notif_protein_text, gap),"
+        errorLine2="                                                              ~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/notifications/NotificationWorkers.kt"
+            line="174"
+            column="63"/>
+        <location
+            file="src/androidMain/res/values-en/strings.xml"
+            line="35"
+            column="5"
+            message="Conflicting argument declaration here"/>
+    </issue>
+
+    <issue
+        id="StringFormatMatches"
+        message="Wrong argument type for formatting argument &apos;#1&apos; in `notif_protein_text`: conversion is &apos;`d`&apos;, received `Void` (argument #2 in method call)"
+        errorLine1="            text = ctx.getString(R.string.notif_protein_text, gap),"
+        errorLine2="                                                              ~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/notifications/NotificationWorkers.kt"
+            line="174"
+            column="63"/>
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="36"
+            column="5"
+            message="Conflicting argument declaration here"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;kcal&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;widget_kcal_remaining&quot;>%1$d kcal left&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values-en/strings.xml"
+            line="38"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;kcal&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;widget_kcal_remaining&quot;>%1$d kcal restantes&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="39"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 26"
+        errorLine1="        if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.O) return"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/fasting/AndroidFastingNotifier.kt"
+            line="33"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 26"
+        errorLine1="        if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.O) return"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/notifications/AndroidNotificationScheduler.kt"
+            line="28"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 26"
+        errorLine1="        if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.O) return"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/workout/AndroidWorkoutAlerts.kt"
+            line="29"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 26"
+        errorLine1="    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/workout/AndroidWorkoutAlerts.kt"
+            line="53"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 26"
+        errorLine1="        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/locale/LanguageController.android.kt"
+            line="47"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 26"
+        errorLine1="            if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.O) return"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/running/RunTrackerService.kt"
+            line="111"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.">
+        <location
+            file="src/androidMain/res/mipmap-anydpi-v26"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `String.toUri` instead?"
+        errorLine1="        val uri = Uri.parse("
+        errorLine2="                  ^">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/me/FeedbackSender.android.kt"
+            line="24"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Bitmap.scale` instead?"
+        errorLine1="    return Bitmap.createScaledBitmap("
+        errorLine2="           ^">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/util/ImagePicker.android.kt"
+            line="113"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        context.getSharedPreferences(FILE, Context.MODE_PRIVATE)"
+        errorLine2="        ^">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/core/locale/LanguageController.android.kt"
+            line="25"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `String.toColorInt` instead?"
+        errorLine1="                        PropertyFactory.lineColor(Color.parseColor(&quot;#4C8DFF&quot;)),"
+        errorLine2="                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/pt/antares/app/feature/running/ui/RunMap.android.kt"
+            line="74"
+            column="51"/>
+    </issue>
+
+</issues>
