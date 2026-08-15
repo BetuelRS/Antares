@@ -10,12 +10,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import pt.antares.app.core.calc.NutritionCalc
 import pt.antares.app.core.calc.WeeklyAggregate
 import pt.antares.app.core.coach.CoachRepository
 import pt.antares.app.core.coach.CoachTrigger
 import pt.antares.app.core.database.entities.CoachReportEntity
 import pt.antares.app.core.util.AppError
 import pt.antares.app.core.util.AppResult
+import pt.antares.app.feature.profile.data.ProfileRepository
 
 data class CoachReportUi(
     val id: String,
@@ -58,8 +60,18 @@ data class CoachState(
 
 class CoachViewModel(
     private val repository: CoachRepository,
+    profiles: ProfileRepository,
     private val json: Json = Json { ignoreUnknownKeys = true },
 ) : ViewModel() {
+
+    /**
+     * O ritmo que a pessoa pediu, em kg por semana. Vem do perfil de agora e não do
+     * relatório: é com o que está pedido hoje que faz sentido comparar uma proposta por
+     * responder. Negativo é perder.
+     */
+    val requestedRateKgPerWeek: StateFlow<Double?> = profiles.observeProfile()
+        .map { it?.let { p -> NutritionCalc.weeklyKgFromKcalPerDay(p.goalRateKcal) } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     private val _loading = MutableStateFlow(false)
     private val _error = MutableStateFlow<AppError?>(null)

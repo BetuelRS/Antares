@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import kotlin.math.abs
 import androidx.compose.ui.text.style.TextOverflow
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -32,7 +33,11 @@ import pt.antares.app.core.util.dayShort
 import pt.antares.app.core.util.epochDayToLocalDate
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.generated.resources.adaptive_accept
+import pt.antares.app.generated.resources.adaptive_why_gain
+import pt.antares.app.generated.resources.adaptive_why_loss
+import pt.antares.app.generated.resources.adaptive_why_opposite
 import pt.antares.app.generated.resources.adaptive_body
 import pt.antares.app.generated.resources.adaptive_disclaimer
 import pt.antares.app.generated.resources.adaptive_keep
@@ -113,6 +118,7 @@ fun CoachReportScreen(
 
             else -> {
 
+                val ritmoPedido by viewModel.requestedRateKgPerWeek.collectAsState()
                 val winsTitle = stringResource(Res.string.coach_wins)
                 val obsTitle = stringResource(Res.string.coach_observations)
                 val adjTitle = stringResource(Res.string.coach_adjustments)
@@ -126,6 +132,7 @@ fun CoachReportScreen(
                         item {
                             AdaptiveProposalCard(
                                 report = report,
+                                requestedRateKgPerWeek = ritmoPedido,
                                 onAccept = { viewModel.acceptProposal(report) },
                                 onKeep = { viewModel.dismissProposal(report) },
                             )
@@ -368,6 +375,7 @@ private fun NumbersCard(report: CoachReportUi) {
 @Composable
 fun AdaptiveProposalCard(
     report: CoachReportUi,
+    requestedRateKgPerWeek: Double?,
     onAccept: () -> Unit,
     onKeep: () -> Unit,
     modifier: Modifier = Modifier,
@@ -382,6 +390,18 @@ fun AdaptiveProposalCard(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
         )
+        // A razão antes dos números: a proposta muda a meta porque o ritmo real não é o
+        // que foi pedido, e sem essa frase o cartão pede uma decisão sem dar o motivo.
+        // Cala-se quando falta um dos dois ritmos — a semana com menos de duas pesagens
+        // não sabe dizer para onde o peso foi.
+        porqueMuda(requestedRateKgPerWeek, report.aggregate?.weightTrendDeltaKg)?.let { porque ->
+            Text(
+                text = porque,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(top = Spacing.sm),
+            )
+        }
         Text(
             text = stringResource(Res.string.adaptive_body, observed, previous, proposed),
             style = MaterialTheme.typography.bodyMedium,
@@ -409,4 +429,44 @@ fun AdaptiveProposalCard(
             modifier = Modifier.padding(top = Spacing.sm),
         )
     }
+}
+
+/**
+ * Como se diz porque é que a meta mudaria. É a comparação entre o ritmo pedido e o ritmo
+ * real, e não uma conta: os dois números já vêm feitos.
+ */
+internal enum class RazaoDaProposta { A_PERDER, A_GANHAR, AO_CONTRARIO }
+
+/**
+ * Escolhe a frase, ou nenhuma. Ambos os ritmos em kg por semana, negativos a perder.
+ *
+ * Nulo — e o cartão fica sem linha — quando falta um dos dois, ou quando o pedido é
+ * manter o peso: «pediste 0 kg por semana» não explica nada.
+ */
+internal fun razaoDaProposta(pedido: Double?, real: Double?): RazaoDaProposta? {
+    if (pedido == null || real == null) return null
+    if (abs(pedido) < RITMO_MINIMO_KG) return null
+
+    // Sinais opostos são o caso que mais precisa de ser dito: pediu-se perder e está-se a
+    // ganhar. Vale mesmo quando o peso mal mexeu, porque a direção já está errada.
+    return when {
+        pedido * real < 0 -> RazaoDaProposta.AO_CONTRARIO
+        pedido < 0 -> RazaoDaProposta.A_PERDER
+        else -> RazaoDaProposta.A_GANHAR
+    }
+}
+
+// Abaixo de 50 g por semana o pedido é manter o peso, e não há ritmo para comparar.
+internal const val RITMO_MINIMO_KG = 0.05
+
+// Os módulos vão para o texto porque o verbo de cada frase já carrega a direção.
+@Composable
+private fun porqueMuda(pedido: Double?, real: Double?): String? {
+    val razao = razaoDaProposta(pedido, real) ?: return null
+    val chave = when (razao) {
+        RazaoDaProposta.AO_CONTRARIO -> Res.string.adaptive_why_opposite
+        RazaoDaProposta.A_PERDER -> Res.string.adaptive_why_loss
+        RazaoDaProposta.A_GANHAR -> Res.string.adaptive_why_gain
+    }
+    return stringResource(chave, fmtG(abs(pedido!!)), fmtG(abs(real!!)))
 }

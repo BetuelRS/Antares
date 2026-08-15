@@ -765,6 +765,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_error">Couldn't generate the report. Try again.</string>
 
     <string name="adaptive_title">New target suggested</string>
+    <string name="adaptive_why_loss">You asked to lose %1$s kg a week, and you are losing %2$s.</string>
+    <string name="adaptive_why_gain">You asked to gain %1$s kg a week, and you are gaining %2$s.</string>
+    <string name="adaptive_why_opposite">You asked for %1$s kg a week, and your weight is going the other way: %2$s.</string>
     <string name="adaptive_body">Going by what you ate and what your weight did, you burn around %1$d kcal/day. Your target would go from %2$d to %3$d kcal.</string>
     <string name="adaptive_accept">Accept</string>
     <string name="adaptive_keep">Keep</string>

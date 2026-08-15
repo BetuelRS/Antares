@@ -766,6 +766,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_error">Não deu para gerar o relatório. Tenta outra vez.</string>
 
     <string name="adaptive_title">Nova meta sugerida</string>
+    <string name="adaptive_why_loss">Pediste perder %1$s kg por semana, e estás a perder %2$s.</string>
+    <string name="adaptive_why_gain">Pediste ganhar %1$s kg por semana, e estás a ganhar %2$s.</string>
+    <string name="adaptive_why_opposite">Pediste %1$s kg por semana, e o peso está a ir ao contrário: %2$s.</string>
     <string name="adaptive_body">Pelo que comeste e pelo que o peso fez, gastas cerca de %1$d kcal/dia. A meta passaria de %2$d para %3$d kcal.</string>
     <string name="adaptive_accept">Aceitar</string>
     <string name="adaptive_keep">Manter</string>

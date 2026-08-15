@@ -101,7 +101,7 @@ val viewModelModule = module {
     viewModel { RunDetailViewModel(get()) }
 
     viewModel { pt.antares.app.feature.ai.AiViewModel(get()) }
-    viewModel { pt.antares.app.feature.coach.CoachViewModel(get()) }
+    viewModel { pt.antares.app.feature.coach.CoachViewModel(get(), get()) }
 
     viewModel { pt.antares.app.feature.health.HealthViewModel(get(), get()) }
 }
