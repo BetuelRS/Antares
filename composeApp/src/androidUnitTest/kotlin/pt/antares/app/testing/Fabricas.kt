@@ -15,7 +15,9 @@ import pt.antares.app.feature.diary.DiaryRepository
 import pt.antares.app.feature.exercise.ExerciseRepository
 import pt.antares.app.feature.fasting.NoopFastingNotifier
 import pt.antares.app.feature.fasting.data.FastingRepository
+import pt.antares.app.feature.profile.data.BodyMeasurementRepository
 import pt.antares.app.feature.profile.data.ProfileRepository
+import pt.antares.app.feature.profile.ui.HealthProfileViewModel
 import pt.antares.app.feature.running.data.RunRepository
 import pt.antares.app.feature.stats.NutritionStatsRepository
 import pt.antares.app.feature.templates.MealTemplateRepository
@@ -63,15 +65,18 @@ object Fabricas {
     fun routineRepository(db: AntaresDb, io: CoroutineDispatcher) =
         RoutineRepository(db.routineDao(), db.exerciseLibraryDao(), db.routineScheduleDao(), io)
 
-    fun todayViewModel(
+    /**
+     * O Health Connect ligado a nada: escreve na base de teste e nunca lê janelas de fora.
+     * Serve os dois modelos que dependem dele, e é por isso que está aqui — a montagem
+     * duplicada foi a razão de as duas suites divergirem antes.
+     */
+    fun healthRepository(
         db: AntaresDb,
-        prefs: AppPreferences,
         io: CoroutineDispatcher,
         gateway: HealthGateway = CountingHealthGateway(),
-    ): TodayViewModel {
+    ): HealthRepository {
         var lastImport = 0L
-        var lastPublish = 0L
-        val health = HealthRepository(
+        return HealthRepository(
             gateway = gateway,
             weights = object : HealthRepository.WeightWriter {
                 override suspend fun importedRefs() = emptySet<String>()
@@ -90,6 +95,25 @@ object Fabricas {
             now = { Clock.System.now().toEpochMilliseconds() },
             epochDayOf = { it / 86_400_000L },
         )
+    }
+
+    fun healthProfileViewModel(
+        db: AntaresDb,
+        io: CoroutineDispatcher,
+    ) = HealthProfileViewModel(
+        repository = profileRepository(db, io),
+        measurements = BodyMeasurementRepository(db.bodyMeasurementDao(), db.userProfileDao(), io),
+        health = healthRepository(db, io),
+    )
+
+    fun todayViewModel(
+        db: AntaresDb,
+        prefs: AppPreferences,
+        io: CoroutineDispatcher,
+        gateway: HealthGateway = CountingHealthGateway(),
+    ): TodayViewModel {
+        var lastPublish = 0L
+        val health = healthRepository(db, io, gateway)
         val publisher = HealthPublisher(
             gateway = gateway,
             nutrition = { emptyList() },

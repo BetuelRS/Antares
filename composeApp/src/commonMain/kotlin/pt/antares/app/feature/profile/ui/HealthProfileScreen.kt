@@ -447,6 +447,11 @@ private fun GoalCard(state: HealthProfileState) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Text(
+                    stringResource(Res.string.profile_health_eta_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
             else -> Text(
                 stringResource(Res.string.profile_health_no_eta),

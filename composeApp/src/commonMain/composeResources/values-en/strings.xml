@@ -973,6 +973,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="onb_plan_estimates_note">These are estimates. After a few weeks of logging, the app measures your real expenditure and adjusts on its own.</string>
 
     <string name="profile_health_eta">~%1$d weeks · %2$s</string>
+    <string name="profile_health_eta_note">Based on your rate over the last 4 weeks, not on what you asked for. It is redone at every weigh-in — and usually moves further out, because expenditure falls as weight does.</string>
     <string name="profile_health_no_eta">No date yet — not enough weigh-ins, or your weight is nearly flat.</string>
     <string name="profile_health_moving_away">Your weight is moving away from your goal.</string>
 

@@ -974,6 +974,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="onb_plan_estimates_note">São estimativas. Com algumas semanas de registos, a app mede o teu gasto real e ajusta sozinha.</string>
 
     <string name="profile_health_eta">~%1$d semanas · %2$s</string>
+    <string name="profile_health_eta_note">Sai do teu ritmo das últimas 4 semanas, não do que pediste. Refaz-se a cada pesagem — e costuma afastar-se, porque o gasto desce à medida que o peso desce.</string>
     <string name="profile_health_no_eta">Ainda não dá para prever uma data — faltam pesagens ou o peso está quase parado.</string>
     <string name="profile_health_moving_away">O teu peso está a andar ao contrário do objetivo.</string>
 
