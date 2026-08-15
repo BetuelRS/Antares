@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.isoDayNumber
+import pt.antares.app.core.calc.AguaDaComida
 import pt.antares.app.core.calc.DailyGoals
 import pt.antares.app.core.calc.LoggingStreak
 import pt.antares.app.core.calc.Targets
@@ -219,6 +220,16 @@ class TodayViewModel(
                     referencia.forKey(chave)?.forPerson(sexo, perfil?.lifeStage)
                 },
             )
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /**
+     * A água que veio da comida. Fica fora do [state] de propósito: não é para somar ao
+     * contador, é para aparecer ao lado dele — a meta fala do que se bebe.
+     */
+    val aguaDaComidaMl: StateFlow<Int?> = todayFlow.flatMapLatest { today ->
+        diaryRepository.observeDayTotals(today).map {
+            AguaDaComida.mlDoDia(statsRepository.totals(today, today))
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 

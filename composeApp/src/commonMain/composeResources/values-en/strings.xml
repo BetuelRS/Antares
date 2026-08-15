@@ -490,6 +490,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exercise_workout_label">Strength workout</string>
     <string name="today_workout_title">Workout</string>
     <string name="today_workout_active">Workout in progress — tap to resume</string>
+    <string name="today_water_from_food">Another %1$d ml came from food — not counted toward the goal</string>
     <string name="today_workout_last">Last workout: %1$d kg volume</string>
     <string name="today_workout_none">No workouts yet. Let's start!</string>
     <string name="today_workout_scheduled">Today's plan: %1$s</string>

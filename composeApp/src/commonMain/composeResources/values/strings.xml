@@ -491,6 +491,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exercise_workout_label">Treino de força</string>
     <string name="today_workout_title">Treino</string>
     <string name="today_workout_active">Treino em curso — toca para retomar</string>
+    <string name="today_water_from_food">Mais %1$d ml vieram da comida — não contam para a meta</string>
     <string name="today_workout_last">Último treino: %1$d kg de volume</string>
     <string name="today_workout_none">Sem treinos ainda. Bora começar!</string>
     <string name="today_workout_scheduled">Plano de hoje: %1$s</string>

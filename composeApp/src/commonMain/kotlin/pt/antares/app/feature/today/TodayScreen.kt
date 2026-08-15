@@ -91,6 +91,7 @@ fun TodayScreen(
     val heroStyle by viewModel.heroStyle.collectAsState()
     val weeklyBudget by viewModel.weeklyBudget.collectAsState()
     val dailyGap by viewModel.dailyGap.collectAsState()
+    val aguaDaComidaMl by viewModel.aguaDaComidaMl.collectAsState()
     val haptic = LocalHapticFeedback.current
 
     LaunchedEffect(Unit) { viewModel.syncHealthConnect() }
@@ -260,6 +261,16 @@ fun TodayScreen(
                             MaterialTheme.colorScheme.onSurfaceVariant
                         },
                     )
+                    // Só aparece quando metade das calorias do dia trouxeram teor de água
+                    // medido. Fora disso o número falava de meio prato e parecia falar do
+                    // dia inteiro — ver `AguaDaComida`.
+                    aguaDaComidaMl?.let { daComida ->
+                        Text(
+                            stringResource(Res.string.today_water_from_food, daComida),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
                 TextButton(onClick = onAddMeal) { Text(stringResource(Res.string.nav_diary)) }
             }
