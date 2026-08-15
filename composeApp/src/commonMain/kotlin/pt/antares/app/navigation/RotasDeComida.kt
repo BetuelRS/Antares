@@ -29,6 +29,11 @@ internal fun NavGraphBuilder.rotasDeComida(navController: NavHostController) {
             onQuickLog = { slot, epochDay, mode, query ->
                 navController.navigate(Route.FoodSearch(slot.name, epochDay, mode.name, query))
             },
+            // Leva o dia e a refeição do próprio registo: voltar atrás cai no dia onde se
+            // estava, e não em hoje.
+            onOpenFood = { foodId, slot, epochDay ->
+                navController.navigate(Route.FoodDetail(foodId, slot.name, epochDay))
+            },
         )
     }
     composable<Route.FoodSearch> { entry ->

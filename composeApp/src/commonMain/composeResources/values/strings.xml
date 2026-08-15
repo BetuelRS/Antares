@@ -324,6 +324,7 @@
     <string name="rich_explain">Ordenado por quanto trazem em 100 kcal, não em 100 g: por peso ganham sempre os secos e as gorduras, e uma colher de tomilho não resolve o ferro de ninguém.</string>
     <string name="rich_row">%1$d% por 100 kcal · %2$d% por 100 g</string>
     <string name="rich_empty">Nenhum alimento do catálogo traz este nutriente em quantidade que conte.</string>
+    <string name="log_open_food">Ver o alimento e de onde vêm estes números</string>
     <string name="log_origin_label">Como registaste</string>
     <string name="nutrition_source_label">Origem dos dados</string>
     <string name="nutrition_source_curated">Escrito à mão para o Antares · micronutrientes de um alimento equivalente da CIQUAL</string>

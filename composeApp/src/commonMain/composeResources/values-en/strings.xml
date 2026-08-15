@@ -324,6 +324,7 @@
     <string name="rich_explain">Ranked by how much they carry per 100 kcal, not per 100 g: by weight the dried and fatty foods always win, and a spoon of thyme fixes nobody's iron.</string>
     <string name="rich_row">%1$d% per 100 kcal · %2$d% per 100 g</string>
     <string name="rich_empty">No food in the catalogue carries this nutrient in a meaningful amount.</string>
+    <string name="log_open_food">See the food and where these numbers come from</string>
     <string name="log_origin_label">How you logged it</string>
     <string name="nutrition_source_label">Data source</string>
     <string name="nutrition_source_curated">Hand-written for Antares · micronutrients from an equivalent CIQUAL food</string>

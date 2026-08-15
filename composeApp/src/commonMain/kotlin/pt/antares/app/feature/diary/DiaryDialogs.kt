@@ -15,6 +15,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
+import pt.antares.app.core.model.Sex
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -299,4 +302,146 @@ internal fun EscolherRefeicaoDialog(onEscolha: (MealSlot) -> Unit, onDismiss: ()
             TextButton(onClick = onDismiss) { Text(stringResource(Res.string.common_cancel)) }
         },
     )
+}
+
+/**
+ * Os nove diálogos e folhas do diário, e o estado de cada um.
+ *
+ * Vivem juntos porque partilham a mesma regra: só um está aberto de cada vez, e todos se
+ * fecham pondo o campo a nulo. Estavam declarados um a um no corpo do ecrã, e eram cento e
+ * poucas linhas antes de a lista do dia começar.
+ */
+@Stable
+internal class DiarySheets {
+    var editLog by mutableStateOf<FoodLogEntity?>(null)
+    var detailLog by mutableStateOf<FoodLogEntity?>(null)
+    var detailMeal by mutableStateOf<MealSlot?>(null)
+    var saveTemplateSlot by mutableStateOf<MealSlot?>(null)
+    var addSheetSlot by mutableStateOf<MealSlot?>(null)
+    var quickLogPendente by mutableStateOf<QuickLogPendente?>(null)
+    var quickAddSlot by mutableStateOf<MealSlot?>(null)
+    var copyIntoSlot by mutableStateOf<MealSlot?>(null)
+    var clearMealSlot by mutableStateOf<MealSlot?>(null)
+}
+
+@Composable
+internal fun DiaryDialogHost(
+    folhas: DiarySheets,
+    viewModel: DiaryViewModel,
+    epochDay: Long,
+    logsBySlot: Map<MealSlot, List<FoodLogEntity>>,
+    onAddFood: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode) -> Unit,
+    onQuickLog: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -> Unit,
+    onOpenFood: (String, MealSlot, Long) -> Unit,
+) {
+    folhas.quickLogPendente?.let { pedido ->
+        EscolherRefeicaoDialog(
+            onEscolha = { slot ->
+                folhas.quickLogPendente = null
+                onQuickLog(slot, epochDay, pedido.mode, pedido.query)
+            },
+            onDismiss = { folhas.quickLogPendente = null },
+        )
+    }
+
+    folhas.addSheetSlot?.let { slot ->
+        pt.antares.app.feature.fooddata.AddEntrySheet(
+            onPick = { mode ->
+                folhas.addSheetSlot = null
+                if (mode == pt.antares.app.feature.fooddata.AddMode.QUICK) {
+                    folhas.quickAddSlot = slot
+                } else {
+                    onAddFood(slot, epochDay, mode)
+                }
+            },
+            onDismiss = { folhas.addSheetSlot = null },
+        )
+    }
+
+    folhas.quickAddSlot?.let { slot ->
+        QuickAddDialog(
+            onConfirm = { kcal, nome ->
+                viewModel.quickAddCalories(kcal, nome, slot)
+                folhas.quickAddSlot = null
+            },
+            onDismiss = { folhas.quickAddSlot = null },
+        )
+    }
+
+    folhas.copyIntoSlot?.let { slot ->
+        val copyCandidates by viewModel.copyCandidates.collectAsState()
+        CopyFromDayDialog(
+            candidates = copyCandidates,
+            onPick = { dia -> viewModel.copyMealFrom(dia, slot); folhas.copyIntoSlot = null },
+            onDismiss = { folhas.copyIntoSlot = null; viewModel.closeCopyCandidates() },
+        )
+    }
+
+    folhas.clearMealSlot?.let { slot ->
+        AlertDialog(
+            onDismissRequest = { folhas.clearMealSlot = null },
+            title = { Text(stringResource(Res.string.diary_clear_meal)) },
+            text = { Text(stringResource(Res.string.diary_clear_meal_body, slotLabel(slot))) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.clearMeal(slot); folhas.clearMealSlot = null }) {
+                    Text(stringResource(Res.string.common_delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { folhas.clearMealSlot = null }) {
+                    Text(stringResource(Res.string.common_cancel))
+                }
+            },
+        )
+    }
+
+    folhas.saveTemplateSlot?.let { slot ->
+        SaveTemplateDialog(
+            onConfirm = { name ->
+                viewModel.saveMealAsTemplate(name, slot)
+                folhas.saveTemplateSlot = null
+            },
+            onDismiss = { folhas.saveTemplateSlot = null },
+        )
+    }
+
+    folhas.detailMeal?.let { slot ->
+        val ref by viewModel.nutritionRef.collectAsState()
+        MealDetailSheet(
+            slot = slot,
+            slotName = slotLabel(slot),
+            logs = logsBySlot[slot].orEmpty(),
+            reference = ref?.reference,
+            sex = ref?.sex ?: Sex.MALE,
+            lifeStage = ref?.lifeStage,
+            onDismiss = { folhas.detailMeal = null },
+        )
+    }
+
+    folhas.detailLog?.let { log ->
+        val ref by viewModel.nutritionRef.collectAsState()
+        LogDetailSheet(
+            log = log,
+            reference = ref?.reference,
+            sex = ref?.sex ?: Sex.MALE,
+            lifeStage = ref?.lifeStage,
+            // Nulo quando o alimento já não existe: o registo sobrevive-lhe.
+            onOpenFood = log.foodId?.let { id ->
+                { onOpenFood(id, log.mealSlot, log.epochDay) }
+            },
+            onDismiss = { folhas.detailLog = null },
+        )
+    }
+
+    folhas.editLog?.let { log ->
+        EditLogDialog(
+            log = log,
+            onSave = { grams, hora ->
+                viewModel.updateLogQuantity(log.id, grams)
+                if (hora != log.eatenAtMin) viewModel.updateLogEatenAt(log.id, hora)
+                folhas.editLog = null
+            },
+            onDismiss = { folhas.editLog = null },
+        )
+    }
 }

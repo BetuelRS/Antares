@@ -18,6 +18,7 @@ import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.model.LogOrigin
@@ -38,6 +39,9 @@ fun LogDetailSheet(
     reference: EfsaReference?,
     lifeStage: LifeStage? = null,
     sex: Sex,
+    // Nulo quando o alimento já não existe no catálogo: o registo sobrevive-lhe, e não há
+    // ficha para onde ir.
+    onOpenFood: (() -> Unit)? = null,
     onDismiss: () -> Unit,
 ) {
     val nutrition = remember(log.id, reference, sex) {
@@ -84,6 +88,17 @@ fun LogDetailSheet(
                 source = originRes(log.origin),
                 sourceLabel = Res.string.log_origin_label,
             )
+
+            // A ficha do registo diz **como** ele entrou — à mão, por código de barras, pela
+            // IA — mas não de onde vêm os números do alimento. Essa é a diferença entre esta
+            // vista e a do alimento, e é por isso que há um caminho para lá.
+            onOpenFood?.let { abrir ->
+                SecondaryButton(
+                    text = stringResource(Res.string.log_open_food),
+                    onClick = abrir,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }

@@ -1,5 +1,19 @@
 package pt.antares.app.feature.diary
 
+import androidx.compose.foundation.layout.Arrangement
+import pt.antares.app.core.designsystem.Spacing
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
+import pt.antares.app.core.database.entities.ExerciseLogEntity
+import pt.antares.app.core.designsystem.success
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -82,3 +96,105 @@ internal fun QuebraDoJejumCartao(quebra: QuebraDoJejum) {
 
 // O registo rápido à espera de saber a que refeição pertence. Guarda o pedido inteiro para
 // a resposta não obrigar a pessoa a escrever tudo outra vez.
+
+/**
+ * O exercício do dia: o cabeçalho com o total, e uma linha por entrada.
+ *
+ * As calorias aqui são o que se gastou **a mais** do que estar sentado — ver o `MetCalc`.
+ */
+internal fun LazyListScope.exerciseSection(
+    entries: List<ExerciseLogEntity>,
+    kcal: Int,
+    onAdd: () -> Unit,
+    onDelete: (String) -> Unit,
+) {
+    item(key = "exercise-header") {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(Res.string.exercise_section_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                if (kcal > 0) {
+                    Spacer(Modifier.width(Spacing.sm))
+                    Text(
+                        "$kcal ${stringResource(Res.string.common_kcal)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            IconButton(onClick = onAdd) {
+                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.exercise_add_cta))
+            }
+        }
+    }
+    if (entries.isEmpty()) {
+        item(key = "exercise-empty") {
+            Text(
+                stringResource(Res.string.exercise_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+    items(entries, key = { "ex-${it.id}" }) { entry ->
+        ExerciseRow(entry = entry, onDelete = { onDelete(entry.id) })
+    }
+}
+
+/**
+ * A água do dia, bebida e da comida.
+ *
+ * A meta é de **água total** desde que passou a sair da referência da EFSA, e por isso a
+ * parcela da comida conta para ela. Quando não dá para saber essa parcela — menos de metade
+ * do prato com teor de água medido —, só se conta a bebida e o texto di-lo.
+ */
+@Composable
+internal fun WaterCard(
+    bebidaMl: Int,
+    daComidaMl: Int?,
+    metaMl: Int,
+    onAdd: (Int) -> Unit,
+) {
+    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column {
+                Text(stringResource(Res.string.diary_water), style = MaterialTheme.typography.titleMedium)
+                val total = bebidaMl + (daComidaMl ?: 0)
+                Text(
+                    "$total / $metaMl ml",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (total >= metaMl) {
+                        MaterialTheme.success
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
+                Text(
+                    daComidaMl?.let { stringResource(Res.string.today_water_parts, bebidaMl, it) }
+                        ?: stringResource(Res.string.today_water_food_unknown),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Row {
+                TextButton(onClick = { onAdd(-COPO_ML) }) { Text("−$COPO_ML") }
+                TextButton(onClick = { onAdd(COPO_ML) }) { Text("+$COPO_ML") }
+                TextButton(onClick = { onAdd(GARRAFA_ML) }) { Text("+$GARRAFA_ML") }
+            }
+        }
+    }
+}
+
+// Um copo e uma garrafa pequena. São as duas medidas que se reconhecem sem pensar.
+private const val COPO_ML = 250
+private const val GARRAFA_ML = 500

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pt.antares.app.core.calc.AguaDaComida
 import pt.antares.app.core.calc.DailyGoals
 import pt.antares.app.core.calc.Targets
 import pt.antares.app.core.database.daos.DayTotals
@@ -105,6 +106,20 @@ class DiaryViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     private val selectedDay = MutableStateFlow(DayTicker.today.value)
+
+    /**
+     * A água que veio da comida do dia. Fluxo à parte e não campo do estado: a conta é
+     * suspensa, e o `combine` que monta o estado não é.
+     *
+     * A meta é de água **total** desde o F2, e por isso esta parcela conta para ela — o ecrã
+     * de hoje já o fazia, e ter os dois a mostrar números diferentes para a mesma meta era o
+     * pior dos dois mundos.
+     */
+    val aguaDaComidaMl: StateFlow<Int?> = selectedDay.flatMapLatest { day ->
+        diaryRepository.observeDayTotals(day).map {
+            AguaDaComida.mlDoDia(statsRepository.totals(day, day))
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     private val _templateSaved = MutableStateFlow<String?>(null)
     val templateSaved: StateFlow<String?> = _templateSaved
