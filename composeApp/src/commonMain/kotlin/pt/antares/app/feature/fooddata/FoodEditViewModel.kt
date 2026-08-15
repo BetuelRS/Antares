@@ -2,12 +2,17 @@ package pt.antares.app.feature.fooddata
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.antares.app.core.ai.AiRepository
 import pt.antares.app.core.ai.AiWarnings
+import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.util.AppError
 import pt.antares.app.core.util.AppResult
 import kotlin.math.abs
@@ -34,6 +39,10 @@ data class FoodEditState(
     val labelIncomplete: Boolean = false,
 
     val labelNeedsCheck: Boolean = false,
+
+    // Alimentos que já existem com um nome parecido. Avisam, não bloqueiam: há bacalhaus
+    // diferentes, e quem escreve o nome é quem sabe se é o mesmo.
+    val duplicados: List<FoodEntity> = emptyList(),
 ) {
     private fun num(s: String): Double? = s.replace(',', '.').toDoubleOrNull()
 
@@ -54,6 +63,7 @@ data class FoodEditState(
         }
 }
 
+@OptIn(FlowPreview::class)
 class FoodEditViewModel(
     private val repository: FoodRepository,
     private val ai: AiRepository,
@@ -63,6 +73,30 @@ class FoodEditViewModel(
     val state: StateFlow<FoodEditState> = _state
 
     private var barcode: String? = null
+
+    private val nomeEscrito = MutableStateFlow("")
+
+    init {
+        // O mesmo intervalo da pesquisa de alimentos. Menos do que isto consulta o índice a
+        // cada tecla; mais e o aviso só chega depois de a pessoa ter escrito os macros.
+        nomeEscrito
+            .debounce(ESPERA_MS)
+            .onEach { nome -> _state.update { it.copy(duplicados = procurarParecidos(nome)) } }
+            .launchIn(viewModelScope)
+    }
+
+    /**
+     * Procura no catálogo com o mesmo índice da pesquisa de alimentos, e não por igualdade
+     * de texto: quem escreve «arroz cozido» tem de ser avisado do «Arroz, cozido» que já lá
+     * está, e uma comparação exata nunca os juntava.
+     *
+     * Só ao criar. A editar, o alimento parecido é quase sempre o próprio.
+     */
+    private suspend fun procurarParecidos(nome: String): List<FoodEntity> {
+        if (_state.value.editingId != null) return emptyList()
+        if (nome.trim().length < MIN_LETRAS) return emptyList()
+        return repository.search(nome).take(MAX_DUPLICADOS)
+    }
 
     fun readLabel(imageBase64: String, mime: String = "image/jpeg") {
         if (_state.value.readingLabel) return
@@ -144,7 +178,11 @@ class FoodEditViewModel(
     private fun digits(s: String, decimals: Boolean = true) =
         s.filter { it.isDigit() || (decimals && (it == '.' || it == ',')) }.take(7)
 
-    fun setName(v: String) = _state.update { it.copy(name = v.take(80)) }
+    fun setName(v: String) {
+        val nome = v.take(80)
+        _state.update { it.copy(name = nome) }
+        nomeEscrito.value = nome
+    }
     fun setKcal(v: String) = _state.update { it.copy(kcal = digits(v, decimals = false).take(4)) }
     fun setProtein(v: String) = _state.update { it.copy(protein = digits(v)) }
     fun setCarbs(v: String) = _state.update { it.copy(carbs = digits(v)) }
@@ -178,5 +216,13 @@ class FoodEditViewModel(
             )
             _state.update { it.copy(saved = true) }
         }
+    }
+
+    private companion object {
+        const val ESPERA_MS = 300L
+        const val MIN_LETRAS = 3
+        // Três chegam para reconhecer o alimento. Uma lista mais longa passava de aviso a
+        // segunda pesquisa, e o ecrã não é para procurar.
+        const val MAX_DUPLICADOS = 3
     }
 }

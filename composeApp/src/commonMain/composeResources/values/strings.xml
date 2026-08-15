@@ -371,6 +371,8 @@
     <string name="nutrition_satfat">Gordura saturada</string>
     <string name="food_last_amount">Última: %1$d g</string>
 
+    <string name="food_edit_duplicates_title">Já existe algo parecido. Toca para usar em vez de criar.</string>
+    <string name="food_edit_duplicates_kcal">%1$d kcal / 100 g</string>
     <string name="food_edit_title_new">Novo alimento</string>
     <string name="food_edit_title_edit">Editar alimento</string>
     <string name="food_edit_per_100g">Valores por 100 g</string>

@@ -251,7 +251,9 @@ fun AntaresNavHost(
                 onFoodSelected = { foodId ->
                     navController.navigate(Route.FoodDetail(foodId, route.slot, route.epochDay))
                 },
-                onCreateCustom = { navController.navigate(Route.FoodEdit()) },
+                onCreateCustom = {
+                    navController.navigate(Route.FoodEdit(slot = route.slot, epochDay = route.epochDay))
+                },
                 onScan = { navController.navigate(Route.BarcodeScan(route.slot, route.epochDay)) },
                 onRecipeSelected = { recipeId ->
                     navController.navigate(Route.RecipeDetail(recipeId, route.slot, route.epochDay))
@@ -283,6 +285,16 @@ fun AntaresNavHost(
                 barcode = route.barcode,
                 onSaved = { navController.popBackStack() },
                 onBack = { navController.popBackStack() },
+                // Sai do ecrã de criação antes de abrir o alimento: quem escolheu usar um
+                // que já existe não quer o rascunho de volta ao carregar em voltar.
+                onUseExisting = route.slot?.let { slot ->
+                    route.epochDay?.let { dia ->
+                        { foodId: String ->
+                            navController.popBackStack()
+                            navController.navigate(Route.FoodDetail(foodId, slot, dia))
+                        }
+                    }
+                },
             )
         }
 
@@ -304,7 +316,11 @@ fun AntaresNavHost(
                         Route.FoodDetail(r.foodId, route.slot, route.epochDay),
                     ) { popUpTo<Route.BarcodeScan> { inclusive = true } }
                     is BarcodeResult.NotFound -> navController.navigate(
-                        Route.FoodEdit(barcode = r.barcode),
+                        Route.FoodEdit(
+                            barcode = r.barcode,
+                            slot = route.slot,
+                            epochDay = route.epochDay,
+                        ),
                     ) { popUpTo<Route.BarcodeScan> { inclusive = true } }
                     else -> Unit
                 }

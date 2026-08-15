@@ -78,7 +78,17 @@ sealed interface Route {
     data class FoodDetail(val foodId: String, val slot: String, val epochDay: Long) : Route
 
     @Serializable
-    data class FoodEdit(val foodId: String? = null, val barcode: String? = null) : Route
+    /**
+     * A refeição e o dia viajam para o ecrã de criação para o aviso de duplicados poder
+     * oferecer o alimento que já existe. Sem eles o aviso só sabia dizer que existe, e
+     * mandava a pessoa voltar atrás e procurar outra vez.
+     */
+    data class FoodEdit(
+        val foodId: String? = null,
+        val barcode: String? = null,
+        val slot: String? = null,
+        val epochDay: Long? = null,
+    ) : Route
 
     @Serializable
     data class BarcodeScan(val slot: String, val epochDay: Long) : Route

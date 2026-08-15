@@ -371,6 +371,8 @@
     <string name="nutrition_satfat">Saturated fat</string>
     <string name="food_last_amount">Last: %1$d g</string>
 
+    <string name="food_edit_duplicates_title">Something similar already exists. Tap to use it instead of creating.</string>
+    <string name="food_edit_duplicates_kcal">%1$d kcal / 100 g</string>
     <string name="food_edit_title_new">New food</string>
     <string name="food_edit_title_edit">Edit food</string>
     <string name="food_edit_per_100g">Values per 100 g</string>

@@ -1,5 +1,6 @@
 package pt.antares.app.feature.fooddata
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
@@ -30,6 +32,7 @@ import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
+import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.core.util.AppError
 import pt.antares.app.core.util.PickedImage
@@ -44,6 +47,9 @@ fun FoodEditScreen(
     barcode: String?,
     onSaved: () -> Unit,
     onBack: () -> Unit,
+    // Nulo quando o ecrã foi aberto de um sítio que não sabe a refeição nem o dia. Nesse
+    // caso o aviso de duplicados continua a aparecer, só não tem para onde levar.
+    onUseExisting: ((String) -> Unit)? = null,
     viewModel: FoodEditViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -75,6 +81,10 @@ fun FoodEditScreen(
                 label = stringResource(Res.string.food_edit_name),
                 numeric = false,
             )
+
+            if (state.duplicados.isNotEmpty()) {
+                DuplicadosCard(state.duplicados, onUseExisting)
+            }
 
             LabelScanRow(
                 reading = state.readingLabel,
@@ -125,6 +135,42 @@ fun FoodEditScreen(
                 enabled = state.valid,
                 modifier = Modifier.fillMaxWidth().padding(top = Spacing.md),
             )
+        }
+    }
+}
+
+/**
+ * Avisa que já existe algo parecido. Não bloqueia nada: o botão de guardar continua onde
+ * estava e com as mesmas condições — há bacalhaus diferentes, e quem escreveu o nome é quem
+ * sabe se é o mesmo alimento.
+ */
+@Composable
+private fun DuplicadosCard(duplicados: List<FoodEntity>, onUseExisting: ((String) -> Unit)?) {
+    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(Res.string.food_edit_duplicates_title),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        duplicados.forEach { food ->
+            val nome = food.namePt.ifBlank { food.nameEn }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = Spacing.sm)
+                    .then(
+                        if (onUseExisting == null) Modifier
+                        else Modifier.clickable(role = Role.Button) { onUseExisting(food.id) },
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(nome, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                Text(
+                    stringResource(Res.string.food_edit_duplicates_kcal, food.kcal),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
