@@ -128,7 +128,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 21,
+    version = 22,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -153,6 +153,7 @@ interface DbInfoDao {
         AutoMigration(from = 18, to = 19),
         AutoMigration(from = 19, to = 20),
         AutoMigration(from = 20, to = 21, spec = AntaresDb.DropSyncMeta::class),
+        AutoMigration(from = 21, to = 22),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)

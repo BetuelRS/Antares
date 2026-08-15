@@ -16,6 +16,8 @@ import pt.antares.app.core.util.AppResult
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.onSuccess
 import kotlin.math.roundToInt
+import pt.antares.app.core.util.currentMinuteOfDay
+import pt.antares.app.core.util.todayEpochDay
 
 /**
  * Entre os ecrãs e o [AiClient]. Recebe funções em vez de repositórios para não depender
@@ -117,6 +119,7 @@ class AiRepository(
                     origin = origin,
 
                     isLiquid = DrinkClassifier.isLiquid(item.name, item.name),
+                    eatenAtMin = currentMinuteOfDay().takeIf { epochDay == todayEpochDay() },
                     updatedAt = timestamp,
                 ),
             )

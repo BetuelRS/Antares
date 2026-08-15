@@ -16,6 +16,8 @@ import pt.antares.app.core.database.entities.WaterLogEntity
 import pt.antares.app.core.model.LogOrigin
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
+import pt.antares.app.core.util.currentMinuteOfDay
+import pt.antares.app.core.util.todayEpochDay
 import kotlin.math.roundToInt
 
 const val DEFAULT_PORTION_G = 100.0
@@ -33,6 +35,14 @@ class DiaryRepository(
     private val io: CoroutineDispatcher,
 ) {
     private fun now() = Clock.System.now().toEpochMilliseconds()
+
+    /**
+     * A hora a pôr num registo daquele dia. Só o dia de hoje a tem: registar num dia
+     * passado não diz a que horas se comeu, e pôr lá a hora de agora estragaria a janela
+     * alimentar com o momento em que a pessoa se lembrou de registar.
+     */
+    private fun horaDe(epochDay: Long): Int? =
+        currentMinuteOfDay().takeIf { epochDay == todayEpochDay() }
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
@@ -88,6 +98,7 @@ class DiaryRepository(
                 microsPer100Json = snapshotMicros(food),
                 origin = origin,
                 isLiquid = food.isLiquid,
+                eatenAtMin = horaDe(epochDay),
                 updatedAt = now(),
             ),
         )
@@ -116,6 +127,7 @@ class DiaryRepository(
                 fatSnapshot = 0.0,
                 microsPer100Json = null,
                 origin = LogOrigin.MANUAL,
+                eatenAtMin = horaDe(epochDay),
                 updatedAt = now(),
             ),
         )

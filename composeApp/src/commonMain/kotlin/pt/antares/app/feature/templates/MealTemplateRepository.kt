@@ -13,6 +13,8 @@ import pt.antares.app.core.database.entities.MealTemplateItemEntity
 import pt.antares.app.core.model.LogOrigin
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
+import pt.antares.app.core.util.currentMinuteOfDay
+import pt.antares.app.core.util.todayEpochDay
 
 /**
  * Refeições guardadas para repetir. Um modelo é uma cópia congelada de um dia: guardar
@@ -94,7 +96,10 @@ class MealTemplateRepository(
                         // registar à mão o que já lá estava, e a origem serve para explicar
                         // a falta de micronutrientes — não a via de entrada.
                         origin = LogOrigin.MANUAL,
+                        // Aplicar um modelo é comer agora, e por isso leva a hora de
+                        // agora — mas só se for no dia de hoje.
                         isLiquid = item.isLiquid,
+                        eatenAtMin = currentMinuteOfDay().takeIf { epochDay == todayEpochDay() },
                         updatedAt = ts,
                     ),
                 )

@@ -3,11 +3,15 @@ package pt.antares.app.core.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class MealSlot {
-    BREAKFAST,
-    LUNCH,
-    DINNER,
-    SNACK,
+enum class MealSlot(val typicalHours: IntRange) {
+    BREAKFAST(5..10),
+    LUNCH(11..15),
+    DINNER(18..22),
+
+    // O lanche é o que sobra entre as outras, e por isso o intervalo dele não classifica
+    // nada: são só as horas da tarde em que quase sempre acontece, para quando é preciso
+    // **propor** uma hora em vez de a ler.
+    SNACK(16..17),
     ;
 
     companion object {
@@ -15,14 +19,10 @@ enum class MealSlot {
         /**
          * A refeição que o campo já traz escolhida à hora a que se abre o ecrã. Os
          * intervalos deixam buracos de propósito: às quatro da tarde ou às duas da manhã o
-         * mais provável é um lanche, e essas horas caem no `else`.
+         * mais provável é um lanche, e essas horas caem no `SNACK`.
          */
-        fun atHour(hour: Int): MealSlot = when (hour) {
-            in 5..10 -> BREAKFAST
-            in 11..15 -> LUNCH
-            in 18..22 -> DINNER
-            else -> SNACK
-        }
+        fun atHour(hour: Int): MealSlot =
+            entries.firstOrNull { it != SNACK && hour in it.typicalHours } ?: SNACK
     }
 }
 

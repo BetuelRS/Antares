@@ -112,6 +112,21 @@ data class FoodLogEntity(
     val origin: LogOrigin = LogOrigin.MANUAL,
 
     @ColumnInfo(defaultValue = "0") val isLiquid: Boolean = false,
+
+    /**
+     * A que horas se comeu, em minutos desde a meia-noite local — de 0 a 1439.
+     *
+     * Não se confunde com o [updatedAt], que é quando a linha foi escrita: registar o
+     * jantar na manhã seguinte dá dois valores muito diferentes, e só este serve para
+     * saber quando a pessoa come. É dele que sai a janela alimentar e o cruzamento com o
+     * jejum.
+     *
+     * **Nulo é um valor legítimo, e não um valor em falta por preencher.** Fica nulo em
+     * todo o histórico anterior a esta coluna, e em qualquer registo feito num dia que não
+     * seja o de hoje: aí a app não sabe a que horas se comeu, e inventar uma hora estraga
+     * as contas que dependem dela.
+     */
+    @ColumnInfo(defaultValue = "NULL") val eatenAtMin: Int? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
     val dirty: Boolean = true,

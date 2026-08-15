@@ -26,6 +26,16 @@ fun currentHour(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int =
     Clock.System.now().toLocalDateTime(timeZone).hour
 
 /**
+ * Minutos desde a meia-noite local, de 0 a 1439. É a unidade em que a app guarda a hora a
+ * que se comeu: cabe num inteiro, não arrasta fuso horário e compara-se por subtração.
+ */
+fun currentMinuteOfDay(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int =
+    Clock.System.now().toLocalDateTime(timeZone).let { it.hour * MINUTES_PER_HOUR + it.minute }
+
+const val MINUTES_PER_HOUR = 60
+const val MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR
+
+/**
  * A segunda-feira dessa semana. A app usa a semana ISO em todo o lado — relatório, grelha
  * de consistência, orçamento semanal — e é o que faz esses três concordarem.
  */

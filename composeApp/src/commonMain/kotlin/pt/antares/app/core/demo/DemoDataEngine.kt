@@ -16,6 +16,7 @@ import pt.antares.app.core.model.SessionStatus
 import pt.antares.app.core.model.WeightSource
 import pt.antares.app.feature.running.domain.ActivityType
 import pt.antares.app.feature.running.domain.RunStatus
+import pt.antares.app.core.util.MINUTES_PER_HOUR
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -318,6 +319,9 @@ object DemoDataEngine {
                     microsPer100Json = alimento.microsJson,
                     origin = LogOrigin.MANUAL,
                     isLiquid = alimento.liquido,
+                    // Uma hora plausível dentro da refeição, para os dados de demonstração
+                    // exercitarem a janela alimentar em vez de a deixarem vazia.
+                    eatenAtMin = horaDemo(slot, r),
                     updatedAt = quando,
                     deleted = false,
                     dirty = false,
@@ -410,6 +414,16 @@ object DemoDataEngine {
             dirty = false,
         )
     }
+
+    /**
+     * Uma hora dentro da refeição, em minutos desde a meia-noite. Sai do intervalo que o
+     * próprio [MealSlot] declara, para o slot e a hora dos dados de demonstração não se
+     * poderem contradizer.
+     */
+    private fun horaDemo(slot: MealSlot, r: DemoRandom): Int = r.inteiroEntre(
+        slot.typicalHours.first * MINUTES_PER_HOUR,
+        slot.typicalHours.last * MINUTES_PER_HOUR,
+    )
 
     private fun arredonda(valor: Double, casas: Int): Double {
         var fator = 1.0
