@@ -23,6 +23,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
@@ -162,24 +165,12 @@ private fun CoverageRow(c: MicroCoverage, dayMeasuredPct: Int) {
             },
         )
         val fraction = if (c.hasData) (c.coveragePct / 100f).coerceIn(0f, 1f) else 0f
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp)),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(fraction)
-                    .fillMaxHeight()
-                    .background(
-                        if (c.coveragePct >= 100) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
-                        RoundedCornerShape(4.dp),
-                    ),
-            )
-        }
+        // Uma barra curta pode ser carência ou pode ser falta de análise, e a cor não sabia
+        // distinguir as duas. Sem cobertura que chegue, a barra fica cinzenta e tracejada:
+        // é uma medida em que não se pode confiar, e a forma passa a dizê-lo.
+        MicroBar(fraction = fraction, incerta = c.isPartial)
 
-        if (c.isPartial && c.measuredPct < dayMeasuredPct - 15) {
+        if (c.isPartial && c.measuredPct < dayMeasuredPct - COBERTURA_NOTAVEL_ABAIXO) {
             Spacer(Modifier.height(2.dp))
             Text(
                 stringResource(Res.string.stat_micro_partial, c.measuredPct),
@@ -197,3 +188,59 @@ private fun fmt(v: Double): String {
 }
 
 private fun microLabel(key: String): StringResource = pt.antares.app.core.nutrition.microLabelRes(key)
+
+/**
+ * A barra de um micronutriente, com a certeza embutida na forma.
+ *
+ * Cheia e sólida quando a medida é de confiança. Tracejada e cinzenta quando falta análise a
+ * demasiada comida do período — aí o comprimento continua a dizer alguma coisa, mas não é uma
+ * afirmação sobre o que se comeu.
+ *
+ * Uma cor por estado voltava a misturar as duas leituras: era assim que uma barra vermelha
+ * podia significar carência **ou** falta de dados.
+ */
+@Composable
+private fun MicroBar(fraction: Float, incerta: Boolean) {
+    val traco = MaterialTheme.colorScheme.outline
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(MICRO_BAR_HEIGHT_DP.dp)
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(MICRO_BAR_RADIUS_DP.dp)),
+    ) {
+        if (incerta) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(fraction)
+                    .fillMaxHeight()
+                    .drawBehind {
+                        drawLine(
+                            color = traco,
+                            start = Offset(0f, size.height / 2f),
+                            end = Offset(size.width, size.height / 2f),
+                            strokeWidth = size.height,
+                            pathEffect = PathEffect.dashPathEffect(
+                                floatArrayOf(MICRO_DASH_DP.dp.toPx(), MICRO_GAP_DP.dp.toPx()),
+                            ),
+                        )
+                    },
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(fraction)
+                    .fillMaxHeight()
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(MICRO_BAR_RADIUS_DP.dp)),
+            )
+        }
+    }
+}
+
+private const val MICRO_BAR_HEIGHT_DP = 8
+private const val MICRO_BAR_RADIUS_DP = 4
+private const val MICRO_DASH_DP = 5
+private const val MICRO_GAP_DP = 3
+
+// Só se nota a falta de análise deste nutriente quando ela é bem pior do que a do dia todo;
+// caso contrário repetia-se o aviso que já está no topo do ecrã.
+private const val COBERTURA_NOTAVEL_ABAIXO = 15
