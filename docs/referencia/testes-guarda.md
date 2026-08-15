@@ -29,6 +29,7 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `DicionarioUsdaTest` | a tradução dos nomes americanos descer sem ninguém dar por isso | tiraste entradas do dicionário, ou o catálogo foi regenerado com nomes diferentes |
 | `IndicesQuentesTest` | perder um índice de que uma consulta repetida depende | apagaste um `Index` a pensar que sobrava. A app continua certa e passa a varrer a tabela toda — o custo só aparece a quem já tem anos de dados |
 | `SeedFalhadoDeixaRastoTest` | um catálogo que falha a semear ficar vazio em silêncio | a leitura do seed deixou de registar no `CrashStore` |
+| `TodaRotaTemEcraTest` | uma rota declarada sem ecrã, um ficheiro de rotas que ninguém chama, ou a mesma rota registada em duas áreas | navega-se para a rota e fica um ecrã em branco. Nenhuma das três dá erro de compilação, e só se descobre a usar |
 | `EspelhoDeNutrientesTest` | as chaves dos nutrientes descolarem entre o `Nutrients` e o `supabase/functions/_shared/nutrients.ts` do servidor | acrescentaste um nutriente de um lado só. Quem lê um código de barras deixa de o ver, e sem erro nenhum: o servidor grava uma chave que o telemóvel não reconhece e deita fora |
 | `BackupImportRollbackTest` | uma importação falhada deixar a pessoa sem os dados velhos e com metade dos novos | o restauro saiu da transação. Ver [a decisão](../explicacao/decisoes/0002-lapides-e-indices-unicos.md) |
 

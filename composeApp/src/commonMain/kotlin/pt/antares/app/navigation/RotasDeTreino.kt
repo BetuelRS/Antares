@@ -1,0 +1,140 @@
+package pt.antares.app.navigation
+
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.toRoute
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.feature.exercise.AddExerciseScreen
+import pt.antares.app.feature.workout.WorkoutScreen
+import pt.antares.app.feature.workout.ui.ExerciseCreateScreen
+import pt.antares.app.feature.workout.ui.ExerciseDetailScreen
+import pt.antares.app.feature.workout.ui.ExerciseLibraryScreen
+import pt.antares.app.feature.workout.data.SessionPickBus
+import pt.antares.app.feature.workout.ui.RoutineEditScreen
+import pt.antares.app.feature.workout.ui.RoutineItemPickViewModel
+import pt.antares.app.feature.workout.ui.WorkoutDetailScreen
+import pt.antares.app.feature.workout.ui.WeeklyScheduleScreen
+import pt.antares.app.feature.workout.ui.WorkoutHistoryScreen
+import pt.antares.app.feature.workout.ui.WorkoutSessionScreen
+import pt.antares.app.feature.workout.ui.WorkoutStatsScreen
+import pt.antares.app.feature.workout.ui.WorkoutSummaryScreen
+
+/**
+ * Treinar: o treino a decorrer, as rotinas, a biblioteca de exercícios e o histórico.
+ */
+internal fun NavGraphBuilder.rotasDeTreino(navController: NavHostController) {
+    composable<Route.Workout> {
+        WorkoutScreen(
+            onLibrary = { navController.navigate(Route.ExerciseLibrary()) },
+            onRoutine = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
+            onStartEmpty = { navController.navigate(Route.WorkoutSession()) },
+            onResume = { navController.navigate(Route.WorkoutSession()) },
+            onHistory = { navController.navigate(Route.WorkoutHistory) },
+            onStats = { navController.navigate(Route.WorkoutStats) },
+            onSchedule = { navController.navigate(Route.WorkoutSchedule) },
+        )
+    }
+    composable<Route.WorkoutSchedule> {
+        WeeklyScheduleScreen(onBack = { navController.popBackStack() })
+    }
+    composable<Route.AddExercise> { entry ->
+        val route = entry.toRoute<Route.AddExercise>()
+        AddExerciseScreen(
+            epochDay = route.epochDay,
+            onDone = { navController.popBackStack() },
+            onBack = { navController.popBackStack() },
+        )
+    }
+
+    composable<Route.ExerciseLibrary> { entry ->
+        val route = entry.toRoute<Route.ExerciseLibrary>()
+        val pickVm: RoutineItemPickViewModel = koinViewModel()
+        val pickBus: SessionPickBus = koinInject()
+        val scope = rememberCoroutineScope()
+        ExerciseLibraryScreen(
+            pickMode = route.pickMode,
+            onExercise = { id ->
+                when {
+                    route.pickMode && route.routineId != null -> {
+
+                        pickVm.add(route.routineId, id) { navController.popBackStack() }
+                    }
+                    route.sessionPick -> {
+
+                        scope.launch { pickBus.emit(id) }
+                        navController.popBackStack()
+                    }
+                    else -> navController.navigate(Route.ExerciseDetail(id))
+                }
+            },
+            onCreateCustom = { navController.navigate(Route.ExerciseCreate) },
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable<Route.ExerciseDetail> { entry ->
+        val route = entry.toRoute<Route.ExerciseDetail>()
+        ExerciseDetailScreen(
+            exerciseId = route.exerciseId,
+            onDeleted = { navController.popBackStack() },
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable<Route.ExerciseCreate> {
+        ExerciseCreateScreen(
+            onCreated = { id ->
+                navController.navigate(Route.ExerciseDetail(id)) {
+                    popUpTo<Route.ExerciseCreate> { inclusive = true }
+                }
+            },
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable<Route.RoutineEdit> { entry ->
+        val route = entry.toRoute<Route.RoutineEdit>()
+        RoutineEditScreen(
+            routineId = route.routineId,
+            onAddExercise = { rid -> navController.navigate(Route.ExerciseLibrary(pickMode = true, routineId = rid)) },
+            onStart = { rid -> navController.navigate(Route.WorkoutSession(rid)) },
+            onDeleted = { navController.popBackStack() },
+            onBack = { navController.popBackStack() },
+        )
+    }
+
+    composable<Route.WorkoutSession> { entry ->
+        val route = entry.toRoute<Route.WorkoutSession>()
+        WorkoutSessionScreen(
+            routineId = route.routineId,
+            onAddExercise = { navController.navigate(Route.ExerciseLibrary(pickMode = true, sessionPick = true)) },
+            onFinished = { sessionId ->
+                navController.navigate(Route.WorkoutSummary(sessionId)) {
+                    popUpTo<Route.Workout>()
+                }
+            },
+            onDiscarded = { navController.popBackStack(Route.Workout, inclusive = false) },
+        )
+    }
+    composable<Route.WorkoutSummary> { entry ->
+        val route = entry.toRoute<Route.WorkoutSummary>()
+        WorkoutSummaryScreen(
+            sessionId = route.sessionId,
+            onDone = { navController.popBackStack(Route.Workout, inclusive = false) },
+        )
+    }
+    composable<Route.WorkoutHistory> {
+        WorkoutHistoryScreen(
+            onSession = { id -> navController.navigate(Route.WorkoutDetail(id)) },
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable<Route.WorkoutDetail> { entry ->
+        val route = entry.toRoute<Route.WorkoutDetail>()
+        WorkoutDetailScreen(sessionId = route.sessionId, onBack = { navController.popBackStack() })
+    }
+    composable<Route.WorkoutStats> {
+        WorkoutStatsScreen(onBack = { navController.popBackStack() })
+    }
+}

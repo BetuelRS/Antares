@@ -10,8 +10,12 @@ class BackupReachableTest {
         File("src/commonMain/kotlin/pt/antares/app/feature/me/AppMenuScreen.kt").readText()
     private val rotas =
         File("src/commonMain/kotlin/pt/antares/app/navigation/Routes.kt").readText()
-    private val navHost =
-        File("src/commonMain/kotlin/pt/antares/app/navigation/AntaresNavHost.kt").readText()
+    // A pasta toda e não um ficheiro: as rotas foram arrumadas por área, e apontar a um
+    // nome de ficheiro fazia este teste falhar por arrumação em vez de por regressão.
+    private val navHost = File("src/commonMain/kotlin/pt/antares/app/navigation")
+        .walkTopDown()
+        .filter { it.extension == "kt" }
+        .joinToString("\n") { it.readText() }
 
     @Test
     fun `o backup esta no menu da engrenagem`() {
