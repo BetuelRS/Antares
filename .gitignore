@@ -31,11 +31,6 @@ Thumbs.db
 # APKs de teste por fase (entregues fora do git)
 apks/
 
-
-# Sobra do gerador antigo, já apagado: o USDA em bruto que ele lia. Fica ignorado
-# para quem ainda o tenha em disco não o commitar por engano.
-tools/seed-generator/
-
 # Dataset free-exercise-db bruto (1 MB) — reproduzível via README;
 # só o seed_exercises.json gerado é versionado.
 tools/exercise-importer/data/
