@@ -161,7 +161,9 @@ class HealthRepositoryTest {
         val (repo, _, e) = repo(gw)
 
         repo.importNow()
-        assertEquals(320, e.rows.single().kcal)
+        // Líquido: 7 MET acima do repouso, não 8. É o mesmo que a Health Connect entende
+        // por calorias ativas, e é o que não se conta duas vezes contra a meta do dia.
+        assertEquals(280, e.rows.single().kcal)
     }
 
     @Test

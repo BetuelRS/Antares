@@ -4,13 +4,22 @@ import kotlin.math.roundToInt
 
 object MetCalc {
 
+    // Um MET é, por definição, o gasto em repouso.
+    const val REST_MET = 1.0
+
     /**
-     * Calorias de um exercício pela tabela de METs. Um MET é o gasto em repouso, por isso
-     * o produto dá o gasto total do período — inclui o que se gastaria sentado.
+     * O que um exercício gasta **a mais** do que estar sentado.
+     *
+     * O produto `MET × peso × horas` dá o gasto total do período, repouso incluído. Mas o
+     * repouso já está dentro da meta diária, que cobre as 24 horas: somar o valor bruto ao
+     * orçamento contava-o duas vezes. Numa hora de 5 MET a 80 kg eram 80 kcal a mais — 20%.
+     *
+     * Subtrair um MET é a correção, e é a mesma que a Health Connect assume quando fala de
+     * calorias ativas.
      */
     fun kcal(met: Double, weightKg: Double, durationMin: Int): Int {
-        if (met <= 0 || weightKg <= 0 || durationMin <= 0) return 0
-        return (met * weightKg * (durationMin / 60.0)).roundToInt()
+        if (met <= REST_MET || weightKg <= 0 || durationMin <= 0) return 0
+        return ((met - REST_MET) * weightKg * (durationMin / 60.0)).roundToInt()
     }
 }
 
