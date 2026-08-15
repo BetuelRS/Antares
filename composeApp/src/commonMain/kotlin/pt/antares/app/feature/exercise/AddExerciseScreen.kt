@@ -117,6 +117,19 @@ fun AddExerciseScreen(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(Spacing.xs),
             ) {
+                if (state.results.isEmpty()) {
+                    item {
+                        // O catálogo de METs é fixo e vem com a app: uma procura sem
+                        // resultados é a palavra que não existe nele, e não uma falta de
+                        // dados que se resolva registando qualquer coisa.
+                        Text(
+                            stringResource(Res.string.exercise_search_empty),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(Spacing.lg),
+                        )
+                    }
+                }
                 items(state.results, key = { it.id }) { activity ->
                     ActivityRow(
                         activity = activity,

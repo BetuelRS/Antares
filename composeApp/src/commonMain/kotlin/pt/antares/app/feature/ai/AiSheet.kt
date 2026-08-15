@@ -38,6 +38,7 @@ import pt.antares.app.core.util.AppError
 import pt.antares.app.core.util.rememberImagePicker
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.ai_analyze
+import pt.antares.app.generated.resources.ai_items_empty
 import pt.antares.app.generated.resources.ai_analyzing
 import pt.antares.app.generated.resources.ai_camera
 import pt.antares.app.generated.resources.ai_cancel
@@ -244,6 +245,16 @@ private fun ReviewStep(
             stringResource(Res.string.ai_vague_item),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.secondary,
+        )
+    }
+
+    // Tirar todos os itens da lista é uma coisa que se faz — e deixava o ecrã com um
+    // título, uma dica, e nada. O botão de confirmar continuava lá, a não registar nada.
+    if (state.items.isEmpty()) {
+        Text(
+            stringResource(Res.string.ai_items_empty),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 

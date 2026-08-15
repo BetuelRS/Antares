@@ -615,6 +615,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_reps_out_of_range">Repetições entre 1 e %1$s.</string>
     <string name="session_rpe_out_of_range">RPE vai de 1 a 10.</string>
     <string name="session_ghost">Anterior: %1$s</string>
+    <string name="ai_items_empty">Tiraste tudo da lista. Volta atrás para escrever outra vez, ou fecha.</string>
+    <string name="exercise_search_empty">Nada com esse nome na tabela de atividades. Tenta uma palavra mais simples — «corrida» em vez de «corrida de trail».</string>
     <string name="session_no_exercises">Sem exercícios. Adiciona o primeiro.</string>
     <string name="session_rest_running">Descanso: %1$ds</string>
     <string name="session_rest_skip">Saltar</string>
