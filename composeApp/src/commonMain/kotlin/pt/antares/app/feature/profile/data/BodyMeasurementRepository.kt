@@ -75,7 +75,6 @@ class BodyMeasurementRepository(
             thighCm = thighCm ?: existing?.thighCm,
             chestCm = chestCm ?: existing?.chestCm,
             updatedAt = now(),
-            dirty = true,
         )
 
         when {
@@ -112,7 +111,6 @@ class BodyMeasurementRepository(
                 bodyFatPct = medicao?.bodyFatPct,
                 bodyFatSource = medicao?.bodyFatSource,
                 updatedAt = now(),
-                dirty = true,
             ),
         )
     }

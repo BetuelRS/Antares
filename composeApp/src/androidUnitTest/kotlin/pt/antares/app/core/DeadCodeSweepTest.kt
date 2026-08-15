@@ -12,11 +12,6 @@ class DeadCodeSweepTest {
         "countForRun" to "lida pelos testes de corrida, para provar a poda dos pontos",
         "deleteForRun" to "usada pela poda dentro do próprio DAO e verificada em teste",
         "observeRoutineForDay" to "lida pelos testes do plano semanal",
-        "unlockedCount" to "lida pelos testes das conquistas",
-        "sujosDeDemo" to
-            "lida pelo DemoDataWriterTest: pergunta à base se alguma linha de " +
-            "demonstração ficou marcada para sincronizar. O motor promete que não; " +
-            "isto verifica-o na base, que é a diferença entre provar e acreditar",
     )
 
     private fun fontesDaApp(): List<File> =

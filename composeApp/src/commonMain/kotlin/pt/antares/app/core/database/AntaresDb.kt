@@ -3,6 +3,7 @@ package pt.antares.app.core.database
 import androidx.room.AutoMigration
 import androidx.room.ConstructedBy
 import androidx.room.Dao
+import androidx.room.DeleteColumn
 import androidx.room.DeleteTable
 import androidx.room.Database
 import androidx.room.Entity
@@ -131,7 +132,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 23,
+    version = 24,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -158,6 +159,7 @@ interface DbInfoDao {
         AutoMigration(from = 20, to = 21, spec = AntaresDb.DropSyncMeta::class),
         AutoMigration(from = 21, to = 22),
         AutoMigration(from = 22, to = 23),
+        AutoMigration(from = 23, to = 24, spec = AntaresDb.DropDirty::class),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)
@@ -167,6 +169,37 @@ abstract class AntaresDb : RoomDatabase() {
     // sincronização. A app não sincroniza nada, e o `NoSyncTest` garante que continua assim.
     @DeleteTable(tableName = "sync_meta")
     class DropSyncMeta : AutoMigrationSpec
+
+    /**
+     * Apaga a coluna `dirty` das 23 tabelas que a tinham. Marcava linhas por enviar para
+     * um servidor, e a app não sincroniza desde a v21 — era escrita em todo o lado e lida
+     * em sítio nenhum. Ver a [decisão 0001].
+     */
+    @DeleteColumn(tableName = "user_profile", columnName = "dirty")
+    @DeleteColumn(tableName = "weight_log", columnName = "dirty")
+    @DeleteColumn(tableName = "daily_target_override", columnName = "dirty")
+    @DeleteColumn(tableName = "body_measurement_log", columnName = "dirty")
+    @DeleteColumn(tableName = "foods", columnName = "dirty")
+    @DeleteColumn(tableName = "food_log", columnName = "dirty")
+    @DeleteColumn(tableName = "water_log", columnName = "dirty")
+    @DeleteColumn(tableName = "recipe", columnName = "dirty")
+    @DeleteColumn(tableName = "recipe_ingredient", columnName = "dirty")
+    @DeleteColumn(tableName = "exercise_log", columnName = "dirty")
+    @DeleteColumn(tableName = "exercise", columnName = "dirty")
+    @DeleteColumn(tableName = "routine", columnName = "dirty")
+    @DeleteColumn(tableName = "routine_item", columnName = "dirty")
+    @DeleteColumn(tableName = "workout_session", columnName = "dirty")
+    @DeleteColumn(tableName = "workout_set", columnName = "dirty")
+    @DeleteColumn(tableName = "routine_schedule", columnName = "dirty")
+    @DeleteColumn(tableName = "fasting_protocol", columnName = "dirty")
+    @DeleteColumn(tableName = "fasting_session", columnName = "dirty")
+    @DeleteColumn(tableName = "run", columnName = "dirty")
+    @DeleteColumn(tableName = "coach_report", columnName = "dirty")
+    @DeleteColumn(tableName = "meal_template", columnName = "dirty")
+    @DeleteColumn(tableName = "meal_template_item", columnName = "dirty")
+    @DeleteColumn(tableName = "goal_history", columnName = "dirty")
+    class DropDirty : AutoMigrationSpec
+
     abstract fun dbInfoDao(): DbInfoDao
     abstract fun userProfileDao(): UserProfileDao
     abstract fun weightLogDao(): WeightLogDao

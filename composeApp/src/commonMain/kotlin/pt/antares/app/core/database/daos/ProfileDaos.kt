@@ -31,7 +31,7 @@ interface WeightLogDao {
     @Upsert
     suspend fun upsert(entry: WeightLogEntity)
 
-    @Query("UPDATE weight_log SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE weight_log SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM weight_log WHERE deleted = 0 ORDER BY epochDay DESC")
@@ -121,7 +121,7 @@ interface BodyMeasurementDao {
     @Query("SELECT * FROM body_measurement_log WHERE deleted = 0 ORDER BY epochDay ASC")
     suspend fun all(): List<BodyMeasurementEntity>
 
-    @Query("UPDATE body_measurement_log SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE body_measurement_log SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM body_measurement_log WHERE deleted = 0")

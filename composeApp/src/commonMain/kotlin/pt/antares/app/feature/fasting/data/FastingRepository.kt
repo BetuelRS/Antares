@@ -92,7 +92,7 @@ fun FastingSessionEntity.toSnapshot() = FastingSnapshot(
 fun FastingSnapshot.toEntity(updatedAt: Long) = FastingSessionEntity(
     id = id, protocolId = protocolId, startedAt = startedAt,
     targetEndAt = targetEndAt, endedAt = endedAt, status = status,
-    updatedAt = updatedAt, deleted = false, dirty = true,
+    updatedAt = updatedAt, deleted = false,
 )
 
 fun FastingSessionEntity.toFinishedFast(): FinishedFast = FinishedFast(

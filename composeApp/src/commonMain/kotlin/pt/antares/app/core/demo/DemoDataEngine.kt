@@ -168,7 +168,6 @@ object DemoDataEngine {
                     sourceRef = null,
                     updatedAt = quando,
                     deleted = false,
-                    dirty = false,
                 )
             }
 
@@ -192,7 +191,6 @@ object DemoDataEngine {
                     chestCm = arredonda(100 + (peso - 70) * 0.4, 1),
                     updatedAt = quando,
                     deleted = false,
-                    dirty = false,
                 )
             }
 
@@ -213,7 +211,6 @@ object DemoDataEngine {
                     ml = r.inteiroEntre(6, 12) * 250,
                     updatedAt = quando,
                     deleted = false,
-                    dirty = false,
                 )
             }
 
@@ -233,7 +230,6 @@ object DemoDataEngine {
                     status = SessionStatus.DONE,
                     updatedAt = quando,
                     deleted = false,
-                    dirty = false,
                 )
                 series += seriesDoTreino(r, sessaoId, quando, i, exercicios)
             }
@@ -261,7 +257,6 @@ object DemoDataEngine {
                     status = if (cumpriu) FastingStatus.COMPLETED else FastingStatus.BROKEN,
                     updatedAt = quando,
                     deleted = false,
-                    dirty = false,
                 )
             }
         }
@@ -324,7 +319,6 @@ object DemoDataEngine {
                     eatenAtMin = horaDemo(slot, r),
                     updatedAt = quando,
                     deleted = false,
-                    dirty = false,
                 )
             }
         }
@@ -371,7 +365,6 @@ object DemoDataEngine {
                     isWarmup = s == 0,
                     updatedAt = quando,
                     deleted = false,
-                    dirty = false,
                 )
             }
         }
@@ -411,7 +404,6 @@ object DemoDataEngine {
             status = RunStatus.DONE,
             updatedAt = quando,
             deleted = false,
-            dirty = false,
         )
     }
 

@@ -89,7 +89,6 @@ class ExerciseLibraryRepository(
                 isCustom = true,
                 verified = true,
                 updatedAt = now(),
-                dirty = true,
             ),
         )
         id

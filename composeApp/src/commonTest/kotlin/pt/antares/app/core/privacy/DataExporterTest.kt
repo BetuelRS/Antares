@@ -19,7 +19,7 @@ class DataExporterTest {
 
     private fun weight(id: String, kg: Double, deleted: Boolean = false) = WeightLogEntity(
         id = id, epochDay = 20_000, weightKg = kg, note = null,
-        updatedAt = 1_000, deleted = deleted, dirty = false,
+        updatedAt = 1_000, deleted = deleted,
     )
 
     @Test

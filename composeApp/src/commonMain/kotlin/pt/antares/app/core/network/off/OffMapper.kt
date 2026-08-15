@@ -61,7 +61,6 @@ object OffMapper {
             servingGrams = porcao.grams,
             verified = true,
             updatedAt = now,
-            dirty = false,
         )
     }
 

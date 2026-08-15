@@ -39,7 +39,7 @@ class ProfileRepository(
     fun observeProfile(): Flow<UserProfileEntity?> = profileDao.observe()
 
     suspend fun saveProfile(profile: UserProfileEntity) = withContext(io) {
-        profileDao.upsert(profile.copy(updatedAt = now(), dirty = true))
+        profileDao.upsert(profile.copy(updatedAt = now()))
 
         recordGoalIfNew(profile.goalWeightKg)
     }
@@ -89,7 +89,6 @@ class ProfileRepository(
                 weightKg = value,
                 note = note,
                 updatedAt = now(),
-                dirty = true,
             ),
         )
     }

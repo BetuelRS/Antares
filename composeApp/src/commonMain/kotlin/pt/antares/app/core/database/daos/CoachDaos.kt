@@ -26,7 +26,7 @@ interface CoachReportDao {
     suspend fun byWeekForWrite(weekStartEpochDay: Long): CoachReportEntity?
 
     @Query(
-        "UPDATE coach_report SET proposalAccepted = :accepted, dirty = 1, updatedAt = :now " +
+        "UPDATE coach_report SET proposalAccepted = :accepted, updatedAt = :now " +
             "WHERE id = :id",
     )
     suspend fun setProposalAccepted(id: String, accepted: Boolean, now: Long)

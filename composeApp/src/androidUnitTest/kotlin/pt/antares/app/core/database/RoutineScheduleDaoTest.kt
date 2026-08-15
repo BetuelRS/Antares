@@ -61,7 +61,7 @@ class RoutineScheduleDaoTest {
     @Test
     fun `clearDay deixa tombstone sujo para o sync, nao apaga a linha`() = runTest {
         val dao = db.routineScheduleDao()
-        dao.upsert(RoutineScheduleEntity(dayOfWeek = 2, routineId = "r1", updatedAt = 1, dirty = false))
+        dao.upsert(RoutineScheduleEntity(dayOfWeek = 2, routineId = "r1", updatedAt = 1))
         dao.clearDay(2, now = 99)
 
         assertEquals(1, contaApagados("routine_schedule"))

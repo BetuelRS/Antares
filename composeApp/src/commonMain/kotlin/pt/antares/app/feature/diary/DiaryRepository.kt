@@ -151,7 +151,6 @@ class DiaryRepository(
                 carbsSnapshot = log.carbsSnapshot * factor,
                 fatSnapshot = log.fatSnapshot * factor,
                 updatedAt = now(),
-                dirty = true,
             ),
         )
     }
@@ -166,19 +165,19 @@ class DiaryRepository(
             "hora fora do dia: $eatenAtMin"
         }
         val log = foodLogDao.byId(logId) ?: return@withContext
-        foodLogDao.upsert(log.copy(eatenAtMin = eatenAtMin, updatedAt = now(), dirty = true))
+        foodLogDao.upsert(log.copy(eatenAtMin = eatenAtMin, updatedAt = now()))
     }
 
     suspend fun move(logId: String, newSlot: MealSlot) = withContext(io) {
         val log = foodLogDao.byId(logId) ?: return@withContext
-        foodLogDao.upsert(log.copy(mealSlot = newSlot, updatedAt = now(), dirty = true))
+        foodLogDao.upsert(log.copy(mealSlot = newSlot, updatedAt = now()))
     }
 
     // Identificador novo em todas as cópias — aqui, no copiar dia e no copiar refeição.
     // Sem isso, o `upsert` escrevia por cima do original em vez de acrescentar.
     suspend fun duplicate(logId: String) = withContext(io) {
         val log = foodLogDao.byId(logId) ?: return@withContext
-        foodLogDao.upsert(log.copy(id = Ids.newUuid(), updatedAt = now(), dirty = true))
+        foodLogDao.upsert(log.copy(id = Ids.newUuid(), updatedAt = now()))
     }
 
     suspend fun delete(logId: String) = withContext(io) {
@@ -188,7 +187,7 @@ class DiaryRepository(
     suspend fun copyDay(fromEpochDay: Long, toEpochDay: Long) = withContext(io) {
         foodLogDao.dayLogs(fromEpochDay).forEach { log ->
             foodLogDao.upsert(
-                log.copy(id = Ids.newUuid(), epochDay = toEpochDay, updatedAt = now(), dirty = true),
+                log.copy(id = Ids.newUuid(), epochDay = toEpochDay, updatedAt = now()),
             )
         }
     }
@@ -196,7 +195,7 @@ class DiaryRepository(
     suspend fun copyMeal(fromEpochDay: Long, toEpochDay: Long, slot: MealSlot) = withContext(io) {
         foodLogDao.mealLogs(fromEpochDay, slot).forEach { log ->
             foodLogDao.upsert(
-                log.copy(id = Ids.newUuid(), epochDay = toEpochDay, updatedAt = now(), dirty = true),
+                log.copy(id = Ids.newUuid(), epochDay = toEpochDay, updatedAt = now()),
             )
         }
     }
@@ -215,7 +214,7 @@ class DiaryRepository(
     suspend fun moveMeal(epochDay: Long, from: MealSlot, to: MealSlot): Int = withContext(io) {
         if (from == to) return@withContext 0
         val logs = foodLogDao.mealLogs(epochDay, from)
-        logs.forEach { foodLogDao.upsert(it.copy(mealSlot = to, updatedAt = now(), dirty = true)) }
+        logs.forEach { foodLogDao.upsert(it.copy(mealSlot = to, updatedAt = now())) }
         logs.size
     }
 
@@ -283,7 +282,6 @@ class DiaryRepository(
                 epochDay = epochDay,
                 ml = newMl,
                 updatedAt = now(),
-                dirty = true,
             ),
         )
     }

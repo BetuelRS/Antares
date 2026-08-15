@@ -40,5 +40,4 @@ data class CoachReportEntity(
     val createdAt: Long,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )

@@ -12,7 +12,7 @@ interface ExerciseLogDao {
     @Upsert
     suspend fun upsert(log: ExerciseLogEntity)
 
-    @Query("UPDATE exercise_log SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE exercise_log SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM exercise_log WHERE id = :id AND deleted = 0")

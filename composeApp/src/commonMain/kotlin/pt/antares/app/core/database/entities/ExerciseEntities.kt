@@ -31,5 +31,4 @@ data class ExerciseLogEntity(
     val refId: String?,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )

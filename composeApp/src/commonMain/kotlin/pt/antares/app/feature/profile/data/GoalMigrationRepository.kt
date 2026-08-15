@@ -58,7 +58,6 @@ class GoalMigrationRepository(
                 profile.copy(
                     exerciseAddBack = true,
                     updatedAt = Clock.System.now().toEpochMilliseconds(),
-                    dirty = true,
                 ),
             )
         }

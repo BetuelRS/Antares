@@ -103,7 +103,7 @@ class WorkoutSessionRepository(
     suspend fun finish(sessionId: String) = withContext(io) {
         val s = sessionDao.sessionById(sessionId) ?: return@withContext
         val ended = now()
-        sessionDao.upsertSession(s.copy(status = SessionStatus.DONE, endedAt = ended, updatedAt = ended, dirty = true))
+        sessionDao.upsertSession(s.copy(status = SessionStatus.DONE, endedAt = ended, updatedAt = ended))
 
         // Um treino aberto por engano e fechado a seguir, ou só com aquecimento, não gera
         // calorias nenhumas — mas fica gravado, porque aconteceu.
@@ -137,6 +137,6 @@ class WorkoutSessionRepository(
 
     suspend fun discard(sessionId: String) = withContext(io) {
         val s = sessionDao.sessionById(sessionId) ?: return@withContext
-        sessionDao.upsertSession(s.copy(status = SessionStatus.DISCARDED, endedAt = now(), updatedAt = now(), dirty = true))
+        sessionDao.upsertSession(s.copy(status = SessionStatus.DISCARDED, endedAt = now(), updatedAt = now()))
     }
 }

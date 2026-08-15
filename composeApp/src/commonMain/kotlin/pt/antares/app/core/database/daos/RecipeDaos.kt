@@ -13,7 +13,7 @@ interface RecipeDao {
     @Upsert
     suspend fun upsert(recipe: RecipeEntity)
 
-    @Query("UPDATE recipe SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE recipe SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM recipe WHERE deleted = 0 ORDER BY name ASC")
@@ -32,7 +32,7 @@ interface RecipeIngredientDao {
     @Upsert
     suspend fun upsert(ingredient: RecipeIngredientEntity)
 
-    @Query("UPDATE recipe_ingredient SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE recipe_ingredient SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     // Ordem de introdução, que é a ordem em que se cozinha. Não há coluna de posição:

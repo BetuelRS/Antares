@@ -287,7 +287,6 @@ class FoodSeeder(
                 servingGrams = s.servingGrams,
                 verified = s.verified,
                 updatedAt = now,
-                dirty = false,
             )
         }
         val fts = foods.map { f ->

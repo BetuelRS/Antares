@@ -82,7 +82,6 @@ class AiRepositoryTest {
 
         assertTrue(dao.rows.all { it.foodId == null })
 
-        assertTrue(dao.rows.all { it.dirty })
     }
 
     @Test

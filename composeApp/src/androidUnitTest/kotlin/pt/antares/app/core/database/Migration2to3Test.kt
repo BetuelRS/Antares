@@ -119,4 +119,41 @@ class Migration2to3Test {
             db.close()
         }
     }
+
+    /**
+     * A `dirty` foi apagada de 23 tabelas na v24, e apagar uma coluna no SQLite obriga o
+     * Room a **recriar a tabela e copiar as linhas**. Uma migração assim ou corre bem ou
+     * leva o histórico de alguém com ela, e por isso prova-se aqui: a mesma base da v2, que
+     * tem a coluna, aberta com o esquema de agora.
+     */
+    @Test
+    fun `apagar a coluna dirty recria as tabelas sem perder linhas`() = runTest {
+        createV2Database()
+
+        val db = Room.databaseBuilder(context, AntaresDb::class.java, dbName)
+            .setQueryCoroutineContext(Dispatchers.Default)
+            .build()
+
+        try {
+            assertEquals(
+                2,
+                db.weightLogDao().observeAll().first().size,
+                "recriar a tabela perdeu pesagens pelo caminho",
+            )
+            assertEquals(178, db.userProfileDao().get()?.heightCm, "o perfil não sobreviveu")
+
+            val colunas = mutableListOf<String>()
+            db.openHelper.readableDatabase.query("PRAGMA table_info(`weight_log`)").use { c ->
+                val nome = c.getColumnIndexOrThrow("name")
+                while (c.moveToNext()) colunas += c.getString(nome)
+            }
+            assertEquals(
+                emptyList(),
+                colunas.filter { it == "dirty" },
+                "a coluna continua na base: a migração correu sem fazer nada",
+            )
+        } finally {
+            db.close()
+        }
+    }
 }

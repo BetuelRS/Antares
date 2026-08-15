@@ -82,7 +82,7 @@ class RecipeRepository(
 
     suspend fun updateRecipe(id: String, name: String, yieldGrams: Double?) = withContext(io) {
         val existing = recipeDao.byId(id) ?: return@withContext
-        recipeDao.upsert(existing.copy(name = name.trim(), yieldGrams = yieldGrams, updatedAt = now(), dirty = true))
+        recipeDao.upsert(existing.copy(name = name.trim(), yieldGrams = yieldGrams, updatedAt = now()))
     }
 
     suspend fun addIngredient(recipeId: String, foodId: String, grams: Double) = withContext(io) {
@@ -98,7 +98,7 @@ class RecipeRepository(
     }
 
     suspend fun updateIngredientGrams(ingredient: RecipeIngredientEntity, grams: Double) = withContext(io) {
-        ingredientDao.upsert(ingredient.copy(grams = grams, updatedAt = now(), dirty = true))
+        ingredientDao.upsert(ingredient.copy(grams = grams, updatedAt = now()))
     }
 
     suspend fun removeIngredient(ingredient: RecipeIngredientEntity) = withContext(io) {

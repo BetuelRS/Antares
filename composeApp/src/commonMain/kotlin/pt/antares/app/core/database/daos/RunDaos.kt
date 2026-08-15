@@ -31,7 +31,7 @@ interface RunDao {
     @Query("SELECT * FROM run WHERE id = :id")
     suspend fun byId(id: String): RunEntity?
 
-    @Query("UPDATE run SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE run SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM run WHERE deleted = 0")

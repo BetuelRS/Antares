@@ -71,7 +71,6 @@ class RoutineTemplateSeeder(
                     position = items.size,
                     supersetGroup = null,
                     updatedAt = now,
-                    dirty = false,
                 )
             }
             if (items.isEmpty()) return@forEachIndexed
@@ -82,7 +81,6 @@ class RoutineTemplateSeeder(
                     note = null,
                     position = rIndex,
                     updatedAt = now,
-                    dirty = false,
                 ),
             )
             routineDao.upsertItems(items)

@@ -41,9 +41,13 @@ que a app foi construída.
 | 19 | `goal_history`, `progress_photo`, `search_miss` | `body_measurement_log`: `armCm`, `thighCm`, `chestCm` |
 | 20 | `cycle_log` | `user_profile.lifeStage` |
 | 21 | **remove** `sync_meta` | |
+| 22 | | `food_log.eatenAtMin` — a que horas se comeu |
+| 23 | `food_nutrient` | |
+| 24 | | **remove** `dirty` de 23 tabelas |
 
-A v21 é a única migração que não é acrescento. O `sync_meta` guardava estado de sincronização, e a
-app deixou de sincronizar — ver
+**Duas destas não são acrescentos, e as duas são a mesma história.** O `sync_meta` guardava
+estado de sincronização e a `dirty` marcava linhas por enviar; a app deixou de sincronizar, e as
+duas ficaram a descrever uma funcionalidade que não existe — ver
 [a decisão](../explicacao/decisoes/0001-a-app-nao-sincroniza.md).
 
 ## Apagar não apaga
@@ -57,10 +61,13 @@ dia. As duas regras juntas produzem uma armadilha que não dá erro — explicad
 Quem escrever um caminho novo que grave por dia tem de usar os métodos `byDayForWrite`, que vêem
 as lápides. O `TombstoneCollisionTest` defende isto.
 
-## A coluna `dirty`
+## A coluna `dirty`, que já não existe
 
-Escrita em toda a app e lida **num sítio só**: a contagem de registos de demonstração do
-`DemoDao`. Sobra da sincronização que já não existe.
+Marcava linhas por enviar para um servidor. Era escrita em 23 tabelas e lida em sítio nenhum —
+sobrava da sincronização, que saiu na v21. **Apagada na v24**, com um `@DeleteColumn` por tabela.
+
+Apagar uma coluna no SQLite obriga o Room a recriar a tabela e a copiar as linhas, e por isso o
+`Migration2to3Test` abre uma base da v2 com o esquema de agora e conta as linhas do outro lado.
 
 ## O que é congelado e o que é vivo
 

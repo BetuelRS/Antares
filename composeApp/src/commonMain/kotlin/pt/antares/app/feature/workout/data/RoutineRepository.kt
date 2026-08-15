@@ -72,7 +72,7 @@ class RoutineRepository(
 
     suspend fun rename(routineId: String, name: String) = withContext(io) {
         val r = routineDao.routineById(routineId) ?: return@withContext
-        routineDao.upsertRoutine(r.copy(name = name, updatedAt = now(), dirty = true))
+        routineDao.upsertRoutine(r.copy(name = name, updatedAt = now()))
     }
 
     suspend fun deleteRoutine(routineId: String) = withContext(io) {
@@ -144,14 +144,13 @@ class RoutineRepository(
                 targetWeightKg = weightKg,
                 restSec = restSec,
                 updatedAt = now(),
-                dirty = true,
             ),
         )
     }
 
     suspend fun setSuperset(itemId: String, group: Int?) = withContext(io) {
         val it = routineDao.itemById(itemId) ?: return@withContext
-        routineDao.upsertItem(it.copy(supersetGroup = group, updatedAt = now(), dirty = true))
+        routineDao.upsertItem(it.copy(supersetGroup = group, updatedAt = now()))
     }
 
     suspend fun deleteItem(itemId: String) = withContext(io) {
@@ -170,8 +169,8 @@ class RoutineRepository(
 
         routineDao.upsertItems(
             listOf(
-                a.copy(position = b.position, updatedAt = t, dirty = true),
-                b.copy(position = a.position, updatedAt = t, dirty = true),
+                a.copy(position = b.position, updatedAt = t),
+                b.copy(position = a.position, updatedAt = t),
             ),
         )
     }

@@ -13,7 +13,7 @@ interface MealTemplateDao {
     @Upsert
     suspend fun upsert(template: MealTemplateEntity)
 
-    @Query("UPDATE meal_template SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE meal_template SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM meal_template WHERE deleted = 0 ORDER BY name ASC")
@@ -35,7 +35,7 @@ interface MealTemplateItemDao {
     @Upsert
     suspend fun upsertAll(items: List<MealTemplateItemEntity>)
 
-    @Query("UPDATE meal_template_item SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE meal_template_item SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM meal_template_item WHERE templateId = :templateId AND deleted = 0 ORDER BY updatedAt ASC")

@@ -81,7 +81,6 @@ data class UserProfileEntity(
     val energyUnit: EnergyUnit = EnergyUnit.KCAL,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 ) {
     companion object {
         const val SINGLETON_ID = "profile"
@@ -115,7 +114,6 @@ data class WeightLogEntity(
     val sourceRef: String? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Serializable
@@ -140,7 +138,6 @@ data class DailyTargetOverrideEntity(
     val source: String,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Serializable
@@ -163,7 +160,6 @@ data class BodyMeasurementEntity(
     @ColumnInfo(defaultValue = "NULL") val chestCm: Double? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 ) {
 
     // Todas as medidas são opcionais, por isso é possível gravar uma linha que não diz

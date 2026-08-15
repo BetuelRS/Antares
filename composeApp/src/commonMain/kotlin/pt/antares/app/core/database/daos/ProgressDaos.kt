@@ -23,7 +23,7 @@ interface GoalHistoryDao {
     @Query("SELECT * FROM goal_history WHERE deleted = 0 ORDER BY setOnEpochDay DESC LIMIT 1")
     suspend fun latest(): GoalHistoryEntity?
 
-    @Query("UPDATE goal_history SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE goal_history SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
     @Query("SELECT * FROM goal_history WHERE deleted = 0")

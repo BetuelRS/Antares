@@ -102,7 +102,6 @@ class ProgressRepository(
                     linha.copy(
                         reachedOnEpochDay = goal.reachedOnEpochDay,
                         updatedAt = now(),
-                        dirty = true,
                     ),
                 )
             }

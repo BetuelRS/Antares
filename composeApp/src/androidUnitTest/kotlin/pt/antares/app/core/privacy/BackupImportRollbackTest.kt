@@ -38,14 +38,14 @@ class BackupImportRollbackTest {
 
     private fun peso(id: String, kg: Double, dia: Long) = WeightLogEntity(
         id = id, epochDay = dia, weightKg = kg, note = null,
-        updatedAt = 1_000, deleted = false, dirty = false,
+        updatedAt = 1_000, deleted = false,
     )
 
     private fun agua(id: String, dia: Long) =
-        WaterLogEntity(id = id, epochDay = dia, ml = 500, updatedAt = 1_000, dirty = false)
+        WaterLogEntity(id = id, epochDay = dia, ml = 500, updatedAt = 1_000)
 
     private fun objetivo(id: String) = GoalHistoryEntity(
-        id = id, targetKg = 75.0, setOnEpochDay = 20_000, updatedAt = 1_000, dirty = false,
+        id = id, targetKg = 75.0, setOnEpochDay = 20_000, updatedAt = 1_000,
     )
 
     /**

@@ -15,7 +15,6 @@ data class FastingProtocolEntity(
     val isCustom: Boolean = false,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = false,
 )
 
 @Serializable
@@ -36,5 +35,4 @@ data class FastingSessionEntity(
     val status: FastingStatus,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )

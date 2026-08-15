@@ -37,7 +37,6 @@ class OffMapperTest {
         assertEquals(15.0, food.servingGrams!!, 1e-9)
         assertNotNull(food.microsJson)
         assertEquals(true, food.verified)
-        assertEquals(false, food.dirty)
     }
 
     @Test

@@ -23,7 +23,7 @@ class BackupImporterTest {
 
     private fun peso(id: String, kg: Double, updatedAt: Long) = WeightLogEntity(
         id = id, epochDay = 20_000, weightKg = kg, note = null,
-        updatedAt = updatedAt, deleted = false, dirty = false,
+        updatedAt = updatedAt, deleted = false,
     )
 
     private fun importador(noTelemovel: List<WeightLogEntity> = emptyList()): BackupImporter {

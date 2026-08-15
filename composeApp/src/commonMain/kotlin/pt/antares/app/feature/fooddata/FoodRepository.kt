@@ -170,7 +170,6 @@ class FoodRepository(
             // quem os confirmar.
             verified = true,
             updatedAt = now(),
-            dirty = true,
         )
         guardarComIndice(food, TextNormalize.normalize("${food.namePt} ${food.nameEn}"))
         food

@@ -65,7 +65,7 @@ class RestaurarBackupTest : KoinTest {
 
     private fun peso(id: String, dia: Long, kg: Double) = WeightLogEntity(
         id = id, epochDay = dia, weightKg = kg, note = null,
-        updatedAt = dia, deleted = false, dirty = false,
+        updatedAt = dia, deleted = false,
     )
 
     @Test

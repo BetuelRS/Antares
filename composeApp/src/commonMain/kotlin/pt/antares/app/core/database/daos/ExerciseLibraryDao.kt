@@ -58,7 +58,7 @@ interface ExerciseLibraryDao {
 
     // O `isCustom = 1` na condição é a defesa: sem ele, um identificador enganado apagava
     // um exercício do catálogo que a app volta a precisar.
-    @Query("UPDATE exercise SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id AND isCustom = 1")
+    @Query("UPDATE exercise SET deleted = 1, updatedAt = :now WHERE id = :id AND isCustom = 1")
     suspend fun softDeleteCustom(id: String, now: Long)
 
     // Repõe os nomes ingleses antes de reaplicar as traduções, para as que saíram da lista

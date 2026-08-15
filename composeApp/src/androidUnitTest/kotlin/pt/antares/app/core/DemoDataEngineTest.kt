@@ -163,7 +163,7 @@ class DemoDataEngineTest {
     }
 
     @Test
-    fun `tudo o que sai tem id demo e nunca sincroniza`() {
+    fun `tudo o que sai tem id demo`() {
 
         val d = gerar()
         val ids = d.pesos.map { it.id } + d.medidas.map { it.id } + d.refeicoes.map { it.id } +
@@ -175,11 +175,6 @@ class DemoDataEngineTest {
             ids.filterNot { it.startsWith(DEMO_ID_PREFIX) },
             "ids sem o prefixo `demo-` ficam na base para sempre quando se desligar",
         )
-        val sujos = d.pesos.count { it.dirty } + d.medidas.count { it.dirty } +
-            d.refeicoes.count { it.dirty } + d.aguas.count { it.dirty } +
-            d.treinos.count { it.dirty } + d.series.count { it.dirty } +
-            d.corridas.count { it.dirty } + d.jejuns.count { it.dirty }
-        assertEquals(0, sujos, "$sujos linhas de ficção iam ser empurradas para a conta de alguém")
     }
 
     @Test

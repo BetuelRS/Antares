@@ -60,10 +60,10 @@ interface RoutineDao {
     @Query("SELECT * FROM routine_item WHERE routineId = :routineId AND deleted = 0 ORDER BY position")
     suspend fun itemsOf(routineId: String): List<RoutineItemEntity>
 
-    @Query("UPDATE routine SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE routine SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteRoutine(id: String, now: Long)
 
-    @Query("UPDATE routine_item SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE routine_item SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteItem(id: String, now: Long)
 
     @Query("SELECT COUNT(*) FROM routine WHERE deleted = 0")
@@ -131,7 +131,7 @@ interface WorkoutSetDao {
     @Query("SELECT * FROM workout_set WHERE sessionId = :sessionId AND deleted = 0 ORDER BY exerciseId, setIndex")
     suspend fun setsForSession(sessionId: String): List<WorkoutSetEntity>
 
-    @Query("UPDATE workout_set SET deleted = 1, dirty = 1, updatedAt = :now WHERE id = :id")
+    @Query("UPDATE workout_set SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteSet(id: String, now: Long)
 
     /**

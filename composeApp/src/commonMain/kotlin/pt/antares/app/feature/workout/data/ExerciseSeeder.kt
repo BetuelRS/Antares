@@ -98,7 +98,6 @@ class ExerciseSeeder(
                 isCustom = false,
                 verified = s.verified,
                 updatedAt = now,
-                dirty = false,
             )
         }
         entities.chunked(300).forEach { db.exerciseLibraryDao().upsertAll(it) }

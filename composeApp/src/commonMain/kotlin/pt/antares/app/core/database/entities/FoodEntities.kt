@@ -14,10 +14,8 @@ import pt.antares.app.core.model.MealSlot
  * Um alimento do catálogo. Os índices servem os três modos de o encontrar sem escrever
  * nada: recentes, favoritos e por origem.
  *
- * Nota sobre duas colunas que aparecem em quase todas as tabelas: `deleted` marca
- * lápides — as linhas apagadas ficam, e por isso praticamente todas as consultas filtram
- * `deleted = 0`; `dirty` é escrito em toda a app e lido apenas pelo contador de registos
- * de demonstração do [DemoDao].
+ * Nota sobre a coluna que aparece em quase todas as tabelas: `deleted` marca lápides — as
+ * linhas apagadas ficam, e por isso praticamente todas as consultas filtram `deleted = 0`.
  */
 @Serializable
 @Entity(
@@ -64,7 +62,6 @@ data class FoodEntity(
     val verified: Boolean = false,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = false,
 )
 
 /**
@@ -129,7 +126,6 @@ data class FoodLogEntity(
     @ColumnInfo(defaultValue = "NULL") val eatenAtMin: Int? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 /**
@@ -151,5 +147,4 @@ data class WaterLogEntity(
     val ml: Int,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )

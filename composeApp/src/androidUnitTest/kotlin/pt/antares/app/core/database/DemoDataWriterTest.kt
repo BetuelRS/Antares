@@ -168,15 +168,6 @@ class DemoDataWriterTest {
     }
 
     @Test
-    fun `nada do que entra vai sincronizar`() = runTest {
-
-        semear()
-        writer.ligar(hoje)
-
-        assertEquals(0, db.demoDao().sujosDeDemo(), "há linhas de demonstração marcadas para subir")
-    }
-
-    @Test
     fun `ligar duas vezes nao duplica`() = runTest {
 
         semear()

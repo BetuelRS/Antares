@@ -43,7 +43,6 @@ associado.
 - `supabase/migrations/` continua a criar tabelas por utilizador com RLS. Ficaram porque quem usou
   versões anteriores pode ter lá linhas, e o direito ao apagamento cobre-as na mesma — é o
   trabalho da função `delete-account`.
-- A coluna `dirty` é escrita em toda a app e lida num sítio só.
 
 Quem ler o SQL sem saber isto conclui que a app sincroniza. Não conclui.
 

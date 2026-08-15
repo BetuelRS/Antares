@@ -38,7 +38,6 @@ data class RunEntity(
     val status: RunStatus,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Entity(

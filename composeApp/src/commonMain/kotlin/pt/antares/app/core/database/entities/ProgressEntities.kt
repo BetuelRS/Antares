@@ -27,7 +27,6 @@ data class GoalHistoryEntity(
     val reachedOnEpochDay: Long? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 /**

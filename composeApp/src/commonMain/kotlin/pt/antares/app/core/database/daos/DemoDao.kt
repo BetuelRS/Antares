@@ -128,23 +128,6 @@ interface DemoDao {
     @Query(
         """
         SELECT
-            (SELECT COUNT(*) FROM weight_log WHERE id LIKE 'demo-%' AND dirty = 1) +
-            (SELECT COUNT(*) FROM body_measurement_log WHERE id LIKE 'demo-%' AND dirty = 1) +
-            (SELECT COUNT(*) FROM food_log WHERE id LIKE 'demo-%' AND dirty = 1) +
-            (SELECT COUNT(*) FROM water_log WHERE id LIKE 'demo-%' AND dirty = 1) +
-            (SELECT COUNT(*) FROM workout_session WHERE id LIKE 'demo-%' AND dirty = 1) +
-            (SELECT COUNT(*) FROM workout_set WHERE id LIKE 'demo-%' AND dirty = 1) +
-            (SELECT COUNT(*) FROM run WHERE id LIKE 'demo-%' AND dirty = 1) +
-            (SELECT COUNT(*) FROM fasting_session WHERE id LIKE 'demo-%' AND dirty = 1)
-        """,
-    )
-    // Serve os testes: os registos de demonstração nascem com `dirty` a zero, e um valor
-    // diferente de zero denuncia que a app os tratou como escritos pela pessoa.
-    suspend fun sujosDeDemo(): Int
-
-    @Query(
-        """
-        SELECT
             (SELECT COUNT(*) FROM weight_log WHERE id NOT LIKE 'demo-%' AND deleted = 0) +
             (SELECT COUNT(*) FROM body_measurement_log WHERE id NOT LIKE 'demo-%' AND deleted = 0) +
             (SELECT COUNT(*) FROM food_log WHERE id NOT LIKE 'demo-%' AND deleted = 0) +

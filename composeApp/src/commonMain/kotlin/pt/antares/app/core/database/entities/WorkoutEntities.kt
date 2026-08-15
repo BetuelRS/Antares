@@ -46,7 +46,6 @@ data class ExerciseEntity(
     val updatedAt: Long,
     val deleted: Boolean = false,
 
-    val dirty: Boolean = false,
 )
 
 @Serializable
@@ -58,7 +57,6 @@ data class RoutineEntity(
     val position: Int,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Serializable
@@ -86,7 +84,6 @@ data class RoutineItemEntity(
     val supersetGroup: Int?,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Serializable
@@ -106,7 +103,6 @@ data class WorkoutSessionEntity(
     val status: SessionStatus,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 // O dia da semana é a própria chave: uma rotina por dia, e mudar o dia substitui.
@@ -119,7 +115,6 @@ data class RoutineScheduleEntity(
 
     @ColumnInfo(defaultValue = "0")
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Serializable
@@ -147,5 +142,4 @@ data class WorkoutSetEntity(
     val isWarmup: Boolean = false,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )

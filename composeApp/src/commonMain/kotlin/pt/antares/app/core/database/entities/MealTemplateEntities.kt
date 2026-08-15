@@ -15,7 +15,6 @@ data class MealTemplateEntity(
     val slot: MealSlot,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Serializable
@@ -44,5 +43,4 @@ data class MealTemplateItemEntity(
     @ColumnInfo(defaultValue = "0") val isLiquid: Boolean = false,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )

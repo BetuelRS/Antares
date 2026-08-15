@@ -15,7 +15,6 @@ data class RecipeEntity(
     val yieldGrams: Double?,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
 
 @Serializable
@@ -34,5 +33,4 @@ data class RecipeIngredientEntity(
     val grams: Double,
     val updatedAt: Long,
     val deleted: Boolean = false,
-    val dirty: Boolean = true,
 )
