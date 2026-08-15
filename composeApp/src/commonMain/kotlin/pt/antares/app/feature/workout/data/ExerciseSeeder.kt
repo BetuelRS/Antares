@@ -6,6 +6,8 @@ import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import pt.antares.app.core.crash.CrashStore
+import pt.antares.app.core.crash.registarEngolida
 import pt.antares.app.core.database.AntaresDb
 import pt.antares.app.core.database.DbInfo
 import pt.antares.app.core.database.entities.ExerciseEntity
@@ -40,6 +42,7 @@ data class SeedExercise(
 class ExerciseSeeder(
     private val db: AntaresDb,
     private val io: CoroutineDispatcher,
+    private val crashes: CrashStore,
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -58,12 +61,20 @@ class ExerciseSeeder(
 
         // Falhar a ler ou a interpretar o ficheiro deixa a app sem catálogo de exercícios,
         // mas a funcionar: a próxima abertura tenta outra vez, porque a marca não foi posta.
-        @OptIn(ExperimentalResourceApi::class)
-        val bytes = runCatching { Res.readBytes("files/seed_exercises.json") }.getOrNull()
-            ?: return@withContext
-        val file = runCatching {
+        // Fica registado porque um catálogo vazio não se distingue, no ecrã, de um catálogo
+        // que ainda não semeou.
+        val file = try {
+            @OptIn(ExperimentalResourceApi::class)
+            val bytes = Res.readBytes("files/seed_exercises.json")
             json.decodeFromString<SeedExercisesFile>(bytes.decodeToString())
-        }.getOrNull() ?: return@withContext
+        } catch (e: Throwable) {
+            crashes.registarEngolida(
+                onde = "ExerciseSeeder: files/seed_exercises.json",
+                erro = e,
+                quando = Clock.System.now().toEpochMilliseconds(),
+            )
+            return@withContext
+        }
         imageBaseUrl = file.imageBaseUrl
         db.dbInfoDao().upsert(DbInfo(KEY_IMAGE_BASE, file.imageBaseUrl))
 

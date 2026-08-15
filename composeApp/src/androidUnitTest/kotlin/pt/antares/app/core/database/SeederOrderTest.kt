@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import pt.antares.app.core.crash.NoCrashStore
 import pt.antares.app.feature.workout.data.ExerciseSeeder
 import java.io.File
 import kotlin.test.assertEquals
@@ -36,7 +37,7 @@ class SeederOrderTest {
         db.dbInfoDao().upsert(DbInfo("seed_exercises_imported", "v1"))
         db.dbInfoDao().upsert(DbInfo("seed_exercises_image_base", base))
 
-        val seeder = ExerciseSeeder(db, Dispatchers.Default)
+        val seeder = ExerciseSeeder(db, Dispatchers.Default, NoCrashStore)
         seeder.seedIfNeeded()
 
         assertEquals(base, seeder.imageBaseUrl, "o imageBaseUrl não veio do db_info")
@@ -48,7 +49,7 @@ class SeederOrderTest {
 
         db.dbInfoDao().upsert(DbInfo("seed_exercises_imported", "v1"))
 
-        val seeder = ExerciseSeeder(db, Dispatchers.Default)
+        val seeder = ExerciseSeeder(db, Dispatchers.Default, NoCrashStore)
         seeder.seedIfNeeded()
 
         assertTrue(seeder.imageBaseUrl.startsWith("https://"), "ficou sem base de imagens")
@@ -88,16 +89,32 @@ class SeederOrderTest {
             .toList()
         assertTrue(seeders.isNotEmpty(), "o teste perdeu o alvo")
 
+        // A forma não interessa — `runCatching` ou `try` servem os dois. O que tem de ser
+        // verdade é que a exceção seja apanhada: isto corre num `launch` sem tratador, e
+        // sem proteção uma leitura falhada mata o arranque em vez de deixar a app sem
+        // catálogo. Quando é `try`, o `SeedFalhadoDeixaRastoTest` exige o rasto por cima.
         val desprotegidos = seeders
-            .filterNot { f ->
-                Regex("""runCatching\s*\{\s*Res\.readBytes""").containsMatchIn(f.readText())
+            .flatMap { f ->
+                val linhas = f.readText().lines()
+                linhas.withIndex()
+                    .filter { (_, l) -> l.contains("Res.readBytes") }
+                    .filterNot { (i, _) ->
+                        linhas.subList(maxOf(0, i - RECUO_LINHAS), i + 1)
+                            .any { it.contains("runCatching") || Regex("""\btry\s*\{""").containsMatchIn(it) }
+                    }
+                    .map { (i, _) -> "${f.name}:${i + 1}" }
             }
-            .map { it.name }
 
         assertEquals(
             emptyList(),
             desprotegidos,
-            "leitura de recurso sem runCatching dentro de um launch sem handler",
+            "leitura de recurso sem nada a apanhar a exceção, dentro de um launch sem tratador",
         )
+    }
+
+    private companion object {
+        // Quantas linhas acima da leitura se procura a proteção. Chega para o abre-chaveta
+        // e a anotação de opt-in ficarem entre os dois.
+        const val RECUO_LINHAS = 12
     }
 }

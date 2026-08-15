@@ -82,6 +82,9 @@ class AntaresWidgetProvider : AppWidgetProvider(), KoinComponent {
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                // Quatro leituras independentes, cada uma a poder falhar sozinha: o widget
+                // corre fora da app, e mostrar uma parte é melhor do que desaparecer do ecrã
+                // inicial. Não se registam — não há aqui utilizador a quem mostrar o erro.
                 val today = todayEpochDay()
                 val target = runCatching { profileRepository.observeTargets(today).first() }.getOrNull()
                 val totals = runCatching { foodLogDao.observeDayTotals(today).first() }.getOrNull()

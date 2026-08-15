@@ -6,6 +6,8 @@ import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import pt.antares.app.core.crash.CrashStore
+import pt.antares.app.core.crash.registarEngolida
 import pt.antares.app.core.database.AntaresDb
 import pt.antares.app.core.database.DbInfo
 import pt.antares.app.core.database.entities.FoodEntity
@@ -42,6 +44,7 @@ data class SeedFood(
 class FoodSeeder(
     private val db: AntaresDb,
     private val io: CoroutineDispatcher,
+    private val crashes: CrashStore,
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -157,8 +160,12 @@ class FoodSeeder(
         var restored = 0
         for ((file, onlyPtExtras) in PT_SEED_FILES) {
             @OptIn(ExperimentalResourceApi::class)
-            val bytes = runCatching { Res.readBytes(file) }.getOrNull() ?: continue
-            val seeds = json.decodeFromString<List<SeedFood>>(bytes.decodeToString())
+            // Saltar o ficheiro é a recuperação certa — os nomes curados são uma correção,
+            // não o catálogo — mas sem rasto ninguém percebe porque é que os alimentos
+            // portugueses ficaram com o nome de origem.
+            val seeds = lerOuRegistar(file) {
+                json.decodeFromString<List<SeedFood>>(it.decodeToString())
+            } ?: continue
             for (s in seeds) {
 
                 if (onlyPtExtras && !s.id.startsWith("pt-")) continue
@@ -178,11 +185,10 @@ class FoodSeeder(
         if (db.dbInfoDao().get(KEY_PT_MICROS)?.value == DONE_PT_MICROS) return
 
         @OptIn(ExperimentalResourceApi::class)
-        val bytes = runCatching { Res.readBytes("files/seed_pt_micros.json") }.getOrNull()
-        if (bytes != null) {
-            val table = json.decodeFromString<Map<String, Map<String, Double>>>(
-                bytes.decodeToString(),
-            )
+        val table = lerOuRegistar("files/seed_pt_micros.json") {
+            json.decodeFromString<Map<String, Map<String, Double>>>(it.decodeToString())
+        }
+        if (table != null) {
             for ((id, micros) in table) {
                 if (micros.isEmpty()) continue
 
@@ -201,12 +207,33 @@ class FoodSeeder(
      * A marca é chave e versão: subir a versão faz o ficheiro ser reimportado por cima de
      * quem já o tinha, sem tocar em mais nada.
      */
+    /**
+     * Lê um ficheiro semeado, ou devolve nulo e deixa rasto. Um recurso que não abre é
+     * quase sempre um ficheiro que mudou de nome sem alguém reparar, e é um defeito da
+     * app — não uma condição do telemóvel de quem a usa.
+     */
+    @OptIn(ExperimentalResourceApi::class)
+    private suspend fun <T> lerOuRegistar(file: String, ler: (ByteArray) -> T): T? =
+        try {
+            ler(Res.readBytes(file))
+        } catch (e: Throwable) {
+            crashes.registarEngolida(
+                onde = "FoodSeeder: $file",
+                erro = e,
+                quando = Clock.System.now().toEpochMilliseconds(),
+            )
+            null
+        }
+
     private suspend fun importIfNeeded(file: String, key: String, doneVersion: String): Long? {
         if (db.dbInfoDao().get(key)?.value == doneVersion) return null
 
-        @OptIn(ExperimentalResourceApi::class)
-        val bytes = Res.readBytes(file)
-        val seeds = json.decodeFromString<List<SeedFood>>(bytes.decodeToString())
+        // Sem proteção, uma leitura falhada aqui rebentava o arranque da app: o
+        // `seedIfNeeded` corre num `launch` sem tratador. Devolver nulo deixa a marca por
+        // pôr, e a próxima abertura tenta outra vez.
+        val seeds = lerOuRegistar(file) {
+            json.decodeFromString<List<SeedFood>>(it.decodeToString())
+        } ?: return null
         val now = Clock.System.now().toEpochMilliseconds()
 
         val foods = seeds.map { s ->

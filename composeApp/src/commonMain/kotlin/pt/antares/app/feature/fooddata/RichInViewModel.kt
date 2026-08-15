@@ -7,13 +7,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.nutrition.NutrientDensity
 import pt.antares.app.core.nutrition.NutrientRich
 import pt.antares.app.core.nutrition.Nutrients
 import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.feature.stats.NutritionStatsRepository
+import pt.antares.app.core.nutrition.microsDeJson
 
 data class RichInState(
     val loading: Boolean = false,
@@ -28,7 +28,6 @@ class RichInViewModel(
     private val statsRepository: NutritionStatsRepository,
 ) : ViewModel() {
 
-    private val json = Json { ignoreUnknownKeys = true }
 
     private val _state = MutableStateFlow(RichInState())
     val state: StateFlow<RichInState> = _state
@@ -47,11 +46,7 @@ class RichInViewModel(
             val candidates = foodRepository.foodsWithNutrient(key)
 
             val micros = candidates.associate { food ->
-                food.id to (
-                    food.microsJson
-                        ?.let { runCatching { json.decodeFromString<Map<String, Double>>(it) }.getOrNull() }
-                        ?: emptyMap()
-                    )
+                food.id to microsDeJson(food.microsJson)
             }
             val ranked = NutrientDensity.rank(
                 foods = candidates.map { Triple(it.id, it.namePt.ifBlank { it.nameEn }, it.kcal) },

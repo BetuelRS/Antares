@@ -46,6 +46,9 @@ actual class LocalPhotoStore(
         withContext(io) { runCatching { dir().deleteRecursively() } }
     }
 
+    // Nulo é um estado que o ecrã sabe mostrar: a foto pode ter sido apagada por fora, ou
+    // ter ficado num cartão que já não está lá. Registar isto encheria o último erro com
+    // ficheiros que a app não controla.
     actual suspend fun readBytes(path: String): ByteArray? = withContext(io) {
         runCatching { File(path).takeIf { it.exists() }?.readBytes() }.getOrNull()
     }

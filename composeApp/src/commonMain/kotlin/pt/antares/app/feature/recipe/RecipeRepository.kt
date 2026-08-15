@@ -20,6 +20,7 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
 import pt.antares.app.feature.diary.DiaryRepository
 import kotlin.math.roundToInt
+import pt.antares.app.core.nutrition.microsDeJson
 
 data class IngredientRow(
     val ingredient: RecipeIngredientEntity,
@@ -47,10 +48,7 @@ class RecipeRepository(
     private fun now() = Clock.System.now().toEpochMilliseconds()
     private val json = Json { ignoreUnknownKeys = true }
 
-    private fun microsOf(food: FoodEntity): Map<String, Double> =
-        food.microsJson?.let {
-            runCatching { json.decodeFromString<Map<String, Double>>(it) }.getOrNull()
-        } ?: emptyMap()
+    private fun microsOf(food: FoodEntity): Map<String, Double> = microsDeJson(food.microsJson)
 
     fun observeSummaries(): Flow<List<RecipeSummary>> =
         recipeDao.observeAll().map { recipes ->

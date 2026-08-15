@@ -11,6 +11,8 @@ class FileCrashStore(context: Context) : CrashStore {
         runCatching { ficheiro.writeText(report) }
     }
 
+    // Nada aqui pode registar a própria falha: o sítio onde se registaria é este ficheiro.
+    // Um erro a ler ou a escrever aparece como se não houvesse relatório nenhum.
     override fun read(): String? =
         runCatching { if (ficheiro.exists()) ficheiro.readText() else null }.getOrNull()
 

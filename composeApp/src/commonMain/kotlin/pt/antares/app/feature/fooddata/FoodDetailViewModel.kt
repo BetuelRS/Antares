@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.LifeStage
@@ -20,6 +19,7 @@ import pt.antares.app.feature.diary.DiaryRepository
 import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.feature.stats.NutritionStatsRepository
 import kotlin.math.roundToInt
+import pt.antares.app.core.nutrition.microsDeJson
 
 data class PortionState(
     val loading: Boolean = true,
@@ -83,7 +83,6 @@ class FoodDetailViewModel(
     private val statsRepository: NutritionStatsRepository,
 ) : ViewModel() {
 
-    private val json = Json { ignoreUnknownKeys = true }
 
     private val _state = MutableStateFlow(PortionState())
     val state: StateFlow<PortionState> = _state
@@ -92,9 +91,7 @@ class FoodDetailViewModel(
         viewModelScope.launch {
             val food = foodRepository.byId(foodId)
 
-            val micros = food?.microsJson?.let {
-                runCatching { json.decodeFromString<Map<String, Double>>(it) }.getOrNull()
-            } ?: emptyMap()
+            val micros = microsDeJson(food?.microsJson)
             val reference = statsRepository.loadReference()
             val perfil = profileRepository.observeProfile().first()
             val sex = perfil?.sex ?: Sex.MALE
