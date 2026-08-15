@@ -324,8 +324,8 @@
     <string name="rich_empty">No food in the catalogue carries this nutrient in a meaningful amount.</string>
     <string name="log_origin_label">How you logged it</string>
     <string name="nutrition_source_label">Data source</string>
-    <string name="nutrition_source_curated">Antares table (PT/BR) · micros from analysed tables</string>
-    <string name="nutrition_source_curated_plain">Antares table (PT/BR)</string>
+    <string name="nutrition_source_curated">Hand-written for Antares · micronutrients from an equivalent CIQUAL food</string>
+    <string name="nutrition_source_curated_plain">Hand-written for Antares · values from published tables</string>
     <string name="nutrition_source_tca">INSA · Portuguese Food Composition Table v7.1</string>
     <string name="nutrition_source_ciqual">CIQUAL 2025 · ANSES (France)</string>
     <string name="nutrition_source_usda">USDA FoodData Central</string>

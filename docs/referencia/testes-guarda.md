@@ -25,6 +25,8 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `BackupRulesTest` | a cópia de segurança do Android levar o que não deve | as regras XML mudaram |
 | `NumericFieldsTest` | campos numéricos abrirem o teclado errado | falta o `KeyboardType` |
 | `WeightDisplayTest` | o peso aparecer na unidade errada | a conversão saiu do sítio |
+| `ProveniencaHonestaTest` | a app prometer uma fonte de dados que não existe, e o INSA deixar de ser nomeado onde os dados dele aparecem | mudaste um texto de origem. A licença do INSA obriga a identificar a fonte **junto dos dados** |
+| `DicionarioUsdaTest` | a tradução dos nomes americanos descer sem ninguém dar por isso | tiraste entradas do dicionário, ou o catálogo foi regenerado com nomes diferentes |
 | `IndicesQuentesTest` | perder um índice de que uma consulta repetida depende | apagaste um `Index` a pensar que sobrava. A app continua certa e passa a varrer a tabela toda — o custo só aparece a quem já tem anos de dados |
 | `SeedFalhadoDeixaRastoTest` | um catálogo que falha a semear ficar vazio em silêncio | a leitura do seed deixou de registar no `CrashStore` |
 | `BackupImportRollbackTest` | uma importação falhada deixar a pessoa sem os dados velhos e com metade dos novos | o restauro saiu da transação. Ver [a decisão](../explicacao/decisoes/0002-lapides-e-indices-unicos.md) |

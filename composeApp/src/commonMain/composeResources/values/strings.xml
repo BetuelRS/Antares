@@ -324,8 +324,8 @@
     <string name="rich_empty">Nenhum alimento do catálogo traz este nutriente em quantidade que conte.</string>
     <string name="log_origin_label">Como registaste</string>
     <string name="nutrition_source_label">Origem dos dados</string>
-    <string name="nutrition_source_curated">Tabela Antares (PT/BR) · micros de tabelas analisadas</string>
-    <string name="nutrition_source_curated_plain">Tabela Antares (PT/BR)</string>
+    <string name="nutrition_source_curated">Escrito à mão para o Antares · micronutrientes de um alimento equivalente da CIQUAL</string>
+    <string name="nutrition_source_curated_plain">Escrito à mão para o Antares · valores de tabelas publicadas</string>
     <string name="nutrition_source_tca">INSA · Tabela da Composição de Alimentos v7.1</string>
     <string name="nutrition_source_ciqual">CIQUAL 2025 · ANSES (França)</string>
     <string name="nutrition_source_usda">USDA FoodData Central</string>
