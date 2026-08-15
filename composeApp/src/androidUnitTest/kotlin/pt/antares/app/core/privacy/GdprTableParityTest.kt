@@ -48,7 +48,9 @@ class GdprTableParityTest {
     }
 
     private fun tabelasExportadas(): Set<String> {
-        val fonte = java.io.File("src/commonMain/kotlin/pt/antares/app/core/di/CoreModule.kt").readText()
+        // O `sources` saiu do `CoreModule` quando ele foi partido por área. Lê-se o
+        // ficheiro da privacidade, que é onde ele vive agora.
+        val fonte = java.io.File("src/commonMain/kotlin/pt/antares/app/core/di/PrivacyModule.kt").readText()
         val lista = fonte.substringAfter("sources = listOf(").substringBefore("appVersion =")
 
         return Regex("""ExportSource\(\s*"([a-z_]+)"""").findAll(lista)
