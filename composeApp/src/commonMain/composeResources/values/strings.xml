@@ -1111,6 +1111,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="scan_continuous_note">Cada código entra logo no diário, com a tua dose habitual. Podes corrigir tudo depois.</string>
     <string name="scan_continuous_logged">Registados: %1$d</string>
     <string name="scan_continuous_missed">%1$d códigos não foram encontrados.</string>
+    <string name="scan_continuous_create">Criar</string>
     <string name="settings_meal_names">Nomes das refeições</string>
     <string name="settings_meal_names_desc">Chama-lhes o que quiseres. Em branco fica o nome de sempre.</string>
     <string name="share_card_cta">Partilhar</string>

@@ -341,7 +341,20 @@ fun AntaresNavHost(
                 continuous = continuous,
                 onToggleContinuous = viewModel::toggleContinuous,
                 logged = logged,
-                notFoundCount = notFound,
+                notFoundCodes = notFound,
+                onCreateMissing = { codigo ->
+                    // Sai da lista antes de abrir a criação: a leitura contínua continua a
+                    // correr, e voltar a este ecrã com o produto já criado não pode
+                    // reencontrar a mesma linha por resolver.
+                    viewModel.forgetNotFound(codigo)
+                    navController.navigate(
+                        Route.FoodEdit(
+                            barcode = codigo,
+                            slot = route.slot,
+                            epochDay = route.epochDay,
+                        ),
+                    )
+                },
             )
         }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,7 +53,8 @@ fun BarcodeScanScreen(
     onToggleContinuous: () -> Unit = {},
 
     logged: List<String> = emptyList(),
-    notFoundCount: Int = 0,
+    notFoundCodes: List<String> = emptyList(),
+    onCreateMissing: ((String) -> Unit)? = null,
 ) {
     val permission = rememberCameraPermissionState()
     var torch by remember { mutableStateOf(false) }
@@ -166,13 +169,7 @@ fun BarcodeScanScreen(
                     )
                 }
 
-                if (notFoundCount > 0) {
-                    Text(
-                        stringResource(Res.string.scan_continuous_missed, notFoundCount),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
+                CodigosPorCriar(notFoundCodes, onCreateMissing)
             }
 
             Text(stringResource(Res.string.scan_manual_title), style = MaterialTheme.typography.titleMedium)
@@ -190,6 +187,36 @@ fun BarcodeScanScreen(
                 enabled = manualCode.length in 8..14,
                 modifier = Modifier.fillMaxWidth(),
             )
+        }
+    }
+}
+
+/**
+ * Os códigos que ficaram por resolver, um por linha e com o número à vista: sem ele não há
+ * como saber qual dos produtos em cima da mesa é que falta ao catálogo.
+ *
+ * O botão fica de fora quando ninguém o soube ligar — a lista continua a valer por si.
+ */
+@Composable
+private fun CodigosPorCriar(codigos: List<String>, onCreateMissing: ((String) -> Unit)?) {
+    if (codigos.isEmpty()) return
+    Text(
+        stringResource(Res.string.scan_continuous_missed, codigos.size),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.error,
+    )
+    codigos.forEach { codigo ->
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(codigo, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            onCreateMissing?.let { criar ->
+                TextButton(onClick = { criar(codigo) }) {
+                    Text(stringResource(Res.string.scan_continuous_create))
+                }
+            }
         }
     }
 }

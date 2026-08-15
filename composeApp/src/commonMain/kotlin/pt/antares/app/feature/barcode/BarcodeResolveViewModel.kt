@@ -45,8 +45,21 @@ class BarcodeResolveViewModel(
     private val _logged = MutableStateFlow<List<String>>(emptyList())
     val logged: StateFlow<List<String>> = _logged
 
-    private val _notFound = MutableStateFlow(0)
-    val notFound: StateFlow<Int> = _notFound
+    /**
+     * Os códigos que não estão em lado nenhum, e não quantos foram.
+     *
+     * Com um número, lêem-se cinco produtos, dois falham, e no fim sabe-se que dois
+     * falharam — sem saber quais nem poder fazer nada. Com a lista dá para criar cada um
+     * com o código já preenchido.
+     */
+    private val _notFound = MutableStateFlow<List<String>>(emptyList())
+    val notFound: StateFlow<List<String>> = _notFound
+
+    // O mesmo código volta a ser lido enquanto a câmara lhe estiver apontada. A lista é de
+    // produtos por criar, não de leituras.
+    fun forgetNotFound(barcode: String) {
+        _notFound.value = _notFound.value - barcode
+    }
 
     private var slot: MealSlot? = null
     private var epochDay: Long? = null
@@ -113,7 +126,10 @@ class BarcodeResolveViewModel(
                     _logged.value = _logged.value + food.namePt.ifBlank { food.nameEn }
                 }
             }
-            is BarcodeResult.NotFound -> _notFound.value += 1
+            is BarcodeResult.NotFound ->
+                if (resultado.barcode !in _notFound.value) {
+                    _notFound.value = _notFound.value + resultado.barcode
+                }
             else -> Unit
         }
         _result.value = BarcodeResult.Idle

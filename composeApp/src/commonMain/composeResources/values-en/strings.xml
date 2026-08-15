@@ -1110,6 +1110,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="scan_continuous_note">Each code goes straight into the diary at your usual portion. You can fix anything afterwards.</string>
     <string name="scan_continuous_logged">Logged: %1$d</string>
     <string name="scan_continuous_missed">%1$d codes were not found.</string>
+    <string name="scan_continuous_create">Create</string>
     <string name="settings_meal_names">Meal names</string>
     <string name="settings_meal_names_desc">Call them whatever you like. Leave blank to keep the default.</string>
     <string name="share_card_cta">Share</string>
