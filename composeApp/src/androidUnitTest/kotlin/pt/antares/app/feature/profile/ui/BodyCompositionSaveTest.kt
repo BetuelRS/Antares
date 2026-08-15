@@ -26,9 +26,9 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * A massa gorda é gravada em dois sítios ao mesmo tempo: no perfil, porque o basal a consulta a
- * cada cálculo, e no `body_measurement_log`, que guarda a série. Este teste existe para fixar o
- * que cada um dos dois fica a saber — incluindo onde discordam, que é o caso do "não sei".
+ * A massa gorda vive no `body_measurement_log`, e o `user_profile` guarda uma cópia porque o
+ * basal a consulta a cada cálculo. Este teste fixa que os dois **nunca discordam**: toda a
+ * escrita passa pelo histórico, e é ele que repõe a cópia.
  *
  * A aritmética das fórmulas não se repete aqui; vive no `BodyCompositionTest`.
  */
@@ -58,7 +58,7 @@ class BodyCompositionSaveTest : ViewModelHarness() {
         updatedAt = 0L,
     )
 
-    private fun measurements() = BodyMeasurementRepository(db.bodyMeasurementDao(), dispatcher)
+    private fun measurements() = BodyMeasurementRepository(db.bodyMeasurementDao(), db.userProfileDao(), dispatcher)
 
     private suspend fun viewModelCom(
         profile: UserProfileEntity = perfil(),
@@ -203,34 +203,72 @@ class BodyCompositionSaveTest : ViewModelHarness() {
     }
 
     @Test
-    fun `escolher nao sei limpa o perfil, mas o historico do dia guarda o que ja la estava`() =
-        runTest(dispatcher) {
-            val vm = viewModelCom()
-            vm.setMethod(BodyFatMethod.KNOWN)
-            vm.setKnownPct("22")
-            advanceUntilIdle()
-            vm.save()
-            advanceUntilIdle()
-            assertEquals(22.0, historicoDeHoje()?.bodyFatPct)
+    fun `escolher nao sei apaga a massa gorda nos dois sitios`() = runTest(dispatcher) {
+        val vm = viewModelCom()
+        vm.setMethod(BodyFatMethod.KNOWN)
+        vm.setKnownPct("22")
+        advanceUntilIdle()
+        vm.save()
+        advanceUntilIdle()
+        assertEquals(22.0, historicoDeHoje()?.bodyFatPct)
 
-            vm.setMethod(BodyFatMethod.NONE)
-            advanceUntilIdle()
-            vm.save()
-            advanceUntilIdle()
+        vm.setMethod(BodyFatMethod.NONE)
+        advanceUntilIdle()
+        vm.save()
+        advanceUntilIdle()
 
-            // O perfil esquece, porque é ele que alimenta o basal e não pode ficar com um
-            // valor que a pessoa retirou.
-            assertNull(perfilGravado()?.bodyFatPct, "o perfil ficou com a massa gorda retirada")
-            assertNull(perfilGravado()?.bodyFatSource)
+        assertNull(perfilGravado()?.bodyFatPct, "o perfil ficou com a massa gorda retirada")
+        assertNull(perfilGravado()?.bodyFatSource)
+        assertNull(
+            historicoDeHoje()?.bodyFatPct,
+            "o histórico guardou uma medição que a pessoa mandou apagar — e é ele a fonte, " +
+                "por isso a app passava a mostrar dois valores diferentes para a mesma coisa",
+        )
+    }
 
-            // O histórico não: o `record` funde com o que lá está, e nada apaga uma medição
-            // do próprio dia. As duas fontes ficam a discordar até à medição seguinte.
-            assertEquals(
-                22.0,
-                historicoDeHoje()?.bodyFatPct,
-                "o histórico apagou uma medição em vez de a manter",
-            )
-        }
+    @Test
+    fun `apagar so a medicao de hoje repoe no perfil a de antes`() = runTest(dispatcher) {
+        val vm = viewModelCom()
+
+        measurements().record(epochDay = hoje - 7, bodyFatPct = 25.0, bodyFatSource = BodyFatSource.MEASURED)
+        vm.setMethod(BodyFatMethod.KNOWN)
+        vm.setKnownPct("22")
+        advanceUntilIdle()
+        vm.save()
+        advanceUntilIdle()
+        assertEquals(22.0, perfilGravado()?.bodyFatPct, "o perfil não seguiu a medição de hoje")
+
+        val hojeId = assertNotNull(db.bodyMeasurementDao().byDay(hoje)).id
+        measurements().delete(hojeId)
+        advanceUntilIdle()
+
+        assertEquals(
+            25.0,
+            perfilGravado()?.bodyFatPct,
+            "apagar a medição de hoje deixou no perfil um valor que já não existe em lado " +
+                "nenhum — devia ter voltado à anterior",
+        )
+    }
+
+    @Test
+    fun `medir so a cintura nao apaga a massa gorda do perfil`() = runTest(dispatcher) {
+        val vm = viewModelCom()
+        vm.setMethod(BodyFatMethod.KNOWN)
+        vm.setKnownPct("18")
+        advanceUntilIdle()
+        vm.save()
+        advanceUntilIdle()
+
+        measurements().record(waistCm = 84.0)
+        advanceUntilIdle()
+
+        assertEquals(
+            18.0,
+            perfilGravado()?.bodyFatPct,
+            "registar uma circunferência apagou a percentagem: nulo aqui quer dizer «não " +
+                "medi isto agora», e não «apaga»",
+        )
+    }
 
     @Test
     fun `medir outra vez no mesmo dia reescreve a linha, e nao acrescenta outra`() =

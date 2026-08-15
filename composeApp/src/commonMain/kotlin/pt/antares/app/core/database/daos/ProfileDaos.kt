@@ -97,6 +97,20 @@ interface BodyMeasurementDao {
     @Query("SELECT * FROM body_measurement_log WHERE deleted = 0 ORDER BY epochDay DESC LIMIT 1")
     fun observeLatest(): Flow<BodyMeasurementEntity?>
 
+    /**
+     * A medição mais recente **que traz massa gorda**, que não é a mesma coisa que a mais
+     * recente: medir só a cintura hoje não apaga a percentagem de gordura da semana
+     * passada. É esta que alimenta a cópia guardada no perfil.
+     */
+    @Query(
+        """
+        SELECT * FROM body_measurement_log
+        WHERE deleted = 0 AND bodyFatPct IS NOT NULL
+        ORDER BY epochDay DESC LIMIT 1
+        """,
+    )
+    suspend fun latestWithBodyFat(): BodyMeasurementEntity?
+
     @Query("SELECT * FROM body_measurement_log WHERE deleted = 0 AND epochDay = :epochDay")
     suspend fun byDay(epochDay: Long): BodyMeasurementEntity?
 

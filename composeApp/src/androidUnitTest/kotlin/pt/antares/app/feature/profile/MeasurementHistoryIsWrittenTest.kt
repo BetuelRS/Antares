@@ -30,7 +30,7 @@ class MeasurementHistoryIsWrittenTest {
         db = Room.inMemoryDatabaseBuilder(context, AntaresDb::class.java)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
-        repository = BodyMeasurementRepository(db.bodyMeasurementDao(), Dispatchers.Default)
+        repository = BodyMeasurementRepository(db.bodyMeasurementDao(), db.userProfileDao(), Dispatchers.Default)
     }
 
     @After

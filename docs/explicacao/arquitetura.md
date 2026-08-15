@@ -55,19 +55,26 @@ A partir daí o diário é dono do que lá ficou.
 
 Se te vires a resolver um problema em que «o histórico mudou sozinho», é quase sempre aqui.
 
-## Duas fontes para a massa gorda
+## A massa gorda tem uma fonte só
 
-O perfil (`user_profile`) guarda a percentagem mais recente, porque o cálculo do metabolismo basal
-a consulta a cada conta e não pode andar a varrer o histórico. A tabela `body_measurement_log`
-guarda a série toda.
+A tabela `body_measurement_log` guarda a série toda, e é ela a verdade. O `user_profile` guarda
+uma **cópia** da percentagem mais recente, porque o cálculo do metabolismo basal a consulta a cada
+conta e não pode andar a varrer o histórico.
 
-**As duas podem discordar, e há um caso concreto em que discordam:** escolher «não sei» limpa o
-perfil, mas o histórico do mesmo dia mantém o valor anterior, porque o registo de medições funde
-com o que lá está em vez de substituir.
+A cópia nunca se escreve à mão. Toda a escrita passa pelo `BodyMeasurementRepository`, que a
+repõe a partir da medição viva mais recente — e é isso que impede os dois de discordarem.
 
-O `BodyCompositionSaveTest` fixa esse comportamento. O teste diz o que a app faz — **não diz que
-está certo**. É um assunto em aberto, e está documentado aqui para não ser descoberto por
-acidente.
+Três casos que a regra tem de aguentar, e que o `BodyCompositionSaveTest` fixa:
+
+| O que se faz | O que acontece |
+|---|---|
+| Registar só a cintura | A percentagem mantém-se: nulo quer dizer «não medi isto agora» |
+| Escolher «não sei» | Apaga nos dois sítios, e a linha do dia vai com ela se ficar vazia |
+| Apagar a medição de hoje | O perfil volta à medição anterior, não fica com um valor órfão |
+
+**Até 2026-08-15 não era assim.** Escolher «não sei» limpava o perfil e deixava o histórico do dia
+intacto, porque o registo de medições fundia com o que lá estava em vez de substituir. As duas
+fontes ficavam a mostrar valores diferentes para a mesma coisa, até à medição seguinte.
 
 ## As ligações
 
@@ -95,7 +102,6 @@ Ver [Privacidade](privacidade.md) para o que sai e para onde.
 
 ## O que não está resolvido
 
-- A divergência da massa gorda, acima.
 - O gerador de dados de demonstração calcula a carga a partir do código do exercício, sem olhar ao
   equipamento — daí aparecerem recordes de 155 kg em exercícios de mobilidade.
 - O resumo de uma corrida sem percurso deixa dois terços do ecrã vazios.

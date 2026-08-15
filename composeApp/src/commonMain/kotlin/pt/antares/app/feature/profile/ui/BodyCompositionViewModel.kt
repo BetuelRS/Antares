@@ -147,10 +147,11 @@ class BodyCompositionViewModel(
         val profile = s.profile ?: return
         val pct = computedPct().takeIf { s.method != BodyFatMethod.NONE }
         viewModelScope.launch {
+            // As circunferências são do perfil porque o formulário as reaproveita à
+            // próxima; a massa gorda não vem aqui. Quem a escreve é o histórico, e o
+            // perfil recebe-a de volta — ver o [BodyMeasurementRepository].
             repository.saveProfile(
                 profile.copy(
-                    bodyFatPct = pct,
-                    bodyFatSource = pct?.let { s.method.toSource() },
                     waistCm = s.waist.toNumber(),
                     neckCm = s.neck.toNumber(),
                     hipCm = s.hip.toNumber(),
@@ -166,6 +167,8 @@ class BodyCompositionViewModel(
                 armCm = s.arm.toNumber(),
                 thighCm = s.thigh.toNumber(),
                 chestCm = s.chest.toNumber(),
+                // «Não sei» é uma ordem de apagar, e não uma omissão.
+                apagarGordura = s.method == BodyFatMethod.NONE,
             )
             _state.update { it.copy(saved = true) }
         }
