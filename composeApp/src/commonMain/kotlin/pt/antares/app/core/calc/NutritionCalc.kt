@@ -63,6 +63,10 @@ data class EnergyEstimate(
     val leanMassKg: Double?,
     val bodyFatPct: Double?,
     val bodyFatSource: BodyFatSource?,
+
+    // O «mais ou menos» do basal, em kcal. Só existe quando a massa gorda veio da fita
+    // métrica — ver [NavyUncertainty]. Nulo é ausência de incerteza declarada, não zero.
+    val bmrUncertaintyKcal: Double? = null,
 )
 
 data class Targets(
@@ -187,14 +191,16 @@ object NutritionCalc {
         // Arredonda-se antes de multiplicar pela atividade para que o basal mostrado no
         // ecrã e o basal usado na conta sejam o mesmo número.
         val bmrValue = roundToTenth(bmrRaw)
+        val origem = if (lean != null) profile.bodyFatSource ?: BodyFatSource.MEASURED else null
         return EnergyEstimate(
             bmr = bmrValue,
             tdee = tdee(bmrValue, profile.activityLevel.multiplier),
             formula = chosen,
             leanMassKg = lean,
             bodyFatPct = if (lean != null) profile.bodyFatPct else null,
-            bodyFatSource = if (lean != null) {
-                profile.bodyFatSource ?: BodyFatSource.MEASURED
+            bodyFatSource = origem,
+            bmrUncertaintyKcal = if (origem == BodyFatSource.NAVY) {
+                NavyUncertainty.bmrKcal(chosen, weightKg)
             } else {
                 null
             },

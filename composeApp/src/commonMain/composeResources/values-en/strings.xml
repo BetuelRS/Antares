@@ -887,6 +887,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_health_daily_target">Daily target</string>
     <string name="profile_health_formula_mifflin">Basal rate from your weight, height and age</string>
     <string name="profile_health_formula_katch">Basal rate from your lean mass</string>
+    <string name="profile_health_bmr_range">About %1$d ±%2$d kcal. Your body fat came from the tape measure, which is off by 3.6 percentage points either way — and that is what these calories are.</string>
     <string name="profile_health_body_section">Your body</string>
     <string name="profile_health_goal_section">Your goal</string>
     <string name="profile_health_no_weight">No weight logged yet. Tap to log your first one.</string>
@@ -1049,6 +1050,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="show_maths_mifflin">%1$s (weight) + %2$s (height) − %3$s (age) %4$s = %5$s kcal basal rate</string>
     <string name="show_maths_activity">%1$s × %2$s (activity) = %3$d kcal you burn per day</string>
     <string name="show_maths_rate">%1$d %2$s = %3$d kcal — your target</string>
+    <string name="show_maths_bmr_uncertain">This basal rate is about %1$s kcal, give or take %2$s kcal: your body fat came from the tape measure, and the method is off by 3.6 percentage points. Everything below inherits that margin.</string>
     <string name="show_maths_protein_trained">Protein: %1$s g per kg of lean mass × %2$s kg = %3$s g. It is higher because you train with weights while in a deficit — Helms et al. (2014) asks for 2.3 to 3.1, rising with how deep the deficit is. With no training logged it would be 1.8.</string>
     <string name="show_maths_footer">That is the whole calculation, with no hidden steps. You can check every line by hand: only the multiplication is rounded, and it is rounded to the nearest calorie.</string>
     <string name="settings_height_ft">Feet</string>

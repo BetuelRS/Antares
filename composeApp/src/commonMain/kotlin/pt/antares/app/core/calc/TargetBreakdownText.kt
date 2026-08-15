@@ -60,6 +60,13 @@ object TargetBreakdownText {
 
         // Gramas por quilo com uma casa, massa magra com o mínimo de casas, e o total em
         // gramas inteiras: é a conta que a pessoa pode refazer de cabeça.
+        // O basal e o seu «mais ou menos», ambos em kcal inteiras: uma décima num número
+        // que erra 62 kcal para cada lado seria ruído a fingir de precisão.
+        TargetBreakdown.Kind.BMR_UNCERTAIN -> listOf(
+            step.exact.roundToInt().toString(),
+            step.values[0].roundToInt().toString(),
+        )
+
         TargetBreakdown.Kind.PROTEIN_TRAINED -> listOf(
             fixedDecimals(step.values[0], 1, comma),
             trimmedDecimal(step.values[1], comma = comma),

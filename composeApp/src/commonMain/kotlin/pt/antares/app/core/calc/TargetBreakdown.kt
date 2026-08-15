@@ -34,6 +34,8 @@ data class TargetBreakdown(
         FLOOR,
 
         PROTEIN_TRAINED,
+
+        BMR_UNCERTAIN,
     }
 }
 
@@ -57,6 +59,15 @@ object TargetBreakdownCalc {
                 values = listOf(lean),
                 exact = e.bmr,
             )
+            // Logo a seguir ao basal e não no fim: quem lê a conta tem de saber que o
+            // primeiro número já traz erro antes de o ver multiplicado pelos outros.
+            e.bmrUncertaintyKcal?.let { erro ->
+                steps += TargetBreakdown.Step(
+                    kind = TargetBreakdown.Kind.BMR_UNCERTAIN,
+                    values = listOf(erro),
+                    exact = e.bmr,
+                )
+            }
         } else {
             val age = NutritionCalc.ageYears(profile.birthEpochDay, todayEpochDay)
 

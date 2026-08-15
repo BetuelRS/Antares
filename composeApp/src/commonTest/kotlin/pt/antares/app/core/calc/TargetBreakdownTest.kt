@@ -135,6 +135,27 @@ class TargetBreakdownTest {
     }
 
     @Test
+    fun `a margem da fita aparece logo a seguir ao basal`() {
+        val p = profile(bodyFatPct = 20.0).copy(bodyFatSource = BodyFatSource.NAVY)
+        val b = breakdown(p)
+
+        val posicao = b.steps.indexOfFirst { it.kind == TargetBreakdown.Kind.BMR_UNCERTAIN }
+        assertEquals(
+            1,
+            posicao,
+            "vem antes da atividade e do ritmo: quem lê tem de saber que o primeiro " +
+                "número já traz erro antes de o ver multiplicado pelos outros",
+        )
+        assertTrue(b.steps[posicao].values[0] > 0.0)
+    }
+
+    @Test
+    fun `massa gorda medida a serio nao traz margem nenhuma`() {
+        val b = breakdown(profile(bodyFatPct = 20.0))
+        assertTrue(b.steps.none { it.kind == TargetBreakdown.Kind.BMR_UNCERTAIN })
+    }
+
+    @Test
     fun `a proteina que sobe por causa do treino diz-se na conta`() {
         val p = profile(rate = -600, bodyFatPct = 20.0)
         val t = NutritionCalc.dailyTargets(p, 80.0, today, treinaForca = true)

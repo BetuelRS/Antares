@@ -204,6 +204,19 @@ private fun TargetCard(state: HealthProfileState, onShowMaths: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            // O basal medido pela fita não é um número exato, e mostrá-lo às décimas dizia
+            // que era — ver `NavyUncertainty`.
+            e.bmrUncertaintyKcal?.let { erro ->
+                Text(
+                    stringResource(
+                        Res.string.profile_health_bmr_range,
+                        e.bmr.roundToInt(),
+                        erro.roundToInt(),
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         state.maintenanceKcal?.takeIf { it != t.kcal }?.let {
