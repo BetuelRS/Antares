@@ -16,6 +16,7 @@ import pt.antares.app.core.database.entities.FoodNutrientEntity
 import pt.antares.app.core.nutrition.microsDeJson
 import pt.antares.app.core.fooddata.DrinkClassifier
 import pt.antares.app.core.fooddata.UsdaNameCleaner
+import pt.antares.app.core.fooddata.UsdaNameTranslator
 import pt.antares.app.core.model.FoodSource
 import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.core.util.todayEpochDay
@@ -80,6 +81,7 @@ class FoodSeeder(
         pruneDuplicateCuratedIfNeeded()
         markAnalysedVerifiedIfNeeded()
         enrichCuratedWithMicrosIfNeeded()
+        traduzirNomesUsdaIfNeeded()
         stampCatalogueRebuildIfNeeded()
         indexarMicrosIfNeeded()
     }
@@ -152,6 +154,33 @@ class FoodSeeder(
             .map { it.id }
         liquidIds.chunked(400).forEach { db.foodDao().markLiquid(it) }
         db.dbInfoDao().upsert(DbInfo(KEY_LIQUID, DONE_LIQUID))
+    }
+
+    /**
+     * Põe em português os nomes americanos que o dicionário cobre por inteiro.
+     *
+     * Corre **depois** dos dois passos que arrumam o inglês, e não em vez deles: o que não
+     * for traduzível continua com o nome inglês limpo, que é o melhor que há para ele. Os
+     * dois nomes vão para o índice de pesquisa, para quem procurar em qualquer das línguas
+     * encontrar o mesmo alimento.
+     *
+     * Traduz do `nameEn`, que nunca muda, e não do `namePt`, que estes passos reescrevem.
+     */
+    private suspend fun traduzirNomesUsdaIfNeeded() {
+        if (db.dbInfoDao().get(KEY_PT_USDA)?.value == DONE_PT_USDA) return
+
+        val segmentos = lerOuRegistar("files/seed_pt_usda_names.json") {
+            json.decodeFromString<Map<String, String>>(it.decodeToString())
+                .filterKeys { chave -> !chave.startsWith("_") }
+        } ?: return
+
+        db.foodDao().usdaNameRows().forEach { row ->
+            val pt = UsdaNameTranslator.traduzir(row.nameEn, segmentos) ?: return@forEach
+            if (pt == row.namePt) return@forEach
+            val fts = TextNormalize.normalize("$pt ${row.nameEn} ${row.brand.orEmpty()}")
+            db.foodDao().setDisplayNameWithFts(row.id, pt, fts)
+        }
+        db.dbInfoDao().upsert(DbInfo(KEY_PT_USDA, DONE_PT_USDA))
     }
 
     private suspend fun cleanUsdaNamesV2IfNeeded() {
@@ -338,6 +367,9 @@ class FoodSeeder(
         const val KEY_REBUILT_DAY = "catalogue_rebuilt_day"
 
         private const val KEY_PT_MICROS = "curated_micros_enriched"
+
+        private const val KEY_PT_USDA = "usda_names_translated"
+        private const val DONE_PT_USDA = "v1"
 
         private const val KEY_MICROS_INDEXADOS = "micros_indexed"
         private const val DONE_MICROS_INDEXADOS = "v1"
