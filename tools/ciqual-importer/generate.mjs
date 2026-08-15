@@ -30,6 +30,19 @@ const MICRO_BY_CODE = {
 
   400: "water_g", 60000: "alcohol_g", 75100: "cholesterol_mg",
   40303: "fatMono_g", 40304: "fatPoly_g",
+
+  10170: "chloride_mg",
+
+  // Os ácidos gordos ficam nas gramas em que a CIQUAL os publica, e a chave diz `_g` por
+  // isso. Convertê-los para miligramas aqui era o erro de mil vezes que nenhum teste apanha
+  // depois de gravado.
+  41833: "omega3_g", 41826: "omega6_g", 42053: "epa_g", 42263: "dha_g",
+
+  33110: "starch_g", 32410: "lactose_g", 34000: "polyols_g",
+
+  // Não somam ao `vitA_ug`, que já é o equivalente de retinol: são a resposta a de onde
+  // veio, e essa não se tira do total.
+  51200: "retinol_ug", 51330: "betaCarotene_ug",
 };
 
 function parseBlocks(xml, tag) {

@@ -13,6 +13,7 @@ import pt.antares.app.core.database.DbInfo
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodFtsEntity
 import pt.antares.app.core.database.entities.FoodNutrientEntity
+import pt.antares.app.core.nutrition.Nutrients
 import pt.antares.app.core.nutrition.microsDeJson
 import pt.antares.app.core.fooddata.DrinkClassifier
 import pt.antares.app.core.fooddata.UsdaNameCleaner
@@ -82,8 +83,42 @@ class FoodSeeder(
         markAnalysedVerifiedIfNeeded()
         enrichCuratedWithMicrosIfNeeded()
         traduzirNomesUsdaIfNeeded()
+        alargarMicrosIfNeeded(jaVeioNaImportacao = importedAt != null)
         stampCatalogueRebuildIfNeeded()
         indexarMicrosIfNeeded()
+    }
+
+    /**
+     * Leva os dez nutrientes novos — cloro, ómega-3 e -6, EPA, DHA, amido, lactose, polióis,
+     * retinol e beta-caroteno — a quem já tem o catálogo instalado.
+     *
+     * Não se faz subindo a versão do `seed_foods.json`, apesar de ser o caminho curto:
+     * reimportar reescreve o `namePt`, e cinco passos deste ficheiro já corrigiram esses
+     * nomes e estão marcados como feitos. O catálogo voltava aos nomes de laboratório em
+     * inglês, e nada os tornaria a limpar.
+     *
+     * O que já lá está ganha ao ficheiro. A tabela só preenche as chaves em falta.
+     */
+    private suspend fun alargarMicrosIfNeeded(jaVeioNaImportacao: Boolean) {
+        if (db.dbInfoDao().get(KEY_MICROS_LARGOS)?.value == DONE_MICROS_LARGOS) return
+
+        // Numa instalação nova o ficheiro acabou de entrar inteiro. Lê-lo outra vez seriam
+        // quatro megabytes para não mudar uma linha.
+        if (!jaVeioNaImportacao) {
+            val seeds = lerOuRegistar("files/seed_foods.json") {
+                json.decodeFromString<List<SeedFood>>(it.decodeToString())
+            } ?: return
+
+            for (s in seeds) {
+                val doFicheiro = s.micros ?: continue
+                val food = db.foodDao().byId(s.id) ?: continue
+                val atual = microsDeJson(food.microsJson)
+                val junto = Nutrients.merge(primary = atual, fallback = doFicheiro)
+                if (junto.size == atual.size) continue
+                db.foodDao().setMicros(s.id, Json.encodeToString(junto))
+            }
+        }
+        db.dbInfoDao().upsert(DbInfo(KEY_MICROS_LARGOS, DONE_MICROS_LARGOS))
     }
 
     /**
@@ -371,8 +406,13 @@ class FoodSeeder(
         private const val KEY_PT_USDA = "usda_names_translated"
         private const val DONE_PT_USDA = "v1"
 
+        private const val KEY_MICROS_LARGOS = "micros_widened"
+        private const val DONE_MICROS_LARGOS = "v1"
+
         private const val KEY_MICROS_INDEXADOS = "micros_indexed"
-        private const val DONE_MICROS_INDEXADOS = "v1"
+        // Sobe com o alargamento: a `food_nutrient` é copiada do JSON, e os dez nutrientes
+        // novos não aparecem em nenhuma pergunta enquanto ela não for refeita.
+        private const val DONE_MICROS_INDEXADOS = "v2"
 
         // Lotes de escrita, para não montar uma instrução com dezenas de milhares de
         // parâmetros de uma vez.
