@@ -46,6 +46,7 @@ import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.core.designsystem.components.Sparkline
 import pt.antares.app.core.designsystem.components.SplitRow
 import pt.antares.app.core.model.BodyFatSource
+import pt.antares.app.core.model.Sex
 import pt.antares.app.core.util.epochDayToLocalDate
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
@@ -133,7 +134,12 @@ fun HealthProfileScreen(
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Text(
-                        stringResource(Res.string.profile_goal_water, DailyGoals.waterMl(weight)),
+                        stringResource(
+                            Res.string.profile_goal_water,
+                            // Sem o treino do dia: este ecrã mostra a meta de base, e a do
+                            // dia com treino aparece onde a água se regista.
+                            DailyGoals.waterMl(state.profile?.sex ?: Sex.MALE, weight),
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Text(

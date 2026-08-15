@@ -252,25 +252,28 @@ fun TodayScreen(
             ) {
                 Column {
                     Text(stringResource(Res.string.diary_water), style = MaterialTheme.typography.titleMedium)
+                    // A meta é de água total, e por isso a da comida conta para ela. Sem
+                    // isto pedia-se de copo o que a EFSA conta de tudo.
+                    val total = state.waterMl + (aguaDaComidaMl ?: 0)
                     Text(
-                        "${state.waterMl} / ${state.waterGoalMl} ml",
+                        "$total / ${state.waterGoalMl} ml",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = if (state.waterMl >= state.waterGoalMl) {
+                        color = if (total >= state.waterGoalMl) {
                             MaterialTheme.success
                         } else {
                             MaterialTheme.colorScheme.onSurfaceVariant
                         },
                     )
-                    // Só aparece quando metade das calorias do dia trouxeram teor de água
-                    // medido. Fora disso o número falava de meio prato e parecia falar do
-                    // dia inteiro — ver `AguaDaComida`.
-                    aguaDaComidaMl?.let { daComida ->
-                        Text(
-                            stringResource(Res.string.today_water_from_food, daComida),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                    Text(
+                        // A parcela da comida só se sabe quando metade das calorias do dia
+                        // trouxeram teor de água medido — ver `AguaDaComida`. Sem ela a
+                        // meta fica injusta, e o texto diz isso em vez de fingir zero.
+                        aguaDaComidaMl?.let { daComida ->
+                            stringResource(Res.string.today_water_parts, state.waterMl, daComida)
+                        } ?: stringResource(Res.string.today_water_food_unknown),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
                 TextButton(onClick = onAddMeal) { Text(stringResource(Res.string.nav_diary)) }
             }

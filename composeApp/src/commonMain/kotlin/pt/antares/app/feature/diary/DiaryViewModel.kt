@@ -73,7 +73,8 @@ data class NutritionRef(
     val lifeStage: LifeStage? = null,
 )
 
-private data class WaterInfo(val ml: Int, val goalMl: Int)
+// A meta não se fecha aqui: falta saber se houve treino no dia, e isso chega noutro fluxo.
+private data class WaterInfo(val ml: Int, val overrideMl: Int?, val sex: Sex, val weightKg: Double)
 // Junta o exercício e o jejum do dia numa fonte só. O `combine` tipado do Flow leva cinco
 // fontes, e sem este agrupamento a sexta não caberia.
 private data class ExerciseInfo(
@@ -131,12 +132,14 @@ class DiaryViewModel(
                 diaryRepository.observeWater(day),
                 preferences.waterGoalOverrideMl,
                 profileRepository.observeLatestWeight(),
-            ) { water, override, weight ->
-                // A mesma regra do ecrã de hoje, e pela mesma função: repetir a conta aqui
-                // fazia os dois ecrãs discordarem assim que a constante mudasse.
-                val goal = override
-                    ?: DailyGoals.waterMl(weight?.weightKg ?: ProfileRepository.DEFAULT_WEIGHT_KG)
-                WaterInfo(ml = water?.ml ?: 0, goalMl = goal)
+                profileRepository.observeProfile(),
+            ) { water, override, weight, perfil ->
+                WaterInfo(
+                    ml = water?.ml ?: 0,
+                    overrideMl = override,
+                    sex = perfil?.sex ?: Sex.MALE,
+                    weightKg = weight?.weightKg ?: ProfileRepository.DEFAULT_WEIGHT_KG,
+                )
             },
 
             combine(
@@ -155,7 +158,13 @@ class DiaryViewModel(
                 totals = totals,
                 targets = targets,
                 waterMl = waterInfo.ml,
-                waterGoalMl = waterInfo.goalMl,
+                // A meta escolhida à mão manda sobre a calculada. A mesma função do ecrã de
+                // hoje: repetir a conta fazia os dois discordarem assim que ela mudasse.
+                waterGoalMl = waterInfo.overrideMl ?: DailyGoals.waterMl(
+                    sex = waterInfo.sex,
+                    weightKg = waterInfo.weightKg,
+                    treinouHoje = exerciseInfo.kcal > 0,
+                ),
                 exerciseEntries = exerciseInfo.entries,
                 exerciseKcal = exerciseInfo.kcal,
                 quebraDoJejum = quebraDoJejum(day, logs, exerciseInfo.jejum),

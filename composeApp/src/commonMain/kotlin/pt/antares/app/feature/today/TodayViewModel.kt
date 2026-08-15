@@ -256,7 +256,11 @@ class TodayViewModel(
             // A meta de água escolhida à mão manda sobre a calculada pelo peso; sem
             // pesagem nenhuma, um peso de recurso evita uma meta de zero.
             val waterGoal = waterRaw.override
-                ?: DailyGoals.waterMl(latest ?: ProfileRepository.DEFAULT_WEIGHT_KG)
+                ?: DailyGoals.waterMl(
+                    sex = perfil?.sex ?: Sex.MALE,
+                    weightKg = latest ?: ProfileRepository.DEFAULT_WEIGHT_KG,
+                    treinouHoje = exerciseKcal > 0,
+                )
             TodayState(
                 loading = false,
                 targets = targets,

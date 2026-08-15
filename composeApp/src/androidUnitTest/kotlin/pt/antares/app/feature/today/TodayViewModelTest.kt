@@ -101,7 +101,10 @@ class TodayViewModelTest : ViewModelHarness() {
         )
         advanceUntilIdle()
 
-        assertEquals(2800, vm.state.first { !it.loading }.waterGoalMl)
+        // 2850 e não 2800: a meta passou a ser a ingestão adequada da EFSA, escalada pelo
+        // peso, e é de água **total** — não só da que se bebe. Sem perfil vale o valor dos
+        // homens, que é o que a app assume quando não sabe.
+        assertEquals(2850, vm.state.first { !it.loading }.waterGoalMl)
     }
 
     @Test

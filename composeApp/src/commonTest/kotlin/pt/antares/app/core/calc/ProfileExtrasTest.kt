@@ -1,6 +1,7 @@
 package pt.antares.app.core.calc
 
 import pt.antares.app.core.database.entities.BodyMeasurementEntity
+import pt.antares.app.core.model.Sex
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -46,16 +47,17 @@ class ProfileExtrasTest {
     }
 
     @Test
-    fun `agua sao 35 ml por kg arredondados aos 50`() {
-
-        assertEquals(2800, DailyGoals.waterMl(80.0))
-
-        assertEquals(2550, DailyGoals.waterMl(73.0))
+    fun `agua parte da EFSA e distingue homens de mulheres`() {
+        // Mudança intencional: eram 35 ml por quilo, iguais para os dois sexos.
+        assertTrue(
+            DailyGoals.waterMl(Sex.MALE, 80.0) > DailyGoals.waterMl(Sex.FEMALE, 80.0),
+            "a EFSA dá 2,5 L aos homens e 2,0 L às mulheres, e a app era cega a isso",
+        )
     }
 
     @Test
     fun `sem peso valido a meta de agua e zero, nao um palpite`() {
-        assertEquals(0, DailyGoals.waterMl(0.0))
+        assertEquals(0, DailyGoals.waterMl(Sex.MALE, 0.0))
     }
 
     @Test
