@@ -89,6 +89,17 @@ fun DiaryScreen(
 
     var addSheetSlot by remember { mutableStateOf<MealSlot?>(null) }
 
+    var quickLogPendente by remember { mutableStateOf<QuickLogPendente?>(null) }
+    quickLogPendente?.let { pedido ->
+        EscolherRefeicaoDialog(
+            onEscolha = { slot ->
+                quickLogPendente = null
+                onQuickLog(slot, state.epochDay, pedido.mode, pedido.query)
+            },
+            onDismiss = { quickLogPendente = null },
+        )
+    }
+
     var quickAddSlot by remember { mutableStateOf<MealSlot?>(null) }
 
     var copyIntoSlot by remember { mutableStateOf<MealSlot?>(null) }
@@ -201,31 +212,25 @@ fun DiaryScreen(
         }
 
         item(key = "quick-log") {
-            pt.antares.app.feature.fooddata.QuickLogBar(
-                onSubmit = { q ->
+            // Num dia que não é hoje, a hora do relógio não diz nada sobre a refeição: quem
+            // regista o jantar de ontem de manhã levava-o para o pequeno-almoço. Aí
+            // pergunta-se, e o pedido fica à espera de resposta.
+            fun registar(mode: pt.antares.app.feature.fooddata.AddMode, q: String) {
+                if (state.isToday) {
                     onQuickLog(
                         MealSlot.atHour(pt.antares.app.core.util.currentHour()),
                         state.epochDay,
-                        pt.antares.app.feature.fooddata.AddMode.SEARCH,
+                        mode,
                         q,
                     )
-                },
-                onPhoto = {
-                    onQuickLog(
-                        MealSlot.atHour(pt.antares.app.core.util.currentHour()),
-                        state.epochDay,
-                        pt.antares.app.feature.fooddata.AddMode.PHOTO,
-                        "",
-                    )
-                },
-                onScan = {
-                    onQuickLog(
-                        MealSlot.atHour(pt.antares.app.core.util.currentHour()),
-                        state.epochDay,
-                        pt.antares.app.feature.fooddata.AddMode.SCAN,
-                        "",
-                    )
-                },
+                } else {
+                    quickLogPendente = QuickLogPendente(mode, q)
+                }
+            }
+            pt.antares.app.feature.fooddata.QuickLogBar(
+                onSubmit = { q -> registar(pt.antares.app.feature.fooddata.AddMode.SEARCH, q) },
+                onPhoto = { registar(pt.antares.app.feature.fooddata.AddMode.PHOTO, "") },
+                onScan = { registar(pt.antares.app.feature.fooddata.AddMode.SCAN, "") },
             )
         }
 
@@ -962,4 +967,38 @@ private fun QuebraDoJejumCartao(quebra: QuebraDoJejum) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
+}
+
+// O registo rápido à espera de saber a que refeição pertence. Guarda o pedido inteiro para
+// a resposta não obrigar a pessoa a escrever tudo outra vez.
+private data class QuickLogPendente(
+    val mode: pt.antares.app.feature.fooddata.AddMode,
+    val query: String,
+)
+
+/**
+ * Pergunta a refeição quando a hora do relógio não a pode dizer — num dia que não é hoje.
+ *
+ * As quatro pela ordem do dia, e nenhuma pré-escolhida: sugerir uma era voltar a assumir,
+ * que é o que isto veio corrigir.
+ */
+@Composable
+private fun EscolherRefeicaoDialog(onEscolha: (MealSlot) -> Unit, onDismiss: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.diary_which_meal_title)) },
+        text = { Text(stringResource(Res.string.diary_which_meal_body)) },
+        confirmButton = {
+            Column {
+                MealSlot.entries.forEach { slot ->
+                    TextButton(onClick = { onEscolha(slot) }) {
+                        Text(pt.antares.app.core.model.mealSlotLabel(slot))
+                    }
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.common_cancel)) }
+        },
+    )
 }

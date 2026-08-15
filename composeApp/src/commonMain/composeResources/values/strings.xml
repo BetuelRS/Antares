@@ -268,6 +268,8 @@
     <string name="diary_today">Hoje</string>
     <string name="diary_remaining_kcal">Restantes</string>
     <string name="diary_add_food">Adicionar alimento</string>
+    <string name="diary_which_meal_title">Qual foi a refeição?</string>
+    <string name="diary_which_meal_body">Este dia não é hoje, e a hora a que estás a registar não diz nada sobre quando comeste.</string>
     <string name="diary_water">Água</string>
     <string name="diary_duplicate">Duplicar</string>
     <string name="diary_move">Mover</string>

@@ -268,6 +268,8 @@
     <string name="diary_today">Today</string>
     <string name="diary_remaining_kcal">Remaining</string>
     <string name="diary_add_food">Add food</string>
+    <string name="diary_which_meal_title">Which meal was it?</string>
+    <string name="diary_which_meal_body">This is not today, and the time you are logging at says nothing about when you ate.</string>
     <string name="diary_water">Water</string>
     <string name="diary_duplicate">Duplicate</string>
     <string name="diary_move">Move</string>

@@ -131,6 +131,38 @@ class HoraDaRefeicaoTest {
     }
 
     @Test
+    fun `corrigir a hora leva a refeicao atras`() = runTest {
+        // O caso do achado: o jantar registado de manhã caiu no pequeno-almoço, e quem
+        // escreve a hora certa a seguir estava a corrigir metade do problema.
+        repo.logFood(aveia, quantityGrams = 50.0, slot = MealSlot.BREAKFAST, epochDay = todayEpochDay())
+        val id = db.foodLogDao().exportRows().single().id
+
+        repo.updateEatenAt(id, eatenAtMin = 21 * 60)
+
+        val log = db.foodLogDao().exportRows().single()
+        assertEquals(MealSlot.DINNER, log.mealSlot, "dizer «comi às 21h» é dizer que foi ao jantar")
+        assertEquals(21 * 60, log.eatenAtMin)
+    }
+
+    @Test
+    fun `apagar a hora nao mexe na refeicao`() = runTest {
+        repo.logFood(aveia, quantityGrams = 50.0, slot = MealSlot.LUNCH, epochDay = todayEpochDay())
+        val id = db.foodLogDao().exportRows().single().id
+        repo.updateEatenAt(id, eatenAtMin = 21 * 60)
+
+        repo.updateEatenAt(id, eatenAtMin = null)
+
+        val log = db.foodLogDao().exportRows().single()
+        assertNull(log.eatenAtMin)
+        assertEquals(
+            MealSlot.DINNER,
+            log.mealSlot,
+            "sem hora não há de onde tirar a refeição, e devolvê-la ao que estava era " +
+                "esquecer o que a pessoa arrumou à mão",
+        )
+    }
+
+    @Test
     fun `as calorias rapidas seguem a mesma regra`() = runTest {
         repo.logQuickCalories(300, "bolo", MealSlot.SNACK, todayEpochDay())
         repo.logQuickCalories(300, "bolo de ontem", MealSlot.SNACK, todayEpochDay() - 1)

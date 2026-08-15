@@ -17,6 +17,7 @@ import pt.antares.app.core.model.LogOrigin
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.MINUTES_PER_DAY
+import pt.antares.app.core.util.MINUTES_PER_HOUR
 import pt.antares.app.core.util.currentMinuteOfDay
 import pt.antares.app.core.util.todayEpochDay
 import kotlin.math.roundToInt
@@ -156,16 +157,24 @@ class DiaryRepository(
     }
 
     /**
-     * Corrige a hora a que se comeu. Aceita nulo, que é como se apaga uma hora errada: a
-     * app trata «nunca houve hora» e «apagaram a hora» da mesma maneira — sem hora, sem
-     * janela alimentar —, e por isso não vale a pena distingui-los.
+     * Corrige a hora a que se comeu, e leva a refeição atrás.
+     *
+     * A refeição era inferida da hora a que se **registou**, e quem escrevia a hora certa
+     * depois ficava com o jantar no pequeno-almoço. Dizer «comi isto às 21h» é a afirmação
+     * mais forte que há sobre em que refeição isto entra, e ganha ao que a app assumiu.
+     *
+     * Apagar a hora não mexe na refeição: sem hora não há de onde a tirar, e devolvê-la ao
+     * que estava era esquecer o que a pessoa entretanto arrumou à mão.
      */
     suspend fun updateEatenAt(logId: String, eatenAtMin: Int?) = withContext(io) {
         require(eatenAtMin == null || eatenAtMin in 0 until MINUTES_PER_DAY) {
             "hora fora do dia: $eatenAtMin"
         }
         val log = foodLogDao.byId(logId) ?: return@withContext
-        foodLogDao.upsert(log.copy(eatenAtMin = eatenAtMin, updatedAt = now()))
+        val slot = eatenAtMin
+            ?.let { MealSlot.atHour(it / MINUTES_PER_HOUR) }
+            ?: log.mealSlot
+        foodLogDao.upsert(log.copy(eatenAtMin = eatenAtMin, mealSlot = slot, updatedAt = now()))
     }
 
     suspend fun move(logId: String, newSlot: MealSlot) = withContext(io) {
