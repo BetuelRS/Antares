@@ -341,7 +341,7 @@
     <string name="log_origin_ai_label">Lido de um rótulo por foto</string>
     <string name="log_detail_open">Ver informação nutricional</string>
     <string name="nutrition_salt">sal %1$s g</string>
-    <string name="nutrition_others">Gorduras, colesterol e outros</string>
+    <string name="nutrition_others">Gorduras, açúcares e outros</string>
     <string name="nutrition_over_limit">Atenção: %1$s está nos %2$d% da referência diária.</string>
     <string name="stat_micro_water">Água</string>
     <string name="stat_micro_alcohol">Álcool</string>

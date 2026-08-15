@@ -14,6 +14,7 @@ class NutritionBreakdownTest {
         vitC_mg,110,95,mg
         iron_mg,11,16,mg
         calcium_mg,950,950,mg
+        chloride_mg,3100,3100,mg
         """.trimIndent(),
     )
 
@@ -95,6 +96,40 @@ class NutritionBreakdownTest {
         )
         val pcts = b.highlights.mapNotNull { it.pctDv }
         assertEquals(pcts.sortedDescending(), pcts, "o destaque mais forte tem de vir primeiro")
+    }
+
+    @Test
+    fun cloroApareceNaListaMasNuncaComoDestaque() {
+
+        // Um alimento com 2 g de cloro por 100 g está nos 65% da referência — muito acima do
+        // limiar dos 15%. Continua a ser sal.
+        val b = NutritionFacts.build(mapOf("chloride_mg" to 2000.0), 100.0, reference, Sex.MALE)
+
+        assertEquals(listOf("chloride_mg"), b.minerals.map { it.key })
+        assertTrue(
+            b.highlights.isEmpty(),
+            "destacar «fonte de cloro» é elogiar um alimento salgado, e o aviso do sódio " +
+                "já fala da mesma sal",
+        )
+    }
+
+    @Test
+    fun osNutrientesNovosSaoLidosEEntramNoDetalhe() {
+
+        // Os dez que o H3 acrescentou. Nenhum tem referência da EFSA fora o cloro, e por
+        // isso saem sem percentagem — mas saem.
+        val b = NutritionFacts.build(
+            mapOf(
+                "omega3_g" to 1.2, "omega6_g" to 3.4, "epa_g" to 0.2, "dha_g" to 0.3,
+                "starch_g" to 20.0, "lactose_g" to 4.5, "polyols_g" to 1.0,
+                "retinol_ug" to 300.0, "betaCarotene_ug" to 900.0,
+            ),
+            amountG = 100.0, reference, Sex.MALE,
+        )
+        assertEquals(9, b.others.size, "os nove sem referência ficam todos no detalhe")
+        assertTrue(b.others.all { it.pctDv == null })
+        assertEquals("g", b.others.single { it.key == "epa_g" }.unit)
+        assertEquals("µg", b.others.single { it.key == "retinol_ug" }.unit)
     }
 
     @Test

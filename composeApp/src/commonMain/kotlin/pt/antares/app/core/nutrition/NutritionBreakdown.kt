@@ -42,6 +42,10 @@ data class NutritionBreakdown(
     // que é uma dose a atingir e não um limite a evitar.
     val highlights: List<MicroValue>
         get() = (micronutrients + labels.filter { it.key == Nutrients.FIBER })
+            // O cloro tem referência da EFSA e apareceria aqui como qualquer mineral. Mas
+            // 3,1 g de cloro são a outra metade de 5 g de sal: destacar «fonte de cloro»
+            // era elogiar um alimento salgado. O aviso do sódio já cobre a mesma sal.
+            .filter { it.key !in Nutrients.TETOS }
             .filter { (it.pctDv ?: 0) >= NutrientClaim.SOURCE_OF }
             .sortedByDescending { it.pctDv ?: 0 }
 
