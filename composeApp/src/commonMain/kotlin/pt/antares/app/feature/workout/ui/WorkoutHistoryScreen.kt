@@ -21,6 +21,9 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.util.dayShort
@@ -36,6 +39,7 @@ fun WorkoutHistoryScreen(
     viewModel: WorkoutHistoryViewModel = koinViewModel(),
 ) {
     val history by viewModel.history.collectAsState()
+    val unidades = rememberUnitSystem()
 
     Scaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.workout_history_title), onBack = onBack) },
@@ -61,7 +65,7 @@ fun WorkoutHistoryScreen(
                     ) {
                         Text(dayShort(epochMillisToLocalDate(s.startedAt)), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md))
                         Text(
-                            "${s.volume.roundToInt()} kg",
+                            weightWithUnit(s.volume, unidades),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

@@ -34,6 +34,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.portionUnitLabel
 import pt.antares.app.core.nutrition.MicroGap
 import pt.antares.app.core.nutrition.NutritionFactsCard
 import pt.antares.app.core.nutrition.provenanceRes
@@ -111,50 +112,28 @@ fun FoodDetailScreen(
                 )
             }
 
-            val unit = stringResource(if (food.isLiquid) Res.string.common_ml else Res.string.common_grams_short)
+            val unit = stringResource(portionUnitLabel(state.unitSystem, food.isLiquid))
             OutlinedTextField(
                 value = state.quantityText,
                 onValueChange = viewModel::setQuantity,
-                label = {
-                    Text(stringResource(if (food.isLiquid) Res.string.food_quantity_ml else Res.string.food_quantity_g))
-                },
+                label = { Text(stringResource(Res.string.food_quantity, unit)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
             )
 
             state.usualG?.let { usual ->
                 Text(
-                    stringResource(Res.string.food_usual_amount, usual.roundToInt(), unit),
+                    stringResource(
+                        Res.string.food_usual_amount,
+                        paraCampo(usual, state.unitSystem, food.isLiquid),
+                        unit,
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
-                verticalArrangement = Arrangement.spacedBy(Spacing.xs),
-            ) {
-
-                food.lastAmountG?.let { last ->
-                    val duplicate = last.roundToInt() == 100 ||
-                        last.roundToInt() == 15 ||
-                        food.servingGrams?.roundToInt() == last.roundToInt()
-                    if (!duplicate) {
-                        AssistChip(
-                            onClick = { viewModel.setQuick(last) },
-                            label = { Text(stringResource(Res.string.food_last_amount, last.roundToInt())) },
-                        )
-                    }
-                }
-                AssistChip(onClick = { viewModel.setQuick(100.0) }, label = { Text("100 $unit") })
-                food.servingGrams?.let { grams ->
-                    AssistChip(
-                        onClick = { viewModel.setQuick(grams) },
-                        label = { Text("${food.servingName ?: stringResource(Res.string.food_serving)} (${grams.roundToInt()} $unit)") },
-                    )
-                }
-                AssistChip(onClick = { viewModel.setQuick(15.0) }, label = { Text(stringResource(Res.string.food_tbsp)) })
-            }
+            AtalhosDePorcao(state = state, unit = unit, onPick = viewModel::setQuick)
 
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
@@ -196,3 +175,51 @@ private fun NutritionPanel(state: PortionState) {
         source = provenanceRes(FoodProvenance.of(food.source, food.id), hasMicros),
     )
 }
+
+/**
+ * As quantidades que se tocam em vez de escrever: a última usada, a porção de referência, a
+ * dose do rótulo e uma colher de sopa.
+ *
+ * As quantidades continuam a ser as mesmas em gramas — são as porções que a app conhece. O
+ * que muda com a preferência é o número que se lê ao lado.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) -> Unit) {
+    val food = state.food ?: return
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+    ) {
+        food.lastAmountG?.let { last ->
+            val duplicate = last.roundToInt() == PORCAO_BASE_G.roundToInt() ||
+                last.roundToInt() == COLHER_DE_SOPA_G.roundToInt() ||
+                food.servingGrams?.roundToInt() == last.roundToInt()
+            if (!duplicate) {
+                val texto = "${paraCampo(last, state.unitSystem, food.isLiquid)} $unit"
+                AssistChip(
+                    onClick = { onPick(last) },
+                    label = { Text(stringResource(Res.string.food_last_amount, texto)) },
+                )
+            }
+        }
+        AssistChip(
+            onClick = { onPick(PORCAO_BASE_G) },
+            label = { Text("${paraCampo(PORCAO_BASE_G, state.unitSystem, food.isLiquid)} $unit") },
+        )
+        food.servingGrams?.let { grams ->
+            val nome = food.servingName ?: stringResource(Res.string.food_serving)
+            val quanto = paraCampo(grams, state.unitSystem, food.isLiquid)
+            AssistChip(onClick = { onPick(grams) }, label = { Text("$nome ($quanto $unit)") })
+        }
+        AssistChip(
+            onClick = { onPick(COLHER_DE_SOPA_G) },
+            label = { Text(stringResource(Res.string.food_tbsp)) },
+        )
+    }
+}
+
+// A porção de referência das tabelas de composição, e a colher de sopa. Ficam em gramas
+// porque é assim que a app as guarda; o que muda com as unidades é o que se lê ao lado.
+private const val PORCAO_BASE_G = 100.0
+private const val COLHER_DE_SOPA_G = 15.0

@@ -19,6 +19,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.distanceUnitLabel
+import pt.antares.app.core.designsystem.paceUnitLabel
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -35,7 +39,6 @@ import pt.antares.app.generated.resources.run_totals_distance
 import pt.antares.app.generated.resources.run_totals_runs
 import pt.antares.app.generated.resources.run_totals_time
 import pt.antares.app.generated.resources.run_totals_title
-import pt.antares.app.generated.resources.run_unit_km
 
 @Composable
 fun RunHistoryScreen(
@@ -44,6 +47,7 @@ fun RunHistoryScreen(
     viewModel: RunHistoryViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val unidades = rememberUnitSystem()
 
     AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.run_history_title), onBack = onBack) },
@@ -64,7 +68,8 @@ fun RunHistoryScreen(
                     PrTile(stringResource(Res.string.run_totals_runs), "${state.totalRuns}", Modifier.weight(1f))
                     PrTile(
                         stringResource(Res.string.run_totals_distance),
-                        "${RunFormat.km(state.totalDistanceM)} ${stringResource(Res.string.run_unit_km)}",
+                        "${RunFormat.distance(state.totalDistanceM, unidades)} " +
+                            stringResource(distanceUnitLabel(unidades)),
                         Modifier.weight(1f),
                     )
                     PrTile(stringResource(Res.string.run_totals_time), RunFormat.clock(state.totalMovingS * 1000), Modifier.weight(1f))
@@ -80,13 +85,13 @@ fun RunHistoryScreen(
                     PrTile(stringResource(Res.string.run_pr_10k), state.pr10kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))
                 }
             }
-            items(state.runs, key = { it.id }) { run -> RunRow(run, onRun) }
+            items(state.runs, key = { it.id }) { run -> RunRow(run, unidades, onRun) }
         }
     }
 }
 
 @Composable
-private fun RunRow(run: RunEntity, onRun: (String) -> Unit) {
+private fun RunRow(run: RunEntity, unidades: UnitSystem, onRun: (String) -> Unit) {
     AntaresCard(modifier = Modifier.fillMaxWidth().clickable { onRun(run.id) }) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 
@@ -103,7 +108,7 @@ private fun RunRow(run: RunEntity, onRun: (String) -> Unit) {
                 )
             }
             Text(
-                "${RunFormat.km(run.distanceM)} ${stringResource(Res.string.run_unit_km)}",
+                "${RunFormat.distance(run.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
                 style = MaterialTheme.typography.titleMedium,
             )
         }

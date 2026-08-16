@@ -8,15 +8,52 @@ import kotlin.math.roundToInt
  * preferência de unidades muda o que se vê e nunca o que está gravado, por isso mudá-la
  * não pode alterar nenhum registo.
  */
+// Dezoito funções, e é para ter dezoito: são nove pares de ida e volta mais os três
+// apresentadores. Parti-las por ficheiros faria alguém converter num sítio e esquecer o
+// inverso no outro — que é precisamente o erro que uma conversão de unidades permite.
+@Suppress("TooManyFunctions")
 object UnitConversions {
     // Fatores exatos por definição, não arredondados: converter ida e volta tem de devolver
     // o mesmo número.
     const val KG_PER_LB = 0.45359237
     const val CM_PER_IN = 2.54
     const val KJ_PER_KCAL = 4.184
+    const val KM_PER_MI = 1.609344
+    const val G_PER_OZ = 28.349523125
+
+    // A onça líquida americana, que é a que interessa a quem escolhe o imperial numa app de
+    // nutrição. Não é a britânica, e não é 1/16 da onça de massa: são unidades diferentes com
+    // o mesmo nome.
+    const val ML_PER_FLOZ = 29.5735295625
 
     fun kgToLb(kg: Double): Double = kg / KG_PER_LB
     fun lbToKg(lb: Double): Double = lb * KG_PER_LB
+
+    fun kmToMi(km: Double): Double = km / KM_PER_MI
+    fun miToKm(mi: Double): Double = mi * KM_PER_MI
+
+    fun gToOz(grams: Double): Double = grams / G_PER_OZ
+    fun ozToG(oz: Double): Double = oz * G_PER_OZ
+
+    fun mlToFlOz(ml: Double): Double = ml / ML_PER_FLOZ
+    fun flOzToMl(flOz: Double): Double = flOz * ML_PER_FLOZ
+
+    /**
+     * A quantidade de uma porção como se escreve e como se lê. A app guarda gramas para o que
+     * é sólido e mililitros para o que é líquido, e o número é o mesmo nas duas — o que muda
+     * é a unidade em que se converte.
+     */
+    fun portionToDisplay(quantity: Double, system: UnitSystem, liquid: Boolean): Double = when {
+        system != UnitSystem.IMPERIAL -> quantity
+        liquid -> mlToFlOz(quantity)
+        else -> gToOz(quantity)
+    }
+
+    fun portionToStored(shown: Double, system: UnitSystem, liquid: Boolean): Double = when {
+        system != UnitSystem.IMPERIAL -> shown
+        liquid -> flOzToMl(shown)
+        else -> ozToG(shown)
+    }
 
     fun kcalToKj(kcal: Int): Int = (kcal * KJ_PER_KCAL).roundToInt()
     fun kjToKcal(kj: Int): Int = (kj / KJ_PER_KCAL).roundToInt()
@@ -33,4 +70,18 @@ object UnitConversions {
 
     fun weightToDisplay(kg: Double, system: UnitSystem): Double =
         if (system == UnitSystem.IMPERIAL) kgToLb(kg) else kg
+
+    fun distanceToDisplay(km: Double, system: UnitSystem): Double =
+        if (system == UnitSystem.IMPERIAL) kmToMi(km) else km
+
+    fun massToDisplay(grams: Double, system: UnitSystem): Double =
+        if (system == UnitSystem.IMPERIAL) gToOz(grams) else grams
+
+    /**
+     * O ritmo é o inverso da distância: uma milha é mais longa do que um quilómetro, por isso
+     * o mesmo ritmo dá **mais** segundos por milha. Dividir aqui em vez de multiplicar era um
+     * erro que ainda daria um número plausível.
+     */
+    fun paceToDisplay(secPerKm: Int, system: UnitSystem): Int =
+        if (system == UnitSystem.IMPERIAL) (secPerKm * KM_PER_MI).roundToInt() else secPerKm
 }

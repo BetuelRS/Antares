@@ -23,6 +23,8 @@ import pt.antares.app.core.calc.BodyStats
 import pt.antares.app.core.calc.MeasurementProgress
 import pt.antares.app.core.calc.WaistRisk
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
+import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.BmiScale
@@ -53,7 +55,11 @@ internal fun WeightCard(state: HealthProfileState, onWeightHistory: () -> Unit) 
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("${fmtG(weight)} kg", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md))
+            Text(
+                bodyWeightWithUnit(weight, rememberUnitSystem()),
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md),
+            )
             state.weeklyRateKg?.let { rate ->
 
                 val arrow = if (rate < 0) "↓" else "↑"

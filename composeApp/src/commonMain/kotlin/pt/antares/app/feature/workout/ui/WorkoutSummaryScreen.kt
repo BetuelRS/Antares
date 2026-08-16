@@ -17,6 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -31,6 +34,7 @@ fun WorkoutSummaryScreen(
     viewModel: WorkoutSummaryViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val unidades = rememberUnitSystem()
     LaunchedEffect(sessionId) { viewModel.load(sessionId) }
 
     Scaffold(
@@ -42,7 +46,7 @@ fun WorkoutSummaryScreen(
         ) {
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Stat(stringResource(Res.string.workout_summary_duration), "${state.durationMin} min")
-                Stat(stringResource(Res.string.workout_summary_volume), "${state.volume.roundToInt()} kg")
+                Stat(stringResource(Res.string.workout_summary_volume), weightWithUnit(state.volume, unidades))
                 Stat(stringResource(Res.string.workout_summary_sets), "${state.setCount}")
             }
 

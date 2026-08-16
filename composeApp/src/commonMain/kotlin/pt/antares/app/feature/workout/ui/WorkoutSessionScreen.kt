@@ -41,12 +41,18 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.SetLimits
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.database.entities.WorkoutSetEntity
+import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.util.UnitConversions
+import kotlin.math.roundToInt
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 
@@ -173,6 +179,7 @@ private fun ExerciseBlock(
     onDeleteSet: (String) -> Unit,
 ) {
     var warmup by remember(ex.exerciseId) { mutableStateOf(false) }
+    val unidades = rememberUnitSystem()
 
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -201,7 +208,8 @@ private fun ExerciseBlock(
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                 Text("${i + 1}", style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "${set.weightKg.toInt()} ${stringResource(Res.string.session_weight)} × ${set.reps} ${stringResource(Res.string.session_reps)}" +
+                    "${weightWithUnit(set.weightKg, unidades)} × ${set.reps} " +
+                        stringResource(Res.string.session_reps) +
                         (if (set.isWarmup) " · ${stringResource(Res.string.session_warmup)}" else ""),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium,
@@ -212,11 +220,12 @@ private fun ExerciseBlock(
             }
         }
 
-        SeriesFantasma(ex)
+        SeriesFantasma(ex, unidades)
 
         NewSetRow(
             prefill = ex.ghost.getOrNull(ex.setsDone),
             warmup = warmup,
+            unidades = unidades,
             onLog = onLog,
         )
     }
@@ -228,11 +237,10 @@ private fun ExerciseBlock(
  * rotina, que é a única outra coisa que se sabe sobre uma série que ainda não aconteceu.
  */
 @Composable
-private fun SeriesFantasma(ex: SessionExerciseUi) {
+private fun SeriesFantasma(ex: SessionExerciseUi, unidades: UnitSystem) {
     val emFalta = ex.targetSets - ex.setsDone
     if (emFalta <= 0) return
 
-    val kg = stringResource(Res.string.session_weight)
     val reps = stringResource(Res.string.session_reps)
     repeat(emFalta) { k ->
         val fantasma = ex.ghost.getOrNull(ex.setsDone + k)
@@ -244,7 +252,7 @@ private fun SeriesFantasma(ex: SessionExerciseUi) {
             )
             Text(
                 if (fantasma != null) {
-                    "${fantasma.weightKg.toInt()} $kg × ${fantasma.reps} $reps"
+                    "${weightWithUnit(fantasma.weightKg, unidades)} × ${fantasma.reps} $reps"
                 } else {
                     "${ex.repsMin}-${ex.repsMax} $reps"
                 },
@@ -287,12 +295,27 @@ private fun ExerciseRecolhido(ex: SessionExerciseUi, onSelect: () -> Unit) {
 }
 
 @Composable
-private fun NewSetRow(prefill: WorkoutSetEntity?, warmup: Boolean, onLog: (Double, Int, Double?, Boolean) -> Unit) {
-    var weight by remember(prefill) { mutableStateOf(prefill?.weightKg?.let { it.toInt().toString() } ?: "") }
+private fun NewSetRow(
+    prefill: WorkoutSetEntity?,
+    warmup: Boolean,
+    unidades: UnitSystem,
+    onLog: (Double, Int, Double?, Boolean) -> Unit,
+) {
+    // O que se escreve está na unidade escolhida; o que se grava está sempre em quilos. A
+    // volta e meia acontece aqui e em mais lado nenhum — a base nunca vê libras.
+    val paraKg = { valor: Double ->
+        if (unidades == UnitSystem.IMPERIAL) UnitConversions.lbToKg(valor) else valor
+    }
+
+    var weight by remember(prefill, unidades) {
+        mutableStateOf(
+            prefill?.weightKg?.let { UnitConversions.weightToDisplay(it, unidades).roundToInt().toString() } ?: "",
+        )
+    }
     var reps by remember(prefill) { mutableStateOf(prefill?.reps?.toString() ?: "") }
     var rpe by remember { mutableStateOf("") }
 
-    val w = weight.replace(',', '.').toDoubleOrNull()
+    val w = weight.replace(',', '.').toDoubleOrNull()?.let(paraKg)
     val r = reps.toIntOrNull()
     val rp = rpe.replace(',', '.').toDoubleOrNull()
 
@@ -306,7 +329,7 @@ private fun NewSetRow(prefill: WorkoutSetEntity?, warmup: Boolean, onLog: (Doubl
         OutlinedTextField(
             value = weight,
             onValueChange = { weight = it.filter { c -> c.isDigit() || c == '.' || c == ',' }.take(6) },
-            label = { Text(stringResource(Res.string.session_weight)) },
+            label = { Text(stringResource(weightUnitLabel(unidades))) },
             singleLine = true,
             isError = pesoMau,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -344,18 +367,20 @@ private fun NewSetRow(prefill: WorkoutSetEntity?, warmup: Boolean, onLog: (Doubl
         }
     }
 
-    ErroDaSerie(pesoMau = pesoMau, repsMau = repsMau, rpeMau = rpeMau)
+    ErroDaSerie(pesoMau = pesoMau, repsMau = repsMau, rpeMau = rpeMau, unidades = unidades)
 }
 
 /** Dizer porquê, em vez de deixar o botão cinzento sem explicação. */
 @Composable
-private fun ErroDaSerie(pesoMau: Boolean, repsMau: Boolean, rpeMau: Boolean) {
+private fun ErroDaSerie(pesoMau: Boolean, repsMau: Boolean, rpeMau: Boolean, unidades: UnitSystem) {
     if (!pesoMau && !repsMau && !rpeMau) return
     Text(
         text = when {
+            // O teto é em quilos; dizê-lo em quilos a quem escreve em libras seria pedir uma
+            // conta de cabeça para perceber o próprio erro.
             pesoMau -> stringResource(
                 Res.string.session_weight_out_of_range,
-                SetLimits.MAX_WEIGHT_KG.toInt().toString(),
+                weightWithUnit(SetLimits.MAX_WEIGHT_KG, unidades),
             )
             repsMau -> stringResource(
                 Res.string.session_reps_out_of_range,

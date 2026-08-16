@@ -85,6 +85,8 @@
     <string name="common_lb">lb</string>
     <string name="common_cm">cm</string>
     <string name="common_grams_short">g</string>
+    <string name="common_oz">oz</string>
+    <string name="common_floz">fl oz</string>
     <string name="common_ml">ml</string>
 
     <string name="macro_p">P</string>
@@ -133,12 +135,15 @@
     <string name="run_live_unlock">Unlock</string>
     <string name="run_live_finish">Finish (hold)</string>
     <string name="run_unit_km">km</string>
+    <string name="run_unit_mi">mi</string>
+    <string name="run_pace_unit">/km</string>
+    <string name="run_pace_unit_mi">/mi</string>
     <string name="run_summary_title">Run summary</string>
     <string name="run_summary_save">Save</string>
     <string name="run_summary_discard">Discard</string>
     <string name="run_summary_name_hint">Run name</string>
     <string name="run_summary_no_map">No map this time: GPS was good enough to measure distance and pace, but not to draw the route. It happens indoors and between tall buildings.</string>
-    <string name="run_summary_splits">Splits</string>
+    <string name="run_summary_splits">Splits per km</string>
     <string name="run_summary_elev">Elevation</string>
     <string name="run_history_empty">You haven't recorded any run yet.</string>
     <string name="run_pr_title">Records</string>
@@ -320,6 +325,7 @@
     <string name="food_create_cta">Create food</string>
 
     <string name="food_portion_title">Portion</string>
+    <string name="food_quantity">Amount (%1$s)</string>
     <string name="food_quantity_g">Amount (g)</string>
     <string name="food_quantity_ml">Amount (ml)</string>
     <string name="food_favorite">Favorite</string>
@@ -388,7 +394,7 @@
     <string name="stat_micro_iodine_ug">Iodine</string>
     <string name="nutrition_sugar">Sugars</string>
     <string name="nutrition_satfat">Saturated fat</string>
-    <string name="food_last_amount">Last: %1$d g</string>
+    <string name="food_last_amount">Last: %1$s</string>
 
     <string name="food_edit_duplicates_title">Something similar already exists. Tap to use it instead of creating.</string>
     <string name="food_edit_duplicates_kcal">%1$d kcal / 100 g</string>
@@ -607,7 +613,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="routine_reps_min">Reps min</string>
     <string name="routine_reps_max">Reps max</string>
     <string name="routine_rest_sec">Rest (s)</string>
-    <string name="routine_weight_optional">Target weight (kg, optional)</string>
+    <string name="routine_weight_optional">Target weight (%1$s, optional)</string>
     <string name="routine_superset">Superset</string>
     <string name="routine_superset_none">None</string>
     <string name="routine_superset_group">Group %1$d</string>
@@ -626,7 +632,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
     <string name="session_warmup">Warmup</string>
-    <string name="session_weight_out_of_range">Weight between 0 and %1$s kg. A slip here becomes a record.</string>
+    <string name="session_weight_out_of_range">Weight between 0 and %1$s. A slip here becomes a record.</string>
     <string name="session_reps_out_of_range">Reps between 1 and %1$s.</string>
     <string name="session_rpe_out_of_range">RPE runs from 1 to 10.</string>
     <string name="session_sets_progress">%1$d/%2$d</string>
@@ -1110,7 +1116,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="quick_add_name">What it was (optional)</string>
     <string name="quick_add_default_name">Quick entry</string>
     <string name="quick_add_note">This counts towards the day's calories but not the protein, carb and fat bars — we do not know what was in it.</string>
-    <string name="food_usual_amount">You usually log %1$d %2$s.</string>
+    <string name="food_usual_amount">You usually log %1$s %2$s.</string>
 
     <string name="progress_q_changing">Am I changing?</string>
     <string name="progress_q_consistent">Am I consistent?</string>

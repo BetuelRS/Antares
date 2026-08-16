@@ -18,6 +18,9 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
@@ -32,6 +35,7 @@ fun WorkoutDetailScreen(
     viewModel: WorkoutDetailViewModel = koinViewModel(),
 ) {
     val breakdown by viewModel.breakdown.collectAsState()
+    val unidades = rememberUnitSystem()
     LaunchedEffect(sessionId) { viewModel.load(sessionId) }
 
     Scaffold(
@@ -49,7 +53,7 @@ fun WorkoutDetailScreen(
             item {
                 AntaresCard(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        "${b.durationMin} min · ${b.volume.roundToInt()} kg",
+                        "${b.durationMin} min · ${weightWithUnit(b.volume, unidades)}",
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
@@ -60,7 +64,7 @@ fun WorkoutDetailScreen(
                     Text(ex.name, style = MaterialTheme.typography.titleSmall)
                     ex.sets.forEachIndexed { i, set ->
                         Text(
-                            "${i + 1}. ${set.weightKg.toInt()} kg × ${set.reps}" +
+                            "${i + 1}. ${weightWithUnit(set.weightKg, unidades)} × ${set.reps}" +
                                 (if (set.isWarmup) " · ${stringResource(Res.string.session_warmup)}" else ""),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,

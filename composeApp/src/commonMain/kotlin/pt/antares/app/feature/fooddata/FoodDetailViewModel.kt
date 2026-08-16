@@ -11,6 +11,8 @@ import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.model.Sex
+import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.util.UnitConversions
 import pt.antares.app.core.nutrition.EfsaReference
 import pt.antares.app.core.nutrition.Nutrients
 import pt.antares.app.core.nutrition.NutritionBreakdown
@@ -34,8 +36,14 @@ data class PortionState(
     val lifeStage: LifeStage? = null,
 
     val usualG: Double? = null,
+
+    /** Só muda o que se escreve e o que se lê. O que se grava está sempre em gramas. */
+    val unitSystem: UnitSystem = UnitSystem.METRIC,
 ) {
-    val quantityGrams: Double? get() = quantityText.replace(',', '.').toDoubleOrNull()?.takeIf { it in 1.0..5000.0 }
+    val quantityGrams: Double?
+        get() = quantityText.replace(',', '.').toDoubleOrNull()
+            ?.let { UnitConversions.portionToStored(it, unitSystem, food?.isLiquid == true) }
+            ?.takeIf { it in 1.0..5000.0 }
 
     val previewKcal: Int get() = scale { it.kcal.toDouble() }.roundToInt()
     val previewP: Double get() = scale { it.proteinG }
@@ -98,13 +106,14 @@ class FoodDetailViewModel(
             val stage = perfil?.lifeStage
 
             val usual = food?.let { diaryRepository.usualPortionOf(it.id) }
+            val unidades = perfil?.unitSystem ?: UnitSystem.METRIC
+            val inicial = (usual ?: food?.lastAmountG ?: food?.servingGrams) ?: PORCAO_DE_RECURSO_G
             _state.update {
                 it.copy(
                     loading = false,
                     food = food,
-
-                    quantityText = (usual ?: food?.lastAmountG ?: food?.servingGrams)
-                        ?.roundToInt()?.toString() ?: "100",
+                    unitSystem = unidades,
+                    quantityText = paraCampo(inicial, unidades, food?.isLiquid == true),
                     usualG = usual,
                     microsPer100 = micros,
                     reference = reference,
@@ -119,7 +128,9 @@ class FoodDetailViewModel(
         it.copy(quantityText = text.filter { ch -> ch.isDigit() || ch == '.' || ch == ',' }.take(6))
     }
 
-    fun setQuick(grams: Double) = _state.update { it.copy(quantityText = grams.roundToInt().toString()) }
+    fun setQuick(grams: Double) = _state.update {
+        it.copy(quantityText = paraCampo(grams, it.unitSystem, it.food?.isLiquid == true))
+    }
 
     fun toggleFavorite() {
         val food = _state.value.food ?: return
@@ -140,3 +151,18 @@ class FoodDetailViewModel(
         }
     }
 }
+
+/**
+ * O valor guardado para o que o campo mostra. Em onças fica com uma casa decimal: uma onça são
+ * quase trinta gramas, e arredondar ao inteiro dava saltos de trinta gramas por toque.
+ */
+fun paraCampo(quantidade: Double, system: UnitSystem, liquido: Boolean = false): String =
+    if (system == UnitSystem.IMPERIAL) {
+        val v = UnitConversions.portionToDisplay(quantidade, system, liquido)
+        ((v * UMA_CASA).roundToInt() / UMA_CASA.toDouble()).toString()
+    } else {
+        quantidade.roundToInt().toString()
+    }
+
+private const val UMA_CASA = 10
+private const val PORCAO_DE_RECURSO_G = 100.0

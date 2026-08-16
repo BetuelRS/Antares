@@ -37,6 +37,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.weightWithUnit
+import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.util.UnitConversions
+import kotlin.math.roundToInt
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -152,6 +158,7 @@ private fun RoutineItemCard(
     onDelete: () -> Unit,
 ) {
     val it = row.item
+    val unidades = rememberUnitSystem()
     var menu by remember { mutableStateOf(false) }
     var ssMenu by remember { mutableStateOf(false) }
 
@@ -161,7 +168,7 @@ private fun RoutineItemCard(
                 Text(row.exerciseName, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
                 Text(
                     "${it.targetSets}×${it.targetRepsMin}-${it.targetRepsMax} · ${it.restSec}s" +
-                        (it.targetWeightKg?.let { w -> " · ${w}kg" } ?: ""),
+                        (it.targetWeightKg?.let { w -> " · " + weightWithUnit(w, unidades) } ?: ""),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -207,7 +214,17 @@ private fun TargetsDialog(
     var min by remember { mutableStateOf(it.targetRepsMin.toString()) }
     var max by remember { mutableStateOf(it.targetRepsMax.toString()) }
     var rest by remember { mutableStateOf(it.restSec.toString()) }
-    var weight by remember { mutableStateOf(it.targetWeightKg?.toString() ?: "") }
+
+    // O alvo é escrito e lido na unidade escolhida, e guardado sempre em quilos.
+    val unidades = rememberUnitSystem()
+    var weight by remember {
+        mutableStateOf(
+            it.targetWeightKg?.let { kg ->
+                val v = UnitConversions.weightToDisplay(kg, unidades)
+                ((v * 10).roundToInt() / 10.0).toString()
+            } ?: "",
+        )
+    }
 
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
@@ -218,7 +235,13 @@ private fun TargetsDialog(
                 NumField(min, { min = it }, Res.string.routine_reps_min)
                 NumField(max, { max = it }, Res.string.routine_reps_max)
                 NumField(rest, { rest = it }, Res.string.routine_rest_sec)
-                NumField(weight, { weight = it }, Res.string.routine_weight_optional, decimal = true)
+                NumField(
+                    value = weight,
+                    onChange = { weight = it },
+                    label = Res.string.routine_weight_optional,
+                    labelArg = stringResource(weightUnitLabel(unidades)),
+                    decimal = true,
+                )
             }
         },
         confirmButton = {
@@ -229,7 +252,9 @@ private fun TargetsDialog(
                         sets.toIntOrNull() ?: it.targetSets,
                         min.toIntOrNull() ?: it.targetRepsMin,
                         max.toIntOrNull() ?: it.targetRepsMax,
-                        weight.replace(',', '.').toDoubleOrNull(),
+                        weight.replace(',', '.').toDoubleOrNull()?.let { v ->
+                            if (unidades == UnitSystem.IMPERIAL) UnitConversions.lbToKg(v) else v
+                        },
                         rest.toIntOrNull() ?: it.restSec,
                     )
                 },
@@ -247,11 +272,12 @@ private fun NumField(
     onChange: (String) -> Unit,
     label: org.jetbrains.compose.resources.StringResource,
     decimal: Boolean = false,
+    labelArg: String? = null,
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = { v -> onChange(v.filter { it.isDigit() || (decimal && (it == '.' || it == ',')) }.take(5)) },
-        label = { Text(stringResource(label)) },
+        label = { Text(if (labelArg == null) stringResource(label) else stringResource(label, labelArg)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = if (decimal) KeyboardType.Decimal else KeyboardType.Number),
         modifier = Modifier.fillMaxWidth(),

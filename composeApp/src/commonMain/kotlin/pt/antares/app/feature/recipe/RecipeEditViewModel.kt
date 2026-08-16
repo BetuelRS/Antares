@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.antares.app.core.calc.RecipeNutrition
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
+import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.util.UnitConversions
 
 data class RecipeEditState(
     val recipeId: String? = null,
@@ -77,8 +79,14 @@ class RecipeEditViewModel(
         }
     }
 
-    fun updateGrams(ingredient: RecipeIngredientEntity, gramsText: String) {
-        val grams = gramsText.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 } ?: return
+    fun updateGrams(
+        ingredient: RecipeIngredientEntity,
+        gramsText: String,
+        unidades: UnitSystem = UnitSystem.METRIC,
+    ) {
+        val grams = gramsText.replace(',', '.').toDoubleOrNull()
+            ?.let { UnitConversions.portionToStored(it, unidades, liquid = false) }
+            ?.takeIf { it > 0 } ?: return
         viewModelScope.launch { repository.updateIngredientGrams(ingredient, grams) }
     }
 

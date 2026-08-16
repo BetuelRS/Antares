@@ -21,6 +21,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.util.rememberFileSharer
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.distanceUnitLabel
+import pt.antares.app.core.designsystem.paceUnitLabel
+import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -30,7 +33,6 @@ import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.run_detail_export
 import pt.antares.app.generated.resources.run_summary_elev
 import pt.antares.app.generated.resources.run_summary_title
-import pt.antares.app.generated.resources.run_unit_km
 
 @Composable
 fun RunDetailScreen(
@@ -39,6 +41,7 @@ fun RunDetailScreen(
     viewModel: RunDetailViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val unidades = rememberUnitSystem()
     LaunchedEffect(runId) { viewModel.load(runId) }
     val shareFile = rememberFileSharer()
 
@@ -55,12 +58,12 @@ fun RunDetailScreen(
             }
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "${RunFormat.km(run.distanceM)} ${stringResource(Res.string.run_unit_km)}",
+                    "${RunFormat.distance(run.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Row(modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(RunFormat.clock(run.movingS * 1000))
-                    Text(RunFormat.pace(run.avgPaceSecPerKm))
+                    Text("${RunFormat.pace(run.avgPaceSecPerKm, unidades)} ${stringResource(paceUnitLabel(unidades))}")
                     Text("${run.kcal} kcal")
                 }
                 Text(

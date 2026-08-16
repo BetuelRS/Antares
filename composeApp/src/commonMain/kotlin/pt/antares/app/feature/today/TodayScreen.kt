@@ -44,6 +44,7 @@ import pt.antares.app.core.nutrition.microLabelRes
 import pt.antares.app.core.designsystem.AntaresColors
 import pt.antares.app.core.designsystem.cascadeIn
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
 import pt.antares.app.core.designsystem.success
@@ -324,7 +325,13 @@ fun TodayScreen(
             val run = lastRun
             if (run != null) {
                 Text(
-                    stringResource(Res.string.today_run_last, RunFormat.km(run.distanceM), run.kcal),
+                    // A distância aqui vinha sem unidade nenhuma — «Última: 3,50 · 250 kcal».
+                    stringResource(
+                        Res.string.today_run_last,
+                        "${RunFormat.distance(run.distanceM, state.unitSystem)} " +
+                            stringResource(distanceUnitLabel(state.unitSystem)),
+                        run.kcal,
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -44,6 +44,7 @@ import androidx.compose.ui.semantics.semantics
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.model.ExerciseOrigin
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.porcaoComUnidade
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresGhostCard
 import pt.antares.app.core.model.MealSlot
@@ -220,7 +221,7 @@ internal fun LogRow(
                 // e escrever «sem hora» em cada linha do histórico seria ruído.
                 val hora = log.eatenAtMin?.let { " · ${formatMinuteOfDay(it)}" }.orEmpty()
                 Text(
-                    "${log.quantityGrams.toInt()} ${stringResource(if (log.isLiquid) Res.string.common_ml else Res.string.common_grams_short)}" +
+                    "${porcaoComUnidade(log.quantityGrams, log.isLiquid)}" +
                         " · ${log.kcalSnapshot} ${stringResource(Res.string.common_kcal)}$hora",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

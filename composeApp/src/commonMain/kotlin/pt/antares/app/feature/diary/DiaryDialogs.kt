@@ -26,6 +26,10 @@ import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.clickable
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.portionUnitLabel
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.util.UnitConversions
+import pt.antares.app.feature.fooddata.paraCampo
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.model.MealSlot
@@ -170,8 +174,13 @@ internal fun EditLogDialog(
     onSave: (Double, Int?) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var text by remember { mutableStateOf(log.quantityGrams.toInt().toString()) }
-    val parsed = text.replace(',', '.').toDoubleOrNull()?.takeIf { it in 1.0..5000.0 }
+    // Escreve-se na unidade escolhida e grava-se sempre em gramas — a mesma volta e meia do
+    // ecrã do alimento, e pela mesma razão: a base não muda com uma preferência.
+    val unidades = rememberUnitSystem()
+    var text by remember(unidades) { mutableStateOf(paraCampo(log.quantityGrams, unidades, log.isLiquid)) }
+    val parsed = text.replace(',', '.').toDoubleOrNull()
+        ?.let { UnitConversions.portionToStored(it, unidades, log.isLiquid) }
+        ?.takeIf { it in 1.0..5000.0 }
 
     val previewKcal = parsed?.let { (log.kcalSnapshot * it / log.quantityGrams).toInt() }
 
@@ -187,7 +196,12 @@ internal fun EditLogDialog(
                     value = text,
                     onValueChange = { text = it.filter { ch -> ch.isDigit() || ch == '.' || ch == ',' }.take(6) },
                     label = {
-                        Text(stringResource(if (log.isLiquid) Res.string.food_quantity_ml else Res.string.food_quantity_g))
+                        Text(
+                            stringResource(
+                                Res.string.food_quantity,
+                                stringResource(portionUnitLabel(unidades, log.isLiquid)),
+                            ),
+                        )
                     },
                     singleLine = true,
                 )

@@ -12,10 +12,19 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.feature.running.domain.Split
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.run_pace_unit
 import pt.antares.app.generated.resources.run_summary_splits
 
+/**
+ * Os parciais ficam em quilómetros mesmo com o imperial escolhido, e o título di-lo.
+ *
+ * São medidos e gravados por quilómetro pelo motor da corrida: convertê-los para milhas era
+ * recalcular os parciais a partir do percurso, e não mudar um rótulo. Mostrar «parcial 1» com
+ * ritmo por milha seria pior do que isto — seria uma tabela com duas unidades ao mesmo tempo.
+ */
 @Composable
 fun SplitsTable(splits: List<Split>) {
     // Menos de um quilómetro não tem parciais para mostrar, e uma tabela com um cabeçalho e
@@ -29,7 +38,11 @@ fun SplitsTable(splits: List<Split>) {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text("${s.index}", style = MaterialTheme.typography.bodyMedium)
-                Text(RunFormat.pace(s.paceSecPerKm), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    RunFormat.pace(s.paceSecPerKm, UnitSystem.METRIC) +
+                        " ${stringResource(Res.string.run_pace_unit)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
                 Text("${s.kcal} kcal", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }

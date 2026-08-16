@@ -35,6 +35,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.database.entities.ProgressPhotoEntity
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
+import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -152,7 +154,7 @@ private fun ComparisonSide(foto: ProgressPhotoEntity, modifier: Modifier) {
         )
 
         foto.weightKgSnapshot?.let {
-            Text("${fmtG(it)} kg", style = MaterialTheme.typography.bodyMedium)
+            Text(bodyWeightWithUnit(it, rememberUnitSystem()), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -166,7 +168,7 @@ private fun PhotoCard(foto: ProgressPhotoEntity, onDelete: () -> Unit) {
                     Text(dayShortDated(foto.epochDay), style = MaterialTheme.typography.bodyLarge)
                     foto.weightKgSnapshot?.let {
                         Text(
-                            "${fmtG(it)} kg",
+                            bodyWeightWithUnit(it, rememberUnitSystem()),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

@@ -34,6 +34,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.portionUnitLabel
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.feature.fooddata.paraCampo
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -53,6 +56,7 @@ fun RecipeEditScreen(
     viewModel: RecipeEditViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val unidades = rememberUnitSystem()
     var confirmarApagar by remember { mutableStateOf(false) }
 
     LaunchedEffect(recipeId) { viewModel.start(recipeId) }
@@ -140,10 +144,12 @@ fun RecipeEditScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         maxLines = 2,
                     )
+                    // O ingrediente é sólido por definição — uma receita mede-se em massa —,
+                    // por isso vai sempre pela unidade de massa e nunca pela de volume.
                     OutlinedTextField(
-                        value = row.ingredient.grams.roundToInt().toString(),
-                        onValueChange = { viewModel.updateGrams(row.ingredient, it) },
-                        label = { Text(stringResource(Res.string.common_grams_short)) },
+                        value = paraCampo(row.ingredient.grams, unidades),
+                        onValueChange = { viewModel.updateGrams(row.ingredient, it, unidades) },
+                        label = { Text(stringResource(portionUnitLabel(unidades, liquid = false))) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.width(96.dp),

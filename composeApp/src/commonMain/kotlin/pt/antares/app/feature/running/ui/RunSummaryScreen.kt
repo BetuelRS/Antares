@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.distanceUnitLabel
+import pt.antares.app.core.designsystem.paceUnitLabel
+import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -34,7 +37,6 @@ import pt.antares.app.generated.resources.run_summary_name_hint
 import pt.antares.app.generated.resources.run_summary_save
 import pt.antares.app.generated.resources.run_summary_no_map
 import pt.antares.app.generated.resources.run_summary_title
-import pt.antares.app.generated.resources.run_unit_km
 
 @Composable
 fun RunSummaryScreen(
@@ -44,6 +46,7 @@ fun RunSummaryScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val m = state.metrics
+    val unidades = rememberUnitSystem()
     var name by remember { mutableStateOf("") }
 
     AntaresScaffold(
@@ -69,12 +72,15 @@ fun RunSummaryScreen(
             }
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "${RunFormat.km(m.distanceM)} ${stringResource(Res.string.run_unit_km)}",
+                    "${RunFormat.distance(m.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Row(modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("${RunFormat.clock(m.movingMs)}", style = MaterialTheme.typography.bodyLarge)
-                    Text(RunFormat.pace(m.avgPaceSecPerKm), style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        "${RunFormat.pace(m.avgPaceSecPerKm, unidades)} ${stringResource(paceUnitLabel(unidades))}",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                     Text("${m.kcal} kcal", style = MaterialTheme.typography.bodyLarge)
                 }
             }

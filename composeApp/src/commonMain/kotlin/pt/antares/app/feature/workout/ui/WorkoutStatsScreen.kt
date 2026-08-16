@@ -18,6 +18,9 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LabeledBar
@@ -31,6 +34,7 @@ fun WorkoutStatsScreen(
     viewModel: WorkoutStatsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val unidades = rememberUnitSystem()
 
     Scaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.workout_stats_title), onBack = onBack) },
@@ -52,7 +56,7 @@ fun WorkoutStatsScreen(
                             label = stringResource(muscleLabel(mv.muscle)),
                             value = mv.volume.toFloat(),
                             maxValue = maxV,
-                            valueText = "${mv.volume.roundToInt()} kg",
+                            valueText = weightWithUnit(mv.volume, unidades),
                         )
                     }
                 }
@@ -70,7 +74,11 @@ fun WorkoutStatsScreen(
                         ) {
 
                             Text(r.name, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md))
-                            Text("${r.oneRm.roundToInt()} kg", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                            Text(
+                                weightWithUnit(r.oneRm, unidades),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
                         }
                     }
                 }

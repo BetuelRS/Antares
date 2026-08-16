@@ -84,6 +84,10 @@ abstract class FluxoUiHarness {
      * ViewModel lá dentro — o Hoje traz o cartão do relatório semanal — e sem contexto
      * rebentam com «KoinApplication has not been started». Só se registam os ViewModels
      * que não são passados por parâmetro: o resto entra pela porta da frente, à vista.
+     *
+     * O `ProfileRepository` está aqui por causa do `rememberUnitSystem`: qualquer ecrã que
+     * mostre um peso, uma distância ou uma porção precisa de saber em que unidades a pessoa
+     * as quer, e vai buscá-lo pelo Koin em vez de o arrastar por doze ViewModels.
      */
     protected fun arrancaKoin(vararg extras: Module) {
         stopKoin()
@@ -91,6 +95,7 @@ abstract class FluxoUiHarness {
             modules(
                 module {
                     viewModel { Fabricas.coachViewModel(db, prefs, io) }
+                    single { Fabricas.profileRepository(db, io) }
                 },
                 *extras,
             )

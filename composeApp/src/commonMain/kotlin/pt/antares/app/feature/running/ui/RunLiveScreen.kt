@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.distanceUnitLabel
+import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.run_acquiring_gps
 import pt.antares.app.generated.resources.run_acquiring_hint
@@ -59,6 +61,7 @@ fun RunLiveScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val m = state.metrics
+    val unidades = rememberUnitSystem()
     val goalType by viewModel.goalType.collectAsState()
     val goalValue by viewModel.goalValue.collectAsState()
     var locked by remember { mutableStateOf(false) }
@@ -93,7 +96,7 @@ fun RunLiveScreen(
                 )
             }
             Text(
-                "${RunFormat.km(m.distanceM)} ${stringResource(Res.string.run_unit_km)}",
+                "${RunFormat.distance(m.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
@@ -122,11 +125,11 @@ fun RunLiveScreen(
             Spacer(Modifier.height(Spacing.md))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 Metric(RunFormat.clock(m.movingMs), stringResource(Res.string.run_live_time))
-                Metric(RunFormat.pace(m.avgPaceSecPerKm), stringResource(Res.string.run_live_pace_avg))
+                Metric(RunFormat.pace(m.avgPaceSecPerKm, unidades), stringResource(Res.string.run_live_pace_avg))
             }
             Spacer(Modifier.height(Spacing.sm))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                Metric(RunFormat.paceFromSpeed(m.curSpeedMps), stringResource(Res.string.run_live_pace_cur))
+                Metric(RunFormat.paceFromSpeed(m.curSpeedMps, unidades), stringResource(Res.string.run_live_pace_cur))
                 Metric("${m.kcal}", stringResource(Res.string.run_live_kcal))
             }
             Spacer(Modifier.height(Spacing.lg))

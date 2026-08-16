@@ -23,6 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.distanceUnitLabel
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.feature.running.domain.ActivityType
@@ -40,7 +43,6 @@ import pt.antares.app.generated.resources.run_goal_label
 import pt.antares.app.generated.resources.run_goal_min
 import pt.antares.app.generated.resources.run_goal_none
 import pt.antares.app.generated.resources.run_goal_time
-import pt.antares.app.generated.resources.run_unit_km
 import pt.antares.app.generated.resources.run_gps_off_body
 import pt.antares.app.generated.resources.run_gps_off_cta
 import pt.antares.app.generated.resources.run_gps_off_title
@@ -122,6 +124,7 @@ private fun RunHub(
     val oemShown by viewModel.oemWarningShown.collectAsState()
     val goalType by viewModel.goalType.collectAsState()
     val goalValue by viewModel.goalValue.collectAsState()
+    val unidades = rememberUnitSystem()
 
     if (!oemShown) {
         AlertDialog(
@@ -172,11 +175,15 @@ private fun RunHub(
         }
         if (goalType == RunGoalType.DISTANCE) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                listOf(3000, 5000, 10000).forEach { m ->
+                // A meta guarda-se sempre em metros; o que muda são as distâncias redondas
+                // que se oferecem. Três, cinco e dez quilómetros não são distâncias redondas
+                // para quem corre em milhas, e converter as métricas dava «3,1 mi».
+                val metas = if (unidades == UnitSystem.IMPERIAL) METAS_MI else METAS_KM
+                metas.forEach { (metros, valor) ->
                     FilterChip(
-                        selected = goalValue == m,
-                        onClick = { viewModel.setGoal(RunGoalType.DISTANCE, m) },
-                        label = { Text("${m / 1000} ${stringResource(Res.string.run_unit_km)}") },
+                        selected = goalValue == metros,
+                        onClick = { viewModel.setGoal(RunGoalType.DISTANCE, metros) },
+                        label = { Text("$valor ${stringResource(distanceUnitLabel(unidades))}") },
                     )
                 }
             }
@@ -229,3 +236,8 @@ private fun PermissionRationale(
         }
     }
 }
+
+// Metas em metros, com o número redondo que se mostra ao lado. As milhas não são conversões
+// das métricas: são as distâncias que quem corre em milhas reconhece.
+private val METAS_KM = listOf(3000 to 3, 5000 to 5, 10000 to 10)
+private val METAS_MI = listOf(1609 to 1, 4828 to 3, 8047 to 5)

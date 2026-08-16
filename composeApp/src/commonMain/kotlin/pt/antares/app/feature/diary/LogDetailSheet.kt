@@ -17,6 +17,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.porcaoComUnidade
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.fmtG
@@ -59,8 +60,7 @@ fun LogDetailSheet(
         ) {
             Text(log.nameSnapshot, style = MaterialTheme.typography.titleLarge)
             Text(
-                "${log.quantityGrams.roundToInt()} " +
-                    stringResource(if (log.isLiquid) Res.string.common_ml else Res.string.common_grams_short),
+                porcaoComUnidade(log.quantityGrams, log.isLiquid),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
