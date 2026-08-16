@@ -17,6 +17,28 @@ Nada por lançar.
 
 ---
 
+## [2.0.1] — 2026-08-16
+
+Três defeitos que nenhum dos 1338 testes apanhou, porque os três só se vêem num ecrã. Foram
+encontrados a correr a 2.0.0 num emulador — de telemóvel, deitado e de tablet — logo a seguir
+a lançá-la. Esquema da base: **v25**, sem alterações.
+
+### Fixed
+
+- **O gráfico do peso parecia uma subida onde havia descida.** Os extremos do eixo vertical
+  estavam um em cada ponta, mesmo por cima das datas: lia-se «69,2 a 18 de julho» e «75,6 a 12
+  de agosto» por baixo de uma tendência que dizia menos 1,5 kg. Passam a ser uma linha só, com
+  o eixo escrito por extenso.
+- **Em libras, o volume do treino mostrava quilos.** O «kg» estava escrito dentro do texto, e
+  o número ia em bruto.
+- **A distância misturava vírgula com ponto.** «6,87 mi» ao lado de «153.9 lb» no mesmo cartão:
+  a corrida tinha a vírgula fixa e o resto da app escolhe o separador pelo idioma.
+- **Num tablet, as listas dentro do painel de detalhe apertavam-se a três colunas** onde só
+  cabiam duas. Contavam pela janela; passam a contar pela caixa onde estão.
+- O botão de criar exercício tapava a última linha da lista.
+
+---
+
 ## [2.0.0] — 2026-08-16
 
 Cinquenta tarefas decididas item a item a 2026-08-14 e feitas uma a uma, cada uma com o seu

@@ -23,9 +23,26 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.0.0"
+    const val CURRENT = "2.0.1"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.0.1",
+            title = "Três coisas que só se viam num ecrã",
+            titleEn = "Three things you could only see on a screen",
+            highlights = listOf(
+                "Em libras, o volume do treino mostrava quilos, e a distância misturava vírgula com ponto",
+                "O gráfico do peso tinha os extremos da escala onde deviam estar o primeiro e o " +
+                    "último dia — parecia uma subida onde havia descida",
+                "Num tablet, as listas dentro do painel de detalhe apertavam-se em três colunas onde só cabiam duas",
+            ),
+            highlightsEn = listOf(
+                "In pounds, workout volume still showed kilograms, and distance mixed comma with dot",
+                "The weight chart put the scale's ends where the first and last day should be " +
+                    "— it read as a rise where there was a fall",
+                "On a tablet, lists inside the detail pane squeezed into three columns where only two fit",
+            ),
+        ),
         AppVersion(
             name = "2.0.0",
             title = "A app roda, e as contas ficam honestas",
