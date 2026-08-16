@@ -80,6 +80,29 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
         val lastSeenVersion = androidx.datastore.preferences.core.stringPreferencesKey("last_seen_version")
         val goalEngineNoticePending = booleanPreferencesKey("goal_engine_notice_pending")
+        val onboardingSkipped =
+            androidx.datastore.preferences.core.stringSetPreferencesKey("onboarding_skipped")
+    }
+
+    /**
+     * Os passos do arranque que a pessoa saltou, pelo nome da constante.
+     *
+     * Guarda-se para a app poder pedir o que falta quando fizer falta: o que ficou por
+     * responder entrou no perfil como valor por omissão, e um valor por omissão que ninguém
+     * sabe que lá está é indistinguível de uma resposta.
+     */
+    val onboardingSkipped: Flow<Set<String>> =
+        dataStore.data.map { it[Keys.onboardingSkipped] ?: emptySet() }
+
+    suspend fun setOnboardingSkipped(steps: Set<String>) {
+        dataStore.edit { it[Keys.onboardingSkipped] = steps }
+    }
+
+    suspend fun clearOnboardingSkipped(step: String) {
+        dataStore.edit { prefs ->
+            val restantes = (prefs[Keys.onboardingSkipped] ?: emptySet()) - step
+            prefs[Keys.onboardingSkipped] = restantes
+        }
     }
 
     val lastSeenVersion: Flow<String> =

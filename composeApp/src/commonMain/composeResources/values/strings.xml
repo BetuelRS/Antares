@@ -209,6 +209,15 @@
     <string name="onb_plan_sum_invalid">A soma dos macros tem de bater na meta (±2%).</string>
     <string name="onb_plan_reset">Repor sugestão</string>
     <string name="onb_finish">Concluir</string>
+    <string name="onb_skip">Saltar</string>
+    <string name="onb_pending_title">Respostas em falta</string>
+    <string name="onb_pending_body">Saltaste %1$s no arranque. A app respondeu por ti para poder mostrar números, e são palpites.</string>
+    <string name="onb_pending_cta">Responder agora</string>
+    <string name="onb_pending_dismiss">Não perguntar</string>
+    <string name="onb_pending_activity">o nível de atividade</string>
+    <string name="onb_pending_goal">o objetivo</string>
+    <string name="onb_pending_goal_weight">o peso-alvo</string>
+    <string name="onb_pending_rate">o ritmo</string>
 
     <string name="today_target_title">Meta diária</string>
     <string name="today_weight_title">Peso</string>

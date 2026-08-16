@@ -59,6 +59,7 @@ import pt.antares.app.core.designsystem.components.StatRing
 import pt.antares.app.core.designsystem.components.SupernovaCelebration
 import pt.antares.app.feature.fasting.data.toSnapshot
 import pt.antares.app.feature.fasting.domain.FastingMachine
+import pt.antares.app.feature.onboarding.OnboardingStep
 import pt.antares.app.feature.running.ui.RunFormat
 import pt.antares.app.feature.fasting.ui.FastingFormat
 import pt.antares.app.generated.resources.Res
@@ -72,6 +73,7 @@ fun TodayScreen(
     onOpenFasting: () -> Unit,
     onOpenRun: () -> Unit,
     onOpenCoach: () -> Unit,
+    onOpenProfile: () -> Unit,
 
     onQuickLog: (pt.antares.app.core.model.MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -> Unit,
 
@@ -88,6 +90,7 @@ fun TodayScreen(
     val weeklyBudget by viewModel.weeklyBudget.collectAsState()
     val dailyGap by viewModel.dailyGap.collectAsState()
     val aguaDaComidaMl by viewModel.aguaDaComidaMl.collectAsState()
+    val porResponder by viewModel.porResponder.collectAsState()
     val haptic = LocalHapticFeedback.current
 
     LaunchedEffect(Unit) { viewModel.syncHealthConnect() }
@@ -145,6 +148,14 @@ fun TodayScreen(
 
         if (streak.current >= 1) {
             StreakCard(streak = streak)
+        }
+
+        if (porResponder.isNotEmpty()) {
+            RespostasEmFaltaCard(
+                passos = porResponder,
+                onAnswer = onOpenProfile,
+                onDismiss = viewModel::naoPerguntar,
+            )
         }
 
         AntaresCard(modifier = Modifier.fillMaxWidth()) {
@@ -433,6 +444,54 @@ private fun DailyGapCard(gap: DailyGap, onOpen: (String) -> Unit) {
             color = MaterialTheme.colorScheme.primary,
         )
     }
+}
+
+/**
+ * O que ficou por responder no arranque, e que a app respondeu por si para poder mostrar
+ * números. Aparece por cima da meta diária de propósito: é essa meta que os palpites
+ * decidem, e um palpite que ninguém sabe que lá está lê-se como uma resposta.
+ *
+ * Duas saídas: responder, ou dizer à app que não pergunte mais — que também é uma resposta,
+ * e por isso ela não volta a insistir.
+ */
+@Composable
+private fun RespostasEmFaltaCard(
+    passos: List<OnboardingStep>,
+    onAnswer: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(Res.string.onb_pending_title), style = MaterialTheme.typography.titleMedium)
+        val nomes = passos.map { stringResource(nomeDoPasso(it)) }
+        Text(
+            stringResource(Res.string.onb_pending_body, nomes.joinToString(", ")),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = Spacing.xs),
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        ) {
+            SecondaryButton(
+                text = stringResource(Res.string.onb_pending_dismiss),
+                onClick = onDismiss,
+                modifier = Modifier.weight(1f),
+            )
+            PrimaryButton(
+                text = stringResource(Res.string.onb_pending_cta),
+                onClick = onAnswer,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+private fun nomeDoPasso(step: OnboardingStep) = when (step) {
+    OnboardingStep.ACTIVITY -> Res.string.onb_pending_activity
+    OnboardingStep.GOAL -> Res.string.onb_pending_goal
+    OnboardingStep.GOAL_WEIGHT -> Res.string.onb_pending_goal_weight
+    // Os obrigatórios nunca chegam aqui: não há como saltá-los. O ritmo é o que sobra.
+    else -> Res.string.onb_pending_rate
 }
 
 @Composable

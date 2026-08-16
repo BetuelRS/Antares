@@ -4,6 +4,19 @@ import pt.antares.app.core.model.GoalType
 
 object OnboardingFlow {
 
+    /**
+     * O que a app não consegue inventar. Sem sexo, data de nascimento, altura e peso não há
+     * metabolismo basal nenhum para calcular, e todo o resto da app fica a mostrar zeros.
+     *
+     * Tudo o resto tem um valor por omissão defensável, e por isso pode ser saltado: eram
+     * nove passos obrigatórios à frente de quem só queria ver a app.
+     */
+    val OBRIGATORIOS = setOf(OnboardingStep.SEX, OnboardingStep.BIRTH, OnboardingStep.BODY)
+
+    /** O primeiro ecrã não faz pergunta nenhuma — saltá-lo é continuar. */
+    fun canSkip(step: OnboardingStep): Boolean =
+        step != OnboardingStep.WELCOME && step !in OBRIGATORIOS
+
     fun applies(step: OnboardingStep, goalType: GoalType?): Boolean = when (step) {
         OnboardingStep.RATE, OnboardingStep.GOAL_WEIGHT -> goalType != GoalType.MAINTAIN
         else -> true

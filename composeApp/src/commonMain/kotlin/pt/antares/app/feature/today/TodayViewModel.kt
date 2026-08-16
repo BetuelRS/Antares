@@ -36,6 +36,8 @@ import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.feature.diary.DiaryRepository
 import pt.antares.app.feature.exercise.ExerciseRepository
 import pt.antares.app.feature.fasting.data.FastingRepository
+import pt.antares.app.feature.onboarding.OnboardingFlow
+import pt.antares.app.feature.onboarding.OnboardingStep
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.feature.running.data.RunRepository
@@ -93,7 +95,7 @@ class TodayViewModel(
     routineRepository: RoutineRepository,
     fastingRepository: FastingRepository,
     runRepository: RunRepository,
-    preferences: AppPreferences,
+    private val preferences: AppPreferences,
     private val statsRepository: pt.antares.app.feature.stats.NutritionStatsRepository,
     private val health: HealthRepository,
     private val healthPublisher: HealthPublisher,
@@ -108,6 +110,29 @@ class TodayViewModel(
             health.stepsToday(start, start + DAY_MS)
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /**
+     * As perguntas do arranque que ficaram por responder e ainda fazem falta.
+     *
+     * Aparecem aqui, e não nas definições, porque é neste ecrã que está o número que elas
+     * decidem: a meta diária de quem saltou o nível de atividade é a de um sedentário, e
+     * nada no ecrã o diria.
+     *
+     * O preview do plano sai da lista — saltá-lo é aceitar o plano, não deixar uma pergunta
+     * por responder —, e sai também o que o objetivo atual tornou irrelevante.
+     */
+    val porResponder: StateFlow<List<OnboardingStep>> = combine(
+        preferences.onboardingSkipped,
+        profileRepository.observeProfile(),
+    ) { saltados, perfil ->
+        saltados.mapNotNull { nome -> OnboardingStep.entries.firstOrNull { it.name == nome } }
+            .filter { it != OnboardingStep.PLAN_PREVIEW && OnboardingFlow.applies(it, perfil?.goalType) }
+            .sortedBy { OnboardingStep.entries.indexOf(it) }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    fun naoPerguntar() {
+        viewModelScope.launch { preferences.setOnboardingSkipped(emptySet()) }
+    }
 
     fun syncHealthConnect() {
         viewModelScope.launch {

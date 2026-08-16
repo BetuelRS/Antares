@@ -28,6 +28,7 @@ import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.datastore.AppPreferences
 import pt.antares.app.core.datastore.StoredAiUsage
 import pt.antares.app.core.util.todayEpochDay
+import pt.antares.app.feature.onboarding.OnboardingStep
 import pt.antares.app.feature.profile.data.ProfileRepository
 
 data class ProfileSettingsState(
@@ -156,11 +157,24 @@ class ProfileSettingsViewModel(
         if (cm in 100..250) save { it.copy(heightCm = cm) }
     }
 
-    fun setActivity(level: ActivityLevel) = save { it.copy(activityLevel = level) }
+    fun setActivity(level: ActivityLevel) {
+        respondido(OnboardingStep.ACTIVITY)
+        save { it.copy(activityLevel = level) }
+    }
+
+    /**
+     * Responder aqui apaga a pergunta que ficou pendente do arranque. Sem isto, o cartão do
+     * Hoje continuava a pedir uma resposta que já tinha sido dada — e um aviso que não
+     * desaparece quando se faz o que ele pede deixa de ser lido.
+     */
+    private fun respondido(step: OnboardingStep) {
+        viewModelScope.launch { preferences.clearOnboardingSkipped(step.name) }
+    }
 
     // Mudar de objetivo repõe o ritmo por omissão desse objetivo. Manter o anterior daria
     // um défice a quem acabou de escolher ganhar peso.
     fun setGoal(goal: GoalType) = save {
+        respondido(OnboardingStep.GOAL)
 
         val rate = when (goal) {
             GoalType.MAINTAIN -> GoalRates.MAINTAIN
@@ -173,6 +187,7 @@ class ProfileSettingsViewModel(
     }
 
     fun setWeeklyRate(kgPerWeek: Double) = save { profile ->
+        respondido(OnboardingStep.RATE)
         val magnitude = abs(kgPerWeek)
 
         // A recomposição conta como perda: o défice é pequeno, mas é défice — o que muda é
@@ -183,6 +198,7 @@ class ProfileSettingsViewModel(
     }
 
     fun setGoalWeight(kg: Double?) = save {
+        respondido(OnboardingStep.GOAL_WEIGHT)
         it.copy(goalWeightKg = kg?.takeIf { v -> v in PLAUSIBLE_GOAL_WEIGHT_KG })
     }
 

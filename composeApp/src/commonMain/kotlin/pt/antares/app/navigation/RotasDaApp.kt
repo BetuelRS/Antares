@@ -30,6 +30,7 @@ internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
             onOpenFasting = { navController.navigate(Route.Fasting) { launchSingleTop = true } },
             onOpenRun = { navController.navigateToTab(Route.Run) },
             onOpenCoach = { navController.navigate(Route.CoachReport()) },
+            onOpenProfile = { navController.navigate(Route.ProfileSettings) },
             onQuickLog = { slot, epochDay, mode, query ->
                 navController.navigate(Route.FoodSearch(slot.name, epochDay, mode.name, query))
             },

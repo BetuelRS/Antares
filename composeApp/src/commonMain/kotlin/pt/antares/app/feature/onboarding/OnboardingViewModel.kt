@@ -54,6 +54,8 @@ data class OnboardingState(
     val macrosEdited: Boolean = false,
 
     val preview: Targets? = null,
+    /** Os passos que ficaram por responder. Vão para as preferências ao gravar o perfil. */
+    val skipped: Set<OnboardingStep> = emptySet(),
     val underage: Boolean = false,
     val saving: Boolean = false,
     val done: Boolean = false,
@@ -201,6 +203,47 @@ class OnboardingViewModel(
         if (nextStep == OnboardingStep.PLAN_PREVIEW) recomputePreview(fillMacros = true)
     }
 
+    /**
+     * Saltar o passo. O valor por omissão entra à mesma — o perfil não admite buracos —, mas
+     * fica registado que foi a app a responder e não a pessoa, para poder ser perguntado
+     * mais tarde. Só os passos que [OnboardingFlow.canSkip] deixa.
+     *
+     * As omissões são deliberadamente as que não empurram ninguém: sedentário é o
+     * multiplicador mais baixo, e manter não abre défice nenhum. Um palpite alto de mais
+     * dava uma meta de calorias que parece uma resposta e sabota um défice em silêncio.
+     */
+    fun skip() {
+        val s = _state.value
+        if (!OnboardingFlow.canSkip(s.step)) return
+
+        _state.update {
+            when (it.step) {
+                OnboardingStep.ACTIVITY -> it.copy(activityLevel = ActivityLevel.SEDENTARY)
+                OnboardingStep.GOAL -> it.copy(goalType = GoalType.MAINTAIN, goalRateKcal = GoalRates.MAINTAIN)
+                OnboardingStep.GOAL_WEIGHT -> it.copy(goalWeightInput = "")
+                OnboardingStep.RATE -> it.copy(goalRateKcal = ritmoPorOmissao(it.goalType))
+                else -> it
+            }.copy(skipped = it.skipped + it.step)
+        }
+
+        if (s.step == OnboardingStep.PLAN_PREVIEW) {
+            save()
+            return
+        }
+        // Saltar o objetivo muda o caminho: sem objetivo o percurso ainda passava pelo
+        // peso-alvo e pelo ritmo, e com «manter» deixa de passar.
+        val seguinte = OnboardingFlow.next(_state.value.step, _state.value.goalType) ?: return
+        _state.update { it.copy(step = seguinte) }
+        if (seguinte == OnboardingStep.PLAN_PREVIEW) recomputePreview(fillMacros = true)
+    }
+
+    private fun ritmoPorOmissao(goal: GoalType?): Int = when (goal) {
+        GoalType.LOSE -> NutritionCalc.kcalPerDayFromWeeklyKg(-GoalRates.DEFAULT_LOSE_KG_WEEK)
+        GoalType.GAIN -> NutritionCalc.kcalPerDayFromWeeklyKg(GoalRates.DEFAULT_GAIN_KG_WEEK)
+        GoalType.RECOMP -> NutritionCalc.kcalPerDayFromWeeklyKg(-GoalRates.RECOMP_KG_WEEK)
+        else -> GoalRates.MAINTAIN
+    }
+
     fun back(): Boolean {
         val s = _state.value
         val previous = OnboardingFlow.previous(s.step, s.goalType) ?: return false
@@ -275,6 +318,9 @@ class OnboardingViewModel(
             // primeiro ecrã abriria com um peso de recurso em vez do que se acabou de dar.
             repository.upsertWeight(todayEpochDay(), weight, note = null)
             repository.saveProfile(profile)
+            // O que foi saltado fica escrito: é o que permite à app voltar a perguntar, em
+            // vez de o valor por omissão passar por resposta para sempre.
+            preferences.setOnboardingSkipped(s.skipped.map { it.name }.toSet())
             // A marca fica em último: um arranque interrompido a meio recomeça do princípio
             // em vez de deixar a app com meio perfil e o arranque dado por feito.
             preferences.setOnboardingDone(true)

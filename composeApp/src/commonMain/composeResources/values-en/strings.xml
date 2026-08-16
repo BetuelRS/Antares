@@ -209,6 +209,15 @@
     <string name="onb_plan_sum_invalid">Macro energy must match the target (±2%).</string>
     <string name="onb_plan_reset">Reset to suggestion</string>
     <string name="onb_finish">Finish</string>
+    <string name="onb_skip">Skip</string>
+    <string name="onb_pending_title">Unanswered questions</string>
+    <string name="onb_pending_body">You skipped %1$s during setup. The app answered for you so it could show numbers, and those are guesses.</string>
+    <string name="onb_pending_cta">Answer now</string>
+    <string name="onb_pending_dismiss">Don't ask</string>
+    <string name="onb_pending_activity">activity level</string>
+    <string name="onb_pending_goal">your goal</string>
+    <string name="onb_pending_goal_weight">your target weight</string>
+    <string name="onb_pending_rate">your pace</string>
 
     <string name="today_target_title">Daily target</string>
     <string name="today_weight_title">Weight</string>

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +27,7 @@ import pt.antares.app.generated.resources.onb_body_weight
 import pt.antares.app.generated.resources.onb_finish
 import pt.antares.app.generated.resources.onb_goal_lose
 import pt.antares.app.generated.resources.onb_sex_male
+import pt.antares.app.generated.resources.onb_skip
 import pt.antares.app.generated.resources.onb_welcome_cta
 import pt.antares.app.testing.FluxoUiHarness
 import kotlin.test.assertEquals
@@ -133,6 +135,63 @@ class OnboardingFluxoUiTest : FluxoUiHarness() {
                 "o basal, e sem ele as contas do primeiro dia não correm",
         )
     }
+
+    @Test
+    fun `saltar o que nao e obrigatorio deixa a app utilizavel, e diz o que ficou por responder`() =
+        runComposeUiTest {
+            val vm = OnboardingViewModel(repositorio(), prefs)
+            val textos = Textos()
+            var terminou = false
+
+            setContent {
+                textos.ler(
+                    Res.string.onb_welcome_cta,
+                    Res.string.common_continue,
+                    Res.string.onb_skip,
+                    Res.string.onb_sex_male,
+                    Res.string.onb_body_height,
+                    Res.string.onb_body_weight,
+                    Res.string.common_kg,
+                )
+                OnboardingScreen(onFinished = { terminou = true }, viewModel = vm)
+            }
+
+            val continuar = textos[Res.string.common_continue]
+            val saltar = textos[Res.string.onb_skip]
+
+            onNodeWithText(textos[Res.string.onb_welcome_cta]).performClick()
+            onNodeWithText(textos[Res.string.onb_sex_male]).performClick()
+            onNodeWithText(continuar).performClick()
+            vm.setBirth(NASCIMENTO_EPOCH_DAY)
+            onNodeWithText(continuar).performClick()
+            onNodeWithText(textos[Res.string.onb_body_height]).performTextInput("180")
+            val rotuloPeso = "${textos[Res.string.onb_body_weight]} (${textos[Res.string.common_kg]})"
+            onNodeWithText(rotuloPeso).performTextInput("80")
+            onNodeWithText(continuar).performClick()
+
+            // Atividade, objetivo e plano. Saltar o objetivo põe «manter», e manter faz o
+            // percurso deixar de passar pelo peso-alvo e pelo ritmo — daí serem três e não
+            // cinco toques.
+            repeat(3) { onNodeWithText(saltar).performClick() }
+
+            waitUntil("saltar não chegou ao fim do arranque", ESPERA_MS) { terminou }
+
+            val perfil = assertNotNull(runBlocking { db.userProfileDao().get() }, "não guardou perfil nenhum")
+            assertEquals(
+                ActivityLevel.SEDENTARY,
+                perfil.activityLevel,
+                "a omissão da atividade tem de ser a mais baixa: um palpite alto inflaciona " +
+                    "a meta e sabota um défice em silêncio",
+            )
+            assertEquals(GoalType.MAINTAIN, perfil.goalType)
+            assertEquals(0, perfil.goalRateKcal, "saltar o objetivo abriu um défice que ninguém pediu")
+
+            assertEquals(
+                setOf("ACTIVITY", "GOAL", "PLAN_PREVIEW"),
+                runBlocking { prefs.onboardingSkipped.first() },
+                "sem isto escrito, o valor por omissão passa por resposta para sempre",
+            )
+        }
 
     private companion object {
         // 1990-06-15, uma idade adulta que não fica perto de nenhum limite do fluxo.

@@ -98,6 +98,32 @@ class OnboardingFlowTest {
     }
 
     @Test
+    fun `dos nove passos so quatro sao obrigatorios`() {
+
+        // Sexo, nascimento e corpo — que traz altura e peso — mais o primeiro ecrã, que não
+        // pergunta nada. É o que a app precisa para calcular o basal; o resto tem omissão.
+        val obrigatorios = OnboardingStep.entries.filterNot { OnboardingFlow.canSkip(it) }
+        assertEquals(
+            listOf(
+                OnboardingStep.WELCOME,
+                OnboardingStep.SEX,
+                OnboardingStep.BIRTH,
+                OnboardingStep.BODY,
+            ),
+            obrigatorios,
+            "eram nove passos obrigatórios à frente de quem só queria ver a app",
+        )
+    }
+
+    @Test
+    fun `os cinco que sobram podem ser saltados`() {
+        val saltaveis = OnboardingStep.entries.filter { OnboardingFlow.canSkip(it) }
+        assertEquals(5, saltaveis.size)
+        assertTrue(OnboardingStep.ACTIVITY in saltaveis)
+        assertTrue(OnboardingStep.PLAN_PREVIEW in saltaveis)
+    }
+
+    @Test
     fun `a barra chega ao fim para todos os objetivos`() {
 
         for (goal in listOf(GoalType.LOSE, GoalType.MAINTAIN, GoalType.GAIN)) {

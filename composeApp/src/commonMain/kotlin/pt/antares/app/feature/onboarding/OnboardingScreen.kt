@@ -34,6 +34,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -92,11 +93,21 @@ fun OnboardingScreen(
             .padding(Spacing.xl),
     ) {
 
+        // O saltar fica em cima, ao lado da barra, e não junto ao continuar: são nove
+        // passos, e quem quer só ver a app não devia ter de descer o ecrã para sair de uma
+        // pergunta que a app sabe responder sozinha.
         val progress = OnboardingFlow.progress(state.step, state.goalType)
-        LinearProgressIndicator(
-            progress = { progress },
-            modifier = Modifier.fillMaxWidth(),
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier.weight(1f),
+            )
+            if (OnboardingFlow.canSkip(state.step)) {
+                TextButton(onClick = viewModel::skip) {
+                    Text(stringResource(Res.string.onb_skip))
+                }
+            }
+        }
         Spacer(Modifier.height(Spacing.xl))
 
         Column(

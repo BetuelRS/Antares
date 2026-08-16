@@ -70,6 +70,7 @@ class AnelDoDiaUiTest : FluxoUiHarness() {
                 onOpenFasting = {},
                 onOpenRun = {},
                 onOpenCoach = {},
+                onOpenProfile = {},
                 onQuickLog = { _, _, _, _ -> },
                 onOpenGap = {},
                 viewModel = vm,
