@@ -459,6 +459,8 @@
     <string name="stat_title">Nutrition stats</string>
     <string name="stat_period_day">Day</string>
     <string name="stat_period_week">Week</string>
+    <string name="stat_period_month">Month</string>
+    <string name="stat_period_year">Year</string>
     <string name="stat_no_data">Not enough data. Log meals with nutrition info to see coverage.</string>
     <string name="stat_micro_no_data">no data</string>
     <string name="stat_micro_partial">Only %1$d% of what you logged has this nutrient measured.</string>

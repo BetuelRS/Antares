@@ -20,7 +20,22 @@ import pt.antares.app.core.nutrition.MicroCoverage
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.feature.profile.data.ProfileRepository
 
-enum class StatsPeriod { DAY, WEEK }
+/**
+ * Os períodos que a cobertura de micronutrientes aceita, com quantos dias cada um conta.
+ *
+ * Eram dois — dia e semana — enquanto o Progresso já oferecia 30 dias, três meses e um ano.
+ * Um micronutriente não se lê num dia: o fígado guarda vitamina A durante meses, e uma
+ * cobertura de 40% num dia pode ser 100% no mês. Era o período curto a dar o alarme falso.
+ */
+enum class StatsPeriod(val dias: Int) {
+    DAY(1),
+    WEEK(7),
+    MONTH(30),
+
+    // 365, e não 366: um dia de diferença não muda uma média, e a alternativa era saber em
+    // que ano estamos para uma conta que é sempre aproximada.
+    YEAR(365),
+}
 
 data class StatsState(
     val loading: Boolean = true,
@@ -66,7 +81,7 @@ class NutritionStatsViewModel(
     private suspend fun compute(p: StatsPeriod): StatsState {
         val reference = efsa ?: statsRepository.loadReference().also { efsa = it }
         val today = todayEpochDay()
-        val dias = if (p == StatsPeriod.WEEK) DAYS_IN_WEEK else 1
+        val dias = p.dias
         val from = today - (dias - 1)
         val totals = statsRepository.totals(from, today)
         val perfil = profileRepository.observeProfile().first()
@@ -85,9 +100,5 @@ class NutritionStatsViewModel(
             measuredAnyPct = totals.measuredAnyPct,
             includesOldCatalogue = rebuiltDay != null && from < rebuiltDay,
         )
-    }
-
-    private companion object {
-        const val DAYS_IN_WEEK = 7
     }
 }

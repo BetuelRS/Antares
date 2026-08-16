@@ -459,6 +459,8 @@
     <string name="stat_title">Estatísticas nutricionais</string>
     <string name="stat_period_day">Dia</string>
     <string name="stat_period_week">Semana</string>
+    <string name="stat_period_month">Mês</string>
+    <string name="stat_period_year">Ano</string>
     <string name="stat_no_data">Sem dados suficientes. Regista refeições com informação nutricional para veres a cobertura.</string>
     <string name="stat_micro_no_data">sem dados</string>
     <string name="stat_micro_partial">Só %1$d% do que registaste traz este nutriente medido.</string>

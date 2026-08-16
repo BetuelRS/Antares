@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -62,20 +64,20 @@ fun NutritionStatsScreen(
             verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
             item {
-                Row(
+                // Em linha corrida e não numa `Row`: quatro períodos não cabem na largura
+                // de um telemóvel estreito, e a quarta ficava cortada em vez de descer.
+                FlowRow(
                     modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.md),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.xs),
                 ) {
-                    FilterChip(
-                        selected = state.period == StatsPeriod.DAY,
-                        onClick = { viewModel.setPeriod(StatsPeriod.DAY) },
-                        label = { Text(stringResource(Res.string.stat_period_day)) },
-                    )
-                    FilterChip(
-                        selected = state.period == StatsPeriod.WEEK,
-                        onClick = { viewModel.setPeriod(StatsPeriod.WEEK) },
-                        label = { Text(stringResource(Res.string.stat_period_week)) },
-                    )
+                    StatsPeriod.entries.forEach { periodo ->
+                        FilterChip(
+                            selected = state.period == periodo,
+                            onClick = { viewModel.setPeriod(periodo) },
+                            label = { Text(stringResource(periodLabel(periodo))) },
+                        )
+                    }
                 }
             }
 
@@ -244,3 +246,10 @@ private const val MICRO_GAP_DP = 3
 // Só se nota a falta de análise deste nutriente quando ela é bem pior do que a do dia todo;
 // caso contrário repetia-se o aviso que já está no topo do ecrã.
 private const val COBERTURA_NOTAVEL_ABAIXO = 15
+
+private fun periodLabel(p: StatsPeriod) = when (p) {
+    StatsPeriod.DAY -> Res.string.stat_period_day
+    StatsPeriod.WEEK -> Res.string.stat_period_week
+    StatsPeriod.MONTH -> Res.string.stat_period_month
+    StatsPeriod.YEAR -> Res.string.stat_period_year
+}
