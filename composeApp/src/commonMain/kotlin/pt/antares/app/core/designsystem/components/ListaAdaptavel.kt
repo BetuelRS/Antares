@@ -1,7 +1,9 @@
 package pt.antares.app.core.designsystem.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -12,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import pt.antares.app.core.designsystem.LarguraDaJanela
-import pt.antares.app.core.designsystem.LocalLarguraDaJanela
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.larguraDaJanela
 
 /**
  * Quantas colunas cabem numa lista. Uma lista de linhas curtas — um exercício, uma corrida,
@@ -46,15 +48,25 @@ fun ListaAdaptavel(
     state: LazyGridState = rememberLazyGridState(),
     content: LazyGridScope.() -> Unit,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(colunasDaLista(LocalLarguraDaJanela.current)),
-        modifier = modifier,
-        state = state,
-        contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(espaco),
-        horizontalArrangement = Arrangement.spacedBy(espaco),
-        content = content,
-    )
+    // Mede a caixa onde está, e não a janela. A diferença aparece dentro do
+    // [PainelDeListaEDetalhe]: a lista fica com dois quintos do tablet, e a contar pela
+    // janela desenhava três colunas em 682 dp — nomes partidos em três linhas ao lado de
+    // miniaturas espremidas. Visto no emulador, não nos testes.
+    //
+    // O casco continua a decidir-se pela janela: onde vive a navegação é uma pergunta sobre
+    // o ecrã todo, e o número de colunas de uma lista é uma pergunta sobre a lista.
+    BoxWithConstraints(modifier = modifier) {
+        val colunas = colunasDaLista(larguraDaJanela(maxWidth.value.toInt()))
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(colunas),
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            contentPadding = contentPadding,
+            verticalArrangement = Arrangement.spacedBy(espaco),
+            horizontalArrangement = Arrangement.spacedBy(espaco),
+            content = content,
+        )
+    }
 }
 
 /**

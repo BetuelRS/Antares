@@ -126,7 +126,9 @@ fun ExerciseLibraryScreen(
             } else {
                 ListaAdaptavel(
                     modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = Spacing.lg),
+                    // O botão de criar exercício flutua por cima da lista, e sem esta folga
+                    // tapava a última linha — que é sempre um exercício que existe.
+                    contentPadding = PaddingValues(bottom = FOLGA_DO_BOTAO_DP.dp),
                     espaco = Spacing.xs,
                 ) {
                     items(results, key = { it.id }) { ex ->
@@ -207,3 +209,6 @@ private fun ExerciseListItem(ex: Exercise, onClick: () -> Unit) {
         }
     }
 }
+
+// Altura do botão flutuante estendido mais a margem que ele guarda do fundo.
+private const val FOLGA_DO_BOTAO_DP = 88

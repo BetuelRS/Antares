@@ -1,14 +1,15 @@
 package pt.antares.app.core.designsystem.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import pt.antares.app.core.designsystem.LarguraDaJanela
-import pt.antares.app.core.designsystem.LocalLarguraDaJanela
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.larguraDaJanela
 
 /**
  * Quantas colunas de cartões cabem. Param nas duas mesmo numa janela larga, e não é o mesmo
@@ -49,24 +50,29 @@ fun GrelhaDeCartoes(
     cabecalho: (@Composable () -> Unit)? = null,
     conteudo: GrelhaDeCartoesScope.() -> Unit,
 ) {
-    val colunas = colunasDeCartoes(LocalLarguraDaJanela.current)
     val scope = GrelhaDeCartoesScope().apply(conteudo)
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(espaco)) {
-        cabecalho?.invoke()
+    // Mede a caixa e não a janela, como na [ListaAdaptavel]: se estes cartões forem um dia
+    // para dentro de um painel, a conta tem de ser sobre o espaço que eles têm mesmo.
+    BoxWithConstraints(modifier = modifier) {
+        val colunas = colunasDeCartoes(larguraDaJanela(maxWidth.value.toInt()))
 
-        if (colunas <= 1) {
-            scope.cartoes.forEach { it() }
-        } else {
-            Row(horizontalArrangement = Arrangement.spacedBy(espaco)) {
-                for (coluna in 0 until colunas) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(espaco),
-                    ) {
-                        scope.cartoes
-                            .filterIndexed { indice, _ -> indice % colunas == coluna }
-                            .forEach { it() }
+        Column(verticalArrangement = Arrangement.spacedBy(espaco)) {
+            cabecalho?.invoke()
+
+            if (colunas <= 1) {
+                scope.cartoes.forEach { it() }
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(espaco)) {
+                    for (coluna in 0 until colunas) {
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(espaco),
+                        ) {
+                            scope.cartoes
+                                .filterIndexed { indice, _ -> indice % colunas == coluna }
+                                .forEach { it() }
+                        }
                     }
                 }
             }

@@ -1,6 +1,8 @@
 package pt.antares.app.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
@@ -8,6 +10,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.unit.dp
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -67,6 +70,33 @@ class ListaAdaptavelUiTest {
         val primeiro = onNodeWithText("um").getUnclippedBoundsInRoot().top
         assertTrue(onNodeWithText("dois").getUnclippedBoundsInRoot().top > primeiro)
     }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    fun `dentro de um painel estreito a lista conta pelo painel e nao pela janela`() =
+        runComposeUiTest {
+            // O defeito que isto guarda foi visto no emulador, não aqui: dentro do painel de
+            // lista+detalhe — dois quintos de um tablet — a lista desenhava três colunas,
+            // porque contava pela janela. Nomes partidos em três linhas ao lado de miniaturas
+            // espremidas.
+            setContent {
+                ProvedorDaJanela {
+                    // 700 dp é o que sobra para a lista num tablet de 1706 dp: dois quintos.
+                    Box(Modifier.width(700.dp)) {
+                        ListaAdaptavel(modifier = Modifier.fillMaxSize()) {
+                            items(itens) { Text(it) }
+                        }
+                    }
+                }
+            }
+
+            val um = onNodeWithText("um").getUnclippedBoundsInRoot()
+            assertEquals(um.top, onNodeWithText("dois").getUnclippedBoundsInRoot().top)
+            assertTrue(
+                onNodeWithText("tres").getUnclippedBoundsInRoot().top > um.top,
+                "cabiam três colunas em 700 dp — a lista continua a medir a janela",
+            )
+        }
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp")
