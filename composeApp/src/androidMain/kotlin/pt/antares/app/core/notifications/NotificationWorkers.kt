@@ -19,11 +19,15 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.context.GlobalContext
 import pt.antares.app.MainActivity
+import pt.antares.app.core.calc.DailyGoals
 import pt.antares.app.core.calc.EndOfDayProtein
+import pt.antares.app.core.database.daos.ExerciseLogDao
 import pt.antares.app.core.database.daos.FoodLogDao
+import pt.antares.app.core.database.daos.WaterLogDao
 import pt.antares.app.core.database.daos.WeightLogDao
 import pt.antares.app.core.datastore.AppPreferences
 import pt.antares.app.core.model.MealSlot
+import pt.antares.app.core.model.Sex
 import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.core.util.todayEpochDay
 
@@ -178,6 +182,67 @@ class EndOfDayProteinWorker(ctx: Context, params: WorkerParameters) : CoroutineW
 
     companion object {
         const val NOTIF_ID = 5320
+    }
+}
+
+/**
+ * O lembrete de água. É o único dos quatro canais que nasce desligado, e o único cujo
+ * intervalo a pessoa escolhe.
+ *
+ * O texto diz quanto falta e não manda beber: «faltam 900 ml para os 2500 de hoje» é um
+ * número que se pode discutir; «bebe água» é uma ordem de uma app.
+ */
+class WaterReminderWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
+
+    override suspend fun doWork(): Result {
+        val koin = GlobalContext.get()
+        val prefs = koin.get<AppPreferences>()
+        val ctx = applicationContext.appLocalized()
+
+        if (!prefs.waterReminder.first()) return Result.success()
+        if (!canPostNotifications(ctx)) return Result.success()
+        if (inQuietHours(prefs)) return Result.success()
+
+        val agora = Clock.System.now().toEpochMilliseconds()
+        val passou = NotificationRules.waterIntervalElapsed(
+            nowMs = agora,
+            lastNotifiedMs = prefs.lastWaterNotifAt.first(),
+            intervalHours = prefs.waterReminderIntervalH.first(),
+        )
+        if (!passou) return Result.success()
+
+        val today = todayEpochDay()
+        val bebido = koin.get<WaterLogDao>().byDay(today)?.ml ?: 0
+
+        // A meta escolhida à mão manda sobre a calculada, como no ecrã de hoje. Sem
+        // pesagem, o peso de recurso evita uma meta de zero — que daria um aviso por dia
+        // a dizer que falta nada.
+        val meta = prefs.waterGoalOverrideMl.first()
+            ?: DailyGoals.waterMl(
+                sex = koin.get<ProfileRepository>().profileOnce()?.sex ?: Sex.MALE,
+                weightKg = koin.get<WeightLogDao>().latest()?.weightKg
+                    ?: ProfileRepository.DEFAULT_WEIGHT_KG,
+                treinouHoje = koin.get<ExerciseLogDao>().observeDayKcal(today).first() > 0,
+            )
+
+        val falta = NotificationRules.waterGapToNotify(bebido, meta) ?: return Result.success()
+
+        AppNotificationChannels.ensureAll(ctx)
+        postNotification(
+            ctx,
+            AppNotificationChannels.WATER,
+            id = NOTIF_ID,
+            title = ctx.getString(R.string.notif_water_title),
+            text = ctx.getString(R.string.notif_water_text, falta, meta),
+        )
+        // Só depois de avisar: um aviso saltado pelas horas de silêncio ou pela meta já
+        // cumprida não pode gastar o intervalo do próximo.
+        prefs.setLastWaterNotifAt(agora)
+        return Result.success()
+    }
+
+    companion object {
+        const val NOTIF_ID = 5330
     }
 }
 

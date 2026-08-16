@@ -734,6 +734,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_notif_weighin_desc">Uma vez por semana, se ainda não te pesaste.</string>
     <string name="settings_notif_coach">Relatório do coach</string>
     <string name="settings_notif_coach_desc">Avisa quando o relatório semanal está pronto.</string>
+    <string name="settings_notif_water">Lembrete de água</string>
+    <string name="settings_notif_water_desc">Diz quanto falta para a meta do dia. Vem desligado.</string>
+    <string name="settings_notif_water_every">%1$d h</string>
     <string name="settings_notif_quiet">Silêncio noturno</string>
     <string name="settings_notif_quiet_desc">Não notificar das 22:00 às 08:00.</string>
     <string name="settings_section_fasting">Jejum</string>

@@ -4,6 +4,7 @@ import pt.antares.app.core.model.MealSlot
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class NotificationRulesTest {
@@ -71,6 +72,60 @@ class NotificationRulesTest {
     fun `toggle desligado nunca lembra`() {
         assertFalse(
             NotificationRules.shouldRemindMeal(MealSlot.DINNER, loggedSlots = emptySet(), enabled = false),
+        )
+    }
+
+    @Test
+    fun `a agua avisa com o que falta`() {
+        assertEquals(1500, NotificationRules.waterGapToNotify(consumedMl = 1000, goalMl = 2500))
+    }
+
+    @Test
+    fun `com a meta cumprida nao ha nada a dizer`() {
+        assertNull(
+            NotificationRules.waterGapToNotify(consumedMl = 2500, goalMl = 2500),
+            "avisar quem já bebeu o que devia é o caminho mais curto para desligar o lembrete",
+        )
+        assertNull(NotificationRules.waterGapToNotify(consumedMl = 3000, goalMl = 2500))
+    }
+
+    @Test
+    fun `nao avisa por meio copo`() {
+        assertNull(
+            NotificationRules.waterGapToNotify(consumedMl = 2400, goalMl = 2500),
+            "cem mililitros não justificam interromper ninguém",
+        )
+        assertEquals(250, NotificationRules.waterGapToNotify(consumedMl = 2250, goalMl = 2500))
+    }
+
+    @Test
+    fun `sem meta nao ha aviso`() {
+        assertNull(NotificationRules.waterGapToNotify(consumedMl = 0, goalMl = 0))
+    }
+
+    @Test
+    fun `o intervalo escolhido e o que manda`() {
+        val agora = 1_000_000_000L
+        val umaHora = 3_600_000L
+
+        assertFalse(
+            NotificationRules.waterIntervalElapsed(agora, agora - 2 * umaHora, intervalHours = 3),
+            "duas horas depois, com três escolhidas, ainda não é altura",
+        )
+        assertTrue(NotificationRules.waterIntervalElapsed(agora, agora - 3 * umaHora, intervalHours = 3))
+    }
+
+    @Test
+    fun `o primeiro aviso do dia nao espera por nada`() {
+        assertTrue(NotificationRules.waterIntervalElapsed(1_000L, lastNotifiedMs = 0L, intervalHours = 6))
+    }
+
+    @Test
+    fun `um relogio acertado para tras nao cala a app para sempre`() {
+        // O último aviso ficou no futuro. Sem isto, ninguém voltava a ser avisado até o
+        // tempo o alcançar — que pode ser meses.
+        assertTrue(
+            NotificationRules.waterIntervalElapsed(1_000L, lastNotifiedMs = 9_000_000L, intervalHours = 2),
         )
     }
 }

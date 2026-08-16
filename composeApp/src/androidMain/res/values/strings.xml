@@ -35,6 +35,11 @@
     <string name="notif_protein_title">Proteína a fechar o dia</string>
     <string name="notif_protein_text">Faltam %1$dg de proteína para a tua meta de hoje.</string>
 
+    <string name="notif_channel_water_name">Lembrete de água</string>
+    <string name="notif_channel_water_desc">Diz quanto falta para a meta de água do dia. Vem desligado.</string>
+    <string name="notif_water_title">Água</string>
+    <string name="notif_water_text">Faltam %1$d ml para os %2$d de hoje.</string>
+
     <string name="widget_title">Antares</string>
     <string name="widget_kcal_remaining">%1$d kcal restantes</string>
     <string name="widget_kcal_none">Define as tuas metas</string>

@@ -26,6 +26,7 @@ import pt.antares.app.core.model.Sex
 import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.datastore.AppPreferences
+import pt.antares.app.core.datastore.WATER_REMINDER_DEFAULT_H
 import pt.antares.app.core.datastore.StoredAiUsage
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.feature.onboarding.OnboardingStep
@@ -46,6 +47,10 @@ data class ProfileSettingsState(
     val weighInReminder: Boolean = true,
     val coachReadyNotif: Boolean = true,
     val quietHours: Boolean = true,
+
+    // Desligado por omissão, ao contrário dos outros três.
+    val waterReminder: Boolean = false,
+    val waterReminderIntervalH: Int = WATER_REMINDER_DEFAULT_H,
 
     val aiUsage: StoredAiUsage? = null,
     val saved: Boolean = false,
@@ -83,7 +88,10 @@ class ProfileSettingsViewModel(
             preferences.weighInReminder,
             preferences.coachReadyNotif,
             preferences.quietHoursEnabled,
-        ) { meal, weighIn, coach, quiet -> NotifFlags(meal, weighIn, coach, quiet) }
+            combine(preferences.waterReminder, preferences.waterReminderIntervalH) { on, h -> on to h },
+        ) { meal, weighIn, coach, quiet, agua ->
+            NotifFlags(meal, weighIn, coach, quiet, agua.first, agua.second)
+        }
 
         val withAi = combine(
             base,
@@ -100,6 +108,8 @@ class ProfileSettingsViewModel(
                 weighInReminder = flags.weighIn,
                 coachReadyNotif = flags.coach,
                 quietHours = flags.quiet,
+                waterReminder = flags.water,
+                waterReminderIntervalH = flags.waterIntervalH,
             )
         }
             // `saved` sobrevive à emissão nova: é o aviso de "guardado" no ecrã, e vem de
@@ -114,7 +124,15 @@ class ProfileSettingsViewModel(
         val weighIn: Boolean,
         val coach: Boolean,
         val quiet: Boolean,
+        val water: Boolean,
+        val waterIntervalH: Int,
     )
+
+    fun setWaterReminder(enabled: Boolean) =
+        viewModelScope.launch { preferences.setWaterReminder(enabled) }.let {}
+
+    fun setWaterReminderInterval(hours: Int) =
+        viewModelScope.launch { preferences.setWaterReminderIntervalH(hours) }.let {}
 
     fun setMealReminders(enabled: Boolean) =
         viewModelScope.launch { preferences.setMealReminders(enabled) }.let {}

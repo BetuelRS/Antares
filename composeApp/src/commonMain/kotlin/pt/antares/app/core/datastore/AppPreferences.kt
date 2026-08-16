@@ -15,6 +15,11 @@ import pt.antares.app.core.notifications.NotificationRules
 
 const val MEAL_NAME_MAX = 24
 
+// De duas em duas horas é o mais curto que ainda não é assédio; de seis em seis já não chega
+// para mudar nada num dia. Três horas dá quatro ou cinco avisos entre acordar e deitar.
+val WATER_REMINDER_HOURS = 2..6
+const val WATER_REMINDER_DEFAULT_H = 3
+
 // Uma chave por refeição, derivada do nome da constante da enumeração. Renomear um valor
 // de [MealSlot] faz a app esquecer o nome que a pessoa tinha escolhido.
 private fun mealNameKey(slot: MealSlot) = stringPreferencesKey("meal_name_" + slot.name)
@@ -82,6 +87,11 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         val goalEngineNoticePending = booleanPreferencesKey("goal_engine_notice_pending")
         val onboardingSkipped =
             androidx.datastore.preferences.core.stringSetPreferencesKey("onboarding_skipped")
+        val waterReminderEnabled = booleanPreferencesKey("notif_water")
+        val waterReminderIntervalH =
+            androidx.datastore.preferences.core.intPreferencesKey("notif_water_interval_h")
+        val lastWaterNotifAt =
+            androidx.datastore.preferences.core.longPreferencesKey("notif_water_last_at")
     }
 
     /**
@@ -192,6 +202,33 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setWeighInReminder(enabled: Boolean) {
         dataStore.edit { it[Keys.weighInReminderEnabled] = enabled }
+    }
+
+    /**
+     * O lembrete de água. **Desligado por omissão**, ao contrário dos outros três: a app não
+     * decide sozinha que alguém quer ser interrompida de duas em duas horas por causa de um
+     * copo de água. Quem o quer, liga-o.
+     */
+    val waterReminder: Flow<Boolean> =
+        dataStore.data.map { it[Keys.waterReminderEnabled] ?: false }
+
+    suspend fun setWaterReminder(enabled: Boolean) {
+        dataStore.edit { it[Keys.waterReminderEnabled] = enabled }
+    }
+
+    val waterReminderIntervalH: Flow<Int> =
+        dataStore.data.map { it[Keys.waterReminderIntervalH] ?: WATER_REMINDER_DEFAULT_H }
+
+    suspend fun setWaterReminderIntervalH(hours: Int) {
+        dataStore.edit { it[Keys.waterReminderIntervalH] = hours.coerceIn(WATER_REMINDER_HOURS) }
+    }
+
+    /** Quando o último aviso de água saiu. É o que faz o intervalo escolhido valer. */
+    val lastWaterNotifAt: Flow<Long> =
+        dataStore.data.map { it[Keys.lastWaterNotifAt] ?: 0L }
+
+    suspend fun setLastWaterNotifAt(epochMillis: Long) {
+        dataStore.edit { it[Keys.lastWaterNotifAt] = epochMillis }
     }
 
     val coachReadyNotif: Flow<Boolean> =

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -51,6 +52,7 @@ import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.datastore.StoredAiUsage
+import pt.antares.app.core.datastore.WATER_REMINDER_HOURS
 import pt.antares.app.core.nutrition.LifeStageDrv
 import pt.antares.app.core.nutrition.microLabelRes
 import pt.antares.app.core.privacy.PrivacyViewModel
@@ -454,6 +456,28 @@ fun ProfileSettingsScreen(
                 checked = state.coachReadyNotif,
                 onChange = viewModel::setCoachReadyNotif,
             )
+            SettingSwitchRow(
+                title = stringResource(Res.string.settings_notif_water),
+                desc = stringResource(Res.string.settings_notif_water_desc),
+                checked = state.waterReminder,
+                onChange = viewModel::setWaterReminder,
+            )
+            // O intervalo só aparece com o lembrete ligado: uma escolha que não tem efeito
+            // nenhum é pior do que não haver escolha.
+            if (state.waterReminder) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.sm),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                ) {
+                    WATER_REMINDER_HOURS.forEach { horas ->
+                        FilterChip(
+                            selected = state.waterReminderIntervalH == horas,
+                            onClick = { viewModel.setWaterReminderInterval(horas) },
+                            label = { Text(stringResource(Res.string.settings_notif_water_every, horas)) },
+                        )
+                    }
+                }
+            }
             SettingSwitchRow(
                 title = stringResource(Res.string.settings_notif_quiet),
                 desc = stringResource(Res.string.settings_notif_quiet_desc),

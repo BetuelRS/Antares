@@ -23,6 +23,7 @@ object AppNotificationChannels {
     const val MEAL = "meal_reminders"
     const val WEIGH_IN = "weigh_in_reminder"
     const val COACH = "coach_ready"
+    const val WATER = "water_reminder"
 
     fun ensureAll(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
@@ -42,6 +43,17 @@ object AppNotificationChannels {
                 description = context.getString(R.string.notif_channel_coach_desc)
             },
         )
+        // O canal existe mesmo com o lembrete desligado: é assim que ele aparece nas
+        // definições do Android, e é lá que se ajusta o som e a insistência.
+        nm.createNotificationChannel(
+            NotificationChannel(
+                WATER,
+                context.getString(R.string.notif_channel_water_name),
+                NotificationManager.IMPORTANCE_LOW,
+            ).apply {
+                description = context.getString(R.string.notif_channel_water_desc)
+            },
+        )
     }
 }
 
@@ -51,6 +63,10 @@ object NotificationScheduler {
     private const val WEIGH_IN_WORK = "weighin_reminder_periodic"
     private const val WIDGET_WORK = "widget_midnight_refresh"
     private const val PROTEIN_WORK = "end_of_day_protein_periodic"
+    private const val WATER_WORK = "water_reminder_periodic"
+
+    // O mais curto que a app oferece: o trabalhador filtra o resto.
+    private const val WATER_TICK_HOURS = 2L
 
     fun scheduleAll(context: Context) {
         AppNotificationChannels.ensureAll(context)
@@ -92,5 +108,19 @@ object NotificationScheduler {
             .build()
         WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(PROTEIN_WORK, ExistingPeriodicWorkPolicy.KEEP, protein)
+
+        // O trabalho da água anda sempre ao ritmo mais curto que a app oferece, e é o
+        // trabalhador que decide se já passou o intervalo **escolhido**. O período de um
+        // trabalho periódico fixa-se ao ser posto na fila: agendá-lo pelo intervalo da
+        // pessoa fazia com que mudar de três para seis horas não mudasse nada.
+        val water = PeriodicWorkRequestBuilder<WaterReminderWorker>(
+            WATER_TICK_HOURS,
+            TimeUnit.HOURS,
+        )
+            .setConstraints(Constraints.NONE)
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniquePeriodicWork(WATER_WORK, ExistingPeriodicWorkPolicy.KEEP, water)
     }
+
 }
