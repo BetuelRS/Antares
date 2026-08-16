@@ -158,7 +158,13 @@
     <string name="today_streak_record_now">Novo recorde pessoal! Continua assim</string>
 
     <string name="onb_welcome_title">Bem-vindo ao Antares</string>
-    <string name="onb_welcome_subtitle">Mostra-te a conta de cada meta, linha a linha. Traz 1376 alimentos medidos em Portugal. E nada sai do telemóvel.</string>
+    <string name="onb_welcome_lead">Três coisas que mais nenhuma app de nutrição faz:</string>
+    <string name="onb_welcome_maths_title">A conta à vista</string>
+    <string name="onb_welcome_maths_body">Cada meta mostra-se linha a linha, com a fórmula e a fonte. Podes conferi-la à mão e discordar dela.</string>
+    <string name="onb_welcome_food_title">1376 alimentos medidos em Portugal</string>
+    <string name="onb_welcome_food_body">Da Tabela de Composição de Alimentos do INSA, com micronutrientes. Não são traduções de uma tabela americana.</string>
+    <string name="onb_welcome_offline_title">Nada sai do telemóvel</string>
+    <string name="onb_welcome_offline_body">Não crias nada nem entras em lado nenhum. O que escreves fica no telemóvel, e sai de lá só se fores tu a exportá-lo.</string>
     <string name="onb_welcome_disclaimer">O Antares é informativo e não substitui aconselhamento médico.</string>
     <string name="onb_welcome_cta">Começar</string>
     <string name="onb_sex_title">Qual é o teu sexo?</string>

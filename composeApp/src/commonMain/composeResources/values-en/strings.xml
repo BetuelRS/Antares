@@ -158,7 +158,13 @@
     <string name="today_streak_record_now">New personal record! Keep it up</string>
 
     <string name="onb_welcome_title">Welcome to Antares</string>
-    <string name="onb_welcome_subtitle">Every target shown as arithmetic you can check, line by line. 1376 foods measured in Portugal. And nothing leaves your phone.</string>
+    <string name="onb_welcome_lead">Three things no other nutrition app does:</string>
+    <string name="onb_welcome_maths_title">The arithmetic, in the open</string>
+    <string name="onb_welcome_maths_body">Every target is shown line by line, with the formula and the source. You can check it by hand and disagree with it.</string>
+    <string name="onb_welcome_food_title">1376 foods measured in Portugal</string>
+    <string name="onb_welcome_food_body">From the INSA food composition table, with micronutrients. Not translations of an American table.</string>
+    <string name="onb_welcome_offline_title">Nothing leaves your phone</string>
+    <string name="onb_welcome_offline_body">Nothing to create, nowhere to sign in. What you write stays on the phone, and leaves only if you export it yourself.</string>
     <string name="onb_welcome_disclaimer">Antares is informational and is not medical advice.</string>
     <string name="onb_welcome_cta">Get started</string>
     <string name="onb_sex_title">What is your sex?</string>

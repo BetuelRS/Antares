@@ -1,5 +1,12 @@
 package pt.antares.app.feature.onboarding
 
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -135,16 +142,74 @@ fun OnboardingScreen(
     }
 }
 
+/**
+ * O primeiro ecrã. É o único sítio onde alguém lê o que a app faz de diferente antes de
+ * decidir se a usa.
+ *
+ * O argumento — as contas à vista, os alimentos medidos em Portugal, nada sair do telemóvel —
+ * estava numa frase só, corrida, com 60% da altura do ecrã vazia por baixo. Três afirmações
+ * numa linha lêem-se como uma, e nenhuma fica.
+ *
+ * Agora são três, cada uma com o seu ícone e a sua explicação. O vazio enche-se com o que há
+ * para dizer, e não esticando o que já lá estava.
+ */
 @Composable
 private fun WelcomeStep() {
     Text(stringResource(Res.string.onb_welcome_title), style = MaterialTheme.typography.headlineMedium)
-    Text(stringResource(Res.string.onb_welcome_subtitle), style = MaterialTheme.typography.bodyLarge)
+    Text(
+        stringResource(Res.string.onb_welcome_lead),
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Spacer(Modifier.height(Spacing.sm))
+
+    ArgumentoRow(
+        icon = Icons.Default.Calculate,
+        titulo = stringResource(Res.string.onb_welcome_maths_title),
+        corpo = stringResource(Res.string.onb_welcome_maths_body),
+    )
+    ArgumentoRow(
+        icon = Icons.Default.Place,
+        titulo = stringResource(Res.string.onb_welcome_food_title),
+        corpo = stringResource(Res.string.onb_welcome_food_body),
+    )
+    ArgumentoRow(
+        icon = Icons.Default.Lock,
+        titulo = stringResource(Res.string.onb_welcome_offline_title),
+        corpo = stringResource(Res.string.onb_welcome_offline_body),
+    )
+
+    Spacer(Modifier.height(Spacing.sm))
     Text(
         stringResource(Res.string.onb_welcome_disclaimer),
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
+
+@Composable
+private fun ArgumentoRow(icon: ImageVector, titulo: String, corpo: String) {
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
+        Icon(
+            imageVector = icon,
+            // Decorativo: o texto ao lado diz tudo o que o ícone diz, e um leitor de ecrã
+            // que os lesse aos dois repetia-se.
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(ICONE_DP.dp),
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            Text(titulo, style = MaterialTheme.typography.titleSmall)
+            Text(
+                corpo,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+private const val ICONE_DP = 28
 
 @Composable
 private fun SexStep(state: OnboardingState, viewModel: OnboardingViewModel) {
