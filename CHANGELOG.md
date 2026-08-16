@@ -13,17 +13,83 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+Nada por lançar.
+
+---
+
+## [2.0.0] — 2026-08-16
+
+Cinquenta tarefas decididas item a item a 2026-08-14 e feitas uma a uma, cada uma com o seu
+commit e a suite verde. Esquema da base: **v25**.
+
+**Porque é MAJOR e não MINOR:** duas coisas que existiam na 1.0.0 deixam de existir — o ecrã
+de conquistas e o estilo «Antares Ring» do ecrã Hoje. A regra escrita em
+[docs/referencia/versionamento.md](docs/referencia/versionamento.md) não pergunta se a versão é
+importante; pergunta se quem atualiza perde alguma coisa com que contava. Perde.
+
+### Removed
+
+- **O ecrã de conquistas.** Desbloqueava 22 de 22 de uma vez, com emojis ao lado da iconografia
+  do resto da app: eram contadores disfarçados. Os marcos do Progresso dizem o mesmo sem enfeite.
+- **O estilo «Antares Ring» do ecrã Hoje.** Dois estilos duplicavam a superfície a manter e a
+  testar por um ganho estético. Ficou o clássico, por escolha do dono.
+- **As 23 tabelas de sincronização** saíram das migrações do servidor. A app não sincroniza desde
+  a 1.0.0, e as tabelas ficaram lá a ocupar espaço e a confundir quem lesse o esquema.
+- A coluna `dirty`, que marcava linhas por enviar para um servidor que já não existe, saiu de 23
+  tabelas por migração automática.
+
 ### Added
 
-- Documentação escrita de raiz: `README.md` e `docs/`.
-- 69 testes novos, sobre as definições do perfil, a composição corporal, a montagem da sessão de
-  treino, o registo de receitas, a pesquisa de alimentos e o aviso de mudança de cálculo.
+- **A app roda.** A tranca do retrato saiu. Paisagem, tablet e ecrã dividido têm esquema próprio:
+  uma coluna, lista e detalhe lado a lado, ou duas colunas, conforme a largura da janela.
+- **Desfazer** em tudo o que apaga — registo, pesagem, série, rotina, receita, refeição guardada.
+  Só as fotografias de progresso e o apagamento da conta não voltam atrás, e ambos avisam antes.
+- Registo rápido a partir do Hoje e do diário, por texto, por foto ou por código de barras.
+- **Lembrete de água** pelo que falta beber, com horas de silêncio à escolha, e lembrete de
+  pesagem no dia e à hora que a pessoa escolher.
+- **Filtros nos históricos** de treino e de corrida: por mês, por exercício e por tipo.
+- **Receitas com doses.** Uma receita passa a ter um número de doses, e registá-la propõe uma dose
+  em vez do tacho inteiro.
+- Dez nutrientes novos, que a CIQUAL já trazia e o gerador do catálogo deitava fora.
+- Proveniência real em cada alimento: quem o mediu, e quando.
+- Aviso de alimento duplicado antes de criar mais uma cópia, e criação a partir de uma pesquisa
+  que não deu nada.
+- A leitura contínua de códigos de barras guarda **quais** os códigos que não foram encontrados,
+  e oferece criá-los.
+- Estatísticas de micronutrientes por dia, semana, mês e ano.
+- O ciclo passa a poder marcar a data em que aconteceu, e não a de hoje.
+- As imagens dos exercícios têm os três estados que têm mesmo: a carregar, sem ligação, e a
+  imagem. E ficam em cache no telemóvel.
 
 ### Changed
 
-- A numeração passou a ser SemVer estrito, e o `versionCode` deriva do nome em vez de ser
-  contado à mão.
-- O código passou a estar comentado de ponta a ponta.
+- **As calorias do exercício passam a ser líquidas** — o que ele gasta a mais do que estar
+  sentado. O repouso já está dentro da meta diária, e somá-lo outra vez contava-o duas vezes.
+  Quem regista exercício vê o orçamento do dia descer.
+- **A meta de água segue a referência da EFSA, por sexo**, e é de água total: a que vem da comida
+  passa a contar para ela.
+- **O chão de proteína escala** com o treino de força e com a profundidade do défice, entre 1,8 e
+  2,8 g/kg, e o «Mostra-me a conta» explica porquê.
+- **O basal calculado a partir da fita métrica diz a margem que tem** (±62 kcal): o método da
+  marinha americana tem 3,6 pontos percentuais de erro-padrão, e fingir precisão seria mentir.
+- O sistema imperial passou a ser um sistema inteiro: peso, distância, ritmo e porções.
+- A refeição segue a hora a que se comeu, e não a hora a que se registou.
+- Uma segunda pesagem no mesmo dia passa a perguntar o que fazer, em vez de decidir sozinha.
+- O onboarding deixa saltar os passos a que a app sabe responder sozinha.
+- O treino faz-se um exercício de cada vez, em vez de mostrar a rotina toda aberta.
+- O ecrã de jejum foi refeito à volta do que o relógio diz.
+- Sugestões e registos deixam de se confundir no diário, e a cor passa a dizer uma só coisa.
+- O `CoreModule` e o grafo de navegação foram partidos por área.
+
+### Fixed
+
+- O apagamento da conta filtrava por uma coluna que não existe na `purchase_events`: devolvia 400
+  e a conta **nunca chegava a ser apagada**. E não tocava em quatro tabelas com dados por pessoa.
+- Restaurar uma cópia de segurança passou a acontecer dentro de uma transação. Uma falha a meio
+  deixava a pessoa sem os dados antigos e com metade dos novos.
+- Os ecrãs de lista que ficavam mudos quando vazios passaram a dizer o que fazer.
+- O mapa de consistência contava desde sempre e não desde que a pessoa começou, e dava «1%».
+- Imagens e gráficos passaram a ter descrição, e cada silêncio passou a ter razão escrita.
 
 ---
 

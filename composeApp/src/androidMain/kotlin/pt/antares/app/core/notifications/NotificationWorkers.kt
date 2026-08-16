@@ -233,7 +233,10 @@ class WaterReminderWorker(ctx: Context, params: WorkerParameters) : CoroutineWor
                 treinouHoje = koin.get<ExerciseLogDao>().observeDayKcal(today).first() > 0,
             )
 
-        val falta = NotificationRules.waterGapToNotify(bebido, meta) ?: return Result.success()
+        // O tipo está escrito à mão porque o lint não o consegue ler através do `?: return`:
+        // sem ele conclui que se está a formatar um `Void` com `%1$d` e recusa a compilação.
+        val falta: Int = NotificationRules.waterGapToNotify(bebido, meta)
+            ?: return Result.success()
 
         AppNotificationChannels.ensureAll(ctx)
         postNotification(

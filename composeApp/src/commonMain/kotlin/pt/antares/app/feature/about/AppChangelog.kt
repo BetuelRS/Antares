@@ -23,9 +23,42 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "1.0.0"
+    const val CURRENT = "2.0.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.0.0",
+            title = "A app roda, e as contas ficam honestas",
+            titleEn = "The app rotates, and the maths gets honest",
+            highlights = listOf(
+                "**A app roda.** Deitada, num tablet ou em ecrã dividido, deixa de ser um telemóvel esticado",
+                "Num tablet, o exercício **abre ao lado da lista** em vez de a tapar",
+                "**Desfazer em tudo o que apaga** — um registo, uma pesagem, uma série, uma rotina",
+                "O sistema imperial passou a ser um sistema inteiro: peso, distância, ritmo e porções",
+                "As calorias do exercício passam a ser **o que ele gasta a mais** do que estar sentado",
+                "A meta de água segue a referência da EFSA, por sexo, e **a água da comida conta**",
+                "O basal calculado a partir da fita métrica passa a dizer a margem que tem",
+                "O chão de proteína sobe com o treino e com a profundidade do défice, e diz porquê",
+                "Receitas registam-se **por dose** — registar lasanha deixou de propor comê-la toda",
+                "Dez nutrientes novos, que as tabelas já traziam e a app deitava fora",
+                "Os históricos filtram-se por mês, por exercício e por tipo",
+                "O ecrã de conquistas saiu: os marcos do Progresso dizem a mesma coisa sem enfeite",
+            ),
+            highlightsEn = listOf(
+                "**The app rotates.** Landscape, tablet or split screen — no longer a stretched phone",
+                "On a tablet, an exercise **opens beside the list** instead of covering it",
+                "**Undo on everything that deletes** — a log, a weigh-in, a set, a routine",
+                "Imperial is now a whole system: weight, distance, pace and portions",
+                "Exercise calories are now **what it burns beyond sitting still**",
+                "The water target follows the EFSA reference, by sex, and **water from food counts**",
+                "A BMR computed from tape measurements now states the margin it carries",
+                "The protein floor rises with training and with how deep the deficit is, and says why",
+                "Recipes are logged **per serving** — logging lasagna no longer proposes eating all of it",
+                "Ten new nutrients, which the tables already carried and the app was throwing away",
+                "Histories filter by month, by exercise and by type",
+                "The achievements screen is gone: the Progress milestones say the same without the trim",
+            ),
+        ),
         AppVersion(
             name = "1.0.0",
             title = "A app vive no telemóvel",
