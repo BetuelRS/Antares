@@ -34,11 +34,20 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `TodaRotaTemEcraTest` | uma rota declarada sem ecrã, um ficheiro de rotas que ninguém chama, ou a mesma rota registada em duas áreas | navega-se para a rota e fica um ecrã em branco. Nenhuma das três dá erro de compilação, e só se descobre a usar |
 | `EspelhoDeNutrientesTest` | as chaves dos nutrientes descolarem entre o `Nutrients` e o `supabase/functions/_shared/nutrients.ts` do servidor | acrescentaste um nutriente de um lado só. Quem lê um código de barras deixa de o ver, e sem erro nenhum: o servidor grava uma chave que o telemóvel não reconhece e deita fora |
 | `BackupImportRollbackTest` | uma importação falhada deixar a pessoa sem os dados velhos e com metade dos novos | o restauro saiu da transação. Ver [a decisão](../explicacao/decisoes/0002-lapides-e-indices-unicos.md) |
+| `JanelaTest` e `JanelaLargaUiTest` | as fronteiras da janela deixarem de ser as do Material (600, 840 e 480 dp), ou a navegação não sair de baixo quando a janela é larga ou baixa | alguém mexeu num `>=`, ou o `ProvedorDaJanela` deixou de estar acima de tudo e passou a medir uma coluna em vez da janela |
+| `ListaAdaptavelUiTest` | uma lista voltar a ser uma coluna só num tablet, ou um cabeçalho ficar encavalitado ao lado do primeiro resultado | trocaste a `ListaAdaptavel` por uma `LazyColumn`, ou um `linhaInteira` por um `item` |
+| `GrelhaDeCartoesUiTest` | os cartões do Hoje voltarem a empilhar-se numa coluna com meio ecrã vazio ao lado | a grelha deixou de alternar entre as duas colunas |
+| `LarguraDeLeituraUiTest` | um formulário esticar-se por 1200 dp, ou ficar encostado a um lado em vez de ao meio | falta o `larguraDeLeitura()` num ecrã novo, ou a cadeia de modificadores perdeu o `wrapContentWidth` |
+| `ListaEDetalheUiTest` | o detalhe deixar de abrir ao lado numa janela larga, ou tentar abrir ao lado num telemóvel | o `cabeDetalheAoLado` deixou de olhar ao modo de esquema |
 
 ## Onde estão
 
 A maior parte em `composeApp/src/androidUnitTest/kotlin/pt/antares/app/core/`. Os que não precisam
-de Android estão em `composeApp/src/commonTest/`.
+de Android estão em `composeApp/src/commonTest/`. Os do esquema adaptável estão em
+`composeApp/src/androidUnitTest/kotlin/pt/antares/app/ui/`, porque precisam de compor a interface
+com uma janela de tamanho conhecido — o tamanho vem dos qualificadores do Robolectric
+(`@Config(qualifiers = "w1280dp-h800dp")`) e não de um `Modifier.size`, que a janela do teste
+aperta.
 
 ## Porque é que isto existe
 
