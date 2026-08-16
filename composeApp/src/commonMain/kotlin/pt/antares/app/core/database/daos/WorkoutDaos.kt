@@ -65,8 +65,14 @@ interface RoutineDao {
     @Query("UPDATE routine SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteRoutine(id: String, now: Long)
 
+    @Query("UPDATE routine SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restoreRoutine(id: String, now: Long)
+
     @Query("UPDATE routine_item SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteItem(id: String, now: Long)
+
+    @Query("UPDATE routine_item SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restoreItem(id: String, now: Long)
 
     @Query("SELECT COUNT(*) FROM routine WHERE deleted = 0")
     suspend fun countRoutines(): Int
@@ -149,6 +155,9 @@ interface WorkoutSetDao {
 
     @Query("UPDATE workout_set SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteSet(id: String, now: Long)
+
+    @Query("UPDATE workout_set SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restoreSet(id: String, now: Long)
 
     /**
      * As séries da última vez que este exercício foi feito, para aparecerem a cinzento por

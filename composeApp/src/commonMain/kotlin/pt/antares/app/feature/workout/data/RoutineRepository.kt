@@ -75,6 +75,16 @@ class RoutineRepository(
         routineDao.upsertRoutine(r.copy(name = name, updatedAt = now()))
     }
 
+    /**
+     * Devolve a rotina e os dias do calendário que foram com ela. A ordem é a inversa de
+     * apagar: sem o calendário, desfazer devolvia uma rotina que a semana já não conhece.
+     */
+    suspend fun restoreRoutine(routineId: String) = withContext(io) {
+        val ts = now()
+        routineDao.restoreRoutine(routineId, ts)
+        scheduleDao.restoreByRoutine(routineId, ts)
+    }
+
     suspend fun deleteRoutine(routineId: String) = withContext(io) {
         routineDao.softDeleteRoutine(routineId, now())
 
@@ -155,6 +165,10 @@ class RoutineRepository(
 
     suspend fun deleteItem(itemId: String) = withContext(io) {
         routineDao.softDeleteItem(itemId, now())
+    }
+
+    suspend fun restoreItem(itemId: String) = withContext(io) {
+        routineDao.restoreItem(itemId, now())
     }
 
     suspend fun move(routineId: String, itemId: String, up: Boolean) = withContext(io) {

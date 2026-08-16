@@ -16,6 +16,9 @@ interface MealTemplateDao {
     @Query("UPDATE meal_template SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
+    @Query("UPDATE meal_template SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
     @Query("SELECT * FROM meal_template WHERE deleted = 0 ORDER BY name ASC")
     fun observeAll(): Flow<List<MealTemplateEntity>>
 
@@ -38,8 +41,16 @@ interface MealTemplateItemDao {
     @Query("UPDATE meal_template_item SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
+    @Query("UPDATE meal_template_item SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
     @Query("SELECT * FROM meal_template_item WHERE templateId = :templateId AND deleted = 0 ORDER BY updatedAt ASC")
     suspend fun forTemplate(templateId: String): List<MealTemplateItemEntity>
+
+    // Sem filtrar as apagadas, e é essa a razão de existir: desfazer o apagamento de um
+    // modelo tem de encontrar as linhas que acabaram de ser marcadas.
+    @Query("SELECT * FROM meal_template_item WHERE templateId = :templateId ORDER BY updatedAt ASC")
+    suspend fun forTemplateForWrite(templateId: String): List<MealTemplateItemEntity>
 
     @Query("SELECT * FROM meal_template_item WHERE deleted = 0")
     suspend fun exportRows(): List<MealTemplateItemEntity>

@@ -34,6 +34,9 @@ interface RunDao {
     @Query("UPDATE run SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
+    @Query("UPDATE run SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
     @Query("SELECT * FROM run WHERE deleted = 0")
     suspend fun exportRows(): List<RunEntity>
 }

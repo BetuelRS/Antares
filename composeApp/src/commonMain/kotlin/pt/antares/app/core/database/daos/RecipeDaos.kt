@@ -16,6 +16,9 @@ interface RecipeDao {
     @Query("UPDATE recipe SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
+    @Query("UPDATE recipe SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
     @Query("SELECT * FROM recipe WHERE deleted = 0 ORDER BY name ASC")
     fun observeAll(): Flow<List<RecipeEntity>>
 
@@ -34,6 +37,9 @@ interface RecipeIngredientDao {
 
     @Query("UPDATE recipe_ingredient SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
+
+    @Query("UPDATE recipe_ingredient SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
 
     // Ordem de introdução, que é a ordem em que se cozinha. Não há coluna de posição:
     // reordenar ingredientes não muda a receita.

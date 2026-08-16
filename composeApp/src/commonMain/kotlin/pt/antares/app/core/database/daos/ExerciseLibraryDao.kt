@@ -61,6 +61,9 @@ interface ExerciseLibraryDao {
     @Query("UPDATE exercise SET deleted = 1, updatedAt = :now WHERE id = :id AND isCustom = 1")
     suspend fun softDeleteCustom(id: String, now: Long)
 
+    @Query("UPDATE exercise SET deleted = 0, updatedAt = :now WHERE id = :id AND isCustom = 1")
+    suspend fun restoreCustom(id: String, now: Long)
+
     // Repõe os nomes ingleses antes de reaplicar as traduções, para as que saíram da lista
     // não ficarem com o nome antigo. Não toca nos exercícios criados pelo utilizador.
     @Query("UPDATE exercise SET namePt = nameEn WHERE isCustom = 0")

@@ -45,6 +45,7 @@ import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresChart
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.ConfirmDialog
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -122,6 +123,7 @@ fun WeightHistoryScreen(
 
     var showAddDialog by remember { mutableStateOf(false) }
     var pendingDelete by remember { mutableStateOf<WeightLogEntity?>(null) }
+    val apagar = rememberApagarComDesfazer()
 
     val imperial = state.unitSystem == UnitSystem.IMPERIAL
     val unitLabel = stringResource(if (imperial) Res.string.common_lb else Res.string.common_kg)
@@ -246,7 +248,7 @@ fun WeightHistoryScreen(
             confirmLabel = stringResource(Res.string.common_delete),
             dismissLabel = stringResource(Res.string.common_cancel),
             onConfirm = {
-                viewModel.delete(entry.id)
+                apagar({ viewModel.delete(entry.id) }, { viewModel.restore(entry.id) })
                 pendingDelete = null
             },
             onDismiss = { pendingDelete = null },

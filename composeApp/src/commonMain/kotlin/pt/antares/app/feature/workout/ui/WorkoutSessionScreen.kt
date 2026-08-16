@@ -45,6 +45,7 @@ import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -76,6 +77,7 @@ fun WorkoutSessionScreen(
     LaunchedEffect(exit.discarded) { if (exit.discarded) onDiscarded() }
 
     var confirmDiscard by remember { mutableStateOf(false) }
+    val apagar = rememberApagarComDesfazer()
 
     Scaffold(
         topBar = {
@@ -126,7 +128,9 @@ fun WorkoutSessionScreen(
                     ExerciseBlock(
                         ex = ex,
                         onLog = { w, r, rpe, warm -> viewModel.logSet(ex, w, r, rpe, warm) },
-                        onDeleteSet = viewModel::deleteSet,
+                        onDeleteSet = { id ->
+                            apagar({ viewModel.deleteSet(id) }, { viewModel.restoreSet(id) })
+                        },
                     )
                 } else {
                     ExerciseRecolhido(ex = ex, onSelect = { viewModel.select(ex.exerciseId) })

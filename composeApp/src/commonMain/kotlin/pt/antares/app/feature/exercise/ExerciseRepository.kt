@@ -49,6 +49,8 @@ class ExerciseRepository(
 
     suspend fun delete(id: String) = withContext(io) { dao.softDelete(id, now()) }
 
+    suspend fun restore(id: String) = withContext(io) { dao.restore(id, now()) }
+
     /**
      * A tabela de METs, lida do ficheiro empacotado a cada chamada. Não fica em memória
      * porque só o ecrã de registar exercício a usa, e são umas centenas de linhas — guardá-la

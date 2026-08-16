@@ -115,6 +115,10 @@ class RecipeEditViewModel(
         viewModelScope.launch { repository.removeIngredient(ingredient) }
     }
 
+    fun restoreIngredient(ingredientId: String) {
+        viewModelScope.launch { repository.restoreIngredient(ingredientId) }
+    }
+
     fun delete() {
         val id = recipeId.value ?: return
         viewModelScope.launch {

@@ -49,4 +49,11 @@ class CycleRepository(
     }
 
     suspend fun delete(id: String) = withContext(io) { dao.delete(id) }
+
+    /**
+     * Volta a inserir o período apagado. Aqui o apagamento é mesmo `DELETE` e não uma
+     * marca — a tabela do ciclo nunca teve `deleted` —, por isso o desfazer traz a linha
+     * inteira consigo em vez de tirar uma marca.
+     */
+    suspend fun restore(entry: CycleEntity) = withContext(io) { dao.upsert(entry) }
 }

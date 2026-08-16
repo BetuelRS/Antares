@@ -235,6 +235,8 @@ class WorkoutSessionViewModel(
 
     fun deleteSet(setId: String) = viewModelScope.launch { repository.deleteSet(setId) }
 
+    fun restoreSet(setId: String) = viewModelScope.launch { repository.restoreSet(setId) }
+
     fun finish() {
         val id = state.value.sessionId ?: return
         viewModelScope.launch {

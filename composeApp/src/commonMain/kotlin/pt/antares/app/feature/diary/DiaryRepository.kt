@@ -193,6 +193,11 @@ class DiaryRepository(
         foodLogDao.softDelete(logId, now())
     }
 
+    /** Desfaz o apagamento: a linha continua lá, marcada, e isto tira-lhe a marca. */
+    suspend fun restore(logId: String) = withContext(io) {
+        foodLogDao.restore(logId, now())
+    }
+
     suspend fun copyDay(fromEpochDay: Long, toEpochDay: Long) = withContext(io) {
         foodLogDao.dayLogs(fromEpochDay).forEach { log ->
             foodLogDao.upsert(

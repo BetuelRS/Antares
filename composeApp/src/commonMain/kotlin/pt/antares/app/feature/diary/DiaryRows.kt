@@ -46,6 +46,7 @@ import pt.antares.app.core.model.ExerciseOrigin
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.porcaoComUnidade
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.AntaresGhostCard
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.mealSlotLabel
@@ -339,13 +340,16 @@ internal fun LazyListScope.mealSection(
     }
 
     items(logs, key = { it.id }) { log ->
+        val apagar = rememberApagarComDesfazer()
         LogRow(
             log = log,
             onOpen = { folhas.detailLog = log },
             onEdit = { folhas.editLog = log },
             onDuplicate = { viewModel.duplicateLog(log.id) },
             onMove = { newSlot -> viewModel.moveLog(log.id, newSlot) },
-            onDelete = { viewModel.deleteLog(log.id) },
+            onDelete = {
+                apagar({ viewModel.deleteLog(log.id) }, { viewModel.restoreLog(log.id) })
+            },
         )
     }
 }

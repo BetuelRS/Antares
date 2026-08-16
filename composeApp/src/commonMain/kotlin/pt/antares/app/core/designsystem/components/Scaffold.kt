@@ -22,6 +22,7 @@ fun AntaresScaffold(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -31,6 +32,7 @@ fun AntaresScaffold(
         modifier = modifier.imePadding(),
         topBar = topBar,
         bottomBar = bottomBar,
+        snackbarHost = snackbarHost,
         content = content,
     )
 }

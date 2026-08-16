@@ -34,6 +34,9 @@ interface WeightLogDao {
     @Query("UPDATE weight_log SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
+    @Query("UPDATE weight_log SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
     @Query("SELECT * FROM weight_log WHERE deleted = 0 ORDER BY epochDay DESC")
     fun observeAll(): Flow<List<WeightLogEntity>>
 
@@ -123,6 +126,9 @@ interface BodyMeasurementDao {
 
     @Query("UPDATE body_measurement_log SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
+
+    @Query("UPDATE body_measurement_log SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
 
     @Query("SELECT * FROM body_measurement_log WHERE deleted = 0")
     suspend fun exportRows(): List<BodyMeasurementEntity>

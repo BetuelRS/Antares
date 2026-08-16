@@ -48,6 +48,8 @@ class RoutineEditViewModel(
 
     fun deleteItem(itemId: String) = viewModelScope.launch { repository.deleteItem(itemId) }
 
+    fun restoreItem(itemId: String) = viewModelScope.launch { repository.restoreItem(itemId) }
+
     fun deleteRoutine() {
         val id = routineId.value ?: return
         viewModelScope.launch {
@@ -55,6 +57,9 @@ class RoutineEditViewModel(
             _deleted.value = true
         }
     }
+
+    /** O identificador é guardado pelo ecrã antes de ele fechar: aqui já não há estado. */
+    fun restoreRoutine(id: String) = viewModelScope.launch { repository.restoreRoutine(id) }
 }
 
 class RoutineItemPickViewModel(

@@ -58,6 +58,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresTopBar
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.SectionHeader
@@ -116,6 +117,7 @@ fun FoodSearchScreen(
     val multiSelect = !pickMode && aiSlot != null && aiEpochDay != null
 
     val marcados = state.selected.size
+    val apagar = rememberApagarComDesfazer()
 
     LaunchedEffect(openFood) {
         openFood?.let {
@@ -299,7 +301,9 @@ fun FoodSearchScreen(
                             viewModel.applyTemplate(id, aiSlot, aiEpochDay)
                         }
                     },
-                    onDelete = viewModel::deleteTemplate,
+                    onDelete = { id ->
+                        apagar({ viewModel.deleteTemplate(id) }, { viewModel.restoreTemplate(id) })
+                    },
                 )
                 else -> {
                     val list = when (state.tab) {

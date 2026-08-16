@@ -256,6 +256,9 @@ interface FoodLogDao {
     @Query("UPDATE food_log SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
+    @Query("UPDATE food_log SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
     @Query("SELECT * FROM food_log WHERE id = :id AND deleted = 0")
     suspend fun byId(id: String): FoodLogEntity?
 

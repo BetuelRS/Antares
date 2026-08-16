@@ -95,4 +95,6 @@ class ExerciseLibraryRepository(
     }
 
     suspend fun deleteCustom(id: String) = withContext(io) { dao.softDeleteCustom(id, now()) }
+
+    suspend fun restoreCustom(id: String) = withContext(io) { dao.restoreCustom(id, now()) }
 }

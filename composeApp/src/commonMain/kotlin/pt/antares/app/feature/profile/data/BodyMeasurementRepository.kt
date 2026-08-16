@@ -96,6 +96,13 @@ class BodyMeasurementRepository(
         sincronizarPerfil()
     }
 
+    suspend fun restore(id: String) = withContext(io) {
+        dao.restore(id, now())
+        // A massa gorda do perfil segue a medição viva mais recente: sem isto, desfazer
+        // devolvia a linha e deixava o perfil a olhar para a anterior.
+        sincronizarPerfil()
+    }
+
     /**
      * Repõe no perfil a massa gorda da medição viva mais recente, ou tira-a se já não
      * houver nenhuma. É a única escrita da app nesses dois campos.

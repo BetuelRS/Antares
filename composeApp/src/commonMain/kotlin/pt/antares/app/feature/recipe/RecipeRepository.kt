@@ -120,6 +120,10 @@ class RecipeRepository(
         ingredientDao.softDelete(ingredient.id, now())
     }
 
+    suspend fun restoreIngredient(ingredientId: String) = withContext(io) {
+        ingredientDao.restore(ingredientId, now())
+    }
+
     suspend fun deleteRecipe(id: String) = withContext(io) {
         recipeDao.softDelete(id, now())
     }

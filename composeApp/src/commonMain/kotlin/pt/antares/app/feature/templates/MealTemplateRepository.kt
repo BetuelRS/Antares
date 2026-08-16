@@ -107,6 +107,13 @@ class MealTemplateRepository(
             items.size
         }
 
+    /** Devolve o modelo e os itens que foram com ele. A ordem é a inversa de os apagar. */
+    suspend fun restoreTemplate(templateId: String) = withContext(io) {
+        val ts = now()
+        templateDao.restore(templateId, ts)
+        itemDao.forTemplateForWrite(templateId).forEach { itemDao.restore(it.id, ts) }
+    }
+
     suspend fun deleteTemplate(templateId: String) = withContext(io) {
         val ts = now()
         // Os itens primeiro: não há chave estrangeira a apagá-los em cascata, e ficariam

@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 import pt.antares.app.core.util.formatMinuteOfDay
@@ -107,6 +108,7 @@ internal fun LazyListScope.exerciseSection(
     kcal: Int,
     onAdd: () -> Unit,
     onDelete: (String) -> Unit,
+    onRestore: (String) -> Unit,
 ) {
     item(key = "exercise-header") {
         Row(
@@ -143,7 +145,11 @@ internal fun LazyListScope.exerciseSection(
         }
     }
     items(entries, key = { "ex-${it.id}" }) { entry ->
-        ExerciseRow(entry = entry, onDelete = { onDelete(entry.id) })
+        val apagar = rememberApagarComDesfazer()
+        ExerciseRow(
+            entry = entry,
+            onDelete = { apagar({ onDelete(entry.id) }, { onRestore(entry.id) }) },
+        )
     }
 }
 

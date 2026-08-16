@@ -45,6 +45,7 @@ import pt.antares.app.core.util.UnitConversions
 import kotlin.math.roundToInt
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.feature.workout.data.RoutineItemView
 import pt.antares.app.generated.resources.Res
@@ -66,6 +67,7 @@ fun RoutineEditScreen(
     LaunchedEffect(deleted) { if (deleted) onDeleted() }
 
     var editItem by remember { mutableStateOf<RoutineItemView?>(null) }
+    val apagar = rememberApagarComDesfazer()
 
     Scaffold(
         topBar = {
@@ -73,7 +75,14 @@ fun RoutineEditScreen(
                 title = stringResource(Res.string.routine_edit_title),
                 onBack = onBack,
                 actions = {
-                    IconButton(onClick = viewModel::deleteRoutine) {
+                    IconButton(
+                        onClick = {
+                            apagar(
+                                { viewModel.deleteRoutine() },
+                                { viewModel.restoreRoutine(routineId) },
+                            )
+                        },
+                    ) {
                         Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.routine_delete))
                     }
                 },
@@ -113,7 +122,12 @@ fun RoutineEditScreen(
                     onMoveUp = { viewModel.move(row.item.id, up = true) },
                     onMoveDown = { viewModel.move(row.item.id, up = false) },
                     onSuperset = { g -> viewModel.setSuperset(row.item.id, g) },
-                    onDelete = { viewModel.deleteItem(row.item.id) },
+                    onDelete = {
+                        apagar(
+                            { viewModel.deleteItem(row.item.id) },
+                            { viewModel.restoreItem(row.item.id) },
+                        )
+                    },
                 )
             }
 

@@ -206,6 +206,10 @@ class FoodSearchViewModel(
         viewModelScope.launch { templateRepository.deleteTemplate(templateId) }
     }
 
+    fun restoreTemplate(templateId: String) {
+        viewModelScope.launch { templateRepository.restoreTemplate(templateId) }
+    }
+
     private companion object {
 
         const val MAX_SUGGESTIONS = 6

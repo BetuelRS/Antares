@@ -26,6 +26,9 @@ interface GoalHistoryDao {
     @Query("UPDATE goal_history SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDelete(id: String, now: Long)
 
+    @Query("UPDATE goal_history SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
     @Query("SELECT * FROM goal_history WHERE deleted = 0")
     suspend fun exportRows(): List<GoalHistoryEntity>
 }

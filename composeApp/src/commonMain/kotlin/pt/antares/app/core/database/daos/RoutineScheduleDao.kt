@@ -26,6 +26,10 @@ interface RoutineScheduleDao {
     @Query("UPDATE routine_schedule SET deleted = 1, updatedAt = :now WHERE routineId = :routineId")
     suspend fun clearByRoutine(routineId: String, now: Long)
 
+    // O inverso, para o desfazer: os dias voltam com a rotina.
+    @Query("UPDATE routine_schedule SET deleted = 0, updatedAt = :now WHERE routineId = :routineId")
+    suspend fun restoreByRoutine(routineId: String, now: Long)
+
     @Query("SELECT * FROM routine_schedule WHERE deleted = 0")
     suspend fun exportRows(): List<RoutineScheduleEntity>
 }

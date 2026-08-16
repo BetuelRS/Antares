@@ -37,6 +37,10 @@ class RunRepository(
         runDao.softDelete(id, Clock.System.now().toEpochMilliseconds())
     }
 
+    suspend fun restore(id: String) = withContext(io) {
+        runDao.restore(id, Clock.System.now().toEpochMilliseconds())
+    }
+
     suspend fun save(
         type: ActivityType,
         metrics: RunMetrics,

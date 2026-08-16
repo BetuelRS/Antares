@@ -125,6 +125,15 @@ class ProfileRepository(
         weightDao.softDelete(id, now())
     }
 
+    /**
+     * Devolve a pesagem apagada. O índice único do dia conta lápides, mas isto não colide:
+     * uma pesagem nova no mesmo dia **reaproveita** a lápide — ver a decisão 0002 —, e por
+     * isso a linha que aqui se desmarca é a mesma que ficou a valer.
+     */
+    suspend fun restoreWeight(id: String) = withContext(io) {
+        weightDao.restore(id, now())
+    }
+
     fun observeTargets(epochDay: Long = todayEpochDay()): Flow<Targets?> =
         combine(
             profileDao.observe(),

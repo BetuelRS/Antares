@@ -183,4 +183,8 @@ class WeightViewModel(
     fun delete(id: String) {
         viewModelScope.launch { repository.deleteWeight(id) }
     }
+
+    fun restore(id: String) {
+        viewModelScope.launch { repository.restoreWeight(id) }
+    }
 }

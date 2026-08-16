@@ -40,6 +40,7 @@ import pt.antares.app.feature.fooddata.paraCampo
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.ConfirmDialog
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -58,6 +59,7 @@ fun RecipeEditScreen(
     val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
     var confirmarApagar by remember { mutableStateOf(false) }
+    val apagar = rememberApagarComDesfazer()
 
     LaunchedEffect(recipeId) { viewModel.start(recipeId) }
     LaunchedEffect(state.saved) { if (state.saved) onDone() }
@@ -177,7 +179,14 @@ fun RecipeEditScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.width(96.dp),
                     )
-                    IconButton(onClick = { viewModel.removeIngredient(row.ingredient) }) {
+                    IconButton(
+                        onClick = {
+                            apagar(
+                                { viewModel.removeIngredient(row.ingredient) },
+                                { viewModel.restoreIngredient(row.ingredient.id) },
+                            )
+                        },
+                    ) {
                         Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.common_delete))
                     }
                 }

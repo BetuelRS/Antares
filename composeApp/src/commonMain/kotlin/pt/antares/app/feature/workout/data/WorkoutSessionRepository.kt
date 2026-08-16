@@ -89,6 +89,8 @@ class WorkoutSessionRepository(
 
     suspend fun deleteSet(id: String) = withContext(io) { setDao.softDeleteSet(id, now()) }
 
+    suspend fun restoreSet(id: String) = withContext(io) { setDao.restoreSet(id, now()) }
+
     suspend fun setsForSession(sessionId: String): List<WorkoutSetEntity> =
         withContext(io) { setDao.setsForSession(sessionId) }
 

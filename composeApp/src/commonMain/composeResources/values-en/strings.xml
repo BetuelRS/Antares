@@ -54,6 +54,8 @@
     <string name="cycle_next">Next expected: %1$s (estimate)</string>
     <string name="cycle_retention">At this point in the cycle the scale often goes up from fluid retention. It is not fat, and the app has not touched your target because of it.</string>
     <string name="cycle_start_today">Started today</string>
+    <string name="undo_deleted">Deleted.</string>
+    <string name="undo_action">Undo</string>
     <string name="filter_all">All</string>
     <string name="filter_month">Month</string>
     <string name="filter_exercise">Exercise</string>

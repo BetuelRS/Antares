@@ -43,6 +43,7 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.DateDialog
+import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.components.SplitRow
@@ -136,6 +137,8 @@ class CycleViewModel(
     fun dispensarErro() = _state.update { it.copy(erro = null) }
 
     fun delete(id: String) = viewModelScope.launch { repository.delete(id) }
+
+    fun restore(entry: CycleEntity) = viewModelScope.launch { repository.restore(entry) }
 }
 
 @Composable
@@ -147,6 +150,7 @@ fun CycleScreen(
 
     // Qual dos três seletores está aberto: início, fim, ou a correção de um registo.
     var aEscolher by remember { mutableStateOf<EscolhaDeData?>(null) }
+    val apagar = rememberApagarComDesfazer()
 
     Scaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.cycle_title), onBack = onBack) },
@@ -231,7 +235,9 @@ fun CycleScreen(
                     linha = linha,
                     onEditStart = { aEscolher = EscolhaDeData.CorrigirInicio(linha.id) },
                     onEditEnd = { aEscolher = EscolhaDeData.CorrigirFim(linha.id) },
-                    onDelete = { viewModel.delete(linha.id) },
+                    onDelete = {
+                        apagar({ viewModel.delete(linha.id) }, { viewModel.restore(linha) })
+                    },
                 )
             }
         }

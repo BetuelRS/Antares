@@ -19,7 +19,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.coach.CoachRepository
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import pt.antares.app.core.datastore.AppPreferences
 import pt.antares.app.core.model.LocalMealNames
 import pt.antares.app.core.model.MealNames
@@ -32,6 +35,8 @@ import pt.antares.app.core.designsystem.AntaresTheme
 import pt.antares.app.core.designsystem.ThemeMode
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.LoadingState
+import pt.antares.app.core.designsystem.components.LocalUndo
+import pt.antares.app.core.designsystem.components.rememberUndoController
 import pt.antares.app.navigation.AntaresBottomBar
 import pt.antares.app.navigation.AntaresNavHost
 import pt.antares.app.navigation.Route
@@ -123,14 +128,23 @@ private fun MainScaffold(startAtOnboarding: Boolean) {
         dest.route in rootRouteNames
     } == true
 
-    AntaresScaffold(
-        bottomBar = { if (showBottomBar) AntaresBottomBar(navController) },
-    ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            AntaresNavHost(
-                navController = navController,
-                startDestination = if (startAtOnboarding) Route.Onboarding else Route.Today,
-            )
+    // O aviso com anulação vive aqui, uma vez, e chega a todos os ecrãs pelo `LocalUndo`.
+    // Um por ecrã seria um em cada um dos catorze sítios que apagam, e o décimo quarto
+    // ficaria por fazer.
+    val snackbarHost = remember { SnackbarHostState() }
+    val undo = rememberUndoController(snackbarHost)
+
+    CompositionLocalProvider(LocalUndo provides undo) {
+        AntaresScaffold(
+            bottomBar = { if (showBottomBar) AntaresBottomBar(navController) },
+            snackbarHost = { SnackbarHost(snackbarHost) },
+        ) { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+                AntaresNavHost(
+                    navController = navController,
+                    startDestination = if (startAtOnboarding) Route.Onboarding else Route.Today,
+                )
+            }
         }
     }
 }
