@@ -24,6 +24,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.DietBreak
 import pt.antares.app.core.calc.DietBreakSuggestion
 import pt.antares.app.core.calc.WeightTrend
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -94,6 +95,7 @@ fun DietBreakScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .larguraDeLeitura()
                 .padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {

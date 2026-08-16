@@ -1,10 +1,15 @@
 package pt.antares.app.core.designsystem
 
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /**
  * O tamanho da janela, em classes e não em números. A app esteve trancada em retrato desde
@@ -95,3 +100,19 @@ fun ProvedorDaJanela(content: @Composable () -> Unit) {
 // `Dp.value` é `Float` e as fronteiras são inteiras; arredondar aqui evita que 599,7 dp
 // caia de um lado nas contas e do outro no que o sistema decidiu.
 private fun Dp.emDp(): Int = value.toInt()
+
+/**
+ * Trava a largura de um formulário ou de um texto corrido e centra-o. Num tablet, um campo
+ * de texto com 1200 dp de largura é impossível de ler e ridículo de preencher; e o olho
+ * perde a linha ao voltar à esquerda muito antes disso.
+ *
+ * O `wrapContentWidth` no meio é o que centra: dá ao conteúdo largura mínima zero dentro da
+ * largura toda, e o `widthIn` a seguir é que decide onde ele para. Sem ele, o conteúdo ficava
+ * encostado à esquerda com um vazio à direita.
+ *
+ * Num telemóvel não faz nada — 360 dp nunca chega ao teto.
+ */
+fun Modifier.larguraDeLeitura(): Modifier = this
+    .fillMaxWidth()
+    .wrapContentWidth()
+    .widthIn(max = LARGURA_DE_LEITURA_DP.dp)

@@ -33,6 +33,7 @@ import pt.antares.app.core.calc.BmrFormula
 import pt.antares.app.core.calc.MeasurementProgress
 import pt.antares.app.core.calc.BodyStats
 import pt.antares.app.core.calc.WaistRisk
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.activityLevelLabel
 import pt.antares.app.core.designsystem.fmtG
@@ -84,6 +85,7 @@ fun HealthProfileScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .larguraDeLeitura()
                 .padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {

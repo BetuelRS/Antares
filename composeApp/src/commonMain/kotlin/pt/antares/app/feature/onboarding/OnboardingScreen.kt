@@ -54,6 +54,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.BmrFormula
 import pt.antares.app.core.calc.NutritionCalc
 import pt.antares.app.core.calc.TargetWarning
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -113,7 +114,8 @@ fun OnboardingScreen(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .larguraDeLeitura(),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
             when (state.step) {
