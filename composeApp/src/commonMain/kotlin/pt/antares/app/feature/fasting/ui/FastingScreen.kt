@@ -31,6 +31,7 @@ import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
@@ -104,6 +105,7 @@ fun FastingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .larguraDeLeitura()
                 .padding(Spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(Spacing.lg),

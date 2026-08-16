@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
@@ -64,7 +65,7 @@ fun WeeklyScheduleScreen(
         topBar = { AntaresTopBar(title = stringResource(Res.string.schedule_title), onBack = onBack) },
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(Spacing.lg),
+            modifier = Modifier.fillMaxSize().padding(padding).larguraDeLeitura().padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
             Text(

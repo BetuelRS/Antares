@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
@@ -41,7 +42,9 @@ fun WorkoutStatsScreen(
     ) { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding)
-                .verticalScroll(rememberScrollState()).padding(Spacing.lg),
+                .verticalScroll(rememberScrollState())
+                .larguraDeLeitura()
+                .padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
 

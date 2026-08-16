@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
@@ -41,7 +42,7 @@ fun WorkoutSummaryScreen(
         topBar = { AntaresTopBar(title = stringResource(Res.string.workout_summary_title)) },
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(Spacing.lg),
+            modifier = Modifier.fillMaxSize().padding(padding).larguraDeLeitura().padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
             AntaresCard(modifier = Modifier.fillMaxWidth()) {

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.designsystem.rememberUnitSystem
@@ -138,7 +139,7 @@ private fun RunHub(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.lg),
+        modifier = Modifier.fillMaxSize().larguraDeLeitura().padding(Spacing.lg),
         verticalArrangement = Arrangement.spacedBy(Spacing.lg),
     ) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
