@@ -26,8 +26,12 @@ import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
+import pt.antares.app.core.designsystem.components.FilterBar
+import pt.antares.app.core.designsystem.components.FilterDropdownChip
+import pt.antares.app.core.designsystem.components.FilterOption
 import pt.antares.app.core.util.dayShort
 import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.mesLabel
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 import kotlin.math.roundToInt
@@ -38,13 +42,13 @@ fun WorkoutHistoryScreen(
     onBack: () -> Unit,
     viewModel: WorkoutHistoryViewModel = koinViewModel(),
 ) {
-    val history by viewModel.history.collectAsState()
+    val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
 
     Scaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.workout_history_title), onBack = onBack) },
     ) { padding ->
-        if (history.isEmpty()) {
+        if (state.todos.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 Text(
                     stringResource(Res.string.workout_history_empty),
@@ -57,7 +61,37 @@ fun WorkoutHistoryScreen(
             modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
-            items(history, key = { it.id }) { s ->
+            item {
+                FilterBar {
+                    FilterDropdownChip(
+                        label = stringResource(Res.string.filter_month),
+                        selected = state.mes,
+                        options = state.meses.map { FilterOption(it, mesLabel(it)) },
+                        onSelect = viewModel::setMes,
+                    )
+                    FilterDropdownChip(
+                        label = stringResource(Res.string.filter_exercise),
+                        selected = state.exercicioId,
+                        options = state.exercicios.map { FilterOption(it.id, it.name) },
+                        onSelect = viewModel::setExercicio,
+                    )
+                }
+            }
+
+            // Uma lista vazia por causa do filtro não é um histórico vazio, e dizer-lhe o
+            // mesmo era mandar a pessoa procurar treinos que ela tem.
+            if (state.visiveis.isEmpty()) {
+                item {
+                    Text(
+                        stringResource(Res.string.filter_no_match),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = Spacing.lg),
+                    )
+                }
+            }
+
+            items(state.visiveis, key = { it.id }) { s ->
                 AntaresCard(modifier = Modifier.fillMaxWidth().clickable { onSession(s.id) }) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),

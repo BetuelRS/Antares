@@ -26,6 +26,8 @@ data class ExerciseSessionAgg(
 
 data class SessionVolumeRow(val sessionId: String, val volume: Double)
 
+data class SessionExerciseRow(val sessionId: String, val exerciseId: String)
+
 data class ExerciseSetRow(val exerciseId: String, val weightKg: Double, val reps: Int)
 
 @Dao
@@ -220,6 +222,23 @@ interface WorkoutSetDao {
         """,
     )
     suspend fun sessionVolumes(): List<SessionVolumeRow>
+
+    /**
+     * Que exercícios teve cada treino. Uma linha por par, e não uma consulta por treino: o
+     * histórico com duzentos treinos faria duzentas idas à base para desenhar um filtro.
+     *
+     * O aquecimento conta aqui, ao contrário do volume: quem procura os treinos em que fez
+     * agachamento quer também aquele em que só aqueceu com ele.
+     */
+    @Query(
+        """
+        SELECT DISTINCT s.sessionId AS sessionId, s.exerciseId AS exerciseId
+        FROM workout_set s
+        JOIN workout_session ws ON s.sessionId = ws.id
+        WHERE ws.status = 'DONE' AND ws.deleted = 0 AND s.deleted = 0
+        """,
+    )
+    suspend fun sessionExercises(): List<SessionExerciseRow>
 
     @Query(
         """

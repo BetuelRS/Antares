@@ -40,3 +40,16 @@ fun axisDate(epochDay: Long, spanDays: Long): String {
         DateStyle.AxisStyle.MONTH_YEAR -> "$month ${(date.year % 100).toString().padStart(2, '0')}"
     }
 }
+
+/**
+ * Um mês com o ano, como os filtros dos históricos o mostram: «fev 24».
+ *
+ * O ano vai junto de propósito — «fevereiro» sozinho misturava o deste ano com o de há três,
+ * e é essa confusão que um histórico serve para não ter.
+ */
+@Composable
+fun mesLabel(mes: pt.antares.app.core.calc.Mes): String {
+    val meses = stringArrayResource(Res.array.months_short)
+    val nome = meses.getOrElse(mes.mes - 1) { "" }
+    return "$nome ${(mes.ano % 100).toString().padStart(2, '0')}"
+}

@@ -27,8 +27,15 @@ import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.FilterBar
+import pt.antares.app.core.designsystem.components.FilterDropdownChip
+import pt.antares.app.core.designsystem.components.FilterOption
 import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.mesLabel
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.filter_month
+import pt.antares.app.generated.resources.filter_no_match
+import pt.antares.app.generated.resources.filter_type
 import pt.antares.app.generated.resources.run_history_empty
 import pt.antares.app.generated.resources.run_history_title
 import pt.antares.app.generated.resources.run_pr_10k
@@ -85,7 +92,36 @@ fun RunHistoryScreen(
                     PrTile(stringResource(Res.string.run_pr_10k), state.pr10kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))
                 }
             }
-            items(state.runs, key = { it.id }) { run -> RunRow(run, unidades, onRun) }
+            item {
+                FilterBar {
+                    FilterDropdownChip(
+                        label = stringResource(Res.string.filter_month),
+                        selected = state.mes,
+                        options = state.meses.map { FilterOption(it, mesLabel(it)) },
+                        onSelect = viewModel::setMes,
+                    )
+                    FilterDropdownChip(
+                        label = stringResource(Res.string.filter_type),
+                        selected = state.tipo,
+                        options = state.tipos.map { FilterOption(it, stringResource(activityLabel(it))) },
+                        onSelect = viewModel::setTipo,
+                    )
+                }
+            }
+
+            // Filtrar até não sobrar nada não é o mesmo que não ter corrido nunca.
+            if (state.visiveis.isEmpty()) {
+                item {
+                    Text(
+                        stringResource(Res.string.filter_no_match),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = Spacing.lg),
+                    )
+                }
+            }
+
+            items(state.visiveis, key = { it.id }) { run -> RunRow(run, unidades, onRun) }
         }
     }
 }

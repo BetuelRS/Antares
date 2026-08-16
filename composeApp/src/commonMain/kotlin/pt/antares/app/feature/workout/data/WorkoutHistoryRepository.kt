@@ -18,7 +18,13 @@ data class SessionSummary(
     val startedAt: Long,
     val endedAt: Long?,
     val volume: Double,
+
+    /** Os exercícios que este treino teve, para o filtro os poder usar sem outra consulta. */
+    val exerciseIds: Set<String> = emptySet(),
 )
+
+/** Um exercício que aparece no histórico, com o nome já resolvido para o filtro o mostrar. */
+data class ExerciseOption(val id: String, val name: String)
 
 data class SessionBreakdown(
     val startedAt: Long,
@@ -48,10 +54,30 @@ class WorkoutHistoryRepository(
     fun observeHistory(): Flow<List<SessionSummary>> =
         sessionDao.observeByStatus(SessionStatus.DONE).mapLatest { sessions ->
             val vols = setDao.sessionVolumes().associate { it.sessionId to it.volume }
+            // Duas consultas para a lista toda, e não duas por treino: com duzentos treinos
+            // gravados, o segundo caminho são quatrocentas idas à base para desenhar uma
+            // lista que já estava desenhada.
+            val exercicios = setDao.sessionExercises()
+                .groupBy { it.sessionId }
+                .mapValues { (_, linhas) -> linhas.map { it.exerciseId }.toSet() }
             sessions.map {
-                SessionSummary(it.id, it.startedAt, it.endedAt, vols[it.id] ?: 0.0)
+                SessionSummary(
+                    id = it.id,
+                    startedAt = it.startedAt,
+                    endedAt = it.endedAt,
+                    volume = vols[it.id] ?: 0.0,
+                    exerciseIds = exercicios[it.id].orEmpty(),
+                )
             }
         }
+
+    /** Os exercícios que aparecem no histórico, com o nome, por ordem alfabética. */
+    suspend fun exerciseOptions(): List<ExerciseOption> = withContext(io) {
+        val ids = setDao.sessionExercises().map { it.exerciseId }.distinct()
+        exerciseDao.namesByIds(ids)
+            .map { ExerciseOption(it.id, it.namePt.ifBlank { it.nameEn }) }
+            .sortedBy { it.name }
+    }
 
     suspend fun breakdown(sessionId: String): SessionBreakdown? = withContext(io) {
         val session = sessionDao.sessionById(sessionId) ?: return@withContext null

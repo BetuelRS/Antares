@@ -54,6 +54,11 @@
     <string name="cycle_next">Próximo esperado: %1$s (estimativa)</string>
     <string name="cycle_retention">Nesta fase é normal a balança subir por retenção de líquidos. Não é gordura, e a app não mexeu na tua meta por causa disto.</string>
     <string name="cycle_start_today">Começou hoje</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_month">Mês</string>
+    <string name="filter_exercise">Exercício</string>
+    <string name="filter_type">Tipo</string>
+    <string name="filter_no_match">Nada com estes filtros.</string>
     <string name="cycle_pick_date">Escolher data</string>
     <string name="cycle_start_on">Início do período</string>
     <string name="cycle_end_on">Fim do período</string>
