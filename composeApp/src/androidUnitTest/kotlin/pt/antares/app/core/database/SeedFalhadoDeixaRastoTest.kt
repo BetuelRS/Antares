@@ -42,9 +42,11 @@ class SeedFalhadoDeixaRastoTest {
     fun `nao conseguir ler o seed dos exercicios fica registado`() = runTest {
         val crashes = StoreEmMemoria()
 
-        // Sem a marca na `db_info`, o semeador vai mesmo ler o recurso — que num teste
-        // unitário não existe, e é exatamente a falha que se quer provocar.
-        ExerciseSeeder(db, Dispatchers.Default, crashes).seedIfNeeded()
+        // A falha é pedida, e não esperada: contar com que os recursos do Compose não
+        // existam num teste unitário fazia isto passar ou falhar conforme a ordem em que os
+        // testes corriam — o fornecedor de recursos é do processo inteiro.
+        ExerciseSeeder(db, Dispatchers.Default, crashes, ler = { error("ficheiro ausente") })
+            .seedIfNeeded()
 
         val relatorio = assertNotNull(
             crashes.texto,
@@ -64,7 +66,12 @@ class SeedFalhadoDeixaRastoTest {
 
     @Test
     fun `falhar a ler nao poe a marca, para a proxima abertura tentar outra vez`() = runTest {
-        ExerciseSeeder(db, Dispatchers.Default, StoreEmMemoria()).seedIfNeeded()
+        ExerciseSeeder(
+            db,
+            Dispatchers.Default,
+            StoreEmMemoria(),
+            ler = { error("ficheiro ausente") },
+        ).seedIfNeeded()
 
         assertTrue(
             db.dbInfoDao().get("seed_exercises_imported") == null,

@@ -43,6 +43,7 @@ import pt.antares.app.core.calc.ProgressCalc
 import pt.antares.app.core.calc.ProgressRange
 import pt.antares.app.core.calc.TimeAxis
 import pt.antares.app.core.database.entities.ProgressPhotoEntity
+import pt.antares.app.core.designsystem.lengthWithUnit
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.success
@@ -466,7 +467,11 @@ private fun BeenHereCard(visita: BeenHereCalc.Visit, state: ProgressState) {
         visita.waistCm?.let { antes ->
             state.waistNowCm?.let { agora ->
                 Text(
-                    stringResource(Res.string.beenhere_waist, fmtG(antes), fmtG(agora)),
+                    stringResource(
+                        Res.string.beenhere_waist,
+                        lengthWithUnit(antes, state.unitSystem),
+                        lengthWithUnit(agora, state.unitSystem),
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )

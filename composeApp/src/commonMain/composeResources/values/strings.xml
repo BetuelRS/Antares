@@ -26,7 +26,7 @@
     <string name="patterns_title">Como tens comido</string>
     <string name="beenhere_title">Já estiveste aqui</string>
     <string name="beenhere_when">Pesaste o mesmo há %1$d dias, a %2$s.</string>
-    <string name="beenhere_waist">Cintura nessa altura: %1$s cm. Agora: %2$s cm.</string>
+    <string name="beenhere_waist">Cintura nessa altura: %1$s. Agora: %2$s.</string>
     <string name="beenhere_fat">Gordura nessa altura: %1$s%. Agora: %2$s%.</string>
     <string name="beenhere_nothing">Não temos medidas dessa altura para comparar — só o peso.</string>
     <string name="patterns_weekend_higher">Ao fim de semana comes em média mais %1$d kcal por dia.</string>
@@ -97,6 +97,8 @@
     <string name="common_kg">kg</string>
     <string name="common_lb">lb</string>
     <string name="common_cm">cm</string>
+    <string name="common_in">pol</string>
+    <string name="common_ft">pé</string>
     <string name="common_grams_short">g</string>
     <string name="common_oz">oz</string>
     <string name="common_floz">fl oz</string>
@@ -858,7 +860,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_logged_days">%1$d de 7 dias registados</string>
     <string name="coach_avg_kcal">Média: %1$d kcal (meta %2$d)</string>
     <string name="coach_on_target">%1$d dias dentro da meta</string>
-    <string name="coach_weight_trend">Tendência do peso: %1$s kg</string>
+    <string name="coach_weight_trend">Tendência do peso: %1$s</string>
     <string name="coach_sparse">Semana com poucos registos — o relatório vale o que vale.</string>
     <string name="coach_week_at_a_glance">A semana à vista</string>
     <string name="coach_disclaimer">Contas feitas neste telemóvel, a partir do que registaste. Não é aconselhamento médico.</string>
@@ -866,9 +868,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_error">Não deu para gerar o relatório. Tenta outra vez.</string>
 
     <string name="adaptive_title">Nova meta sugerida</string>
-    <string name="adaptive_why_loss">Pediste perder %1$s kg por semana, e estás a perder %2$s.</string>
-    <string name="adaptive_why_gain">Pediste ganhar %1$s kg por semana, e estás a ganhar %2$s.</string>
-    <string name="adaptive_why_opposite">Pediste %1$s kg por semana, e o peso está a ir ao contrário: %2$s.</string>
+    <string name="adaptive_why_loss">Pediste perder %1$s por semana, e estás a perder %2$s.</string>
+    <string name="adaptive_why_gain">Pediste ganhar %1$s por semana, e estás a ganhar %2$s.</string>
+    <string name="adaptive_why_opposite">Pediste %1$s por semana, e o peso está a ir ao contrário: %2$s.</string>
     <string name="adaptive_body">Pelo que comeste e pelo que o peso fez, gastas cerca de %1$d kcal/dia. A meta passaria de %2$d para %3$d kcal.</string>
     <string name="adaptive_accept">Aceitar</string>
     <string name="adaptive_keep">Manter</string>
@@ -960,15 +962,16 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_health_goal_section">O teu objetivo</string>
     <string name="profile_health_no_weight">Ainda não registaste nenhum peso. Toca para registares o primeiro.</string>
     <string name="profile_health_kg_per_week">kg/semana</string>
-    <string name="profile_health_trend">Tendência: %1$s kg</string>
+    <string name="profile_health_lb_per_week">lb/semana</string>
+    <string name="profile_health_trend">Tendência: %1$s</string>
     <string name="profile_health_bmi">IMC</string>
-    <string name="profile_health_healthy_range">Faixa saudável para a tua altura: %1$s–%2$s kg</string>
+    <string name="profile_health_healthy_range">Faixa saudável para a tua altura: %1$s a %2$s</string>
     <string name="profile_health_bmi_caveat">O IMC não distingue músculo de gordura. Quem treina há anos pode aparecer acima do peso sem o estar.</string>
     <string name="profile_health_waist_ratio">Cintura a dividir pela altura: %1$s · %2$s</string>
     <string name="profile_health_body_fat">Gordura %1$s%</string>
-    <string name="profile_health_lean_mass">Massa magra %1$s kg</string>
-    <string name="profile_health_goal_weight">Chegar aos %1$s kg</string>
-    <string name="profile_health_goal_remaining">Faltam %1$s kg</string>
+    <string name="profile_health_lean_mass">Massa magra %1$s</string>
+    <string name="profile_health_goal_weight">Chegar aos %1$s</string>
+    <string name="profile_health_goal_remaining">Faltam %1$s</string>
     <string name="profile_health_goal_reached">Chegaste ao teu peso-alvo.</string>
     <string name="profile_health_no_goal_weight">Ainda não escolheste um peso-alvo. Podes escolhê-lo em Editar perfil e metas.</string>
     <string name="profile_health_no_weigh_in">Tens um peso-alvo, mas falta a pesagem de partida. Regista o teu peso para veres o caminho que falta.</string>
@@ -1014,7 +1017,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="bodycomp_known_note">Valor dado por ti. É este que a app usa.</string>
     <string name="bodycomp_navy_note">Estimativa pelas circunferências (US Navy). É uma estimativa, não uma medição.</string>
     <string name="bodycomp_bmi_note">Estimativa pelo IMC. É a mais grosseira das três e não entra no cálculo da tua meta.</string>
-    <string name="bodycomp_fat_mass">Massa gorda %1$s kg</string>
+    <string name="bodycomp_fat_mass">Massa gorda %1$s</string>
     <string name="bodycomp_invalid">Com estes valores não dá para estimar. Confirma o que escreveste.</string>
     <string name="bodycomp_no_weight">Regista primeiro o teu peso — sem ele não há composição corporal.</string>
     <string name="bodycomp_save">Guardar</string>
@@ -1022,12 +1025,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_health_add_composition">Sabes a tua % de gordura?</string>
     <string name="profile_health_add_composition_desc">Com ela, a meta passa a ser calculada pela tua massa magra — mais exata do que só pelo peso.</string>
 
-    <string name="settings_rate_lose">Perder %1$s kg por semana</string>
-    <string name="settings_rate_gain">Ganhar %1$s kg por semana</string>
+    <string name="settings_rate_lose">Perder %1$s por semana</string>
+    <string name="settings_rate_gain">Ganhar %1$s por semana</string>
     <string name="settings_rate_deficit">= comer menos %1$d kcal por dia do que gastas</string>
     <string name="settings_rate_suspended">Este ritmo fica guardado, mas não está a ser aplicado — a meta é a de manutenção enquanto durar esta fase.</string>
     <string name="settings_rate_surplus">= comer mais %1$d kcal por dia do que gastas</string>
-    <string name="settings_rate_safe_zone">Zona segura para o teu peso: %1$s–%2$s kg por semana</string>
+    <string name="settings_rate_safe_zone">Zona segura para o teu peso: %1$s a %2$s por semana</string>
     <string name="settings_rate_too_fast_lose">Mais rápido do que isto custa músculo e é difícil de aguentar.</string>
     <string name="settings_rate_too_fast_gain">Ganhar mais rápido do que isto é sobretudo ganhar gordura.</string>
     <string name="settings_goal_weight">Peso-alvo (kg)</string>
@@ -1035,8 +1038,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="onb_plan_burn">Gastas por dia</string>
     <string name="onb_plan_burn_breakdown">metabolismo %1$d + atividade %2$d</string>
     <string name="onb_plan_formula_katch">Calculado pela tua massa magra, não só pelo peso.</string>
-    <string name="onb_plan_to_lose">Para perderes %1$s kg por semana</string>
-    <string name="onb_plan_to_gain">Para ganhares %1$s kg por semana</string>
+    <string name="onb_plan_to_lose">Para perderes %1$s por semana</string>
+    <string name="onb_plan_to_gain">Para ganhares %1$s por semana</string>
     <string name="onb_plan_less_than_burn">%1$d a menos do que gastas</string>
     <string name="onb_plan_more_than_burn">%1$d a mais do que gastas</string>
     <string name="onb_plan_estimates_note">São estimativas. Com algumas semanas de registos, a app mede o teu gasto real e ajusta sozinha.</string>
@@ -1054,25 +1057,25 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="goal_change_floor">A tua meta estava abaixo do mínimo saudável para o teu metabolismo e foi subida até ele.</string>
     <string name="goal_change_addback">O exercício passou a somar sempre ao orçamento do dia. Tinhas essa opção desligada; ela deixou de existir.</string>
     <string name="goal_change_ack">Entendi</string>
-    <string name="recalc_lost">Perdeste %1$s kg — a tua meta desceu de %2$d para %3$d kcal.</string>
-    <string name="recalc_gained">Ganhaste %1$s kg — a tua meta subiu de %2$d para %3$d kcal.</string>
+    <string name="recalc_lost">Perdeste %1$s — a tua meta desceu de %2$d para %3$d kcal.</string>
+    <string name="recalc_gained">Ganhaste %1$s — a tua meta subiu de %2$d para %3$d kcal.</string>
 
     <string name="settings_pregnancy_title">Sem défice nesta fase</string>
     <string name="settings_pregnancy_body">Marcaste gravidez ou amamentação no teu perfil, por isso a meta passou a ser a de manutenção — não se faz défice nesta fase. A app não acrescenta calorias por conta própria: as necessidades mudam ao longo da gestação e quem as sabe dizer é a tua equipa de saúde.</string>
     <string name="settings_goal_weight_low">Esse peso-alvo fica abaixo da faixa saudável para a tua altura.</string>
-    <string name="settings_goal_weight_low_range">Esse peso-alvo fica abaixo da faixa saudável para a tua altura (%1$s–%2$s kg). Podes continuar, mas vale a pena falares com alguém antes.</string>
+    <string name="settings_goal_weight_low_range">Esse peso-alvo fica abaixo da faixa saudável para a tua altura (%1$s a %2$s). Podes continuar, mas vale a pena falares com alguém antes.</string>
     <string name="settings_goal_reached_title">Chegaste ao teu peso-alvo</string>
     <string name="settings_goal_reached_body">Continuas a comer menos do que gastas. Se era aqui que querias chegar, passa a manutenção — a app calcula quanto precisas para ficar neste peso.</string>
     <string name="settings_goal_reached_cta">Passar a manutenção</string>
     <string name="weight_how_to_title">Como pesar-te</string>
     <string name="weight_how_to_body">De manhã, depois da casa de banho, antes de comer ou beber, e sempre na mesma balança. Não é mania: metade da variação entre pesagens é a hora do dia e a roupa, e a app usa estes números para te calcular a meta.</string>
     <string name="weight_second_title">Já te pesaste hoje</string>
-    <string name="weight_second_body">Tinhas %1$s kg e agora marcaste %2$s kg. O que queres guardar para hoje?</string>
-    <string name="weight_second_replace">Ficar com %1$s kg</string>
+    <string name="weight_second_body">Tinhas %1$s e agora marcaste %2$s. O que queres guardar para hoje?</string>
+    <string name="weight_second_replace">Ficar com %1$s</string>
     <string name="weight_second_average">Média das duas</string>
-    <string name="weight_second_keep">Manter os %1$s kg de antes</string>
+    <string name="weight_second_keep">Manter os %1$s de antes</string>
     <string name="weight_confirm_title">Confirmas este peso?</string>
-    <string name="weight_confirm_body">%1$s kg afasta-se muito do teu peso habitual (%2$s kg). Pode ser um erro de escrita — ou pode estar certo, e nesse caso guarda-o.</string>
+    <string name="weight_confirm_body">%1$s afasta-se muito do teu peso habitual (%2$s). Pode ser um erro de escrita — ou pode estar certo, e nesse caso guarda-o.</string>
     <string name="weight_confirm_save">Está certo, guarda</string>
     <string name="profile_help_title">Precisas de falar com alguém?</string>
     <string name="profile_help_body">Se a comida ou o peso te andam a ocupar a cabeça mais do que gostarias, isso merece ajuda a sério — e não é a esta app que ela vem. Fala com o teu médico de família, ou procura um psicólogo ou nutricionista.</string>
@@ -1110,12 +1113,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_formula_cunningham">Cunningham</string>
     <string name="settings_formula_cunningham_desc">Dá um valor mais alto. Costuma acertar melhor em quem tem muita massa magra.</string>
     <string name="settings_goal_body_fat">Objetivo de gordura corporal (%)</string>
-    <string name="height_recheck_title">A tua altura ainda é %1$d cm?</string>
+    <string name="height_recheck_title">A tua altura ainda é %1$s?</string>
     <string name="height_recheck_body">Perguntamos de vez em quando porque nesta idade ainda se cresce, e a altura mexe no cálculo da tua meta.</string>
     <string name="height_recheck_confirm">Continua igual</string>
     <string name="measure_history_title">Composição ao longo do tempo</string>
     <string name="measure_history_empty">Ainda só tens uma medição. Volta a medir daqui a umas semanas para veres a diferença.</string>
-    <string name="measure_waist_change">Cintura: %1$s cm → %2$s cm</string>
+    <string name="measure_waist_change">Cintura: %1$s → %2$s</string>
     <string name="measure_fat_change">Gordura: %1$s% → %2$s%</string>
     <string name="show_maths_title">Mostra-me a conta</string>
     <string name="show_maths_cta">Ver a conta</string>
@@ -1132,8 +1135,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_goal_water">Água: %1$d ml</string>
     <string name="profile_goal_fibre">Fibra: %1$d g</string>
     <string name="checkin_title">Check-in da semana</string>
-    <string name="checkin_weight">Peso: %1$s kg (tendência %2$s kg)</string>
-    <string name="checkin_rate">Ritmo: %1$s kg por semana</string>
+    <string name="checkin_weight">Peso: %1$s (tendência %2$s)</string>
+    <string name="checkin_rate">Ritmo: %1$s</string>
     <string name="checkin_no_rate">Ainda sem pesagens que cheguem para medir o ritmo.</string>
     <string name="checkin_open_coach">Ver o relatório do coach</string>
     <string name="weight_true_weight">A linha suave do gráfico é o teu peso verdadeiro. Os saltos de um dia para o outro são água e comida por digerir — não é gordura que apareceu de repente.</string>

@@ -28,6 +28,8 @@ import kotlin.math.abs
 import androidx.compose.ui.text.style.TextOverflow
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
+import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -376,7 +378,10 @@ private fun NumbersCard(report: CoachReportUi) {
             )
             agg.weightTrendDeltaKg?.let { delta ->
 
-                val signed = if (delta > 0) "+$delta" else delta.toString()
+                // O sinal escreve-se à mão porque um "+" diz que subiu, e o formatador só
+                // escreve o "-". A unidade vem convertida: era o último kg preso ao relatório.
+                val comUnidade = bodyWeightWithUnit(delta, rememberUnitSystem())
+                val signed = if (delta > 0) "+$comUnidade" else comUnidade
                 Text(
                     text = stringResource(Res.string.coach_weight_trend, signed),
                     style = MaterialTheme.typography.bodyMedium,
@@ -482,7 +487,12 @@ private fun porqueMuda(pedido: Double?, real: Double?): String? {
         RazaoDaProposta.A_PERDER -> Res.string.adaptive_why_loss
         RazaoDaProposta.A_GANHAR -> Res.string.adaptive_why_gain
     }
-    return stringResource(chave, fmtG(abs(pedido!!)), fmtG(abs(real!!)))
+    val unidades = rememberUnitSystem()
+    return stringResource(
+        chave,
+        bodyWeightWithUnit(abs(pedido!!), unidades),
+        bodyWeightWithUnit(abs(real!!), unidades),
+    )
 }
 
 /**

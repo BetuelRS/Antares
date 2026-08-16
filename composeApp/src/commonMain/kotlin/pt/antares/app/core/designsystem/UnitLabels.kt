@@ -7,12 +7,17 @@ import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
 import kotlin.math.roundToInt
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.common_cm
 import pt.antares.app.generated.resources.common_floz
+import pt.antares.app.generated.resources.common_ft
+import pt.antares.app.generated.resources.common_in
 import pt.antares.app.generated.resources.common_grams_short
 import pt.antares.app.generated.resources.common_kg
 import pt.antares.app.generated.resources.common_lb
 import pt.antares.app.generated.resources.common_ml
 import pt.antares.app.generated.resources.common_oz
+import pt.antares.app.generated.resources.profile_health_kg_per_week
+import pt.antares.app.generated.resources.profile_health_lb_per_week
 import pt.antares.app.generated.resources.run_pace_unit
 import pt.antares.app.generated.resources.run_pace_unit_mi
 import pt.antares.app.generated.resources.run_unit_km
@@ -58,6 +63,31 @@ fun bodyWeightWithUnit(kg: Double, system: UnitSystem): String =
     "${fmtG(UnitConversions.weightToDisplay(kg, system))} ${stringResource(weightUnitLabel(system))}"
 
 /**
+ * Um comprimento do corpo com a unidade: centímetros ou polegadas.
+ */
+@Composable
+fun lengthWithUnit(cm: Double, system: UnitSystem): String =
+    "${fmtG(UnitConversions.lengthToDisplay(cm, system))} ${stringResource(lengthUnitLabel(system))}"
+
+fun lengthUnitLabel(system: UnitSystem): StringResource =
+    if (system == UnitSystem.IMPERIAL) Res.string.common_in else Res.string.common_cm
+
+/**
+ * Um ritmo de peso por semana, com a unidade. O número converte-se como qualquer peso — meio
+ * quilo por semana é uma libra e um bocado —, e sem isso o cartão do corpo mostrava «153,9 lb»
+ * por cima de «0,4 kg/semana», que é a mesma pessoa medida em duas escalas.
+ */
+@Composable
+fun ratePerWeekWithUnit(kgPerWeek: Double, system: UnitSystem): String {
+    val rotulo = if (system == UnitSystem.IMPERIAL) {
+        Res.string.profile_health_lb_per_week
+    } else {
+        Res.string.profile_health_kg_per_week
+    }
+    return "${fmtG(UnitConversions.weightToDisplay(kgPerWeek, system))} ${stringResource(rotulo)}"
+}
+
+/**
  * Uma porção com a unidade. Em imperial leva uma casa decimal: uma onça são quase trinta
  * gramas, e ao inteiro uma refeição inteira mudava de tamanho no arredondamento.
  */
@@ -75,3 +105,17 @@ fun porcaoComUnidade(quantidade: Double, liquido: Boolean): String {
 
 // Uma casa decimal, que é o que uma onça precisa e uma grama não.
 private const val UMA_CASA = 10
+
+/**
+ * A altura com a unidade. Em imperial vai em pés e polegadas — «5 ft 10 in» —, e não em
+ * polegadas soltas: ninguém diz a altura em 70 polegadas.
+ */
+@Composable
+fun heightWithUnit(cm: Int, system: UnitSystem): String =
+    if (system == UnitSystem.IMPERIAL) {
+        val (pes, polegadas) = UnitConversions.cmToFtIn(cm)
+        "$pes ${stringResource(Res.string.common_ft)} " +
+            "$polegadas ${stringResource(Res.string.common_in)}"
+    } else {
+        "$cm ${stringResource(Res.string.common_cm)}"
+    }

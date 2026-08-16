@@ -54,6 +54,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.BmrFormula
 import pt.antares.app.core.calc.NutritionCalc
 import pt.antares.app.core.calc.TargetWarning
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
@@ -457,7 +458,7 @@ private fun RateStep(state: OnboardingState, viewModel: OnboardingViewModel) {
     Text(
         stringResource(
             if (losing) Res.string.settings_rate_lose else Res.string.settings_rate_gain,
-            fmtG(current),
+            bodyWeightWithUnit(current, state.unitSystem),
         ),
         style = MaterialTheme.typography.titleLarge,
     )
@@ -490,8 +491,8 @@ private fun RateStep(state: OnboardingState, viewModel: OnboardingViewModel) {
         Text(
             stringResource(
                 Res.string.settings_rate_safe_zone,
-                fmtG(safe.start),
-                fmtG(safe.endInclusive),
+                bodyWeightWithUnit(safe.start, state.unitSystem),
+                bodyWeightWithUnit(safe.endInclusive, state.unitSystem),
             ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -549,7 +550,7 @@ private fun PlanStep(state: OnboardingState, viewModel: OnboardingViewModel) {
                     } else {
                         Res.string.onb_plan_to_gain
                     },
-                    fmtG(weekly),
+                    bodyWeightWithUnit(weekly, state.unitSystem),
                 ),
                 style = MaterialTheme.typography.titleMedium,
             )

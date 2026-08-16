@@ -39,10 +39,18 @@ data class SeedExercise(
     val verified: Boolean = false,
 )
 
+/**
+ * O [ler] existe por causa dos testes, e a razão vale a pena escrever: o teste que guarda o
+ * rasto de uma leitura falhada provocava a falha contando com que os recursos do Compose não
+ * existem num teste unitário. Só que eles passam a existir assim que **outro** teste no mesmo
+ * processo arranca o fornecedor de recursos — e a partir daí a leitura corre bem e o teste
+ * falha por ordem de execução. Com o leitor de fora, a falha é pedida e não esperada.
+ */
 class ExerciseSeeder(
     private val db: AntaresDb,
     private val io: CoroutineDispatcher,
     private val crashes: CrashStore,
+    private val ler: (suspend (String) -> ByteArray)? = null,
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -65,7 +73,7 @@ class ExerciseSeeder(
         // que ainda não semeou.
         val file = try {
             @OptIn(ExperimentalResourceApi::class)
-            val bytes = Res.readBytes("files/seed_exercises.json")
+            val bytes = ler?.invoke(CAMINHO_DO_SEED) ?: Res.readBytes(CAMINHO_DO_SEED)
             json.decodeFromString<SeedExercisesFile>(bytes.decodeToString())
         } catch (e: Throwable) {
             crashes.registarEngolida(
@@ -114,6 +122,7 @@ class ExerciseSeeder(
     }
 
     companion object {
+        private const val CAMINHO_DO_SEED = "files/seed_exercises.json"
         private const val KEY = "seed_exercises_imported"
         private const val DONE = "v1"
 

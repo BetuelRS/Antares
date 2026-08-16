@@ -14,6 +14,8 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.calc.NutritionCalc
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -47,7 +49,7 @@ internal fun WeeklyRateSection(
     Text(
         stringResource(
             if (losing) Res.string.settings_rate_lose else Res.string.settings_rate_gain,
-            fmtG(current),
+            bodyWeightWithUnit(current, rememberUnitSystem()),
         ),
         style = MaterialTheme.typography.titleMedium,
     )
@@ -83,8 +85,8 @@ internal fun WeeklyRateSection(
         Text(
             stringResource(
                 Res.string.settings_rate_safe_zone,
-                fmtG(safe.start),
-                fmtG(safe.endInclusive),
+                bodyWeightWithUnit(safe.start, rememberUnitSystem()),
+                bodyWeightWithUnit(safe.endInclusive, rememberUnitSystem()),
             ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

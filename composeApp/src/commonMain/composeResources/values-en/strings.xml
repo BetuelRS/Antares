@@ -26,7 +26,7 @@
     <string name="patterns_title">How you have been eating</string>
     <string name="beenhere_title">You have been here before</string>
     <string name="beenhere_when">You weighed the same %1$d days ago, on %2$s.</string>
-    <string name="beenhere_waist">Waist back then: %1$s cm. Now: %2$s cm.</string>
+    <string name="beenhere_waist">Waist back then: %1$s. Now: %2$s.</string>
     <string name="beenhere_fat">Body fat back then: %1$s%. Now: %2$s%.</string>
     <string name="beenhere_nothing">We have no measurements from back then to compare — only the weight.</string>
     <string name="patterns_weekend_higher">On weekends you eat %1$d kcal more per day on average.</string>
@@ -97,6 +97,8 @@
     <string name="common_kg">kg</string>
     <string name="common_lb">lb</string>
     <string name="common_cm">cm</string>
+    <string name="common_in">in</string>
+    <string name="common_ft">ft</string>
     <string name="common_grams_short">g</string>
     <string name="common_oz">oz</string>
     <string name="common_floz">fl oz</string>
@@ -857,7 +859,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_logged_days">%1$d of 7 days logged</string>
     <string name="coach_avg_kcal">Average: %1$d kcal (target %2$d)</string>
     <string name="coach_on_target">%1$d days on target</string>
-    <string name="coach_weight_trend">Weight trend: %1$s kg</string>
+    <string name="coach_weight_trend">Weight trend: %1$s</string>
     <string name="coach_sparse">Few entries this week — take the report with a pinch of salt.</string>
     <string name="coach_week_at_a_glance">The week at a glance</string>
     <string name="coach_disclaimer">Worked out on this phone, from what you logged. Not medical advice.</string>
@@ -865,9 +867,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_error">Couldn't generate the report. Try again.</string>
 
     <string name="adaptive_title">New target suggested</string>
-    <string name="adaptive_why_loss">You asked to lose %1$s kg a week, and you are losing %2$s.</string>
-    <string name="adaptive_why_gain">You asked to gain %1$s kg a week, and you are gaining %2$s.</string>
-    <string name="adaptive_why_opposite">You asked for %1$s kg a week, and your weight is going the other way: %2$s.</string>
+    <string name="adaptive_why_loss">You asked to lose %1$s a week, and you are losing %2$s.</string>
+    <string name="adaptive_why_gain">You asked to gain %1$s a week, and you are gaining %2$s.</string>
+    <string name="adaptive_why_opposite">You asked for %1$s a week, and your weight is going the other way: %2$s.</string>
     <string name="adaptive_body">Going by what you ate and what your weight did, you burn around %1$d kcal/day. Your target would go from %2$d to %3$d kcal.</string>
     <string name="adaptive_accept">Accept</string>
     <string name="adaptive_keep">Keep</string>
@@ -959,15 +961,16 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_health_goal_section">Your goal</string>
     <string name="profile_health_no_weight">No weight logged yet. Tap to log your first one.</string>
     <string name="profile_health_kg_per_week">kg/week</string>
-    <string name="profile_health_trend">Trend: %1$s kg</string>
+    <string name="profile_health_lb_per_week">lb/week</string>
+    <string name="profile_health_trend">Trend: %1$s</string>
     <string name="profile_health_bmi">BMI</string>
-    <string name="profile_health_healthy_range">Healthy range for your height: %1$s–%2$s kg</string>
+    <string name="profile_health_healthy_range">Healthy range for your height: %1$s to %2$s</string>
     <string name="profile_health_bmi_caveat">BMI cannot tell muscle from fat. Someone who has trained for years can read as overweight without being it.</string>
     <string name="profile_health_waist_ratio">Waist divided by height: %1$s · %2$s</string>
     <string name="profile_health_body_fat">Body fat %1$s%</string>
-    <string name="profile_health_lean_mass">Lean mass %1$s kg</string>
-    <string name="profile_health_goal_weight">Reach %1$s kg</string>
-    <string name="profile_health_goal_remaining">%1$s kg to go</string>
+    <string name="profile_health_lean_mass">Lean mass %1$s</string>
+    <string name="profile_health_goal_weight">Reach %1$s</string>
+    <string name="profile_health_goal_remaining">%1$s to go</string>
     <string name="profile_health_goal_reached">You reached your goal weight.</string>
     <string name="profile_health_no_goal_weight">No goal weight yet. You can pick one in Edit profile and goals.</string>
     <string name="profile_health_no_weigh_in">You have a goal weight, but no weigh-in to start from. Log your weight to see how far there is to go.</string>
@@ -1013,7 +1016,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="bodycomp_known_note">Your own number. This is the one the app uses.</string>
     <string name="bodycomp_navy_note">Estimated from circumferences (US Navy). An estimate, not a measurement.</string>
     <string name="bodycomp_bmi_note">Estimated from BMI. The roughest of the three, and it does not feed your target.</string>
-    <string name="bodycomp_fat_mass">Fat mass %1$s kg</string>
+    <string name="bodycomp_fat_mass">Fat mass %1$s</string>
     <string name="bodycomp_invalid">These values do not give an estimate. Check what you typed.</string>
     <string name="bodycomp_no_weight">Log your weight first — there is no body composition without it.</string>
     <string name="bodycomp_save">Save</string>
@@ -1021,12 +1024,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_health_add_composition">Do you know your body fat?</string>
     <string name="profile_health_add_composition_desc">With it, your target is worked out from your lean mass — more accurate than weight alone.</string>
 
-    <string name="settings_rate_lose">Lose %1$s kg per week</string>
-    <string name="settings_rate_gain">Gain %1$s kg per week</string>
+    <string name="settings_rate_lose">Lose %1$s per week</string>
+    <string name="settings_rate_gain">Gain %1$s per week</string>
     <string name="settings_rate_deficit">= eat %1$d kcal a day less than you burn</string>
     <string name="settings_rate_suspended">This pace is saved but not applied — the target is maintenance while this stage lasts.</string>
     <string name="settings_rate_surplus">= eat %1$d kcal a day more than you burn</string>
-    <string name="settings_rate_safe_zone">Safe zone for your weight: %1$s–%2$s kg per week</string>
+    <string name="settings_rate_safe_zone">Safe zone for your weight: %1$s to %2$s per week</string>
     <string name="settings_rate_too_fast_lose">Faster than this costs muscle and is hard to sustain.</string>
     <string name="settings_rate_too_fast_gain">Gaining faster than this is mostly gaining fat.</string>
     <string name="settings_goal_weight">Goal weight (kg)</string>
@@ -1034,8 +1037,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="onb_plan_burn">You burn per day</string>
     <string name="onb_plan_burn_breakdown">metabolism %1$d + activity %2$d</string>
     <string name="onb_plan_formula_katch">Worked out from your lean mass, not weight alone.</string>
-    <string name="onb_plan_to_lose">To lose %1$s kg per week</string>
-    <string name="onb_plan_to_gain">To gain %1$s kg per week</string>
+    <string name="onb_plan_to_lose">To lose %1$s per week</string>
+    <string name="onb_plan_to_gain">To gain %1$s per week</string>
     <string name="onb_plan_less_than_burn">%1$d less than you burn</string>
     <string name="onb_plan_more_than_burn">%1$d more than you burn</string>
     <string name="onb_plan_estimates_note">These are estimates. After a few weeks of logging, the app measures your real expenditure and adjusts on its own.</string>
@@ -1053,25 +1056,25 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="goal_change_floor">Your target was below the healthy minimum for your metabolism and was raised to it.</string>
     <string name="goal_change_addback">Exercise now always adds to your daily budget. You had that switched off; the option no longer exists.</string>
     <string name="goal_change_ack">Got it</string>
-    <string name="recalc_lost">You lost %1$s kg — your target went down from %2$d to %3$d kcal.</string>
-    <string name="recalc_gained">You gained %1$s kg — your target went up from %2$d to %3$d kcal.</string>
+    <string name="recalc_lost">You lost %1$s — your target went down from %2$d to %3$d kcal.</string>
+    <string name="recalc_gained">You gained %1$s — your target went up from %2$d to %3$d kcal.</string>
 
     <string name="settings_pregnancy_title">No deficit at this stage</string>
     <string name="settings_pregnancy_body">You marked pregnancy or breastfeeding in your profile, so the target moved to maintenance — no deficit is calculated at this stage. The app does not add calories on its own either: needs change through pregnancy, and your healthcare team is who can say by how much.</string>
     <string name="settings_goal_weight_low">That goal weight is below the healthy range for your height.</string>
-    <string name="settings_goal_weight_low_range">That goal weight is below the healthy range for your height (%1$s–%2$s kg). You can carry on, but it is worth talking to someone first.</string>
+    <string name="settings_goal_weight_low_range">That goal weight is below the healthy range for your height (%1$s to %2$s). You can carry on, but it is worth talking to someone first.</string>
     <string name="settings_goal_reached_title">You reached your goal weight</string>
     <string name="settings_goal_reached_body">You are still eating less than you burn. If this is where you wanted to be, switch to maintenance — the app will work out what you need to stay here.</string>
     <string name="settings_goal_reached_cta">Switch to maintenance</string>
     <string name="weight_how_to_title">How to weigh yourself</string>
     <string name="weight_how_to_body">In the morning, after the bathroom, before eating or drinking, and always on the same scale. This is not fussiness: half the variation between weigh-ins is the time of day and your clothes, and the app uses these numbers to work out your target.</string>
     <string name="weight_second_title">You already weighed in today</string>
-    <string name="weight_second_body">You had %1$s kg and now the scale says %2$s kg. Which one should today keep?</string>
-    <string name="weight_second_replace">Keep %1$s kg</string>
+    <string name="weight_second_body">You had %1$s and now the scale says %2$s. Which one should today keep?</string>
+    <string name="weight_second_replace">Keep %1$s</string>
     <string name="weight_second_average">Average the two</string>
-    <string name="weight_second_keep">Keep the earlier %1$s kg</string>
+    <string name="weight_second_keep">Keep the earlier %1$s</string>
     <string name="weight_confirm_title">Is this weight right?</string>
-    <string name="weight_confirm_body">%1$s kg is a long way from your usual weight (%2$s kg). It could be a typo — or it could be right, in which case save it.</string>
+    <string name="weight_confirm_body">%1$s is a long way from your usual weight (%2$s). It could be a typo — or it could be right, in which case save it.</string>
     <string name="weight_confirm_save">It is right, save it</string>
     <string name="profile_help_title">Need to talk to someone?</string>
     <string name="profile_help_body">If food or your weight are on your mind more than you would like, that deserves real help — and it does not come from this app. Talk to your GP, or find a psychologist or dietitian.</string>
@@ -1109,12 +1112,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_formula_cunningham">Cunningham</string>
     <string name="settings_formula_cunningham_desc">Gives a higher figure. Tends to fit people with a lot of lean mass better.</string>
     <string name="settings_goal_body_fat">Goal body fat (%)</string>
-    <string name="height_recheck_title">Are you still %1$d cm?</string>
+    <string name="height_recheck_title">Are you still %1$s?</string>
     <string name="height_recheck_body">We ask now and then because people still grow at your age, and height feeds into your target.</string>
     <string name="height_recheck_confirm">Still the same</string>
     <string name="measure_history_title">Composition over time</string>
     <string name="measure_history_empty">You only have one measurement so far. Measure again in a few weeks to see the difference.</string>
-    <string name="measure_waist_change">Waist: %1$s cm → %2$s cm</string>
+    <string name="measure_waist_change">Waist: %1$s → %2$s</string>
     <string name="measure_fat_change">Body fat: %1$s% → %2$s%</string>
     <string name="show_maths_title">Show me the maths</string>
     <string name="show_maths_cta">See the maths</string>
@@ -1131,8 +1134,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="profile_goal_water">Water: %1$d ml</string>
     <string name="profile_goal_fibre">Fibre: %1$d g</string>
     <string name="checkin_title">Weekly check-in</string>
-    <string name="checkin_weight">Weight: %1$s kg (trend %2$s kg)</string>
-    <string name="checkin_rate">Rate: %1$s kg per week</string>
+    <string name="checkin_weight">Weight: %1$s (trend %2$s)</string>
+    <string name="checkin_rate">Rate: %1$s</string>
     <string name="checkin_no_rate">Not enough weigh-ins yet to measure your rate.</string>
     <string name="checkin_open_coach">See the coach report</string>
     <string name="weight_true_weight">The smooth line on the chart is your true weight. Day-to-day jumps are water and undigested food — not fat that appeared overnight.</string>

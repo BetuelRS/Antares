@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
@@ -202,13 +204,19 @@ private fun PreviewCard(state: BodyCompositionState, viewModel: BodyCompositionV
         )
         stats.leanMassKg?.let {
             Text(
-                stringResource(Res.string.profile_health_lean_mass, fmtG(it)),
+                stringResource(
+                    Res.string.profile_health_lean_mass,
+                    bodyWeightWithUnit(it, rememberUnitSystem()),
+                ),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
         stats.fatMassKg?.let {
             Text(
-                stringResource(Res.string.bodycomp_fat_mass, fmtG(it)),
+                stringResource(
+                    Res.string.bodycomp_fat_mass,
+                    bodyWeightWithUnit(it, rememberUnitSystem()),
+                ),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

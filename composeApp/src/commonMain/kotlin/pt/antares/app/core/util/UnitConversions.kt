@@ -78,6 +78,13 @@ object UnitConversions {
         if (system == UnitSystem.IMPERIAL) gToOz(grams) else grams
 
     /**
+     * Um comprimento do corpo — cintura, braço, coxa — para ver. É a fita métrica, e não a
+     * altura: a altura mostra-se em pés e polegadas, e uma cintura em pés não se lê.
+     */
+    fun lengthToDisplay(cm: Double, system: UnitSystem): Double =
+        if (system == UnitSystem.IMPERIAL) cm / CM_PER_IN else cm
+
+    /**
      * O ritmo é o inverso da distância: uma milha é mais longa do que um quilómetro, por isso
      * o mesmo ritmo dá **mais** segundos por milha. Dividir aqui em vez de multiplicar era um
      * erro que ainda daria um número plausível.

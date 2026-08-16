@@ -77,6 +77,53 @@ class SistemaImperialCompletoTest {
         )
     }
 
+    /**
+     * O buraco por onde passaram nove textos, encontrado a correr a app em libras: o teste só
+     * lia Kotlin, e um «kg» dentro de um `strings.xml` não é código nenhum. O cartão do corpo
+     * mostrava «153,9 lb» por cima de «0,4 kg/semana» e «Tendência: 70,6 kg».
+     *
+     * A regra é a mesma dos ecrãs: quando o número depende da preferência, a unidade vai com
+     * ele, formatada pelo `UnitLabels.kt`, e o texto recebe `%1$s` em vez de `%1$s kg`.
+     */
+    @Test
+    fun `nenhum texto com um numero convertivel escreve a unidade a mao`() {
+        val padrao = Regex("""%\d\$[sd]\s?(kg|cm|km|ml)\b""")
+
+        val infratores = mutableListOf<String>()
+        for (idioma in listOf("values", "values-en")) {
+            val ficheiro = File("src/commonMain/composeResources/$idioma/strings.xml")
+            for (linha in ficheiro.readLines()) {
+                val chave = Regex("""<string name="([^"]+)"""").find(linha)?.groupValues?.get(1)
+                if (chave != null && chave !in unidadeFixaPorRazao && padrao.containsMatchIn(linha)) {
+                    infratores += "$idioma/$chave"
+                }
+            }
+        }
+
+        assertEquals(
+            emptyList(),
+            infratores,
+            "unidade escrita dentro do texto, num número que muda com a preferência: $infratores",
+        )
+    }
+
+    /**
+     * Textos onde a unidade **não** depende da preferência, com a razão de cada um. A lista é
+     * curta de propósito: cada entrada é uma promessa de que aquele número é sempre métrico.
+     */
+    private val unidadeFixaPorRazao = mapOf(
+        "stat_micro_base" to "é uma percentagem; o «%» colado ao argumento não é unidade",
+        "attrib_coverage" to "também é percentagem",
+        "today_water_parts" to "a água regista-se e mostra-se em mililitros nos dois sistemas",
+        "profile_goal_water" to "a mesma água, na lista de metas",
+        "show_maths_lean" to
+            "a Katch-McArdle é definida em quilos de massa magra; mostrar a fórmula em " +
+                "libras seria mostrar uma conta que ninguém publicou",
+        "show_maths_protein_trained" to "o mesmo: os gramas por quilo vêm do Helms et al.",
+        "show_maths_protein" to "idem",
+        "show_maths_bmr" to "idem",
+    )
+
     @Test
     fun `a volta e meia devolve o mesmo numero`() {
         // Ida e volta em cada par de unidades: é isto que impede um peso de encolher a cada

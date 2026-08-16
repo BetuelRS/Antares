@@ -39,6 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.ChartScale
 import pt.antares.app.core.calc.TimeAxis
 import pt.antares.app.core.database.entities.WeightLogEntity
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -105,8 +106,8 @@ fun WeightHistoryScreen(
             title = stringResource(Res.string.weight_confirm_title),
             message = stringResource(
                 Res.string.weight_confirm_body,
-                fmtG(p.weightKg),
-                fmtG(p.referenceKg),
+                bodyWeightWithUnit(p.weightKg, state.unitSystem),
+                bodyWeightWithUnit(p.referenceKg, state.unitSystem),
             ),
             confirmLabel = stringResource(Res.string.weight_confirm_save),
             dismissLabel = stringResource(Res.string.common_cancel),
@@ -117,8 +118,8 @@ fun WeightHistoryScreen(
     val segundaPesagem by viewModel.segundaPesagem.collectAsState()
     segundaPesagem?.let { p ->
         SegundaPesagemDialog(
-            anterior = fmtG(p.anteriorKg),
-            novo = fmtG(p.novoKg),
+            anterior = bodyWeightWithUnit(p.anteriorKg, state.unitSystem),
+            novo = bodyWeightWithUnit(p.novoKg, state.unitSystem),
             onEscolha = viewModel::resolverSegundaPesagem,
             onDismiss = viewModel::dispensarSegundaPesagem,
         )

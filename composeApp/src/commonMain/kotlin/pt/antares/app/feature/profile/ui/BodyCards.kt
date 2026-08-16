@@ -24,6 +24,7 @@ import pt.antares.app.core.calc.MeasurementProgress
 import pt.antares.app.core.calc.WaistRisk
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.bodyWeightWithUnit
+import pt.antares.app.core.designsystem.ratePerWeekWithUnit
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -64,7 +65,7 @@ internal fun WeightCard(state: HealthProfileState, onWeightHistory: () -> Unit) 
 
                 val arrow = if (rate < 0) "↓" else "↑"
                 Text(
-                    "$arrow ${fmtG(abs(rate))} ${stringResource(Res.string.profile_health_kg_per_week)}",
+                    "$arrow ${ratePerWeekWithUnit(abs(rate), rememberUnitSystem())}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -72,7 +73,10 @@ internal fun WeightCard(state: HealthProfileState, onWeightHistory: () -> Unit) 
         }
         state.trendWeightKg?.let { trend ->
             Text(
-                stringResource(Res.string.profile_health_trend, fmtG(trend)),
+                stringResource(
+                    Res.string.profile_health_trend,
+                    bodyWeightWithUnit(trend, rememberUnitSystem()),
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -115,8 +119,8 @@ internal fun BmiCard(body: BodyStats) {
             Text(
                 stringResource(
                     Res.string.profile_health_healthy_range,
-                    fmtG(range.start),
-                    fmtG(range.endInclusive),
+                    bodyWeightWithUnit(range.start, rememberUnitSystem()),
+                    bodyWeightWithUnit(range.endInclusive, rememberUnitSystem()),
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -172,7 +176,10 @@ internal fun CompositionCard(body: BodyStats, onClick: () -> Unit) {
             trailing = {
                 body.leanMassKg?.let {
                     Text(
-                        stringResource(Res.string.profile_health_lean_mass, fmtG(it)),
+                        stringResource(
+                            Res.string.profile_health_lean_mass,
+                            bodyWeightWithUnit(it, rememberUnitSystem()),
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.End,

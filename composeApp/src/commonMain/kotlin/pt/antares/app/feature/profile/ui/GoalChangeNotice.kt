@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.calc.GoalChange
 import pt.antares.app.core.calc.GoalChangeReason
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
+import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -93,7 +95,7 @@ fun WeightRecalcNotice(oldKcal: Int, newKcal: Int, deltaWeightKg: Double) {
         Text(
             stringResource(
                 if (deltaWeightKg < 0) Res.string.recalc_lost else Res.string.recalc_gained,
-                fmtG(abs(deltaWeightKg)),
+                bodyWeightWithUnit(abs(deltaWeightKg), rememberUnitSystem()),
                 oldKcal,
                 newKcal,
             ),

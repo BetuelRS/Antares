@@ -38,6 +38,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.BmrFormula
 import pt.antares.app.core.calc.NutritionCalc
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
+import pt.antares.app.core.designsystem.heightWithUnit
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
@@ -181,7 +183,10 @@ fun ProfileSettingsScreen(
             if (viewModel.heightCheckDue()) {
                 AntaresCard(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        stringResource(Res.string.height_recheck_title, profile.heightCm),
+                        stringResource(
+                            Res.string.height_recheck_title,
+                            heightWithUnit(profile.heightCm, profile.unitSystem),
+                        ),
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Text(
@@ -308,8 +313,8 @@ fun ProfileSettingsScreen(
                     if (range != null) {
                         stringResource(
                             Res.string.settings_goal_weight_low_range,
-                            fmtG(range.start),
-                            fmtG(range.endInclusive),
+                            bodyWeightWithUnit(range.start, profile.unitSystem),
+                            bodyWeightWithUnit(range.endInclusive, profile.unitSystem),
                         )
                     } else {
                         stringResource(Res.string.settings_goal_weight_low)

@@ -33,6 +33,10 @@ import pt.antares.app.core.calc.BmrFormula
 import pt.antares.app.core.calc.MeasurementProgress
 import pt.antares.app.core.calc.BodyStats
 import pt.antares.app.core.calc.WaistRisk
+import pt.antares.app.core.designsystem.ratePerWeekWithUnit
+import pt.antares.app.core.designsystem.lengthWithUnit
+import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.bodyWeightWithUnit
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.activityLevelLabel
@@ -331,13 +335,18 @@ private fun CheckInCard(state: HealthProfileState, onCoach: () -> Unit) {
         Text(
             stringResource(
                 Res.string.checkin_weight,
-                fmtG(weight),
-                fmtG(state.trendWeightKg ?: weight),
+                bodyWeightWithUnit(weight, rememberUnitSystem()),
+                bodyWeightWithUnit(state.trendWeightKg ?: weight, rememberUnitSystem()),
             ),
             style = MaterialTheme.typography.bodyMedium,
         )
         Text(
-            state.weeklyRateKg?.let { stringResource(Res.string.checkin_rate, fmtG(it)) }
+            state.weeklyRateKg?.let {
+                stringResource(
+                    Res.string.checkin_rate,
+                    ratePerWeekWithUnit(it, rememberUnitSystem()),
+                )
+            }
                 ?: stringResource(Res.string.checkin_no_rate),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -382,7 +391,11 @@ private fun ProgressCard(progress: MeasurementProgress, onClick: () -> Unit) {
         val to = progress.waistTo
         if (from != null && to != null) {
             Text(
-                stringResource(Res.string.measure_waist_change, fmtG(from), fmtG(to)),
+                stringResource(
+                    Res.string.measure_waist_change,
+                    lengthWithUnit(from, rememberUnitSystem()),
+                    lengthWithUnit(to, rememberUnitSystem()),
+                ),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -421,7 +434,10 @@ private fun GoalCard(state: HealthProfileState) {
         }
 
         Text(
-            stringResource(Res.string.profile_health_goal_weight, fmtG(goal)),
+            stringResource(
+                Res.string.profile_health_goal_weight,
+                bodyWeightWithUnit(goal, rememberUnitSystem()),
+            ),
             style = MaterialTheme.typography.titleMedium,
         )
 
@@ -443,7 +459,10 @@ private fun GoalCard(state: HealthProfileState) {
             } else {
                 stringResource(
                     Res.string.profile_health_goal_remaining,
-                    fmtG(p?.remainingKg ?: abs(state.remainingToGoalKg ?: 0.0)),
+                    bodyWeightWithUnit(
+                        p?.remainingKg ?: abs(state.remainingToGoalKg ?: 0.0),
+                        rememberUnitSystem(),
+                    ),
                 )
             },
             style = MaterialTheme.typography.bodyMedium,
