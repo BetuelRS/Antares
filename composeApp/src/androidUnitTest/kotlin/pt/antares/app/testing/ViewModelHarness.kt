@@ -3,6 +3,7 @@ package pt.antares.app.testing
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -72,6 +73,13 @@ abstract class ViewModelHarness {
 
     @After
     fun tearDownHarness() {
+        // O `scope` do harness fica com o que os ViewModels lançaram e o teste não esperou —
+        // um `stateIn(WhileSubscribed)` que ainda vai buscar a primeira leitura, por exemplo.
+        // Fechar a base com uma consulta a caminho fazia o Room abrir outra em memória para a
+        // servir, e essa nunca era fechada: o `CloseGuard` do Robolectric queixava-se disso
+        // no fim da suite, num teste qualquer que estivesse a correr quando o recolector
+        // passasse — e a queixa não dizia de onde vinha.
+        scope.cancel()
         Dispatchers.resetMain()
         db.close()
         prefsFile.delete()

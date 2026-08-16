@@ -1,4 +1,5 @@
 
+import { type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 import { gate, json } from '../_shared/gate.ts';
 import { callClaude, ModelError, MODEL_ANALYSIS, type ContentBlock } from '../_shared/claude.ts';
 import {
@@ -17,7 +18,12 @@ import {
   type Sources,
 } from '../_shared/nutrition.ts';
 
-type Admin = any;
+/**
+ * O cliente do Supabase com chave de serviço, com o tipo que a própria biblioteca publica.
+ * Era `any`, e com `any` um nome de método trocado só se descobria em produção — o
+ * `deno check` não tinha nada a que se agarrar.
+ */
+type Admin = SupabaseClient;
 
 // Limites verificados antes de a chamada ao modelo ser cobrada: o custo cresce com o
 // tamanho da entrada, e uma imagem enorme é a maneira mais fácil de gastar a fatura de

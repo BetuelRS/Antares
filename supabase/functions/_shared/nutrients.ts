@@ -2,6 +2,21 @@
 export type Micros = Record<string, number>;
 
 /**
+ * O que chega de fora — da tabela americana ou da Open Food Facts — é JSON de outra pessoa:
+ * os campos podem faltar, vir com outro nome ou com outro tipo. Descrevê-lo como `unknown`
+ * dentro de um saco de chaves é mais honesto do que `any`, porque obriga quem o lê a
+ * verificar o tipo antes de usar o valor. É o que estas funções já faziam à mão.
+ */
+export type PayloadExterno = Record<string, unknown>;
+
+/** Uma linha de nutriente da tabela americana, com o mínimo que a app lhe pede. */
+export interface UsdaNutriente {
+  nutrientId?: number;
+  value?: unknown;
+  amount?: unknown;
+}
+
+/**
  * Os códigos de nutriente da tabela americana traduzidos para as chaves canónicas da app.
  * Os valores à direita têm de bater exatamente com o `Nutrients` do lado Kotlin: são as
  * chaves que acabam gravadas no JSON de cada registo, e um nome trocado aqui faz o
@@ -110,10 +125,13 @@ export function cleanMicros(raw: Record<string, number | null | undefined>): Mic
   return Object.keys(out).length ? out : undefined;
 }
 
-export function usdaMicros(foodNutrients: any[]): Micros | undefined {
+export function usdaMicros(foodNutrients: UsdaNutriente[]): Micros | undefined {
   const raw: Record<string, number> = {};
   for (const n of foodNutrients ?? []) {
-    const key = USDA_MICRO_IDS[n?.nutrientId];
+    // O identificador pode não vir: aí não há chave nenhuma a que corresponda, e a linha
+    // salta-se — que é o que o `if (!key)` já fazia quando o tipo era `any`.
+    if (typeof n?.nutrientId !== "number") continue;
+    const key = USDA_MICRO_IDS[n.nutrientId];
     if (!key) continue;
     const v = typeof n?.value === "number" ? n.value : Number(n?.amount);
     if (Number.isFinite(v)) raw[key] = v;
@@ -121,7 +139,7 @@ export function usdaMicros(foodNutrients: any[]): Micros | undefined {
   return cleanMicros(raw);
 }
 
-export function offMicros(nutriments: any): Micros | undefined {
+export function offMicros(nutriments: PayloadExterno | null | undefined): Micros | undefined {
   if (!nutriments) return undefined;
   const raw: Record<string, number> = {};
   for (const [suffix, key] of Object.entries(OFF_MICRO_KEYS)) {

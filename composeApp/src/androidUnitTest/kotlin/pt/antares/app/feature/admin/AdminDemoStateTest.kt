@@ -2,7 +2,9 @@ package pt.antares.app.feature.admin
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -38,11 +40,21 @@ class AdminDemoStateTest {
         db = Room.inMemoryDatabaseBuilder(context, AntaresDb::class.java)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
-        vm = DemoViewModel(DemoDataWriter(db.demoDao(), Dispatchers.Default))
+        // O escritor recebe o `Unconfined` e não o `Default`: assim o trabalho dele corre na
+        // própria linha de quem o chamou e acaba **dentro** do corpo do teste. Com o
+        // `Default`, uma consulta ficava a decorrer noutro fio depois de o teste terminar; o
+        // `tearDown` fechava a base, o Room abria outra em memória para a servir, e essa
+        // ficava por fechar. O `CloseGuard` do Robolectric queixava-se disso uma vez por
+        // suite, no teste que calhasse estar a correr quando o recolector passasse.
+        //
+        // Esperar por ela no `tearDown` não serve: um `runBlocking` a juntar-se a trabalho
+        // despachado no despachante de teste bloqueia o fio que o faria avançar.
+        vm = DemoViewModel(DemoDataWriter(db.demoDao(), Dispatchers.Unconfined))
     }
 
     @After
     fun tearDown() {
+        vm.viewModelScope.cancel()
         db.close()
         Dispatchers.resetMain()
     }

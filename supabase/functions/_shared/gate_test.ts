@@ -1,4 +1,5 @@
 
+import { type SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 import { assertEquals } from 'jsr:@std/assert@1';
 import {
   clientIp,
@@ -36,6 +37,10 @@ class FakeDb {
   };
 
   from(table: string) {
+    // O encadeamento devolve sempre o mesmo objeto, e os métodos precisam de chegar aos
+    // contadores do duplo. Uma seta guardaria o `this` sozinha, mas partia o encadeamento:
+    // o `chain` tem de ser um objeto literal com métodos que devolvem `chain`.
+    // deno-lint-ignore no-this-alias
     const self = this;
     const filters: Record<string, unknown> = {};
 
@@ -64,7 +69,7 @@ class FakeDb {
     return chain;
   }
 
-  rpc(name: string, args: any) {
+  rpc(name: string, args: Record<string, number>) {
     switch (name) {
       case 'ai_trial_increment':
         if (this.trialUsed >= args.p_limit) return Promise.resolve({ data: -1, error: null });
@@ -94,12 +99,12 @@ const req = (token = 'jwt', ip = '198.51.100.7') =>
     headers: { Authorization: `Bearer ${token}`, 'x-forwarded-for': ip },
   });
 
-const run = (db: FakeDb, day = today()) => gate(req(), 'analyze-food', day, db as any);
+const run = (db: FakeDb, day = today()) => gate(req(), 'analyze-food', day, db as unknown as SupabaseClient);
 
 Deno.test('sem token → 401', async () => {
   const db = new FakeDb();
 
-  const r = (await gate(new Request('http://x'), 'analyze-food', today(), db as any)) as GateErr;
+  const r = (await gate(new Request('http://x'), 'analyze-food', today(), db as unknown as SupabaseClient)) as GateErr;
   assertEquals(r.ok, false);
   assertEquals(r.status, 401);
 });
@@ -107,7 +112,7 @@ Deno.test('sem token → 401', async () => {
 Deno.test('token inválido → 401 (não gasta quota)', async () => {
   const db = new FakeDb();
 
-  const r = (await gate(req('bad'), 'analyze-food', today(), db as any)) as GateErr;
+  const r = (await gate(req('bad'), 'analyze-food', today(), db as unknown as SupabaseClient)) as GateErr;
   assertEquals(r.status, 401);
   assertEquals(db.trialUsed, 0);
 });

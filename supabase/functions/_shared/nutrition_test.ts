@@ -170,7 +170,7 @@ Deno.test('OFF leva User-Agent — sem ele responde 503 a datacenters', async ()
   let seenUa: string | undefined;
   const s: Sources = {
     ...sources({ off: { products: [{ nutriments: { 'energy-kcal_100g': 165, proteins_100g: 31, carbohydrates_100g: 0, fat_100g: 3.6 } }] }, usdaKey: null }),
-    fetcher: (url, init) => {
+    fetcher: (_url, init) => {
       seenUa = (init?.headers as Record<string, string> | undefined)?.['User-Agent'];
       return Promise.resolve(
         new Response(

@@ -1,5 +1,11 @@
 
-import { offMicros, USDA_MACRO_IDS, usdaMicros } from './nutrients.ts';
+import {
+  offMicros,
+  type PayloadExterno,
+  USDA_MACRO_IDS,
+  usdaMicros,
+  type UsdaNutriente,
+} from './nutrients.ts';
 
 export type Macros = {
   kcal: number;
@@ -167,7 +173,7 @@ export async function usdaLookup(
   const res = await s.fetcher(url, { signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS) });
   if (!res.ok) return null;
   const body = await res.json();
-  const foods: unknown[] = body?.foods ?? [];
+  const foods = (body?.foods as PayloadExterno[] | undefined) ?? [];
 
   for (const food of foods) {
     const per100g = usdaToPer100g(food);
@@ -181,9 +187,16 @@ export async function usdaLookup(
   return null;
 }
 
-export function usdaToPer100g(food: any): Per100g | null {
-  const nutrients: any[] = food?.foodNutrients ?? [];
-  const pick = (id: number) => nutrients.find((n) => n?.nutrientId === id)?.value;
+export function usdaToPer100g(food: PayloadExterno | null | undefined): Per100g | null {
+  const nutrients = (food?.foodNutrients as UsdaNutriente[] | undefined) ?? [];
+
+  // O `pick` passa a devolver número ou nada. Antes devolvia o valor em bruto, e um campo
+  // que viesse como texto entrava direito num `Per100g`, que só tem números — um erro que
+  // ninguém veria até uma conta dar `NaN`.
+  const pick = (id: number): number | undefined => {
+    const v = nutrients.find((n) => n?.nutrientId === id)?.value;
+    return typeof v === 'number' && Number.isFinite(v) ? v : undefined;
+  };
   const kcal = pick(USDA_MACRO_IDS.kcal);
   if (typeof kcal !== 'number') return null;
   return {
@@ -223,7 +236,7 @@ export async function offLookup(
   });
   if (!res.ok) return null;
   const body = await res.json();
-  const products: unknown[] = body?.products ?? [];
+  const products = (body?.products as PayloadExterno[] | undefined) ?? [];
   for (const p of products) {
     const per100g = offToPer100g(p);
     if (
@@ -236,8 +249,8 @@ export async function offLookup(
   return null;
 }
 
-export function offToPer100g(product: any): Per100g | null {
-  const n = product?.nutriments;
+export function offToPer100g(product: PayloadExterno | null | undefined): Per100g | null {
+  const n = product?.nutriments as PayloadExterno | undefined;
   const kcal = n?.['energy-kcal_100g'];
   if (typeof kcal !== 'number') return null;
 
@@ -249,9 +262,9 @@ export function offToPer100g(product: any): Per100g | null {
   const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
   return {
     kcal,
-    protein: n?.proteins_100g ?? 0,
-    carbs: n?.carbohydrates_100g ?? 0,
-    fat: n?.fat_100g ?? 0,
+    protein: num(n?.proteins_100g) ?? 0,
+    carbs: num(n?.carbohydrates_100g) ?? 0,
+    fat: num(n?.fat_100g) ?? 0,
     sugars: num(n?.sugars_100g),
     satFat: num(n?.['saturated-fat_100g']),
     fiber: num(n?.fiber_100g),
