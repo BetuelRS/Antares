@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -42,6 +42,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.feature.workout.model.Exercise
 import pt.antares.app.feature.workout.model.WorkoutTaxonomy
 import pt.antares.app.generated.resources.Res
@@ -123,9 +124,10 @@ fun ExerciseLibraryScreen(
                     )
                 }
             } else {
-                LazyColumn(
+                ListaAdaptavel(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+                    contentPadding = PaddingValues(bottom = Spacing.lg),
+                    espaco = Spacing.xs,
                 ) {
                     items(results, key = { it.id }) { ex ->
                         ExerciseListItem(ex, onClick = { onExercise(ex.id) })

@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CloudDownload
@@ -60,6 +60,8 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
+import pt.antares.app.core.designsystem.components.linhaInteira
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -318,7 +320,11 @@ fun FoodSearchScreen(
                             subtitle = stringResource(Res.string.search_empty_subtitle),
                         )
                     } else {
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        ListaAdaptavel(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = SEM_MARGEM,
+                            espaco = 0.dp,
+                        ) {
                             items(list, key = { it.id }) { food ->
                                 FoodRow(
                                     food = food,
@@ -350,9 +356,9 @@ private fun YourStuff(
         EmptyState(title = stringResource(Res.string.search_min_chars))
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
         if (templates.isNotEmpty()) {
-            item {
+            linhaInteira {
                 SectionHeader(
                     title = stringResource(Res.string.search_your_meals),
                     modifier = Modifier.padding(Spacing.sm),
@@ -378,7 +384,7 @@ private fun YourStuff(
             }
         }
         if (foods.isNotEmpty()) {
-            item {
+            linhaInteira {
                 SectionHeader(
                     title = stringResource(Res.string.search_your_foods),
                     modifier = Modifier.padding(Spacing.sm),
@@ -415,9 +421,14 @@ private fun SearchResults(
         return
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
         if (state.results.isNotEmpty()) {
-            item { SectionHeader(title = stringResource(Res.string.search_section_local), modifier = Modifier.padding(Spacing.sm)) }
+            linhaInteira {
+                SectionHeader(
+                    title = stringResource(Res.string.search_section_local),
+                    modifier = Modifier.padding(Spacing.sm),
+                )
+            }
             items(state.results, key = { "local-${it.id}" }) { food ->
                 FoodRow(
                     food = food,
@@ -429,13 +440,18 @@ private fun SearchResults(
             }
         }
         if (state.onlineResults.isNotEmpty() || state.searchingOnline) {
-            item { SectionHeader(title = stringResource(Res.string.search_section_online), modifier = Modifier.padding(Spacing.sm)) }
+            linhaInteira {
+                SectionHeader(
+                    title = stringResource(Res.string.search_section_online),
+                    modifier = Modifier.padding(Spacing.sm),
+                )
+            }
         }
         items(state.onlineResults, key = { "off-${it.id}" }) { food ->
             FoodRow(food = food, online = true, onClick = { onOnline(food) })
         }
         if (state.searchingOnline) {
-            item { LoadingState() }
+            linhaInteira { LoadingState() }
         }
     }
 }
@@ -447,8 +463,8 @@ private fun RecipesTab(
     onSelect: (String) -> Unit,
     onEdit: (String) -> Unit,
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {
+    ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
+        linhaInteira {
             SecondaryButton(
                 text = stringResource(Res.string.recipe_new),
                 onClick = onNew,
@@ -456,7 +472,7 @@ private fun RecipesTab(
             )
         }
         if (recipes.isEmpty()) {
-            item { EmptyState(title = stringResource(Res.string.search_empty_title)) }
+            linhaInteira { EmptyState(title = stringResource(Res.string.search_empty_title)) }
         }
         items(recipes, key = { it.recipe.id }) { summary ->
             Card(
@@ -499,7 +515,7 @@ private fun TemplatesTab(
         )
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
         items(templates, key = { it.id }) { template ->
             Card(
                 onClick = { onApply(template.id) },
@@ -605,3 +621,9 @@ private fun SourceBadge(label: String) {
         )
     }
 }
+
+/**
+ * As listas da pesquisa trazem a margem em cada linha, e não no contentor. Repeti-la aqui
+ * daria margem a dobrar assim que a lista passou a ganhar colunas.
+ */
+private val SEM_MARGEM = PaddingValues(0.dp)

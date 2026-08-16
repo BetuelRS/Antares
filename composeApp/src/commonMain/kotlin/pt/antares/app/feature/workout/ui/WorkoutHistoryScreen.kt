@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +29,8 @@ import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.FilterBar
 import pt.antares.app.core.designsystem.components.FilterDropdownChip
 import pt.antares.app.core.designsystem.components.FilterOption
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
+import pt.antares.app.core.designsystem.components.linhaInteira
 import pt.antares.app.core.util.dayShort
 import pt.antares.app.core.util.epochMillisToLocalDate
 import pt.antares.app.core.util.mesLabel
@@ -57,11 +59,12 @@ fun WorkoutHistoryScreen(
             }
             return@Scaffold
         }
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+        ListaAdaptavel(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(horizontal = Spacing.lg, vertical = Spacing.sm),
+            espaco = Spacing.sm,
         ) {
-            item {
+            linhaInteira {
                 FilterBar {
                     FilterDropdownChip(
                         label = stringResource(Res.string.filter_month),
@@ -81,7 +84,7 @@ fun WorkoutHistoryScreen(
             // Uma lista vazia por causa do filtro não é um histórico vazio, e dizer-lhe o
             // mesmo era mandar a pessoa procurar treinos que ela tem.
             if (state.visiveis.isEmpty()) {
-                item {
+                linhaInteira {
                     Text(
                         stringResource(Res.string.filter_no_match),
                         style = MaterialTheme.typography.bodyMedium,

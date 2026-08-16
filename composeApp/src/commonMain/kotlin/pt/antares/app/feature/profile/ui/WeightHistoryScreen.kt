@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -47,6 +47,8 @@ import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.ConfirmDialog
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
+import pt.antares.app.core.designsystem.components.linhaInteira
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.model.UnitSystem
@@ -144,16 +146,14 @@ fun WeightHistoryScreen(
                 modifier = Modifier.padding(padding),
             )
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = Spacing.lg),
-                verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+            ListaAdaptavel(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentPadding = PaddingValues(horizontal = Spacing.lg, vertical = Spacing.sm),
+                espaco = Spacing.sm,
             ) {
 
                 recalc?.let { r ->
-                    item {
+                    linhaInteira {
                         Column {
                             WeightRecalcNotice(r.oldKcal, r.newKcal, r.deltaWeightKg)
 
@@ -169,7 +169,7 @@ fun WeightHistoryScreen(
                     }
                 }
 
-                item {
+                linhaInteira {
                     AntaresCard(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             stringResource(Res.string.weight_how_to_title),
@@ -190,7 +190,9 @@ fun WeightHistoryScreen(
                     }
                 }
                 if (state.series.size >= MIN_POINTS_FOR_CHART) {
-                    item {
+                    // O gráfico atravessa a linha toda mesmo em três colunas: espremido a um
+                    // terço da largura, os pontos ficam por cima uns dos outros.
+                    linhaInteira {
                         AntaresCard(modifier = Modifier.fillMaxWidth()) {
                             AntaresChart(
                                 points = state.series.display(imperial),
@@ -221,7 +223,7 @@ fun WeightHistoryScreen(
                         onDelete = { pendingDelete = entry },
                     )
                 }
-                item { Spacer(Modifier.height(FAB_SPACE_DP.dp)) }
+                linhaInteira { Spacer(Modifier.height(FAB_SPACE_DP.dp)) }
             }
         }
     }

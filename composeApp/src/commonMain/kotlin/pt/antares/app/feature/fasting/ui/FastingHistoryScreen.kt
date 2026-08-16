@@ -6,8 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +22,8 @@ import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
+import pt.antares.app.core.designsystem.components.linhaInteira
 import pt.antares.app.core.model.FastingStatus
 import pt.antares.app.core.util.dayShort
 import pt.antares.app.core.util.epochMillisToLocalDate
@@ -57,17 +58,14 @@ fun FastingHistoryScreen(
         }
 
         val s = state.stats
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
-            item {
+        ListaAdaptavel(modifier = Modifier.fillMaxSize().padding(padding)) {
+            linhaInteira {
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md), modifier = Modifier.fillMaxWidth()) {
                     StatTile(stringResource(Res.string.fasting_streak_current), "${s.currentStreak}${stringResource(Res.string.fasting_days_unit)}", Modifier.weight(1f))
                     StatTile(stringResource(Res.string.fasting_streak_best), "${s.longestStreak}${stringResource(Res.string.fasting_days_unit)}", Modifier.weight(1f))
                 }
             }
-            item {
+            linhaInteira {
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md), modifier = Modifier.fillMaxWidth()) {
                     StatTile(stringResource(Res.string.fasting_completion_rate), "${(s.completionRate * 100).roundToInt()}%", Modifier.weight(1f))
                     StatTile(stringResource(Res.string.fasting_avg_duration), FastingFormat.hm(s.averageDurationMs), Modifier.weight(1f))

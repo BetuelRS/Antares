@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,6 +31,7 @@ import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.Sparkline
 import pt.antares.app.core.util.dayShortDated
 import pt.antares.app.feature.profile.data.BodyMeasurementRepository
@@ -66,12 +67,12 @@ fun MeasurementHistoryScreen(
             return@Scaffold
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+        // Os cartões de medida ficam lado a lado numa janela larga, e não é só arrumação: as
+        // quatro medidas comparam-se entre si, e empilhadas obrigavam a percorrer para o fazer.
+        ListaAdaptavel(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(horizontal = Spacing.lg, vertical = Spacing.sm),
+            espaco = Spacing.sm,
         ) {
 
             val fat = entries.mapNotNull { it.bodyFatPct }

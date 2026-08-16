@@ -7,8 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +29,8 @@ import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.FilterBar
 import pt.antares.app.core.designsystem.components.FilterDropdownChip
 import pt.antares.app.core.designsystem.components.FilterOption
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
+import pt.antares.app.core.designsystem.components.linhaInteira
 import pt.antares.app.core.util.epochMillisToLocalDate
 import pt.antares.app.core.util.mesLabel
 import pt.antares.app.generated.resources.Res
@@ -63,14 +64,11 @@ fun RunHistoryScreen(
             EmptyState(title = stringResource(Res.string.run_history_empty), modifier = Modifier.padding(padding))
             return@AntaresScaffold
         }
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
-            item {
+        ListaAdaptavel(modifier = Modifier.fillMaxSize().padding(padding)) {
+            linhaInteira {
                 Text(stringResource(Res.string.run_totals_title), style = MaterialTheme.typography.titleMedium)
             }
-            item {
+            linhaInteira {
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md), modifier = Modifier.fillMaxWidth()) {
                     PrTile(stringResource(Res.string.run_totals_runs), "${state.totalRuns}", Modifier.weight(1f))
                     PrTile(
@@ -82,17 +80,17 @@ fun RunHistoryScreen(
                     PrTile(stringResource(Res.string.run_totals_time), RunFormat.clock(state.totalMovingS * 1000), Modifier.weight(1f))
                 }
             }
-            item {
+            linhaInteira {
                 Text(stringResource(Res.string.run_pr_title), style = MaterialTheme.typography.titleMedium)
             }
-            item {
+            linhaInteira {
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md), modifier = Modifier.fillMaxWidth()) {
                     PrTile(stringResource(Res.string.run_pr_1k), state.pr1kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))
                     PrTile(stringResource(Res.string.run_pr_5k), state.pr5kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))
                     PrTile(stringResource(Res.string.run_pr_10k), state.pr10kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))
                 }
             }
-            item {
+            linhaInteira {
                 FilterBar {
                     FilterDropdownChip(
                         label = stringResource(Res.string.filter_month),
@@ -111,7 +109,7 @@ fun RunHistoryScreen(
 
             // Filtrar até não sobrar nada não é o mesmo que não ter corrido nunca.
             if (state.visiveis.isEmpty()) {
-                item {
+                linhaInteira {
                     Text(
                         stringResource(Res.string.filter_no_match),
                         style = MaterialTheme.typography.bodyMedium,

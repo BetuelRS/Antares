@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
@@ -28,6 +28,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.nutrition.microLabelRes
 import pt.antares.app.generated.resources.Res
@@ -82,7 +83,9 @@ fun RichInScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                    // A coluna à volta já dá a margem lateral; repeti-la aqui afastava as
+                    // linhas da lista das opções que estão por cima delas.
+                    ListaAdaptavel(contentPadding = PaddingValues(), espaco = Spacing.xs) {
                         items(state.results, key = { it.foodId }) { r ->
                             Card(
                                 onClick = { onFoodSelected(r.foodId) },
