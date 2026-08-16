@@ -78,7 +78,10 @@ fun ExerciseDetailScreen(
                     items(ex.imageUrls, key = { it }) { url ->
                         AsyncImage(
                             model = url,
-                            contentDescription = null,
+                            // A imagem é a única coisa no ecrã que mostra o movimento. Sem
+                            // descrição, quem usa leitor de ecrã passa por ela sem saber
+                            // que existe.
+                            contentDescription = stringResource(Res.string.exercise_image_cd, ex.displayName),
                             modifier = Modifier.fillMaxWidth(0.85f).aspectRatio(1.4f).clip(RoundedCornerShape(12.dp)),
                         )
                     }

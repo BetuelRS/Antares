@@ -19,17 +19,38 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.fmtG
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.chart_cd
 
 @Composable
 fun Sparkline(
     values: List<Float>,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
+    contentDescription: String? = null,
 ) {
     if (values.isEmpty()) return
-    Canvas(modifier.fillMaxWidth().height(64.dp)) {
+
+    // Um gráfico desenhado não diz nada a um leitor de ecrã. Sem descrição do ecrã que o
+    // usa, fica pelo menos a forma: quantos pontos, de onde a onde.
+    val descricao = contentDescription ?: stringResource(
+        Res.string.chart_cd,
+        values.size,
+        fmtG(values.min().toDouble()),
+        fmtG(values.max().toDouble()),
+    )
+    Canvas(
+        modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .semantics { this.contentDescription = descricao },
+    ) {
         val minV = values.min()
         val maxV = values.max()
         val range = (maxV - minV).takeIf { it > 0f } ?: 1f

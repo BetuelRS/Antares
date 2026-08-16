@@ -30,6 +30,8 @@ fun StatRing(
     // Quem passou vê-o cheio, e o número ao centro é que diz quanto.
     val clamped = progress.coerceIn(0f, 1f)
     Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
+        // O desenho é decorativo: o valor e o rótulo estão nos textos do centro, e são
+        // esses que o leitor de ecrã anuncia. Descrever o anel repetia-os.
         Canvas(modifier = Modifier.size(size)) {
             val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
             // -90° põe o início no topo: a zero graus o arco começava à direita.

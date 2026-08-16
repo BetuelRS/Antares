@@ -202,7 +202,12 @@ internal fun PhotoImage(foto: ProgressPhotoEntity, modifier: Modifier = Modifier
     ) {
         AsyncImage(
             model = foto.localPath,
-            contentDescription = null,
+            // A foto é o conteúdo, não a decoração: sem isto o TalkBack chega a uma lista de
+            // fotos de progresso e não anuncia nenhuma. A data é o que as distingue.
+            contentDescription = stringResource(
+                Res.string.progress_photo_cd,
+                dayShortDated(foto.epochDay),
+            ),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )

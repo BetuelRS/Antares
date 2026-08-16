@@ -461,6 +461,11 @@
     <string name="stat_period_week">Semana</string>
     <string name="stat_period_month">Mês</string>
     <string name="stat_period_year">Ano</string>
+    <string name="progress_photo_cd">Foto de progresso de %1$s</string>
+    <string name="exercise_image_cd">Imagem do exercício %1$s</string>
+    <string name="session_exercise_done">Exercício concluído</string>
+    <string name="chart_cd">Gráfico com %1$d valores, de %2$s a %3$s.</string>
+    <string name="bmi_scale_cd">Régua de IMC, valor %1$s.</string>
     <string name="stat_no_data">Sem dados suficientes. Regista refeições com informação nutricional para veres a cobertura.</string>
     <string name="stat_micro_no_data">sem dados</string>
     <string name="stat_micro_partial">Só %1$d% do que registaste traz este nutriente medido.</string>

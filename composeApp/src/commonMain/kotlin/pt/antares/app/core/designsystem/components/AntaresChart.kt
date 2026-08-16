@@ -14,7 +14,13 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.calc.ChartScale
+import pt.antares.app.core.designsystem.fmtG
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.chart_cd
 import pt.antares.app.core.calc.TimeAxis
 
 /**
@@ -51,8 +57,22 @@ fun AntaresChart(
     val scale = ChartScale.of(crus.map { it.second } + linha.map { it.second } + listOfNotNull(targetValue))
     val eixo = TimeAxis.of(crus.map { it.first } + linha.map { it.first }) ?: return
 
+    // O gráfico do peso é o ecrã inteiro para quem o abre, e não tinha nada que o
+    // anunciasse. Os rótulos por baixo dizem as datas; falta dizer o que a linha faz.
+    val descricao = stringResource(
+        Res.string.chart_cd,
+        crus.size,
+        fmtG(scale.min),
+        fmtG(scale.max),
+    )
+
     Column(modifier) {
-        Canvas(Modifier.fillMaxWidth().height(height.dp)) {
+        Canvas(
+            Modifier
+                .fillMaxWidth()
+                .height(height.dp)
+                .semantics { contentDescription = descricao },
+        ) {
             // O eixo vertical é invertido: no canvas o zero é em cima, e sem esta
             // subtração o gráfico saía de cabeça para baixo.
             fun y(value: Double): Float =

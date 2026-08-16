@@ -102,6 +102,7 @@ private fun AddOption(icon: ImageVector, tint: androidx.compose.ui.graphics.Colo
     ) {
         Icon(
             imageVector = icon,
+            // Decorativo: a linha tem o rótulo ao lado e é ela que se toca.
             contentDescription = null,
             tint = tint,
             modifier = Modifier

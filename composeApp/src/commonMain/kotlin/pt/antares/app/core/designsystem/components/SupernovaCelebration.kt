@@ -71,6 +71,8 @@ fun SupernovaCelebration(
 
             if (!reduce) {
                 val t = burst.value
+                // Decoração pura: a celebração é uma animação, e o que ela festeja está
+                // escrito nos textos por cima dela.
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val c = Offset(size.width / 2f, size.height * 0.42f)
                     val maxR = size.minDimension * 0.55f

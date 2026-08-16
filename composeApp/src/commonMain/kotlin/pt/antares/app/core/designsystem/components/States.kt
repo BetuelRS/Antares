@@ -38,6 +38,8 @@ fun EmptyState(
             StarField(modifier = Modifier.fillMaxSize())
 
             val glow = MaterialTheme.colorScheme.primary
+            // Decoração pura: o brilho por trás do estado vazio não acrescenta nada à
+            // frase que está por cima dele.
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val r = size.minDimension * 0.42f
                 drawCircle(
@@ -59,6 +61,8 @@ fun EmptyState(
             if (icon != null) {
                 Icon(
                     imageVector = icon,
+                    // Decorativo: a frase por baixo diz o que falta, e o ícone só lhe dá
+                    // forma. Anunciá-lo era ler duas vezes a mesma ausência.
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(48.dp).padding(bottom = Spacing.sm),

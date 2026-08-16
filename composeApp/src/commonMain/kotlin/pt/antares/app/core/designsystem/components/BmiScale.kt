@@ -10,9 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.calc.BodyComposition
+import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.success
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.bmi_scale_cd
 
 /**
  * O IMC numa régua de zonas, em vez de um número solto. Mostra onde a pessoa está e
@@ -32,11 +38,16 @@ fun BmiScale(
     val marker = MaterialTheme.colorScheme.onSurface
     val trackAlpha = 0.55f
 
+    // A régua é toda desenhada: sem isto, quem usa leitor de ecrã chega a um bloco mudo onde
+    // está o único sítio da app que diz em que zona o IMC cai.
+    val descricao = stringResource(Res.string.bmi_scale_cd, fmtG(bmi))
+
     Column(modifier) {
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(TRACK_HEIGHT_DP.dp),
+                .height(TRACK_HEIGHT_DP.dp)
+                .semantics { contentDescription = descricao },
         ) {
             val w = size.width
             val h = size.height

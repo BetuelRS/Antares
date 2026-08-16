@@ -73,6 +73,7 @@ fun AntaresBottomBar(navController: NavHostController) {
             NavigationBarItem(
                 selected = selected,
                 onClick = { navController.navigateToTab(item.route) },
+                // Decorativo: cada separador tem o seu nome por baixo do ícone.
                 icon = { Icon(item.icon, contentDescription = null) },
                 label = { Text(stringResource(item.label)) },
             )

@@ -285,7 +285,9 @@ private fun ExerciseRecolhido(ex: SessionExerciseUi, onSelect: () -> Unit) {
             if (ex.isComplete) {
                 Icon(
                     Icons.Default.Check,
-                    contentDescription = null,
+                    // O visto é o que separa «3/3 feitas» de «3/3 e acabou»: o número
+                    // sozinho não diz que o exercício está fechado.
+                    contentDescription = stringResource(Res.string.session_exercise_done),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = Spacing.sm),
                 )

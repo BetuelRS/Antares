@@ -139,11 +139,13 @@ fun FoodSearchScreen(
                 marcados > 0 && aiSlot != null && aiEpochDay != null ->
                     ExtendedFloatingActionButton(
                         onClick = { viewModel.logSelected(aiSlot, aiEpochDay) },
+                        // Decorativo: o botão traz o texto ao lado do ícone.
                         icon = { Icon(Icons.Default.Add, contentDescription = null) },
                         text = { Text(stringResource(Res.string.search_log_selected, marcados)) },
                     )
                 !pickMode -> ExtendedFloatingActionButton(
                     onClick = onCreateCustom,
+                    // Decorativo: o botão traz o texto ao lado do ícone.
                     icon = { Icon(Icons.Default.Add, contentDescription = null) },
                     text = { Text(stringResource(Res.string.food_create_cta)) },
                 )
@@ -159,6 +161,7 @@ fun FoodSearchScreen(
                 value = state.query,
                 onValueChange = viewModel::setQuery,
                 label = { Text(stringResource(Res.string.search_hint)) },
+                // Decorativo: a lupa repete o rótulo do campo de pesquisa.
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (!pickMode) {
@@ -563,7 +566,9 @@ private fun FoodRow(
                         )
                         food.isFavorite -> Icon(
                             Icons.Default.Star,
-                            contentDescription = null,
+                            // A estrela é a única coisa que diz que este alimento é
+                            // favorito: nada no texto da linha o repete.
+                            contentDescription = stringResource(Res.string.food_favorite),
                             tint = MaterialTheme.colorScheme.secondary,
                         )
                     }

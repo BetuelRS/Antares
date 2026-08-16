@@ -4,11 +4,17 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import org.jetbrains.compose.resources.stringResource
+import pt.antares.app.core.designsystem.fmtG
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.chart_cd
 
 @Composable
 fun Sparkline(
@@ -17,8 +23,16 @@ fun Sparkline(
     secondary: List<Double> = emptyList(),
     primaryColor: Color = MaterialTheme.colorScheme.outline,
     secondaryColor: Color = MaterialTheme.colorScheme.primary,
+    contentDescription: String? = null,
 ) {
-    Canvas(modifier = modifier) {
+    // Como no outro `Sparkline`: desenhado, e por isso mudo sem isto.
+    val descricao = contentDescription ?: stringResource(
+        Res.string.chart_cd,
+        primary.size,
+        fmtG(primary.minOrNull() ?: 0.0),
+        fmtG(primary.maxOrNull() ?: 0.0),
+    )
+    Canvas(modifier = modifier.semantics { this.contentDescription = descricao }) {
         val all = primary + secondary
         if (primary.size < 2) return@Canvas
         val min = all.min()

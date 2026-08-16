@@ -116,6 +116,7 @@ private fun SelectField(
                 (selected?.let { stringResource(optionLabel(it)) } ?: stringResource(label)),
                 modifier = Modifier.weight(1f),
             )
+            // Decorativo: a seta diz que abre, e o botão já tem o rótulo escrito.
             Icon(Icons.Default.ArrowDropDown, contentDescription = null)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {

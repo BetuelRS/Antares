@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.StringResource
@@ -68,6 +69,7 @@ fun ExerciseLibraryScreen(
             if (!pickMode) {
                 ExtendedFloatingActionButton(
                     onClick = onCreateCustom,
+                    // Decorativo: o botão traz o texto ao lado do ícone.
                     icon = { Icon(Icons.Default.Add, contentDescription = null) },
                     text = { Text(stringResource(Res.string.exlib_create_custom)) },
                 )
@@ -154,6 +156,7 @@ private fun FilterDropdown(
                     maxLines = 1,
                 )
             },
+            // Decorativo: a seta acompanha um campo que já se apresenta pelo rótulo.
             trailingIcon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
         )
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
@@ -178,10 +181,12 @@ private fun ExerciseListItem(ex: Exercise, onClick: () -> Unit) {
     val equipText = ex.equipment?.let { stringResource(equipmentLabel(it)) }
     val subtitle = listOfNotNull(muscleText, equipText).joinToString(" · ")
 
-    AntaresCard(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
+    AntaresCard(modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
             AsyncImage(
                 model = ex.imageUrls.firstOrNull(),
+                // Decorativa: a miniatura repete o nome que está ao lado dela, e um leitor
+                // de ecrã que anunciasse as duas lia o mesmo exercício duas vezes por linha.
                 contentDescription = null,
                 modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
             )

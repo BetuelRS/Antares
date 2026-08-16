@@ -71,6 +71,8 @@ fun StarField(
     val estrela = MaterialTheme.colorScheme.onSurface
     val gold = Color(0xFFFFB86B)
 
+    // Decoração pura: um fundo de estrelas não é conteúdo, e anunciá-lo punha um leitor
+    // de ecrã a descrever o papel de parede antes de chegar ao que interessa.
     Canvas(modifier = modifier) {
         stars.forEach { s ->
 

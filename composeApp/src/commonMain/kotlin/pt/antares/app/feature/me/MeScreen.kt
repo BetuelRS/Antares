@@ -88,6 +88,7 @@ private fun MeItem(label: StringResource, icon: ImageVector, onClick: () -> Unit
     Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         ListItem(
             headlineContent = { Text(stringResource(label)) },
+            // Decorativo: cada linha do menu tem o seu nome escrito ao lado.
             leadingContent = { Icon(icon, contentDescription = null) },
         )
     }

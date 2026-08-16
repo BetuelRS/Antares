@@ -183,6 +183,8 @@ internal fun RepeatMealCard(meal: RepeatableMeal, onClick: () -> Unit) {
             }
             Icon(
                 Icons.Default.ContentCopy,
+                // Decorativo: o cartão inteiro é o botão, e o texto dele já diz «outra
+                // vez». O ícone repete o gesto que a linha toda anuncia.
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -61,7 +61,8 @@ fun QuickLogBar(
         value = text,
         onValueChange = { text = it.take(80) },
         placeholder = { Text(stringResource(Res.string.quick_log_hint)) },
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+        // Decorativo: a lupa repete o rótulo do campo de pesquisa.
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         trailingIcon = {
             Row {
                 if (voice.available) {

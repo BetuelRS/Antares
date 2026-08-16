@@ -542,6 +542,8 @@ private fun MiniRing(fraction: Float, reachedGoal: Boolean) {
     val track = MaterialTheme.colorScheme.surfaceVariant
     val color = if (reachedGoal) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
     Box(modifier = Modifier.size(48.dp)) {
+        // Decorativo: o tempo de jejum está escrito na linha ao lado do anel, e é ele que
+        // o leitor de ecrã anuncia. O anel repete-o em forma.
         Canvas(modifier = Modifier.size(48.dp)) {
             val stroke = Stroke(width = 6.dp.toPx(), cap = StrokeCap.Round)
             drawArc(color = track, startAngle = -90f, sweepAngle = 360f, useCenter = false, style = stroke)

@@ -54,6 +54,8 @@ fun FastingTimerRing(
         .map { it to measurer.measure(stringResource(Res.string.fasting_hour_short, it), labelStyle) }
 
     Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
+        // O desenho é decorativo: o tempo decorrido e o que falta estão nos textos do
+        // centro, e são esses que o leitor de ecrã anuncia.
         Canvas(modifier = Modifier.size(size)) {
             val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
             drawArc(color = track, startAngle = -90f, sweepAngle = 360f, useCenter = false, style = stroke)

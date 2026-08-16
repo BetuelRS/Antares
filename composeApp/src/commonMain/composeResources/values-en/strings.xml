@@ -461,6 +461,11 @@
     <string name="stat_period_week">Week</string>
     <string name="stat_period_month">Month</string>
     <string name="stat_period_year">Year</string>
+    <string name="progress_photo_cd">Progress photo from %1$s</string>
+    <string name="exercise_image_cd">Image of %1$s</string>
+    <string name="session_exercise_done">Exercise done</string>
+    <string name="chart_cd">Chart with %1$d values, from %2$s to %3$s.</string>
+    <string name="bmi_scale_cd">BMI scale, value %1$s.</string>
     <string name="stat_no_data">Not enough data. Log meals with nutrition info to see coverage.</string>
     <string name="stat_micro_no_data">no data</string>
     <string name="stat_micro_partial">Only %1$d% of what you logged has this nutrient measured.</string>
