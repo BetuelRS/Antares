@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.util.rememberFileSharer
+import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.distanceUnitLabel
@@ -43,6 +44,7 @@ fun RunDetailScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
+    val virgula = virgulaDecimal()
     LaunchedEffect(runId) { viewModel.load(runId) }
     val shareFile = rememberFileSharer()
 
@@ -60,7 +62,8 @@ fun RunDetailScreen(
             }
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "${RunFormat.distance(run.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
+                    "${RunFormat.distance(run.distanceM, unidades, virgula)} " +
+                        stringResource(distanceUnitLabel(unidades)),
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Row(modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm), horizontalArrangement = Arrangement.SpaceBetween) {

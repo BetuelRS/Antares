@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.database.entities.RunEntity
+import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.designsystem.paceUnitLabel
@@ -56,6 +57,7 @@ fun RunHistoryScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
+    val virgula = virgulaDecimal()
 
     AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.run_history_title), onBack = onBack) },
@@ -73,7 +75,7 @@ fun RunHistoryScreen(
                     PrTile(stringResource(Res.string.run_totals_runs), "${state.totalRuns}", Modifier.weight(1f))
                     PrTile(
                         stringResource(Res.string.run_totals_distance),
-                        "${RunFormat.distance(state.totalDistanceM, unidades)} " +
+                        "${RunFormat.distance(state.totalDistanceM, unidades, virgula)} " +
                             stringResource(distanceUnitLabel(unidades)),
                         Modifier.weight(1f),
                     )
@@ -126,6 +128,7 @@ fun RunHistoryScreen(
 
 @Composable
 private fun RunRow(run: RunEntity, unidades: UnitSystem, onRun: (String) -> Unit) {
+    val virgula = virgulaDecimal()
     AntaresCard(modifier = Modifier.fillMaxWidth().clickable { onRun(run.id) }) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 
@@ -142,7 +145,8 @@ private fun RunRow(run: RunEntity, unidades: UnitSystem, onRun: (String) -> Unit
                 )
             }
             Text(
-                "${RunFormat.distance(run.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
+                "${RunFormat.distance(run.distanceM, unidades, virgula)} " +
+                    stringResource(distanceUnitLabel(unidades)),
                 style = MaterialTheme.typography.titleMedium,
             )
         }

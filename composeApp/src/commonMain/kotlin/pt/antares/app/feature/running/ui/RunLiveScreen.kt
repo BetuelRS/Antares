@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.designsystem.rememberUnitSystem
@@ -62,6 +63,7 @@ fun RunLiveScreen(
     val state by viewModel.state.collectAsState()
     val m = state.metrics
     val unidades = rememberUnitSystem()
+    val virgula = virgulaDecimal()
     val goalType by viewModel.goalType.collectAsState()
     val goalValue by viewModel.goalValue.collectAsState()
     var locked by remember { mutableStateOf(false) }
@@ -96,7 +98,7 @@ fun RunLiveScreen(
                 )
             }
             Text(
-                "${RunFormat.distance(m.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
+                "${RunFormat.distance(m.distanceM, unidades, virgula)} ${stringResource(distanceUnitLabel(unidades))}",
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,

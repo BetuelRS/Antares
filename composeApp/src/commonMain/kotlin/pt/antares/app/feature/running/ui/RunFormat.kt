@@ -1,6 +1,7 @@
 package pt.antares.app.feature.running.ui
 
 import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.designsystem.twoDecimals
 import pt.antares.app.core.util.UnitConversions
 
 /**
@@ -12,12 +13,12 @@ import pt.antares.app.core.util.UnitConversions
  */
 object RunFormat {
 
-    fun distance(distanceM: Double, system: UnitSystem): String {
-        val valor = UnitConversions.distanceToDisplay(distanceM / 1000.0, system)
-        val whole = valor.toInt()
-        val dec = ((valor - whole) * 100).toInt()
-        return "$whole,${if (dec < 10) "0$dec" else "$dec"}"
-    }
+    /**
+     * O separador decimal vem de fora, como no resto da app: a vírgula estava escrita à mão
+     * aqui, e em inglês lia-se «6,87 mi» ao lado de «153.9 lb» no mesmo cartão.
+     */
+    fun distance(distanceM: Double, system: UnitSystem, comma: Boolean): String =
+        twoDecimals(UnitConversions.distanceToDisplay(distanceM / 1000.0, system), comma)
 
     fun clock(ms: Long): String {
         val total = ms / 1000

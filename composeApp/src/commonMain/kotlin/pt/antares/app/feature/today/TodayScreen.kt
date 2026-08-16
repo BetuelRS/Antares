@@ -44,6 +44,7 @@ import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.nutrition.DailyGap
 import pt.antares.app.core.nutrition.Nutrients
 import pt.antares.app.core.nutrition.microLabelRes
+import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.AntaresColors
 import pt.antares.app.core.designsystem.cascadeIn
 import pt.antares.app.core.designsystem.Spacing
@@ -52,6 +53,7 @@ import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
 import pt.antares.app.core.designsystem.success
 import pt.antares.app.core.designsystem.fmtG
+import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.GrelhaDeCartoes
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.feature.coach.CoachTeaserCard
@@ -175,7 +177,13 @@ fun TodayScreen(
             CartaoDaAgua(state = state, aguaDaComidaMl = aguaDaComidaMl, onAbrirDiario = onAddMeal)
         }
 
-        cartao { CartaoDoTreino(treino = workout, onAbrir = onOpenWorkout) }
+        cartao {
+            CartaoDoTreino(
+                treino = workout,
+                unidades = state.unitSystem,
+                onAbrir = onOpenWorkout,
+            )
+        }
 
         cartao { CartaoDoJejum(sessao = fasting, agoraMs = nowMin, onAbrir = onOpenFasting) }
 
@@ -300,7 +308,7 @@ private fun CartaoDaAgua(state: TodayState, aguaDaComidaMl: Int?, onAbrirDiario:
 }
 
 @Composable
-private fun CartaoDoTreino(treino: TodayWorkout, onAbrir: () -> Unit) {
+private fun CartaoDoTreino(treino: TodayWorkout, unidades: UnitSystem, onAbrir: () -> Unit) {
     AntaresCard(
         modifier = Modifier.fillMaxWidth().cascadeIn(0)
             .clickable(role = Role.Button, onClick = onAbrir),
@@ -309,8 +317,13 @@ private fun CartaoDoTreino(treino: TodayWorkout, onAbrir: () -> Unit) {
         Spacer(Modifier.height(Spacing.xs))
         val texto = when {
             treino.hasActive -> stringResource(Res.string.today_workout_active)
+            // O volume levava «kg» escrito no texto e o número em bruto: em imperial ficava
+            // «Last workout: 9338 kg volume» a quem escolheu libras.
             treino.lastVolume != null ->
-                stringResource(Res.string.today_workout_last, treino.lastVolume.roundToInt())
+                stringResource(
+                    Res.string.today_workout_last,
+                    weightWithUnit(treino.lastVolume, unidades),
+                )
             else -> stringResource(Res.string.today_workout_none)
         }
         Text(
@@ -380,6 +393,7 @@ private fun CartaoDoJejum(sessao: FastingSessionEntity?, agoraMs: Long, onAbrir:
 
 @Composable
 private fun CartaoDaCorrida(corrida: RunEntity?, unidades: UnitSystem, onAbrir: () -> Unit) {
+    val virgula = virgulaDecimal()
     AntaresCard(
         modifier = Modifier.fillMaxWidth().cascadeIn(2)
             .clickable(role = Role.Button, onClick = onAbrir),
@@ -391,7 +405,7 @@ private fun CartaoDaCorrida(corrida: RunEntity?, unidades: UnitSystem, onAbrir: 
                 // A distância aqui vinha sem unidade nenhuma — «Última: 3,50 · 250 kcal».
                 stringResource(
                     Res.string.today_run_last,
-                    "${RunFormat.distance(corrida.distanceM, unidades)} " +
+                    "${RunFormat.distance(corrida.distanceM, unidades, virgula)} " +
                         stringResource(distanceUnitLabel(unidades)),
                     corrida.kcal,
                 ),

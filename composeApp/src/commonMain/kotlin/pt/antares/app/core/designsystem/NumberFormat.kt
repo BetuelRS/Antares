@@ -18,6 +18,14 @@ fun fmtG(value: Double): String = oneDecimal(value, comma = Locale.current.langu
 @Composable
 fun fmt2(value: Double): String = twoDecimals(value, comma = Locale.current.language == "pt")
 
+/**
+ * Se o idioma em uso escreve os decimais com vírgula. Existe para quem formata fora daqui
+ * poder seguir a mesma regra em vez de a escolher à mão — foi assim que a corrida ficou com
+ * vírgula fixa e passou a discordar do peso no mesmo cartão.
+ */
+@Composable
+fun virgulaDecimal(): Boolean = Locale.current.language == "pt"
+
 fun twoDecimals(value: Double, comma: Boolean): String = fixedDecimals(value, 2, comma)
 
 fun fixedDecimals(value: Double, places: Int, comma: Boolean): String {

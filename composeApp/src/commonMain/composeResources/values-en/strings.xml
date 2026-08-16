@@ -547,7 +547,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="today_workout_active">Workout in progress — tap to resume</string>
     <string name="today_water_parts">%1$d ml drunk + %2$d ml from food. The goal is total water, like the EFSA one.</string>
     <string name="today_water_food_unknown">The goal is total water. How much came from food is not knowable yet: less than half of what you ate today has a measured water content.</string>
-    <string name="today_workout_last">Last workout: %1$d kg volume</string>
+    <string name="today_workout_last">Last workout: %1$s volume</string>
     <string name="today_workout_none">No workouts yet. Let's start!</string>
     <string name="today_workout_scheduled">Today's plan: %1$s</string>
     <string name="exercise_cat_all">All</string>

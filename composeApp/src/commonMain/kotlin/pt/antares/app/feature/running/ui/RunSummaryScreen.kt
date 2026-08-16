@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.distanceUnitLabel
@@ -48,6 +49,7 @@ fun RunSummaryScreen(
     val state by viewModel.state.collectAsState()
     val m = state.metrics
     val unidades = rememberUnitSystem()
+    val virgula = virgulaDecimal()
     var name by remember { mutableStateOf("") }
 
     AntaresScaffold(
@@ -74,7 +76,8 @@ fun RunSummaryScreen(
             }
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "${RunFormat.distance(m.distanceM, unidades)} ${stringResource(distanceUnitLabel(unidades))}",
+                    "${RunFormat.distance(m.distanceM, unidades, virgula)} " +
+                        stringResource(distanceUnitLabel(unidades)),
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Row(modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm), horizontalArrangement = Arrangement.SpaceBetween) {
