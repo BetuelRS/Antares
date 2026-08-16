@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
@@ -76,12 +75,9 @@ fun ExerciseDetailScreen(
             if (ex.imageUrls.isNotEmpty()) {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     items(ex.imageUrls, key = { it }) { url ->
-                        AsyncImage(
-                            model = url,
-                            // A imagem é a única coisa no ecrã que mostra o movimento. Sem
-                            // descrição, quem usa leitor de ecrã passa por ela sem saber
-                            // que existe.
-                            contentDescription = stringResource(Res.string.exercise_image_cd, ex.displayName),
+                        ExerciseImage(
+                            url = url,
+                            exerciseName = ex.displayName,
                             modifier = Modifier.fillMaxWidth(0.85f).aspectRatio(1.4f).clip(RoundedCornerShape(12.dp)),
                         )
                     }

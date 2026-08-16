@@ -33,9 +33,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -183,11 +183,13 @@ private fun ExerciseListItem(ex: Exercise, onClick: () -> Unit) {
 
     AntaresCard(modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
-            AsyncImage(
-                model = ex.imageUrls.firstOrNull(),
-                // Decorativa: a miniatura repete o nome que está ao lado dela, e um leitor
-                // de ecrã que anunciasse as duas lia o mesmo exercício duas vezes por linha.
-                contentDescription = null,
+            // Sem texto no erro: numa miniatura de 56 dp uma frase não cabe, e o ícone
+            // sozinho já distingue «ainda a carregar» de «não veio».
+            ExerciseImage(
+                url = ex.imageUrls.firstOrNull(),
+                exerciseName = ex.displayName,
+                contentScale = ContentScale.Crop,
+                comTexto = false,
                 modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
             )
             Column(Modifier.weight(1f)) {

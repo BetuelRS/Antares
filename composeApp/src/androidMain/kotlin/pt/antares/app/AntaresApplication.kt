@@ -1,6 +1,11 @@
 package pt.antares.app
 
 import android.app.Application
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import okio.Path.Companion.toOkioPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.android.inject
@@ -48,5 +53,34 @@ class AntaresApplication : Application() {
         runCatching { pt.antares.app.core.util.DayTicker.start(appScope) }
 
         runCatching { NotificationScheduler.scheduleAll(this) }
+
+        instalarCacheDeImagens()
+    }
+
+    /**
+     * A cache em disco das imagens dos exercícios, escrita à mão em vez de deixada por
+     * omissão. Numa app que se apresenta como offline, o que já se viu uma vez tem de
+     * continuar a ver-se sem rede — e o tamanho é uma decisão, não um acaso: são 1300
+     * exercícios com imagens, e sem teto a pasta cresce até onde o telemóvel deixar.
+     */
+    private fun instalarCacheDeImagens() {
+        SingletonImageLoader.setSafe { context ->
+            ImageLoader.Builder(context)
+                .diskCache {
+                    DiskCache.Builder()
+                        .directory(context.filesDir.resolve(PASTA_DE_IMAGENS).toOkioPath())
+                        .maxSizeBytes(CACHE_MAX_BYTES)
+                        .build()
+                }
+                .build()
+        }
+    }
+
+    private companion object {
+        const val PASTA_DE_IMAGENS = "image_cache"
+
+        // 64 MB dá para algumas centenas de imagens de exercício, e é pouco ao lado do que
+        // uma galeria de fotografias ocupa.
+        const val CACHE_MAX_BYTES = 64L * 1024 * 1024
     }
 }
