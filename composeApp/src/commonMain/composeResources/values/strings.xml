@@ -54,6 +54,12 @@
     <string name="cycle_next">Próximo esperado: %1$s (estimativa)</string>
     <string name="cycle_retention">Nesta fase é normal a balança subir por retenção de líquidos. Não é gordura, e a app não mexeu na tua meta por causa disto.</string>
     <string name="cycle_start_today">Começou hoje</string>
+    <string name="cycle_pick_date">Escolher data</string>
+    <string name="cycle_start_on">Início do período</string>
+    <string name="cycle_end_on">Fim do período</string>
+    <string name="cycle_error_future">Essa data ainda não aconteceu.</string>
+    <string name="cycle_error_overlap">Já há um período registado nesses dias.</string>
+    <string name="cycle_error_end_before_start">O fim ficaria antes do início.</string>
     <string name="cycle_end_today">Acabou hoje</string>
     <string name="cycle_open">Por fechar</string>
     <string name="cycle_days">%1$d dias</string>

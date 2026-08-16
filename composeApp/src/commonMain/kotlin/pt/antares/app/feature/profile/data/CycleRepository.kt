@@ -39,5 +39,14 @@ class CycleRepository(
         dao.upsert(ultimo.copy(endEpochDay = epochDay))
     }
 
+    /**
+     * Corrige as datas de um período já registado. Quem se enganou a marcar o início não
+     * tinha como o arranjar: só apagando e voltando a marcar, e a marcação era sempre hoje.
+     */
+    suspend fun updateDates(id: String, startEpochDay: Long, endEpochDay: Long?) = withContext(io) {
+        val existente = dao.all().firstOrNull { it.id == id } ?: return@withContext
+        dao.upsert(existente.copy(startEpochDay = startEpochDay, endEpochDay = endEpochDay))
+    }
+
     suspend fun delete(id: String) = withContext(io) { dao.delete(id) }
 }

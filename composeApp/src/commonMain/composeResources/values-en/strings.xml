@@ -54,6 +54,12 @@
     <string name="cycle_next">Next expected: %1$s (estimate)</string>
     <string name="cycle_retention">At this point in the cycle the scale often goes up from fluid retention. It is not fat, and the app has not touched your target because of it.</string>
     <string name="cycle_start_today">Started today</string>
+    <string name="cycle_pick_date">Pick a date</string>
+    <string name="cycle_start_on">Period start</string>
+    <string name="cycle_end_on">Period end</string>
+    <string name="cycle_error_future">That date hasn't happened yet.</string>
+    <string name="cycle_error_overlap">There is already a period on those days.</string>
+    <string name="cycle_error_end_before_start">The end would fall before the start.</string>
     <string name="cycle_end_today">Ended today</string>
     <string name="cycle_open">Not closed</string>
     <string name="cycle_days">%1$d days</string>
