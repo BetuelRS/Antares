@@ -8,7 +8,6 @@ import kotlinx.serialization.Serializable
 import pt.antares.app.core.model.ActivityLevel
 import pt.antares.app.core.calc.BmrFormula
 import pt.antares.app.core.model.BodyFatSource
-import pt.antares.app.core.model.EnergyUnit
 import pt.antares.app.core.model.GoalType
 import pt.antares.app.core.model.MacroStrategy
 import pt.antares.app.core.model.WeightSource
@@ -78,7 +77,6 @@ data class UserProfileEntity(
     // Preferências de apresentação. Toda a base guarda métrico e kcal; a conversão é só
     // no ecrã, para os dados não dependerem da preferência do momento.
     val unitSystem: UnitSystem = UnitSystem.METRIC,
-    val energyUnit: EnergyUnit = EnergyUnit.KCAL,
     val updatedAt: Long,
     val deleted: Boolean = false,
 ) {

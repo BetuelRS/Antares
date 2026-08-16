@@ -20,12 +20,6 @@ class UnitConversionsTest {
     }
 
     @Test
-    fun `kcal para kJ`() {
-        assertEquals(8368, UnitConversions.kcalToKj(2000))
-        assertEquals(2000, UnitConversions.kjToKcal(8368))
-    }
-
-    @Test
     fun `cm para ft in conhecidos`() {
         assertEquals(Pair(5, 10), UnitConversions.cmToFtIn(178))
         assertEquals(178, UnitConversions.ftInToCm(5, 10))

@@ -320,7 +320,6 @@
     <string name="diary_window_fasting">Actual fast: %1$s</string>
     <string name="diary_fast_clash_title">Fast in progress</string>
     <string name="diary_fast_clash_body">It started at %1$s. Since then %2$d entries were logged — the counter keeps running all the same.</string>
-    <string name="diary_fast_clash_end">End the fast</string>
     <string name="diary_copy_yesterday">Copy yesterday</string>
 
     <string name="meal_breakfast">Breakfast</string>
@@ -342,7 +341,6 @@
     <string name="food_portion_title">Portion</string>
     <string name="food_quantity">Amount (%1$s)</string>
     <string name="food_quantity_g">Amount (g)</string>
-    <string name="food_quantity_ml">Amount (ml)</string>
     <string name="food_favorite">Favorite</string>
     <string name="food_serving">Serving</string>
     <string name="food_estimated_hint">Approximate values per 100 g — you can edit them to correct.</string>
@@ -776,7 +774,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_delete_desc">Deletes your data from this phone. There is no server: what is here is all there is.</string>
     <string name="privacy_delete_confirm_title">Delete everything?</string>
     <string name="privacy_delete_confirm_local">This deletes your profile, diary, workouts, runs and fasts from this phone. There is no undo.</string>
-    <string name="privacy_delete_confirm_server">This deletes your account and ALL your data — on this phone and on the server. There is no undo.</string>
     <string name="privacy_delete_cta">Delete permanently</string>
     <string name="privacy_error">Could not delete on the server: %1$s. Nothing was deleted on the phone.</string>
     <string name="today_fasting_title">Fasting</string>

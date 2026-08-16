@@ -320,7 +320,6 @@
     <string name="diary_window_fasting">Jejum de facto: %1$s</string>
     <string name="diary_fast_clash_title">Jejum a decorrer</string>
     <string name="diary_fast_clash_body">Começou às %1$s. Depois disso ficaram %2$d registos no diário — o contador continua a subir na mesma.</string>
-    <string name="diary_fast_clash_end">Terminar o jejum</string>
     <string name="diary_copy_yesterday">Copiar dia de ontem</string>
 
     <string name="meal_breakfast">Pequeno-almoço</string>
@@ -342,7 +341,6 @@
     <string name="food_portion_title">Porção</string>
     <string name="food_quantity">Quantidade (%1$s)</string>
     <string name="food_quantity_g">Quantidade (g)</string>
-    <string name="food_quantity_ml">Quantidade (ml)</string>
     <string name="food_favorite">Favorito</string>
     <string name="food_serving">Porção</string>
     <string name="food_estimated_hint">Valores aproximados por 100 g — podes editar para os corrigir.</string>
@@ -777,7 +775,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_delete_desc">Apaga os teus dados deste telemóvel. Não há servidor nenhum: o que está aqui é tudo o que existe.</string>
     <string name="privacy_delete_confirm_title">Apagar tudo?</string>
     <string name="privacy_delete_confirm_local">Isto apaga o teu perfil, diário, treinos, corridas e jejuns deste telemóvel. Não há como desfazer.</string>
-    <string name="privacy_delete_confirm_server">Isto apaga a tua conta e TODOS os teus dados — neste telemóvel e no servidor. Não há como desfazer.</string>
     <string name="privacy_delete_cta">Apagar definitivamente</string>
     <string name="privacy_error">Não foi possível apagar no servidor: %1$s. Nada foi apagado no telemóvel.</string>
     <string name="today_fasting_title">Jejum</string>

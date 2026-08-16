@@ -132,7 +132,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 25,
+    version = 26,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -163,6 +163,7 @@ interface DbInfoDao {
         // Acrescenta `recipe.servings`, anulável: quem já tem receitas fica com elas a
         // funcionar exatamente como antes, em gramas.
         AutoMigration(from = 24, to = 25),
+        AutoMigration(from = 25, to = 26, spec = AntaresDb.DropEnergyUnit::class),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)
@@ -172,6 +173,15 @@ abstract class AntaresDb : RoomDatabase() {
     // sincronização. A app não sincroniza nada, e o `NoSyncTest` garante que continua assim.
     @DeleteTable(tableName = "sync_meta")
     class DropSyncMeta : AutoMigrationSpec
+
+    /**
+     * Apaga a coluna `energyUnit`. Era uma preferência entre kcal e kJ **que nunca chegou a
+     * existir**: não havia opção em ecrã nenhum que a escrevesse, nem um único sítio que a
+     * lesse para converter um número. Uma coluna guardada, migrada e exportada em todas as
+     * cópias de segurança, para uma capacidade que a app não tem.
+     */
+    @DeleteColumn(tableName = "user_profile", columnName = "energyUnit")
+    class DropEnergyUnit : AutoMigrationSpec
 
     /**
      * Apaga a coluna `dirty` das 23 tabelas que a tinham. Marcava linhas por enviar para

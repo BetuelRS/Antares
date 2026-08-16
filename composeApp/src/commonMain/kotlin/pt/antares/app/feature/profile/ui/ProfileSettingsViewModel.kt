@@ -18,7 +18,6 @@ import pt.antares.app.core.calc.TargetWarning
 import pt.antares.app.core.calc.Targets
 import pt.antares.app.core.database.entities.UserProfileEntity
 import pt.antares.app.core.model.ActivityLevel
-import pt.antares.app.core.model.EnergyUnit
 import pt.antares.app.core.model.GoalType
 import pt.antares.app.core.model.GoalRates
 import pt.antares.app.core.model.MacroStrategy
@@ -299,7 +298,6 @@ class ProfileSettingsViewModel(
     fun setLifeStage(stage: LifeStage) = save { it.copy(lifeStage = stage) }
 
     fun setUnitSystem(system: UnitSystem) = save { it.copy(unitSystem = system) }
-    fun setEnergyUnit(unit: EnergyUnit) = save { it.copy(energyUnit = unit) }
 
     fun floorWarningActive(): Boolean {
         val warnings = _state.value.targets?.warnings ?: return false

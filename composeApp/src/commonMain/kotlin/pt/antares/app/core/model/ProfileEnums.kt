@@ -52,7 +52,6 @@ enum class MacroStrategy { BALANCED, HIGH_PROTEIN, LOW_CARB, KETO, CUSTOM }
 enum class UnitSystem { METRIC, IMPERIAL }
 
 @Serializable
-enum class EnergyUnit { KCAL, KJ }
 
 /**
  * O que o seletor de ritmo oferece, em quilos por semana. São limites de interface, mais

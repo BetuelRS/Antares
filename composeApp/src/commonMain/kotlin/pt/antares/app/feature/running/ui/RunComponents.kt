@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AutoShrinkText
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.feature.running.domain.Split
 import pt.antares.app.generated.resources.Res
@@ -52,7 +53,11 @@ fun SplitsTable(splits: List<Split>) {
 @Composable
 fun PrTile(label: String, value: String, modifier: Modifier = Modifier) {
     AntaresCard(modifier = modifier) {
-        Text(value, style = MaterialTheme.typography.titleLarge)
+        // Uma linha só, e o texto a encolher até caber: três destes lado a lado num telemóvel
+        // de 360 dp partiam «107:56:02» em «107:56:0» e «2» na linha seguinte, e «630.21 mi»
+        // em duas. Um total lê-se de relance ou não serve de nada.
+        AutoShrinkText(value, style = MaterialTheme.typography.titleLarge)
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
+

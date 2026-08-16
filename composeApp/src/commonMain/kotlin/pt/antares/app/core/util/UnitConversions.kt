@@ -17,7 +17,6 @@ object UnitConversions {
     // o mesmo número.
     const val KG_PER_LB = 0.45359237
     const val CM_PER_IN = 2.54
-    const val KJ_PER_KCAL = 4.184
     const val KM_PER_MI = 1.609344
     const val G_PER_OZ = 28.349523125
 
@@ -54,9 +53,6 @@ object UnitConversions {
         liquid -> flOzToMl(shown)
         else -> ozToG(shown)
     }
-
-    fun kcalToKj(kcal: Int): Int = (kcal * KJ_PER_KCAL).roundToInt()
-    fun kjToKcal(kj: Int): Int = (kj / KJ_PER_KCAL).roundToInt()
 
     // Arredonda para polegadas inteiras antes de separar pés: sem isso, 5 pés e 12
     // polegadas era um resultado possível.
