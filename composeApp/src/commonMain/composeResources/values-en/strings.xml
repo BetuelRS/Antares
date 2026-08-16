@@ -137,6 +137,7 @@
     <string name="run_summary_save">Save</string>
     <string name="run_summary_discard">Discard</string>
     <string name="run_summary_name_hint">Run name</string>
+    <string name="run_summary_no_map">No map this time: GPS was good enough to measure distance and pace, but not to draw the route. It happens indoors and between tall buildings.</string>
     <string name="run_summary_splits">Splits</string>
     <string name="run_summary_elev">Elevation</string>
     <string name="run_history_empty">You haven't recorded any run yet.</string>
@@ -796,6 +797,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_on_target">%1$d days on target</string>
     <string name="coach_weight_trend">Weight trend: %1$s kg</string>
     <string name="coach_sparse">Few entries this week — take the report with a pinch of salt.</string>
+    <string name="coach_week_at_a_glance">The week at a glance</string>
     <string name="coach_disclaimer">Worked out on this phone, from what you logged. Not medical advice.</string>
     <string name="coach_row_summary">%1$d days logged · %2$d kcal average</string>
     <string name="coach_error">Couldn't generate the report. Try again.</string>

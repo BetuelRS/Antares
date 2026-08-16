@@ -18,6 +18,8 @@ import pt.antares.app.generated.resources.run_summary_splits
 
 @Composable
 fun SplitsTable(splits: List<Split>) {
+    // Menos de um quilómetro não tem parciais para mostrar, e uma tabela com um cabeçalho e
+    // nada por baixo é pior do que não haver tabela.
     if (splits.isEmpty()) return
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(Res.string.run_summary_splits), style = MaterialTheme.typography.titleSmall)

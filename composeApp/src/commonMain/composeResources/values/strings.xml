@@ -137,6 +137,7 @@
     <string name="run_summary_save">Guardar</string>
     <string name="run_summary_discard">Descartar</string>
     <string name="run_summary_name_hint">Nome da corrida</string>
+    <string name="run_summary_no_map">Sem mapa desta vez: o GPS deu sinal que chegou para medir a distância e o ritmo, mas não para desenhar o percurso. Acontece dentro de edifícios e entre prédios altos.</string>
     <string name="run_summary_splits">Splits</string>
     <string name="run_summary_elev">Elevação</string>
     <string name="run_history_empty">Ainda não gravaste nenhuma corrida.</string>
@@ -797,6 +798,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="coach_on_target">%1$d dias dentro da meta</string>
     <string name="coach_weight_trend">Tendência do peso: %1$s kg</string>
     <string name="coach_sparse">Semana com poucos registos — o relatório vale o que vale.</string>
+    <string name="coach_week_at_a_glance">A semana à vista</string>
     <string name="coach_disclaimer">Contas feitas neste telemóvel, a partir do que registaste. Não é aconselhamento médico.</string>
     <string name="coach_row_summary">%1$d dias registados · média %2$d kcal</string>
     <string name="coach_error">Não deu para gerar o relatório. Tenta outra vez.</string>

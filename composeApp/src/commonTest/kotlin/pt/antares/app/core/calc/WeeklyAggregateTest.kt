@@ -127,5 +127,21 @@ class WeeklyAggregateTest {
         assertEquals(0, a.avgKcal)
         assertEquals(0, a.daysOnTarget)
         assertTrue(a.isSparse)
+        assertEquals(emptyList(), a.diasComRegisto)
+    }
+
+    @Test
+    fun `guarda quais os dias com registo, e nao so quantos`() {
+        // Cinco dias seguidos e cinco dias alternados dão o mesmo `loggedDays`. O relatório
+        // mostra a semana à vista, e sem saber quais eram desenhava a semana de outra pessoa.
+        val a = WeeklyAggregator.build(
+            weekStartEpochDay = monday,
+            foodLogs = listOf(food(monday, 2000), food(monday + 2, 2000), food(monday + 5, 2000)),
+            targetKcal = 2000,
+            weights = emptyList(),
+        )
+
+        assertEquals(listOf(monday, monday + 2, monday + 5), a.diasComRegisto)
+        assertEquals(a.loggedDays, a.diasComRegisto.size, "as duas contagens têm de bater")
     }
 }

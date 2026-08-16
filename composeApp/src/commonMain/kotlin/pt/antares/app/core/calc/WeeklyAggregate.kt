@@ -48,6 +48,13 @@ data class WeeklyAggregate(
     val runMinutes: Int,
 
     val microGaps: Map<String, Int> = emptyMap(),
+
+    // **Quais** os dias com registo, e não só quantos. O relatório mostra a semana à vista,
+    // e sete quadrados sem saber quais eram inventavam a semana de alguém.
+    //
+    // Vem com omissão para os relatórios já gravados continuarem a ler-se: o agregado viaja
+    // em JSON dentro do `coach_report`, e um campo obrigatório novo partia os antigos.
+    val diasComRegisto: List<Long> = emptyList(),
 ) {
 
     // Menos de quatro dias registados não descreve uma semana. Os ecrãs usam isto para
@@ -151,6 +158,7 @@ object WeeklyAggregator {
                 .let { (it / 100).roundToInt() / 10.0 },
             // Tempo em movimento, não tempo decorrido: as pausas não contam para o ritmo.
             runMinutes = runs.filter { !it.deleted }.sumOf { it.movingS }.toInt() / 60,
+            diasComRegisto = dayKcal.keys.sorted(),
         )
     }
 }

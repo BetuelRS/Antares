@@ -32,6 +32,7 @@ import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.run_summary_discard
 import pt.antares.app.generated.resources.run_summary_name_hint
 import pt.antares.app.generated.resources.run_summary_save
+import pt.antares.app.generated.resources.run_summary_no_map
 import pt.antares.app.generated.resources.run_summary_title
 import pt.antares.app.generated.resources.run_unit_km
 
@@ -54,6 +55,17 @@ fun RunSummaryScreen(
         ) {
             if (state.path.isNotEmpty()) {
                 RunMap(path = state.path, modifier = Modifier.fillMaxWidth().height(220.dp), follow = false)
+            } else {
+                // Sem percurso, o resumo abria com o buraco onde o mapa devia estar e não
+                // dizia porquê. A distância e o ritmo continuam a valer: vieram do GPS o
+                // suficiente para os medir, não o suficiente para desenhar a linha.
+                AntaresCard(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        stringResource(Res.string.run_summary_no_map),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
