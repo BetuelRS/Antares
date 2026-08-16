@@ -23,9 +23,30 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.0.1"
+    const val CURRENT = "2.0.2"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.0.2",
+            title = "O imperial passa a ser imperial em todo o lado",
+            titleEn = "Imperial becomes imperial everywhere",
+            highlights = listOf(
+                "Quem escolhe libras via «153,9 lb» e, três linhas abaixo, «0,4 kg/semana» " +
+                    "e «Tendência: 70,6 kg» — a mesma pessoa em duas escalas",
+                "Foram catorze textos: o check-in semanal, o ritmo, a faixa saudável, a massa " +
+                    "magra e a gorda, a meta, os avisos da pesagem, a cintura e a altura",
+                "A cintura passa a polegadas e a altura a pés e polegadas, para quem usa imperial",
+                "Nos totais das corridas, «107:56:02» partia-se em duas linhas",
+            ),
+            highlightsEn = listOf(
+                "In pounds you saw \"153.9 lb\" and, three lines below, \"0.4 kg/week\" and " +
+                    "\"Trend: 70.6 kg\" — the same person on two scales",
+                "Fourteen texts in all: the weekly check-in, the rate, the healthy range, lean " +
+                    "and fat mass, the goal, the weigh-in prompts, the waist and the height",
+                "Waist now reads in inches and height in feet and inches for imperial",
+                "In the run totals, \"107:56:02\" broke across two lines",
+            ),
+        ),
         AppVersion(
             name = "2.0.1",
             title = "Três coisas que só se viam num ecrã",

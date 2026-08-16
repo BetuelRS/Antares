@@ -17,6 +17,38 @@ Nada por lançar.
 
 ---
 
+## [2.0.2] — 2026-08-16
+
+Uma caçada geral, com a app a correr em libras e em inglês. Esquema da base: **v26**.
+
+### Fixed
+
+- **O sistema imperial ainda era meio sistema.** O cartão do corpo mostrava «153,9 lb» e,
+  três linhas abaixo, «0,4 kg/semana», «Tendência: 70,6 kg» e «Faixa saudável: 58,6–79,2 kg».
+  O guarda que existia para isto só varria ficheiros Kotlin, e estes «kg» viviam dentro dos
+  `strings.xml`. Foram catorze textos, e o guarda passa a varrer os dois idiomas.
+- A cintura passa a polegadas e a altura a pés e polegadas para quem usa imperial.
+- Nos totais das corridas, «107:56:02» partia-se em «107:56:0» e «2» na linha seguinte, e
+  «630.21 mi» em duas linhas. Um total que se parte lê-se como outro número.
+- Um teste-guarda falhava conforme a ordem em que os testes corriam: provocava a falha
+  contando com que os recursos do Compose não existissem, e eles passam a existir assim que
+  outro teste no mesmo processo os arranca.
+
+### Removed
+
+- **A preferência entre kcal e kJ, que nunca chegou a existir.** Havia coluna na base, havia
+  quem a soubesse escrever — e não havia opção em ecrã nenhum, nem um único sítio que a lesse
+  para converter um número. Sai por automigração 25→26, como saiu a coluna `dirty`.
+- Três textos que nenhum ecrã usava, um deles a prometer que o apagamento levava os dados
+  «no servidor» — e não há servidor desde a 1.0.0.
+
+### Added
+
+- Dois testes para uma pergunta que a remoção de uma coluna levanta: uma cópia de segurança
+  feita antes dela ainda abre? Abre, e agora está provado nos dois lados.
+
+---
+
 ## [2.0.1] — 2026-08-16
 
 Três defeitos que nenhum dos 1338 testes apanhou, porque os três só se vêem num ecrã. Foram
