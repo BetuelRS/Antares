@@ -24,8 +24,22 @@ jobs:
 
       - run: chmod +x gradlew
 
-      - name: Build + testes unitários
-        run: ./gradlew build --console=plain
+      # Os testes correm na variante **debug** e o artefacto compila-se na **release**, em
+      # vez do `build`, que corria as duas.
+      #
+      # O `build` incluía o `testReleaseUnitTest`, e os testes de interface não podem correr
+      # aí: o `compose-ui-test-manifest`, que declara a `ComponentActivity` onde eles compõem,
+      # entra como `debugImplementation`. Na release não existe, e o Robolectric falha com
+      # «Unable to resolve activity». Pô-lo na release seria enviar uma activity de teste
+      # dentro da app que as pessoas instalam.
+      #
+      # O CI esteve vermelho desde que os testes de interface entraram, e ninguém tinha por
+      # onde ver — o repositório era só de escrita para quem estava a trabalhar.
+      - name: Testes unitários (debug)
+        run: ./gradlew :composeApp:testDebugUnitTest --console=plain
+
+      - name: Compilar a release
+        run: ./gradlew :composeApp:assembleRelease --console=plain
 
       # Os dois assentam numa linha de base com o que já existia à data em que foram
       # ligados: só código novo faz o CI falhar. Refazer uma linha de base é decisão
