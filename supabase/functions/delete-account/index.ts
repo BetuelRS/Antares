@@ -5,23 +5,28 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
  * Apaga a conta do lado do servidor, a pedido do utilizador. O que a app tem no telemóvel
  * é apagado pelo `PrivacyRepository`; isto trata do que ficou aqui.
  *
- * As tabelas listadas são as das migrações antigas, de quando a app sincronizava. Já não
- * recebem escritas nenhumas — o `NoSyncTest` garante-o —, mas quem tenha usado uma versão
- * anterior pode ter lá linhas, e o direito ao apagamento cobre-as na mesma.
+ * O que ficou aqui é pouco, e é essa a intenção: a app não sincroniza, e o telemóvel não
+ * manda cópias do que se regista. Sobra o que o serviço precisa de saber para funcionar —
+ * quantos pedidos à IA foram feitos, e o que foi comprado.
  */
-const TABLES = [
-  'user_profile', 'weight_log', 'daily_target_override',
-  'food', 'food_log', 'water_log',
-  'recipe', 'recipe_ingredient',
-  'exercise_log', 'exercise',
-  'routine', 'routine_item', 'routine_schedule',
-  'workout_session', 'workout_set',
-  'fasting_protocol', 'fasting_session',
-  'run',
-  'coach_report',
-  'meal_template', 'meal_template_item',
-  'body_measurement_log', 'goal_history',
-];
+// As tabelas de onde há o que apagar: todas as que guardam alguma coisa **por pessoa**.
+//
+// As 23 por utilizador que aqui estavam foram largadas na migração 0009 — a app deixou de
+// sincronizar, e o que o telemóvel escreve fica no telemóvel. Sobra o que o serviço precisa
+// de saber para funcionar: quantos pedidos à IA foram feitos, se o período de experiência já
+// foi usado, e o que foi comprado.
+//
+// **Esta lista esteve errada nos dois sentidos.** Faltavam-lhe a `ai_requests`, a `ai_usage`,
+// a `ai_profile` e a `ai_admin`, que têm `user_id` e ficavam para trás. E tinha a
+// `purchase_events`, que **não tem** `user_id`: filtrar por uma coluna que não existe devolve
+// 400, e a função rebentava antes de chegar a apagar a conta. Quem pedisse o apagamento
+// recebia um erro e ficava com tudo.
+const TABLES = ['ai_requests', 'ai_usage', 'ai_profile', 'ai_admin', 'entitlements'];
+
+// A `purchase_events` fica de fora de propósito. É o registo em bruto do que o serviço de
+// pagamentos enviou, sem ligação à conta da app a não ser dentro do JSON, e é o comprovativo
+// de uma transação — não se apaga a pedido pela mesma razão que uma fatura não se apaga.
+// Se algum dia precisar de ser apagada, é por uma via própria e não por este laço.
 
 const json = (body: unknown, status: number) =>
   new Response(JSON.stringify(body), {
@@ -46,12 +51,6 @@ Deno.serve(async (req) => {
 
     for (const table of TABLES) {
       const { error } = await admin.from(table).delete().eq('user_id', userId);
-      if (error) throw new Error(`${table}: ${error.message}`);
-    }
-
-    for (const table of ['entitlements', 'purchase_events']) {
-      const { error } = await admin.from(table).delete().eq('user_id', userId);
-
       if (error) throw new Error(`${table}: ${error.message}`);
     }
 

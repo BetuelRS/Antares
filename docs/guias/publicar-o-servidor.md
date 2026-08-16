@@ -40,8 +40,16 @@ O `SUPABASE_URL` e o `SUPABASE_SERVICE_ROLE_KEY` são postos pela própria plata
 supabase db push
 ```
 
-Cria as tabelas de controlo de utilizações e a cache de nutrição. As migrações `0001` a `0008`
-também criam tabelas por utilizador com RLS que **já não recebem escritas** — ver
+Cria as tabelas de controlo de utilizações e a cache de nutrição.
+
+As migrações `0001` a `0008` criavam 23 tabelas por utilizador com RLS, de quando a app
+sincronizava. A `0009` larga-as. Num servidor novo elas chegam a ser criadas e são largadas a
+seguir — é feio, e é de propósito: reescrever as migrações antigas fazia o servidor de quem já
+as aplicou divergir do que o ficheiro diz.
+
+**Numa base que já tenha dados, correr antes `supabase/verificar-tabelas-rls.sql`.** Ele conta
+o que lá está sem apagar nada. Largar uma dessas tabelas por cima de linhas de alguém tira ao
+`delete-account` a capacidade de cumprir o direito ao apagamento, e isso não se desfaz. Ver
 [Dados e licenças](../referencia/dados-e-licencas.md) e
 [a decisão de não sincronizar](../explicacao/decisoes/0001-a-app-nao-sincroniza.md).
 
