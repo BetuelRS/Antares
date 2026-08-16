@@ -13,9 +13,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.fasting_hour_short
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -39,7 +44,14 @@ fun FastingTimerRing(
     }
     val markerColor = MaterialTheme.colorScheme.onSurfaceVariant
 
-    val markers = listOf(4, 8, 12).filter { it < totalHours }
+    // As marcas das horas eram três pontos cinzentos sem nada que dissesse a que horas
+    // correspondiam. Um ponto sem legenda é decoração; com a hora ao lado passa a dizer
+    // onde é que o jejum vai.
+    val measurer = rememberTextMeasurer()
+    val labelStyle = MaterialTheme.typography.labelSmall.copy(color = markerColor)
+    val markers = listOf(4, 8, 12)
+        .filter { it < totalHours }
+        .map { it to measurer.measure(stringResource(Res.string.fasting_hour_short, it), labelStyle) }
 
     Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.size(size)) {
@@ -56,11 +68,25 @@ fun FastingTimerRing(
             val radius = (size.toPx() - strokeWidth.toPx()) / 2f
             val center = Offset(size.toPx() / 2f, size.toPx() / 2f)
             val dotR = strokeWidth.toPx() / 4f
-            markers.forEach { hour ->
+            markers.forEach { (hour, rotulo) ->
                 val angle = (-90f + 360f * (hour.toFloat() / totalHours)) * (PI / 180f)
-                val x = center.x + radius * cos(angle).toFloat()
-                val y = center.y + radius * sin(angle).toFloat()
-                drawCircle(color = markerColor, radius = dotR, center = Offset(x, y))
+                val cosA = cos(angle).toFloat()
+                val sinA = sin(angle).toFloat()
+                drawCircle(
+                    color = markerColor,
+                    radius = dotR,
+                    center = Offset(center.x + radius * cosA, center.y + radius * sinA),
+                )
+                // A legenda fica por dentro do anel: por fora saía da caixa, que tem o
+                // tamanho do anel e mais nada.
+                val rotuloRadius = radius - strokeWidth.toPx() - rotulo.size.height / 2f
+                drawText(
+                    textLayoutResult = rotulo,
+                    topLeft = Offset(
+                        center.x + rotuloRadius * cosA - rotulo.size.width / 2f,
+                        center.y + rotuloRadius * sinA - rotulo.size.height / 2f,
+                    ),
+                )
             }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

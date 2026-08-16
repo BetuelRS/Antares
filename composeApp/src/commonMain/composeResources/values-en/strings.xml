@@ -679,6 +679,11 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="fasting_adjust_minus_1h">−1 h</string>
     <string name="fasting_adjust_minus_15m">−15 min</string>
     <string name="fasting_adjust_plus_15m">+15 min</string>
+    <string name="fasting_adjust_plus_1h">+1 h</string>
+    <string name="fasting_started_at">Started</string>
+    <string name="fasting_goal_at">Goal</string>
+    <string name="fasting_over_goal">%1$s past the goal</string>
+    <string name="fasting_hour_short">%1$dh</string>
     <string name="fasting_disclaimer">This is not medical advice. Talk to a professional before changing your diet.</string>
     <string name="fasting_break_confirm_title">End early?</string>
     <string name="fasting_break_confirm_message">You haven't reached the goal yet. The session will be marked as ended early — no problem.</string>

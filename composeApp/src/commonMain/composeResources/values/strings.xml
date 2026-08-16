@@ -680,6 +680,11 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="fasting_adjust_minus_1h">−1 h</string>
     <string name="fasting_adjust_minus_15m">−15 min</string>
     <string name="fasting_adjust_plus_15m">+15 min</string>
+    <string name="fasting_adjust_plus_1h">+1 h</string>
+    <string name="fasting_started_at">Início</string>
+    <string name="fasting_goal_at">Meta</string>
+    <string name="fasting_over_goal">%1$s além do objetivo</string>
+    <string name="fasting_hour_short">%1$dh</string>
     <string name="fasting_disclaimer">Isto não é aconselhamento médico. Fala com um profissional antes de mudanças à tua alimentação.</string>
     <string name="fasting_break_confirm_title">Terminar cedo?</string>
     <string name="fasting_break_confirm_message">Ainda não atingiste o objetivo. A sessão fica marcada como terminada cedo, sem problema.</string>
