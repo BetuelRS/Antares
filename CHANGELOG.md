@@ -13,7 +13,24 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
-Nada por lançar.
+Nada que mude a app para quem a usa: uma correção no gerador de dados de demonstração, que
+só o dono alcança, e duas no CI, que não vai dentro do APK. Por isso não sobem número.
+
+### Fixed
+
+- **O CI estava vermelho em todos os pushes** desde que os testes de interface entraram, e
+  não havia por onde ver. O `gradlew build` corre também o `testReleaseUnitTest`, e o
+  `compose-ui-test-manifest` — que declara a `ComponentActivity` onde esses testes compõem —
+  entra como `debugImplementation`. Vinte e um testes davam «Unable to resolve activity».
+  Passa a correr os testes na variante debug e a compilar o artefacto na release.
+- **O modo de demonstração inventava cargas**: «Ankle Circles — 155 kg», porque o peso saía
+  de um embaralhado do identificador do exercício. Passa a sair da escala do equipamento, e
+  o peso do corpo deixa de levar carga nenhuma.
+- **O catálogo da demonstração era uma fatia alfabética** — daí 354 g de mexilhão cru e 109 g
+  de licor ao pequeno-almoço. Espalha-se pelo catálogo e exige densidade energética
+  plausível, para as porções deixarem de ser absurdas.
+- As ações do CI passam a v5: o GitHub avisava que as v4 têm como alvo o Node 20, já
+  descontinuado.
 
 ---
 

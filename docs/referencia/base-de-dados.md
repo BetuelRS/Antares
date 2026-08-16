@@ -1,6 +1,6 @@
 # Base de dados
 
-Room, no telemóvel e mais lado nenhum. Esquema na **versão 21**, com **29 tabelas** e **20
+Room, no telemóvel e mais lado nenhum. Esquema na **versão 26**, com **30 tabelas** e **25
 migrações automáticas**.
 
 Os esquemas exportados estão em `composeApp/schemas/`, um ficheiro JSON por versão. São eles que
@@ -44,11 +44,18 @@ que a app foi construída.
 | 22 | | `food_log.eatenAtMin` — a que horas se comeu |
 | 23 | `food_nutrient` | |
 | 24 | | **remove** `dirty` de 23 tabelas |
+| 25 | | `recipe.servings` — quantas doses rende a receita |
+| 26 | | **remove** `user_profile.energyUnit` |
 
-**Duas destas não são acrescentos, e as duas são a mesma história.** O `sync_meta` guardava
-estado de sincronização e a `dirty` marcava linhas por enviar; a app deixou de sincronizar, e as
-duas ficaram a descrever uma funcionalidade que não existe — ver
-[a decisão](../explicacao/decisoes/0001-a-app-nao-sincroniza.md).
+**Três destas não são acrescentos, e todas pela mesma razão: descreviam algo que a app não
+faz.** O `sync_meta` guardava estado de sincronização e a `dirty` marcava linhas por enviar; a
+app deixou de sincronizar — ver
+[a decisão](../explicacao/decisoes/0001-a-app-nao-sincroniza.md). O `energyUnit` guardava uma
+escolha entre kcal e kJ que nunca chegou a existir: não havia opção que a escrevesse nem um
+sítio que a lesse.
+
+Uma coluna que sai não parte as cópias de segurança antigas: o importador ignora campos que já
+não conhece, e o `CopiaAntigaAindaAbreTest` guarda essa tolerância.
 
 ## Apagar não apaga
 

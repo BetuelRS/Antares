@@ -83,3 +83,36 @@ Os APKs ficam fora do repositório, em `apks/`, que o `.gitignore` exclui.
 git tag -a v1.1.0 -m "1.1.0"
 git push origin v1.1.0
 ```
+
+## 9. Publicar a release e anexar os APKs
+
+A etiqueta sozinha não dá nada a descarregar a quem chega ao repositório: cria uma página de
+release e põe-lhe os ficheiros.
+
+```bash
+gh release create v1.1.0 \
+  apks/1.1.0/antares-1.1.0-universal-release.apk \
+  apks/1.1.0/antares-1.1.0-arm64-release.apk \
+  apks/1.1.0/antares-1.1.0-x86_64-release.apk \
+  apks/1.1.0/antares-1.1.0-armv7-release.apk \
+  --title "1.1.0 - o titulo desta versao" \
+  --notes-file notas-desta-versao.md \
+  --latest
+```
+
+O `gh auth login` é interativo e abre o browser — tem de ser corrido por uma pessoa, uma vez
+por máquina.
+
+## 10. Olhar para o CI depois de publicar
+
+**O verde local não diz nada sobre o CI.** Ele escolhe as suas tarefas, e já esteve vermelho
+meses sem ninguém dar por isso — corria o `testReleaseUnitTest`, onde os testes de interface
+não podem correr por falta do manifesto que só a variante debug tem.
+
+```bash
+gh run list --limit 3
+```
+
+Se a corrida terminar em menos de dois minutos, os testes vieram da cache do Gradle
+(`FROM-CACHE`) e não chegaram a correr. Com as mesmas entradas isso é legítimo — mas não é
+uma execução, e não serve de prova quando se mudou alguma coisa.
