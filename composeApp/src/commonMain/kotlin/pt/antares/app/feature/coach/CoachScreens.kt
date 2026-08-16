@@ -28,6 +28,7 @@ import kotlin.math.abs
 import androidx.compose.ui.text.style.TextOverflow
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
@@ -131,7 +132,7 @@ fun CoachReportScreen(
                 val adjTitle = stringResource(Res.string.coach_adjustments)
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(padding).padding(Spacing.lg),
+                    modifier = Modifier.fillMaxSize().padding(padding).larguraDeLeitura().padding(Spacing.lg),
                     verticalArrangement = Arrangement.spacedBy(Spacing.md),
                 ) {
 
@@ -234,7 +235,7 @@ fun CoachHistoryScreen(
             return@AntaresScaffold
         }
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(Spacing.lg),
+            modifier = Modifier.fillMaxSize().padding(padding).larguraDeLeitura().padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
             items(state.reports, key = { it.id }) { report ->

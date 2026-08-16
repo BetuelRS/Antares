@@ -2,6 +2,7 @@ package pt.antares.app.feature.progress
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -38,6 +38,7 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.bodyWeightWithUnit
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.fmtG
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.ConfirmDialog
@@ -100,9 +101,12 @@ fun ProgressPhotosScreen(
                 ComparisonCard(state.photos.first(), state.photos.last())
             }
 
-            LazyColumn(
+            // As fotografias são o caso mais óbvio de todos: em coluna, um tablet mostra uma
+            // de cada vez; lado a lado vê-se a evolução sem percorrer.
+            ListaAdaptavel(
                 modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
-                verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+                contentPadding = PaddingValues(),
+                espaco = Spacing.sm,
             ) {
                 items(state.photos.reversed(), key = { it.id }) { foto ->
                     PhotoCard(foto, onDelete = { apagando = foto })

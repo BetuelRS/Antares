@@ -39,6 +39,7 @@ import pt.antares.app.core.calc.CycleCalc
 import pt.antares.app.core.calc.CycleDateError
 import pt.antares.app.core.calc.CycleEdit
 import pt.antares.app.core.database.entities.CycleEntity
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -159,6 +160,7 @@ fun CycleScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .larguraDeLeitura()
                 .padding(horizontal = Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {

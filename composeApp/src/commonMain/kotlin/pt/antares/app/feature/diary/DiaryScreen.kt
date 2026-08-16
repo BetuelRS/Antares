@@ -49,6 +49,7 @@ import androidx.compose.ui.semantics.semantics
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.model.ExerciseOrigin
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.AntaresColors
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.success
@@ -98,8 +99,12 @@ fun DiaryScreen(
     )
 
     LazyColumn(
+        // O diário fica numa coluna só, mesmo num tablet: as refeições são secções, e
+        // parti-las por colunas separava o que a pessoa comeu ao almoço do cabeçalho
+        // "Almoço". Trava na largura de leitura e fica ao meio.
         modifier = Modifier
             .fillMaxSize()
+            .larguraDeLeitura()
             .padding(horizontal = Spacing.lg),
         verticalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {

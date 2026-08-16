@@ -1,5 +1,6 @@
 package pt.antares.app.feature.exercise
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,9 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,6 +35,8 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.components.linhaInteira
+import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.generated.resources.ai_describe
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -113,12 +116,13 @@ fun AddExerciseScreen(
                 }
             }
 
-            LazyColumn(
+            ListaAdaptavel(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+                contentPadding = PaddingValues(),
+                espaco = Spacing.xs,
             ) {
                 if (state.results.isEmpty()) {
-                    item {
+                    linhaInteira {
                         // O catálogo de METs é fixo e vem com a app: uma procura sem
                         // resultados é a palavra que não existe nele, e não uma falta de
                         // dados que se resolva registando qualquer coisa.

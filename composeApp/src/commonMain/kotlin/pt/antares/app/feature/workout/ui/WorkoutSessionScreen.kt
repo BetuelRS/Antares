@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.SetLimits
+import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
@@ -111,7 +112,7 @@ fun WorkoutSessionScreen(
                 }
             }
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(horizontal = Spacing.lg),
+            modifier = Modifier.fillMaxSize().larguraDeLeitura().padding(horizontal = Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
             if (state.exercises.isEmpty()) {
