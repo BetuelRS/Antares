@@ -733,6 +733,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_notif_weighin_desc">Once a week, if you haven't weighed in.</string>
     <string name="settings_notif_coach">Coach report</string>
     <string name="settings_notif_coach_desc">Tells you when the weekly report is ready.</string>
+    <string name="settings_quiet_from">Quiet from</string>
+    <string name="settings_quiet_to">Quiet until</string>
+    <string name="settings_weighin_time">Weigh-in time</string>
     <string name="settings_notif_water">Water reminder</string>
     <string name="settings_notif_water_desc">Tells you how much is left of today's goal. Off by default.</string>
     <string name="settings_notif_water_every">%1$d h</string>

@@ -27,6 +27,7 @@ import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.datastore.AppPreferences
 import pt.antares.app.core.datastore.WATER_REMINDER_DEFAULT_H
+import pt.antares.app.core.notifications.NotificationRules
 import pt.antares.app.core.datastore.StoredAiUsage
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.feature.onboarding.OnboardingStep
@@ -51,6 +52,11 @@ data class ProfileSettingsState(
     // Desligado por omissão, ao contrário dos outros três.
     val waterReminder: Boolean = false,
     val waterReminderIntervalH: Int = WATER_REMINDER_DEFAULT_H,
+
+    val quietStartMin: Int = NotificationRules.DEFAULT_QUIET_START_MIN,
+    val quietEndMin: Int = NotificationRules.DEFAULT_QUIET_END_MIN,
+    val weighInDayIso: Int = NotificationRules.DEFAULT_WEIGH_IN_DAY_ISO,
+    val weighInMinuteOfDay: Int = NotificationRules.DEFAULT_WEIGH_IN_MIN,
 
     val aiUsage: StoredAiUsage? = null,
     val saved: Boolean = false,
@@ -93,6 +99,15 @@ class ProfileSettingsViewModel(
             NotifFlags(meal, weighIn, coach, quiet, agua.first, agua.second)
         }
 
+        // As horas do silêncio e o horário da pesagem num quarto andar: são quatro fluxos,
+        // e o `combine` do Kotlin já ia nos cinco no andar de cima.
+        val horarios = combine(
+            preferences.quietStartMin,
+            preferences.quietEndMin,
+            preferences.weighInDayIso,
+            preferences.weighInMinuteOfDay,
+        ) { qStart, qEnd, dia, hora -> Horarios(qStart, qEnd, dia, hora) }
+
         val withAi = combine(
             base,
             preferences.adaptiveTargets,
@@ -102,7 +117,7 @@ class ProfileSettingsViewModel(
             state.copy(adaptiveTargets = adaptive, aiUsage = usage, patternSuggestions = sugestoes)
         }
 
-        combine(withAi, notifFlags) { state, flags ->
+        combine(withAi, notifFlags, horarios) { state, flags, h ->
             state.copy(
                 mealReminders = flags.meal,
                 weighInReminder = flags.weighIn,
@@ -110,6 +125,10 @@ class ProfileSettingsViewModel(
                 quietHours = flags.quiet,
                 waterReminder = flags.water,
                 waterReminderIntervalH = flags.waterIntervalH,
+                quietStartMin = h.quietStart,
+                quietEndMin = h.quietEnd,
+                weighInDayIso = h.weighInDay,
+                weighInMinuteOfDay = h.weighInMin,
             )
         }
             // `saved` sobrevive à emissão nova: é o aviso de "guardado" no ecrã, e vem de
@@ -127,6 +146,37 @@ class ProfileSettingsViewModel(
         val water: Boolean,
         val waterIntervalH: Int,
     )
+
+    private data class Horarios(
+        val quietStart: Int,
+        val quietEnd: Int,
+        val weighInDay: Int,
+        val weighInMin: Int,
+    )
+
+    /**
+     * As horas de silêncio gravam-se aos pares porque é assim que a preferência as guarda.
+     * Mudar uma leva a outra consigo, tal como está no ecrã.
+     */
+    fun setQuietWindow(start: Int? = null, end: Int? = null) {
+        val atual = _state.value
+        viewModelScope.launch {
+            preferences.setQuietHours(
+                startMin = start ?: atual.quietStartMin,
+                endMin = end ?: atual.quietEndMin,
+            )
+        }
+    }
+
+    fun setWeighInDay(dayIso: Int) {
+        val atual = _state.value
+        viewModelScope.launch { preferences.setWeighInSchedule(dayIso, atual.weighInMinuteOfDay) }
+    }
+
+    fun setWeighInTime(minuteOfDay: Int) {
+        val atual = _state.value
+        viewModelScope.launch { preferences.setWeighInSchedule(atual.weighInDayIso, minuteOfDay) }
+    }
 
     fun setWaterReminder(enabled: Boolean) =
         viewModelScope.launch { preferences.setWaterReminder(enabled) }.let {}

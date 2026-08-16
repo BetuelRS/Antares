@@ -84,11 +84,14 @@ object NotificationScheduler {
         WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(MEAL_WORK, ExistingPeriodicWorkPolicy.KEEP, meal)
 
-        val weighIn = PeriodicWorkRequestBuilder<WeighInReminderWorker>(1, TimeUnit.DAYS)
+        // De três em três horas, e não uma vez por dia: a pesagem passou a ter dia e hora
+        // escolhidos, e um trabalho diário chega quando calha — podia nunca coincidir com a
+        // janela certa. O trabalhador é que decide, e só avisa uma vez por dia.
+        val weighIn = PeriodicWorkRequestBuilder<WeighInReminderWorker>(3, TimeUnit.HOURS)
             .setConstraints(Constraints.NONE)
             .build()
         WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(WEIGH_IN_WORK, ExistingPeriodicWorkPolicy.KEEP, weighIn)
+            .enqueueUniquePeriodicWork(WEIGH_IN_WORK, ExistingPeriodicWorkPolicy.UPDATE, weighIn)
 
         val widgetDelay = DayTicker.msUntilNextMidnight() + 10 * 60 * 1000L
         val widget = PeriodicWorkRequestBuilder<WidgetMidnightWorker>(1, TimeUnit.DAYS)

@@ -76,6 +76,58 @@ class NotificationRulesTest {
     }
 
     @Test
+    fun `a pesagem so avisa no dia escolhido`() {
+        // Segunda às nove, e é terça.
+        assertFalse(
+            NotificationRules.shouldRemindWeighIn(
+                hojeIso = 2, agoraMin = h(9), diaEscolhidoIso = 1, horaEscolhidaMin = h(9),
+                pesouHoje = false, jaAvisadoHoje = false,
+            ),
+        )
+        assertTrue(
+            NotificationRules.shouldRemindWeighIn(
+                hojeIso = 1, agoraMin = h(9), diaEscolhidoIso = 1, horaEscolhidaMin = h(9),
+                pesouHoje = false, jaAvisadoHoje = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `antes da hora nao avisa, depois dela sim`() {
+        fun em(minuto: Int) = NotificationRules.shouldRemindWeighIn(
+            hojeIso = 1, agoraMin = minuto, diaEscolhidoIso = 1, horaEscolhidaMin = h(9),
+            pesouHoje = false, jaAvisadoHoje = false,
+        )
+
+        assertFalse(em(h(8, 59)))
+        // Depois da hora continua a valer: o trabalho periódico chega perto da hora e não à
+        // hora, e recusar por dez minutos era perder o aviso da semana.
+        assertTrue(em(h(9)))
+        assertTrue(em(h(14)))
+    }
+
+    @Test
+    fun `quem ja se pesou hoje nao e chateado`() {
+        assertFalse(
+            NotificationRules.shouldRemindWeighIn(
+                hojeIso = 1, agoraMin = h(10), diaEscolhidoIso = 1, horaEscolhidaMin = h(9),
+                pesouHoje = true, jaAvisadoHoje = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `o aviso da pesagem sai uma vez por dia`() {
+        assertFalse(
+            NotificationRules.shouldRemindWeighIn(
+                hojeIso = 1, agoraMin = h(15), diaEscolhidoIso = 1, horaEscolhidaMin = h(9),
+                pesouHoje = false, jaAvisadoHoje = true,
+            ),
+            "o trabalho corre de três em três horas: sem isto seriam cinco avisos no dia",
+        )
+    }
+
+    @Test
     fun `a agua avisa com o que falta`() {
         assertEquals(1500, NotificationRules.waterGapToNotify(consumedMl = 1000, goalMl = 2500))
     }

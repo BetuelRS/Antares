@@ -16,6 +16,7 @@ import com.antares.app.R
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.context.GlobalContext
 import pt.antares.app.MainActivity
@@ -29,6 +30,7 @@ import pt.antares.app.core.datastore.AppPreferences
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.Sex
 import pt.antares.app.feature.profile.data.ProfileRepository
+import pt.antares.app.core.util.epochDayToLocalDate
 import pt.antares.app.core.util.todayEpochDay
 
 // Antes do Android 13 não havia permissão de notificações: era dada na instalação.
@@ -126,12 +128,18 @@ class WeighInReminderWorker(ctx: Context, params: WorkerParameters) : CoroutineW
         if (!canPostNotifications(ctx)) return Result.success()
         if (inQuietHours(prefs)) return Result.success()
 
-        val weightDao = koin.get<WeightLogDao>()
-        val last = weightDao.latest()
         val today = todayEpochDay()
+        val last = koin.get<WeightLogDao>().latest()
 
-        val due = last == null || (today - last.epochDay) >= WEEK_DAYS
-        if (!due) return Result.success()
+        val avisar = NotificationRules.shouldRemindWeighIn(
+            hojeIso = epochDayToLocalDate(today).dayOfWeek.isoDayNumber,
+            agoraMin = nowMinuteOfDay(),
+            diaEscolhidoIso = prefs.weighInDayIso.first(),
+            horaEscolhidaMin = prefs.weighInMinuteOfDay.first(),
+            pesouHoje = last?.epochDay == today,
+            jaAvisadoHoje = prefs.lastWeighInNotifDay.first() == today,
+        )
+        if (!avisar) return Result.success()
 
         AppNotificationChannels.ensureAll(ctx)
         postNotification(
@@ -141,12 +149,12 @@ class WeighInReminderWorker(ctx: Context, params: WorkerParameters) : CoroutineW
             title = ctx.getString(R.string.notif_weighin_title),
             text = ctx.getString(R.string.notif_weighin_text),
         )
+        prefs.setLastWeighInNotifDay(today)
         return Result.success()
     }
 
     companion object {
         const val NOTIF_ID = 5310
-        const val WEEK_DAYS = 7
     }
 }
 

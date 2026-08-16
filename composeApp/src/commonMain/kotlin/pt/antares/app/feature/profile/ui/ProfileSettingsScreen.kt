@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.BmrFormula
@@ -44,6 +47,7 @@ import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.SectionHeader
+import pt.antares.app.core.designsystem.components.TimeField
 import pt.antares.app.core.model.ActivityLevel
 import pt.antares.app.core.model.GoalType
 import pt.antares.app.core.model.GoalRates
@@ -51,6 +55,7 @@ import pt.antares.app.core.model.MacroStrategy
 import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.datastore.DIAS_DA_SEMANA
 import pt.antares.app.core.datastore.StoredAiUsage
 import pt.antares.app.core.datastore.WATER_REMINDER_HOURS
 import pt.antares.app.core.nutrition.LifeStageDrv
@@ -450,6 +455,19 @@ fun ProfileSettingsScreen(
                 checked = state.weighInReminder,
                 onChange = viewModel::setWeighInReminder,
             )
+            // O dia e a hora só aparecem com o lembrete ligado. Estavam escolhidos em código
+            // e a app nunca os perguntou: quem se pesa ao domingo era avisado à segunda.
+            if (state.weighInReminder) {
+                DiaDaSemanaRow(
+                    diaIso = state.weighInDayIso,
+                    onPick = { viewModel.setWeighInDay(it) },
+                )
+                TimeField(
+                    label = stringResource(Res.string.settings_weighin_time),
+                    minuteOfDay = state.weighInMinuteOfDay,
+                    onPick = viewModel::setWeighInTime,
+                )
+            }
             SettingSwitchRow(
                 title = stringResource(Res.string.settings_notif_coach),
                 desc = stringResource(Res.string.settings_notif_coach_desc),
@@ -484,6 +502,20 @@ fun ProfileSettingsScreen(
                 checked = state.quietHours,
                 onChange = viewModel::setQuietHours,
             )
+            // As horas estavam fixas em 22:00–08:00 no código, e o `AppPreferences` já sabia
+            // guardá-las desde sempre: faltava só quem as perguntasse.
+            if (state.quietHours) {
+                TimeField(
+                    label = stringResource(Res.string.settings_quiet_from),
+                    minuteOfDay = state.quietStartMin,
+                    onPick = { viewModel.setQuietWindow(start = it) },
+                )
+                TimeField(
+                    label = stringResource(Res.string.settings_quiet_to),
+                    minuteOfDay = state.quietEndMin,
+                    onPick = { viewModel.setQuietWindow(end = it) },
+                )
+            }
 
             state.aiUsage?.let { usage ->
                 SectionHeader(title = stringResource(Res.string.settings_section_ai))
@@ -615,5 +647,32 @@ private fun SettingSwitchRow(
             )
         }
         Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+/**
+ * O dia da semana da pesagem, em ISO: 1 é segunda-feira, como em todo o resto da app.
+ *
+ * Sete chips numa linha corrida, e não um menu: são sete opções curtas, e vê-las todas de
+ * uma vez é mais rápido do que abrir uma lista para escolher uma delas.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DiaDaSemanaRow(diaIso: Int, onPick: (Int) -> Unit) {
+    // Os nomes vêm do mesmo `weekdays_short` que o resto da app usa, e com o mesmo índice:
+    // uma segunda lista traduzida à parte divergia da primeira ao primeiro acerto.
+    val nomes = stringArrayResource(Res.array.weekdays_short)
+    FlowRow(
+        modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+    ) {
+        for (iso in 1..DIAS_DA_SEMANA) {
+            FilterChip(
+                selected = diaIso == iso,
+                onClick = { onPick(iso) },
+                label = { Text(nomes.getOrElse(iso % DIAS_DA_SEMANA) { "" }) },
+            )
+        }
     }
 }

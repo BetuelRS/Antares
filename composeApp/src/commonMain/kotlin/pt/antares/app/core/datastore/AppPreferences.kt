@@ -20,6 +20,9 @@ const val MEAL_NAME_MAX = 24
 val WATER_REMINDER_HOURS = 2..6
 const val WATER_REMINDER_DEFAULT_H = 3
 
+const val DIAS_DA_SEMANA = 7
+const val MINUTOS_DO_DIA = 24 * 60
+
 // Uma chave por refeição, derivada do nome da constante da enumeração. Renomear um valor
 // de [MealSlot] faz a app esquecer o nome que a pessoa tinha escolhido.
 private fun mealNameKey(slot: MealSlot) = stringPreferencesKey("meal_name_" + slot.name)
@@ -51,6 +54,10 @@ data class StoredAiUsage(
  * são dados fica na base. Cada leitura tem o valor por omissão embutido — nenhuma devolve
  * nulo por a chave ainda não existir, e é isso que faz a primeira abertura funcionar.
  */
+// Trinta e uma funções, e é para ter trinta e uma: são pares de ler e escrever, um por
+// preferência. Parti-las por classes daria a alguém dois sítios onde procurar a mesma chave,
+// e o comentário das `Keys` diz porque é que uma chave errada não dá erro nenhum.
+@Suppress("TooManyFunctions")
 class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     // Os nomes das chaves são o formato guardado no disco: mudar um deles apaga a
@@ -92,6 +99,10 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
             androidx.datastore.preferences.core.intPreferencesKey("notif_water_interval_h")
         val lastWaterNotifAt =
             androidx.datastore.preferences.core.longPreferencesKey("notif_water_last_at")
+        val weighInDayIso = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_day")
+        val weighInMinute = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_min")
+        val lastWeighInNotifDay =
+            androidx.datastore.preferences.core.longPreferencesKey("notif_weighin_last_day")
     }
 
     /**
@@ -229,6 +240,28 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setLastWaterNotifAt(epochMillis: Long) {
         dataStore.edit { it[Keys.lastWaterNotifAt] = epochMillis }
+    }
+
+    /** O dia da semana da pesagem, em ISO: 1 é segunda-feira. */
+    val weighInDayIso: Flow<Int> =
+        dataStore.data.map { it[Keys.weighInDayIso] ?: NotificationRules.DEFAULT_WEIGH_IN_DAY_ISO }
+
+    val weighInMinuteOfDay: Flow<Int> =
+        dataStore.data.map { it[Keys.weighInMinute] ?: NotificationRules.DEFAULT_WEIGH_IN_MIN }
+
+    suspend fun setWeighInSchedule(dayIso: Int, minuteOfDay: Int) {
+        dataStore.edit {
+            it[Keys.weighInDayIso] = dayIso.coerceIn(1, DIAS_DA_SEMANA)
+            it[Keys.weighInMinute] = minuteOfDay.coerceIn(0, MINUTOS_DO_DIA - 1)
+        }
+    }
+
+    /** O dia em que o último aviso de pesagem saiu, para não sair duas vezes no mesmo. */
+    val lastWeighInNotifDay: Flow<Long> =
+        dataStore.data.map { it[Keys.lastWeighInNotifDay] ?: -1L }
+
+    suspend fun setLastWeighInNotifDay(epochDay: Long) {
+        dataStore.edit { it[Keys.lastWeighInNotifDay] = epochDay }
     }
 
     val coachReadyNotif: Flow<Boolean> =
