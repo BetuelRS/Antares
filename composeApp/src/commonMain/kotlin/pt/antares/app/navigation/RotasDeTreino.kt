@@ -3,11 +3,22 @@ package pt.antares.app.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.toRoute
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.PainelDeListaEDetalhe
+import pt.antares.app.core.designsystem.components.cabeDetalheAoLado
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.painel_escolhe_da_lista
 import pt.antares.app.feature.exercise.AddExerciseScreen
 import pt.antares.app.feature.workout.WorkoutScreen
 import pt.antares.app.feature.workout.ui.ExerciseCreateScreen
@@ -50,31 +61,7 @@ internal fun NavGraphBuilder.rotasDeTreino(navController: NavHostController) {
         )
     }
 
-    composable<Route.ExerciseLibrary> { entry ->
-        val route = entry.toRoute<Route.ExerciseLibrary>()
-        val pickVm: RoutineItemPickViewModel = koinViewModel()
-        val pickBus: SessionPickBus = koinInject()
-        val scope = rememberCoroutineScope()
-        ExerciseLibraryScreen(
-            pickMode = route.pickMode,
-            onExercise = { id ->
-                when {
-                    route.pickMode && route.routineId != null -> {
-
-                        pickVm.add(route.routineId, id) { navController.popBackStack() }
-                    }
-                    route.sessionPick -> {
-
-                        scope.launch { pickBus.emit(id) }
-                        navController.popBackStack()
-                    }
-                    else -> navController.navigate(Route.ExerciseDetail(id))
-                }
-            },
-            onCreateCustom = { navController.navigate(Route.ExerciseCreate) },
-            onBack = { navController.popBackStack() },
-        )
-    }
+    rotaDaBibliotecaDeExercicios(navController)
     composable<Route.ExerciseDetail> { entry ->
         val route = entry.toRoute<Route.ExerciseDetail>()
         ExerciseDetailScreen(
@@ -83,6 +70,78 @@ internal fun NavGraphBuilder.rotasDeTreino(navController: NavHostController) {
             onBack = { navController.popBackStack() },
         )
     }
+    resto(navController)
+}
+
+/**
+ * A biblioteca sai para aqui por ser a única rota com dois esquemas: sozinha numa janela
+ * estreita, lista e detalhe lado a lado numa larga.
+ */
+private fun NavGraphBuilder.rotaDaBibliotecaDeExercicios(navController: NavHostController) {
+    composable<Route.ExerciseLibrary> { entry ->
+        val route = entry.toRoute<Route.ExerciseLibrary>()
+        val pickVm: RoutineItemPickViewModel = koinViewModel()
+        val pickBus: SessionPickBus = koinInject()
+        val scope = rememberCoroutineScope()
+
+        // Numa janela larga o detalhe abre ao lado em vez de tapar a lista: abrir um
+        // exercício, voltar atrás e abrir o seguinte era o percurso mais cansativo da app
+        // num tablet. A escolha guarda-se para sobreviver a uma rotação.
+        //
+        // Só quando a biblioteca é a biblioteca. A escolher um exercício para uma rotina ou
+        // para uma sessão, o toque devolve o resultado e sai — não há detalhe para mostrar.
+        val aoLado = cabeDetalheAoLado() && !route.pickMode && !route.sessionPick
+        var escolhido by rememberSaveable { mutableStateOf<String?>(null) }
+
+        val lista = @Composable {
+            ExerciseLibraryScreen(
+                pickMode = route.pickMode,
+                onExercise = { id ->
+                    when {
+                        route.pickMode && route.routineId != null -> {
+
+                            pickVm.add(route.routineId, id) { navController.popBackStack() }
+                        }
+                        route.sessionPick -> {
+
+                            scope.launch { pickBus.emit(id) }
+                            navController.popBackStack()
+                        }
+                        aoLado -> escolhido = id
+                        else -> navController.navigate(Route.ExerciseDetail(id))
+                    }
+                },
+                onCreateCustom = { navController.navigate(Route.ExerciseCreate) },
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        if (!aoLado) {
+            lista()
+        } else {
+            PainelDeListaEDetalhe(
+                lista = lista,
+                detalhe = escolhido?.let { id ->
+                    {
+                        ExerciseDetailScreen(
+                            exerciseId = id,
+                            // Apagar um exercício personalizado só fecha o painel: a lista ao
+                            // lado já se atualizou sozinha, e sair dela seria perder o sítio.
+                            onDeleted = { escolhido = null },
+                            onBack = { escolhido = null },
+                        )
+                    }
+                },
+                vazio = {
+                    EmptyState(title = stringResource(Res.string.painel_escolhe_da_lista))
+                },
+            )
+        }
+    }
+}
+
+/** O que sobra do grafo de treino: criar exercício, rotinas, sessão, histórico e estatísticas. */
+private fun NavGraphBuilder.resto(navController: NavHostController) {
     composable<Route.ExerciseCreate> {
         ExerciseCreateScreen(
             onCreated = { id ->
