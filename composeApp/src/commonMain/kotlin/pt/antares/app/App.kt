@@ -2,6 +2,7 @@ package pt.antares.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,13 +33,18 @@ import pt.antares.app.feature.fasting.data.FastingProtocolSeeder
 import pt.antares.app.feature.workout.data.ExerciseSeeder
 import pt.antares.app.feature.workout.data.RoutineTemplateSeeder
 import pt.antares.app.core.designsystem.AntaresTheme
+import pt.antares.app.core.designsystem.LocalAlturaDaJanela
+import pt.antares.app.core.designsystem.LocalLarguraDaJanela
+import pt.antares.app.core.designsystem.ProvedorDaJanela
 import pt.antares.app.core.designsystem.ThemeMode
+import pt.antares.app.core.designsystem.navegacaoAoLado
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.LocalUndo
 import pt.antares.app.core.designsystem.components.rememberUndoController
 import pt.antares.app.navigation.AntaresBottomBar
 import pt.antares.app.navigation.AntaresNavHost
+import pt.antares.app.navigation.AntaresNavigationRail
 import pt.antares.app.navigation.Route
 import pt.antares.app.navigation.bottomBarRoutes
 
@@ -104,13 +110,17 @@ fun App(viewModel: AppViewModel = koinViewModel()) {
     val mealNames by viewModel.mealNames.collectAsState()
     AntaresTheme(darkTheme = dark) {
 
-        CompositionLocalProvider(LocalMealNames provides mealNames) {
-            val onboardingDone by viewModel.onboardingDone.collectAsState()
+        // A janela mede-se aqui, acima de tudo o resto: mais abaixo já haveria uma coluna ou
+        // um painel pelo meio, e o ecrã concluiria «compacta» dentro de um tablet.
+        ProvedorDaJanela {
+            CompositionLocalProvider(LocalMealNames provides mealNames) {
+                val onboardingDone by viewModel.onboardingDone.collectAsState()
 
-            when {
+                when {
 
-                onboardingDone == null -> LoadingState()
-                else -> MainScaffold(startAtOnboarding = onboardingDone == false)
+                    onboardingDone == null -> LoadingState()
+                    else -> MainScaffold(startAtOnboarding = onboardingDone == false)
+                }
             }
         }
     }
@@ -134,16 +144,24 @@ private fun MainScaffold(startAtOnboarding: Boolean) {
     val snackbarHost = remember { SnackbarHostState() }
     val undo = rememberUndoController(snackbarHost)
 
+    // A navegação muda de sítio com a janela, e não com o ecrã: o separador aberto tem de
+    // continuar aberto quando o telemóvel roda, e ele só sabe disso porque é o mesmo
+    // `navController` que alimenta os dois.
+    val aoLado = navegacaoAoLado(LocalLarguraDaJanela.current, LocalAlturaDaJanela.current)
+
     CompositionLocalProvider(LocalUndo provides undo) {
-        AntaresScaffold(
-            bottomBar = { if (showBottomBar) AntaresBottomBar(navController) },
-            snackbarHost = { SnackbarHost(snackbarHost) },
-        ) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
-                AntaresNavHost(
-                    navController = navController,
-                    startDestination = if (startAtOnboarding) Route.Onboarding else Route.Today,
-                )
+        Row {
+            if (showBottomBar && aoLado) AntaresNavigationRail(navController)
+            AntaresScaffold(
+                bottomBar = { if (showBottomBar && !aoLado) AntaresBottomBar(navController) },
+                snackbarHost = { SnackbarHost(snackbarHost) },
+            ) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    AntaresNavHost(
+                        navController = navController,
+                        startDestination = if (startAtOnboarding) Route.Onboarding else Route.Today,
+                    )
+                }
             }
         }
     }

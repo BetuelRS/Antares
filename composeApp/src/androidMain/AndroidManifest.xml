@@ -50,7 +50,6 @@
         <activity
             android:name="pt.antares.app.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.Antares"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

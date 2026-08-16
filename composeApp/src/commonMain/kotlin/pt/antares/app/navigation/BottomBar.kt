@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,23 +62,56 @@ private val bottomBarItems = listOf(
 
 @Composable
 fun AntaresBottomBar(navController: NavHostController) {
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = backStackEntry?.destination
+    val selecionado = separadorSelecionado(navController)
 
     NavigationBar {
         bottomBarItems.forEach { item ->
-            val itemRouteName = item.route::class.qualifiedName
-            val selected = currentDestination?.hierarchy?.any {
-                it.route == itemRouteName
-            } == true
-
             NavigationBarItem(
-                selected = selected,
+                selected = selecionado(item.route),
                 onClick = { navController.navigateToTab(item.route) },
                 // Decorativo: cada separador tem o seu nome por baixo do ícone.
                 icon = { Icon(item.icon, contentDescription = null) },
                 label = { Text(stringResource(item.label)) },
             )
         }
+    }
+}
+
+/**
+ * Os mesmos separadores, de pé ao lado do conteúdo. É o que o Material manda numa janela
+ * larga — uma barra em baixo esticada por 1200 dp põe cinco alvos ao longo de todo o ecrã —
+ * e também num telemóvel deitado, onde a barra roubava altura que já não sobrava.
+ *
+ * A lista é a mesma do [AntaresBottomBar] de propósito: dois sítios a decidir que
+ * separadores existem davam duas apps diferentes conforme a rotação.
+ */
+@Composable
+fun AntaresNavigationRail(navController: NavHostController) {
+    val selecionado = separadorSelecionado(navController)
+
+    NavigationRail {
+        bottomBarItems.forEach { item ->
+            NavigationRailItem(
+                selected = selecionado(item.route),
+                onClick = { navController.navigateToTab(item.route) },
+                // Decorativo: o nome do separador está logo por baixo do ícone.
+                icon = { Icon(item.icon, contentDescription = null) },
+                label = { Text(stringResource(item.label)) },
+            )
+        }
+    }
+}
+
+/**
+ * Percorre a hierarquia e não só o destino: um ecrã aninhado dentro de um separador continua
+ * a pertencer-lhe, e sem isto o separador apagava-se assim que se abrisse alguma coisa nele.
+ */
+@Composable
+private fun separadorSelecionado(navController: NavHostController): (Route) -> Boolean {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val destino = backStackEntry?.destination
+    return { rota ->
+        val nome = rota::class.qualifiedName
+        destino?.hierarchy?.any { it.route == nome } == true
     }
 }
