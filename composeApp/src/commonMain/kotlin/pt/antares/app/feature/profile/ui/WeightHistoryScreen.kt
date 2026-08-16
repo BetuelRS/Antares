@@ -59,6 +59,7 @@ import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.common_cancel
 import pt.antares.app.generated.resources.common_delete
+import pt.antares.app.generated.resources.chart_vertical_range
 import pt.antares.app.generated.resources.common_kg
 import pt.antares.app.generated.resources.common_lb
 import pt.antares.app.generated.resources.common_save
@@ -199,7 +200,7 @@ fun WeightHistoryScreen(
                                 trend = state.trendSeries.display(imperial),
                                 targetValue = state.goalWeightKg?.display(imperial),
                                 modifier = Modifier.fillMaxWidth(),
-                                labels = { escala, eixo -> ChartAxisLabels(escala, eixo) },
+                                labels = { escala, eixo -> ChartAxisLabels(escala, eixo, unitLabel) },
                             )
                             state.trend?.let { trend ->
                                 Text(
@@ -307,22 +308,20 @@ private fun WeightRow(
 }
 
 @Composable
-private fun ChartAxisLabels(scale: ChartScale, eixo: TimeAxis) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(top = Spacing.xs),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
+private fun ChartAxisLabels(scale: ChartScale, eixo: TimeAxis, unidade: String) {
+    // Ver a nota em `ProgressScreen`: os extremos do eixo vertical ficavam um em cada ponta,
+    // por cima das datas, e liam-se como se fossem o peso do primeiro e do último dia.
+    Text(
+        stringResource(
+            Res.string.chart_vertical_range,
             fmtG(scale.min),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
             fmtG(scale.max),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+            unidade,
+        ),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.fillMaxWidth().padding(top = Spacing.xs),
+    )
     val marcas = eixo.tickDays()
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         marcas.forEachIndexed { i, dia ->
