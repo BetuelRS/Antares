@@ -1,5 +1,6 @@
 package pt.antares.app.core
 
+import pt.antares.app.core.database.daos.DemoExercicio
 import pt.antares.app.core.demo.DEMO_ID_PREFIX
 import pt.antares.app.core.demo.DemoData
 import pt.antares.app.core.demo.DemoDataEngine
@@ -17,7 +18,12 @@ class DemoDataEngineTest {
         DemoFood("f-azeite", "Azeite", 884, 0.0, 0.0, 100.0),
         DemoFood("f-leite", "Leite meio-gordo", 47, 3.3, 4.8, 1.6, liquido = true),
     )
-    private val exercicios = listOf("ex-supino", "ex-agachamento", "ex-remada", "ex-peso-morto")
+    private val exercicios = listOf(
+        DemoExercicio("ex-supino", "barbell"),
+        DemoExercicio("ex-agachamento", "barbell"),
+        DemoExercicio("ex-remada", "dumbbell"),
+        DemoExercicio("ex-alongamento", "body only"),
+    )
 
     private fun gerar(semente: Long = DemoDataEngine.SEMENTE_PADRAO): DemoData =
         DemoDataEngine.gerar(
@@ -207,5 +213,45 @@ class DemoDataEngineTest {
         assertEquals(d.pesos.size, d.pesos.map { it.epochDay }.toSet().size, "dois pesos no mesmo dia")
         assertEquals(d.aguas.size, d.aguas.map { it.epochDay }.toSet().size, "duas águas no mesmo dia")
         assertEquals(d.medidas.size, d.medidas.map { it.epochDay }.toSet().size, "duas medidas no mesmo dia")
+    }
+
+    /**
+     * A demonstração mostrava «Ankle Circles — 155 kg», porque a carga saía de um embaralhado
+     * do identificador sem olhar ao que se estava a levantar. Quem avalia um ecrã com estes
+     * dados fica sem saber se o número absurdo é do ecrã ou do gerador.
+     */
+    @Test
+    fun `a carga da serie respeita o equipamento`() {
+        assertEquals(0.0, DemoDataEngine.cargaBase(DemoExercicio("ex-prancha", "body only")))
+        assertEquals(0.0, DemoDataEngine.cargaBase(DemoExercicio("ex-rolo", "foam roll")))
+        assertEquals(0.0, DemoDataEngine.cargaBase(DemoExercicio("ex-sem-equipamento", null)))
+
+        val halteres = DemoDataEngine.cargaBase(DemoExercicio("ex-curl", "dumbbell"))
+        assertTrue(halteres in 6.0..30.0, "halteres a $halteres kg")
+
+        val barra = DemoDataEngine.cargaBase(DemoExercicio("ex-agachamento", "barbell"))
+        assertTrue(barra in 30.0..100.0, "barra a $barra kg")
+
+        // O mesmo exercício tem de dar sempre a mesma carga, ou o histórico de dois anos
+        // saltava de treino para treino.
+        assertEquals(barra, DemoDataEngine.cargaBase(DemoExercicio("ex-agachamento", "barbell")))
+    }
+
+    @Test
+    fun `nenhuma serie de peso do corpo leva carga inventada`() {
+        val soPesoDoCorpo = listOf(DemoExercicio("ex-flexao", "body only"))
+        val d = DemoDataEngine.gerar(
+            diaFinal = 20_666L,
+            catalogo = catalogo,
+            exercicios = soPesoDoCorpo,
+            protocoloJejumId = null,
+        )
+
+        // O `+ s * 2.5` das séries a seguir à primeira também não pode inventar peso onde
+        // não há: um degrau por série sobre zero continuaria a dizer «7,5 kg» numa flexão.
+        assertTrue(
+            d.series.all { it.weightKg == 0.0 },
+            "uma série de peso do corpo levou carga: ${d.series.map { it.weightKg }.distinct()}",
+        )
     }
 }

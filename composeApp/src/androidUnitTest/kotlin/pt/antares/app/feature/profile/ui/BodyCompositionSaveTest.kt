@@ -30,6 +30,11 @@ import kotlin.test.assertTrue
  * basal a consulta a cada cálculo. Este teste fixa que os dois **nunca discordam**: toda a
  * escrita passa pelo histórico, e é ele que repõe a cópia.
  *
+ * **Escolher «não sei» limpa o perfil e deixa o histórico como está, e é decisão** — do dono,
+ * a 2026-08-16. O histórico regista medições que aconteceram; dizer «não sei» hoje não apaga
+ * o que foi medido, e a app não apaga dados sem confirmar. O perfil é a cache do valor em
+ * uso, e é essa que fica vazia. Estava por decidir desde que o teste o descreveu.
+ *
  * A aritmética das fórmulas não se repete aqui; vive no `BodyCompositionTest`.
  */
 @OptIn(ExperimentalCoroutinesApi::class)

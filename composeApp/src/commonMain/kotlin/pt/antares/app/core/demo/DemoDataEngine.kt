@@ -1,5 +1,6 @@
 package pt.antares.app.core.demo
 
+import pt.antares.app.core.database.daos.DemoExercicio
 import pt.antares.app.core.database.entities.BodyMeasurementEntity
 import pt.antares.app.core.database.entities.FastingSessionEntity
 import pt.antares.app.core.database.entities.FoodLogEntity
@@ -69,6 +70,28 @@ object DemoDataEngine {
     // Dois anos. Chega para o histórico anual e para várias janelas de tendência.
     const val DIAS = 730
 
+    /** Onde começa a carga de um equipamento e quanto varia de exercício para exercício. */
+    private data class Escala(val minimo: Double, val amplitude: Int)
+
+    // Amplitude zero é peso do corpo: não se carrega, e escrever lá um número seria inventá-lo.
+    private val ESCALAS_POR_EQUIPAMENTO = mapOf(
+        null to Escala(0.0, 0),
+        "body only" to Escala(0.0, 0),
+        "foam roll" to Escala(0.0, 0),
+        "exercise ball" to Escala(0.0, 0),
+        "bands" to Escala(0.0, 0),
+        "medicine ball" to Escala(3.0, 8),
+        "dumbbell" to Escala(6.0, 24),
+        "kettlebells" to Escala(8.0, 24),
+        "e-z curl bar" to Escala(15.0, 25),
+        "cable" to Escala(20.0, 50),
+        "machine" to Escala(20.0, 50),
+        "barbell" to Escala(30.0, 70),
+    )
+
+    // «other» e o que o catálogo traga de novo: uma escala pequena, que erra por defeito.
+    private val ESCALA_DESCONHECIDA = Escala(5.0, 15)
+
     // Semente fixa: a mesma demonstração de cada vez. Sem isto, comparar dois ecrãs depois
     // de regerar não provava nada.
     const val SEMENTE_PADRAO = 20260803L
@@ -134,7 +157,7 @@ object DemoDataEngine {
         semente: Long = SEMENTE_PADRAO,
         diaFinal: Long,
         catalogo: List<DemoFood> = emptyList(),
-        exercicios: List<String> = emptyList(),
+        exercicios: List<DemoExercicio> = emptyList(),
         protocoloJejumId: String? = null,
     ): DemoData {
         val r = DemoRandom(semente)
@@ -330,19 +353,24 @@ object DemoDataEngine {
         sessaoId: String,
         quando: Long,
         dia: Int,
-        exercicios: List<String>,
+        exercicios: List<DemoExercicio>,
     ): List<WorkoutSetEntity> {
         val saida = mutableListOf<WorkoutSetEntity>()
         val quantosExercicios = r.inteiroEntre(4, 6)
 
         val progresso = dia.toDouble() / DIAS
         for (e in 0 until quantosExercicios) {
-            val exercicioId = r.um(exercicios) ?: continue
+            val exercicio = r.um(exercicios) ?: continue
+            val exercicioId = exercicio.id
 
             // A carga inicial deriva do identificador do exercício, e não do acaso: assim
             // cada exercício tem sempre o seu peso próprio ao longo dos dois anos, e o
             // histórico de um exercício não salta de 30 para 80 kg entre treinos.
-            val base = 20.0 + (abs(exercicioId.hashCode()) % 60)
+            //
+            // Mas o identificador sozinho não sabe o que se está a levantar, e dava
+            // «Ankle Circles — 155 kg». O equipamento decide a escala; o embaralhado só
+            // escolhe onde dentro dela.
+            val base = cargaBase(exercicio)
             // 45% de progressão em dois anos, para os recordes irem caindo ao longo da
             // demonstração em vez de aparecerem todos no primeiro treino.
             val carga = base * (1.0 + progresso * 0.45)
@@ -355,8 +383,9 @@ object DemoDataEngine {
                     setIndex = s,
 
                     // Peso a subir e repetições a descer ao longo das séries, como num
-                    // treino real depois do aquecimento.
-                    weightKg = arredonda(carga + s * 2.5, 1),
+                    // treino real depois do aquecimento. Num exercício de peso do corpo o
+                    // degrau não se aplica: somá-lo a zero dizia «7,5 kg» numa flexão.
+                    weightKg = if (carga <= 0.0) 0.0 else arredonda(carga + s * 2.5, 1),
                     reps = (12 - s - r.ate(2)).coerceAtLeast(4),
                     // RPE em menos de metade das séries: quase ninguém o preenche sempre, e
                     // os ecrãs têm de saber lidar com a falta.
@@ -369,6 +398,23 @@ object DemoDataEngine {
             }
         }
         return saida
+    }
+
+    /**
+     * A carga de partida de um exercício, pela escala do equipamento que ele usa.
+     *
+     * O peso do corpo é zero **de propósito** e não um valor pequeno: um alongamento ou uma
+     * prancha não se carregam, e escrever 5 kg ali seria inventar um número. O volume dessas
+     * séries fica a zero, que é o que o cálculo do volume já espera.
+     *
+     * Dentro de cada escala, o identificador escolhe onde — assim o mesmo exercício tem
+     * sempre a mesma carga ao longo dos dois anos.
+     */
+    internal fun cargaBase(exercicio: DemoExercicio): Double {
+        val escala = ESCALAS_POR_EQUIPAMENTO[exercicio.equipment?.lowercase()]
+            ?: ESCALA_DESCONHECIDA
+        if (escala.amplitude == 0) return 0.0
+        return escala.minimo + (abs(exercicio.id.hashCode()) % escala.amplitude)
     }
 
     private fun corrida(r: DemoRandom, dia: Long, quando: Long, i: Int, peso: Double): RunEntity {

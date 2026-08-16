@@ -15,6 +15,15 @@ import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 
 /**
+ * Um exercício do catálogo com o que a demonstração precisa de saber para lhe dar carga:
+ * o equipamento. Um alongamento e um agachamento com barra não levam o mesmo peso.
+ */
+data class DemoExercicio(
+    val id: String,
+    val equipment: String?,
+)
+
+/**
  * Escrita e remoção em massa dos dados de demonstração, para o ecrã de administração.
  *
  * Tudo aqui assenta numa convenção só: os registos de demonstração têm o identificador a
@@ -142,28 +151,42 @@ interface DemoDao {
     /**
      * Alimentos para a demonstração.
      *
-     * Exige `microsJson` porque sem micros os ecrãs de nutrição não têm o que
-     * mostrar, e põe as tabelas portuguesas à frente para a demonstração parecer
-     * uma semana de alguém. O `ORDER BY` é estável, portanto a mesma semente dá
-     * sempre a mesma demonstração.
+     * Exige `microsJson` porque sem micros os ecrãs de nutrição não têm o que mostrar, e põe
+     * as tabelas portuguesas à frente para a demonstração parecer uma semana de alguém.
+     *
+     * Duas condições que não são estética. A **densidade energética entre 40 e 500 kcal por
+     * 100 g** tira da amostra os alimentos que obrigam a porções absurdas: a porção sai de
+     * `kcal do prato ÷ densidade`, e com um alimento de 30 kcal/100 g dava 350 g de mexilhão
+     * cru ao pequeno-almoço. E a ordem **espalha-se pelo catálogo** em vez de cortar uma
+     * fatia alfabética: sessenta alimentos seguidos por ordem de identificador não são uma
+     * dieta, são uma página de dicionário.
+     *
+     * Continua estável — a mesma semente dá sempre a mesma demonstração.
      */
     @Query(
         """
         SELECT * FROM foods
-        WHERE deleted = 0 AND kcal > 0 AND microsJson IS NOT NULL
+        WHERE deleted = 0 AND kcal BETWEEN 40 AND 500 AND microsJson IS NOT NULL
         ORDER BY
             (CASE
                 WHEN id LIKE 'ptx%' OR id LIKE 'pt-%' OR id LIKE 'tca-%' THEN 0
                 ELSE 1
              END) ASC,
+            substr(id, -1) ASC,
+            substr(id, -2, 1) ASC,
             id ASC
         LIMIT :limite
         """,
     )
     suspend fun catalogoParaDemo(limite: Int): List<pt.antares.app.core.database.entities.FoodEntity>
 
-    @Query("SELECT id FROM exercise WHERE deleted = 0 ORDER BY id LIMIT :limite")
-    suspend fun exerciciosParaDemo(limite: Int): List<String>
+    /**
+     * Exercícios para a demonstração, **com o equipamento**. Sem ele, a carga saía de um
+     * embaralhado do identificador e dava «Ankle Circles — 155 kg»: a demonstração ficava
+     * a inventar recordes em exercícios que ninguém carrega.
+     */
+    @Query("SELECT id, equipment FROM exercise WHERE deleted = 0 ORDER BY id LIMIT :limite")
+    suspend fun exerciciosParaDemo(limite: Int): List<DemoExercicio>
 
     @Query("SELECT id FROM fasting_protocol WHERE deleted = 0 ORDER BY id LIMIT 1")
     suspend fun protocoloParaDemo(): String?
