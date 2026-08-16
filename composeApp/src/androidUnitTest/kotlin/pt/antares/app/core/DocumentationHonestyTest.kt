@@ -31,6 +31,13 @@ class DocumentationHonestyTest {
         // Os APKs são entregues fora do git e o `.gitignore` exclui-os; a documentação fala
         // deles precisamente para explicar porque é que não estão aqui.
         "apks/",
+
+        // O que o Gradle escreve. Estes caminhos são a resposta a «onde é que fica o APK
+        // depois de compilar», e por isso a documentação tem de os citar — mas numa cópia
+        // acabada de clonar, ou logo a seguir a um `clean`, ainda não existem. Sem esta
+        // exceção o teste só passava por acaso: bastava alguém correr o `clean` para o
+        // guarda acusar uma documentação que está certa.
+        "composeApp/build/",
     )
 
     private val ficheiroCitado = Regex("""`([A-Za-z0-9_][A-Za-z0-9_./-]*\/[A-Za-z0-9_./-]*)`""")
