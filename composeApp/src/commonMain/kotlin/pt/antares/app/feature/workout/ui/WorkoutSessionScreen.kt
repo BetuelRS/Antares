@@ -1,7 +1,9 @@
 package pt.antares.app.feature.workout.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
@@ -113,11 +116,15 @@ fun WorkoutSessionScreen(
                 }
             }
             items(state.exercises, key = { it.exerciseId }) { ex ->
-                ExerciseBlock(
-                    ex = ex,
-                    onLog = { w, r, rpe, warm -> viewModel.logSet(ex, w, r, rpe, warm) },
-                    onDeleteSet = viewModel::deleteSet,
-                )
+                if (ex.exerciseId == state.currentExerciseId) {
+                    ExerciseBlock(
+                        ex = ex,
+                        onLog = { w, r, rpe, warm -> viewModel.logSet(ex, w, r, rpe, warm) },
+                        onDeleteSet = viewModel::deleteSet,
+                    )
+                } else {
+                    ExerciseRecolhido(ex = ex, onSelect = { viewModel.select(ex.exerciseId) })
+                }
             }
             item {
                 SecondaryButton(
@@ -155,12 +162,18 @@ fun WorkoutSessionScreen(
     }
 }
 
+/**
+ * O exercício que está a ser feito. Ocupa o ecrã inteiro porque durante um treino a pessoa
+ * está num exercício, e não nos quatro do plano ao mesmo tempo.
+ */
 @Composable
 private fun ExerciseBlock(
     ex: SessionExerciseUi,
     onLog: (Double, Int, Double?, Boolean) -> Unit,
     onDeleteSet: (String) -> Unit,
 ) {
+    var warmup by remember(ex.exerciseId) { mutableStateOf(false) }
+
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(ex.name, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f), maxLines = 2)
@@ -168,17 +181,19 @@ private fun ExerciseBlock(
                 AssistChip(onClick = {}, label = { Text(stringResource(Res.string.routine_superset_group, g)) })
             }
         }
-        Text(
-            "${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        if (ex.ghost.isNotEmpty()) {
-            val g = ex.ghost.joinToString("  ") { "${it.weightKg.toInt()}×${it.reps}" }
+        // O aquecimento partilha a linha do alvo em vez de ocupar uma só para ele: era uma
+        // linha inteira por exercício, num ecrã onde o que interessa é a série a seguir.
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(Res.string.session_ghost, g),
+                "${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+            FilterChip(
+                selected = warmup,
+                onClick = { warmup = !warmup },
+                label = { Text(stringResource(Res.string.session_warmup)) },
             )
         }
 
@@ -197,16 +212,85 @@ private fun ExerciseBlock(
             }
         }
 
-        NewSetRow(prefill = ex.ghost.getOrNull(ex.sets.size), onLog = onLog)
+        SeriesFantasma(ex)
+
+        NewSetRow(
+            prefill = ex.ghost.getOrNull(ex.setsDone),
+            warmup = warmup,
+            onLog = onLog,
+        )
+    }
+}
+
+/**
+ * As séries que faltam ao plano, a cinzento e por cima da linha de gravar: o que a pessoa fez
+ * da última vez, no sítio onde vai escrever o que faz hoje. Sem histórico fica o alvo da
+ * rotina, que é a única outra coisa que se sabe sobre uma série que ainda não aconteceu.
+ */
+@Composable
+private fun SeriesFantasma(ex: SessionExerciseUi) {
+    val emFalta = ex.targetSets - ex.setsDone
+    if (emFalta <= 0) return
+
+    val kg = stringResource(Res.string.session_weight)
+    val reps = stringResource(Res.string.session_reps)
+    repeat(emFalta) { k ->
+        val fantasma = ex.ghost.getOrNull(ex.setsDone + k)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            Text(
+                "${ex.sets.size + k + 1}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                if (fantasma != null) {
+                    "${fantasma.weightKg.toInt()} $kg × ${fantasma.reps} $reps"
+                } else {
+                    "${ex.repsMin}-${ex.repsMax} $reps"
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+/** Os exercícios que não estão a ser feitos: nome e progresso, e um toque para trocar. */
+@Composable
+private fun ExerciseRecolhido(ex: SessionExerciseUi, onSelect: () -> Unit) {
+    AntaresCard(
+        modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onSelect),
+        contentPadding = PaddingValues(Spacing.md),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                ex.name,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+            )
+            Text(
+                stringResource(Res.string.session_sets_progress, ex.setsDone, ex.targetSets),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (ex.isComplete) {
+                Icon(
+                    Icons.Default.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = Spacing.sm),
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun NewSetRow(prefill: WorkoutSetEntity?, onLog: (Double, Int, Double?, Boolean) -> Unit) {
+private fun NewSetRow(prefill: WorkoutSetEntity?, warmup: Boolean, onLog: (Double, Int, Double?, Boolean) -> Unit) {
     var weight by remember(prefill) { mutableStateOf(prefill?.weightKg?.let { it.toInt().toString() } ?: "") }
     var reps by remember(prefill) { mutableStateOf(prefill?.reps?.toString() ?: "") }
     var rpe by remember { mutableStateOf("") }
-    var warmup by remember { mutableStateOf(false) }
 
     val w = weight.replace(',', '.').toDoubleOrNull()
     val r = reps.toIntOrNull()
@@ -260,28 +344,26 @@ private fun NewSetRow(prefill: WorkoutSetEntity?, onLog: (Double, Int, Double?, 
         }
     }
 
-    // Dizer porquê, em vez de deixar o botão cinzento sem explicação.
-    if (pesoMau || repsMau || rpeMau) {
-        Text(
-            text = when {
-                pesoMau -> stringResource(
-                    Res.string.session_weight_out_of_range,
-                    SetLimits.MAX_WEIGHT_KG.toInt().toString(),
-                )
-                repsMau -> stringResource(
-                    Res.string.session_reps_out_of_range,
-                    SetLimits.MAX_REPS.toString(),
-                )
-                else -> stringResource(Res.string.session_rpe_out_of_range)
-            },
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.error,
-        )
-    }
+    ErroDaSerie(pesoMau = pesoMau, repsMau = repsMau, rpeMau = rpeMau)
+}
 
-    FilterChip(
-        selected = warmup,
-        onClick = { warmup = !warmup },
-        label = { Text(stringResource(Res.string.session_warmup)) },
+/** Dizer porquê, em vez de deixar o botão cinzento sem explicação. */
+@Composable
+private fun ErroDaSerie(pesoMau: Boolean, repsMau: Boolean, rpeMau: Boolean) {
+    if (!pesoMau && !repsMau && !rpeMau) return
+    Text(
+        text = when {
+            pesoMau -> stringResource(
+                Res.string.session_weight_out_of_range,
+                SetLimits.MAX_WEIGHT_KG.toInt().toString(),
+            )
+            repsMau -> stringResource(
+                Res.string.session_reps_out_of_range,
+                SetLimits.MAX_REPS.toString(),
+            )
+            else -> stringResource(Res.string.session_rpe_out_of_range)
+        },
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.error,
     )
 }

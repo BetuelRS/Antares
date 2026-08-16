@@ -360,6 +360,132 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     }
 
     @Test
+    fun `o ecra abre no primeiro exercicio por acabar`() = runTest(dispatcher) {
+        exercicio("agachamento", pt = "Agachamento")
+        exercicio("supino", pt = "Supino")
+        rotina(
+            "r1",
+            item("r1", "agachamento", position = 0, targetSets = 1),
+            item("r1", "supino", position = 1, targetSets = 3),
+        )
+
+        val vm = viewModel()
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+
+        val estado = vm.state.first { !it.loading && it.exercises.size == 2 }
+        assertEquals("agachamento", estado.currentExerciseId)
+    }
+
+    @Test
+    fun `com as series do plano feitas passa sozinho ao seguinte`() = runTest(dispatcher) {
+        exercicio("agachamento", pt = "Agachamento")
+        exercicio("supino", pt = "Supino")
+        rotina(
+            "r1",
+            item("r1", "agachamento", position = 0, targetSets = 2),
+            item("r1", "supino", position = 1, targetSets = 3),
+        )
+
+        val vm = viewModel()
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+
+        val primeira = vm.state.first { !it.loading && it.exercises.size == 2 }
+        vm.logSet(primeira.exercises.first { it.exerciseId == "agachamento" }, 100.0, 5, null, false)
+        advanceUntilIdle()
+
+        // Esperar pelo estado com a série já lá dentro, e não ler o último valor: sem
+        // coletor a viver, o `state.value` fica no que era antes de a série ser escrita.
+        val meio = vm.state.first { e -> e.exercises.any { it.exerciseId == "agachamento" && it.setsDone == 1 } }
+        assertEquals("agachamento", meio.currentExerciseId, "saltou com uma série a meio do plano")
+
+        vm.logSet(meio.exercises.first { it.exerciseId == "agachamento" }, 100.0, 5, null, false)
+        advanceUntilIdle()
+
+        val fim = vm.state.first { e -> e.exercises.any { it.exerciseId == "agachamento" && it.setsDone == 2 } }
+        assertEquals("supino", fim.currentExerciseId)
+    }
+
+    @Test
+    fun `a escolha da pessoa manda enquanto faltarem series`() = runTest(dispatcher) {
+        exercicio("agachamento", pt = "Agachamento")
+        exercicio("supino", pt = "Supino")
+        rotina(
+            "r1",
+            item("r1", "agachamento", position = 0, targetSets = 3),
+            item("r1", "supino", position = 1, targetSets = 3),
+        )
+
+        val vm = viewModel()
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        vm.state.first { !it.loading && it.exercises.size == 2 }
+
+        vm.select("supino")
+        advanceUntilIdle()
+
+        val escolhido = vm.state.first { it.currentExerciseId == "supino" }
+
+        vm.logSet(escolhido.exercises.first { it.exerciseId == "supino" }, 60.0, 8, null, false)
+        advanceUntilIdle()
+
+        val depois = vm.state.first { e -> e.exercises.any { it.exerciseId == "supino" && it.setsDone == 1 } }
+        assertEquals(
+            "supino",
+            depois.currentExerciseId,
+            "gravar uma série atirou a pessoa de volta ao exercício de cima",
+        )
+    }
+
+    @Test
+    fun `o aquecimento nao conta para as series do plano`() = runTest(dispatcher) {
+        exercicio("agachamento", pt = "Agachamento")
+        exercicio("supino", pt = "Supino")
+        rotina(
+            "r1",
+            item("r1", "agachamento", position = 0, targetSets = 1),
+            item("r1", "supino", position = 1, targetSets = 3),
+        )
+
+        val vm = viewModel()
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+
+        val estado = vm.state.first { !it.loading && it.exercises.size == 2 }
+        vm.logSet(estado.exercises.first { it.exerciseId == "agachamento" }, 40.0, 10, null, warmup = true)
+        advanceUntilIdle()
+
+        val depois = vm.state.first { e -> e.exercises.any { it.exerciseId == "agachamento" && it.sets.size == 1 } }
+        val agachamento = depois.exercises.first { it.exerciseId == "agachamento" }
+        assertEquals(0, agachamento.setsDone, "o aquecimento entrou na conta do plano")
+        assertEquals("agachamento", depois.currentExerciseId, "aquecer deu o exercício por feito")
+    }
+
+    @Test
+    fun `um exercicio que sai do plano nao deixa o ecra sem nenhum aberto`() = runTest(dispatcher) {
+        exercicio("agachamento", pt = "Agachamento")
+        exercicio("supino", pt = "Supino")
+        rotina(
+            "r1",
+            item("r1", "agachamento", position = 0, targetSets = 3),
+            item("r1", "supino", position = 1, targetSets = 3),
+        )
+
+        val vm = viewModel()
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        vm.state.first { !it.loading && it.exercises.size == 2 }
+
+        // Uma escolha que já não existe: é o que fica depois de a rotina ser editada com o
+        // treino a andar.
+        vm.select("exercicio-que-nao-esta-ca")
+        advanceUntilIdle()
+
+        assertEquals("agachamento", vm.state.first { !it.loading }.currentExerciseId)
+    }
+
+    @Test
     fun `saltar o descanso apaga o numero e o alarme`() = runTest(dispatcher) {
         exercicio("agachamento", pt = "Agachamento")
         rotina("r1", item("r1", "agachamento", position = 0, restSec = 180))

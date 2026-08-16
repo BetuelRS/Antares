@@ -11,7 +11,6 @@
     <ID>CyclomaticComplexMethod:NutritionFactsCard.kt$@OptIn(ExperimentalLayoutApi::class) @Composable fun NutritionFactsCard( breakdown: NutritionBreakdown?, gap: MicroGap, expandKey: String, modifier: Modifier = Modifier, source: StringResource? = null, sourceLabel: StringResource = Res.string.nutrition_source_label, )</ID>
     <ID>CyclomaticComplexMethod:ProfileSettingsScreen.kt$@Composable fun ProfileSettingsScreen( onBack: () -&gt; Unit, onCreateFood: ((String) -&gt; Unit)? = null, viewModel: ProfileSettingsViewModel = koinViewModel(), )</ID>
     <ID>CyclomaticComplexMethod:TodayScreen.kt$@Composable fun TodayScreen( onLogWeight: () -&gt; Unit, onAddMeal: () -&gt; Unit, onOpenWorkout: () -&gt; Unit, onOpenFasting: () -&gt; Unit, onOpenRun: () -&gt; Unit, onOpenCoach: () -&gt; Unit, onQuickLog: (pt.antares.app.core.model.MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -&gt; Unit, onOpenGap: (String) -&gt; Unit, viewModel: TodayViewModel = koinViewModel(), )</ID>
-    <ID>CyclomaticComplexMethod:WorkoutSessionScreen.kt$@Composable private fun NewSetRow(prefill: WorkoutSetEntity?, onLog: (Double, Int, Double?, Boolean) -&gt; Unit)</ID>
     <ID>DestructuringDeclarationWithTooManyEntries:GpxTestReader.kt$GpxTestReader$val (lat, lon, ele, time) = m.destructured</ID>
     <ID>DestructuringDeclarationWithTooManyEntries:TargetBreakdownSweepTest.kt$TargetBreakdownSweepTest$val (peso, altura, idade, sexo) = passo.values</ID>
     <ID>EmptyFunctionBlock:CoachNotifier.kt$NoopCoachNotifier${}</ID>

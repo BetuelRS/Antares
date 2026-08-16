@@ -33,12 +33,19 @@ data class SessionExerciseUi(
     val supersetGroup: Int?,
     val ghost: List<WorkoutSetEntity>,
     val sets: List<WorkoutSetEntity>,
-)
+) {
+    /** O aquecimento não conta para o plano — é para isso que se marca a série como tal. */
+    val setsDone: Int get() = sets.count { !it.isWarmup }
+
+    val isComplete: Boolean get() = targetSets > 0 && setsDone >= targetSets
+}
 
 data class SessionUiState(
     val loading: Boolean = true,
     val sessionId: String? = null,
     val exercises: List<SessionExerciseUi> = emptyList(),
+    /** O exercício que ocupa o ecrã. Os outros ficam recolhidos, com nome e progresso. */
+    val currentExerciseId: String? = null,
     val finishedSessionId: String? = null,
     val discarded: Boolean = false,
 )
@@ -54,6 +61,9 @@ class WorkoutSessionViewModel(
 
     private val addedExtras = MutableStateFlow<List<String>>(emptyList())
     private val terminal = MutableStateFlow(SessionUiState(loading = true))
+
+    /** O exercício que a pessoa escolheu. A `null` manda a ordem do plano. */
+    private val picked = MutableStateFlow<String?>(null)
 
     private val _restRemaining = MutableStateFlow<Int?>(null)
     val restRemaining: StateFlow<Int?> = _restRemaining
@@ -72,8 +82,11 @@ class WorkoutSessionViewModel(
                 combine(
                     repository.observeSets(session.id),
                     addedExtras,
-                ) { sets, extras -> Triple(session.id, sets, extras) }
-                    .mapLatest { (sessionId, sets, extras) -> buildState(sessionId, session.routineId, sets, extras) }
+                    picked,
+                ) { sets, extras, escolhido -> Triple(sets, extras, escolhido) }
+                    .mapLatest { (sets, extras, escolhido) ->
+                        buildState(session.id, session.routineId, sets, extras, escolhido)
+                    }
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SessionUiState(loading = true))
@@ -87,6 +100,7 @@ class WorkoutSessionViewModel(
         routineId: String?,
         sets: List<WorkoutSetEntity>,
         extras: List<String>,
+        escolhido: String?,
     ): SessionUiState {
 
         // `LinkedHashSet` porque a ordem é o plano e as repetições têm de desaparecer: um
@@ -121,8 +135,23 @@ class WorkoutSessionViewModel(
                 sets = setsByEx[exId].orEmpty().sortedBy { it.setIndex },
             )
         }
-        return SessionUiState(loading = false, sessionId = sessionId, exercises = exercises)
+        // Um treino faz-se um exercício de cada vez. A escolha da pessoa manda enquanto esse
+        // exercício existir — uma rotina editada a meio pode levá-lo embora —, e sem escolha
+        // manda a ordem do plano, que aponta ao primeiro por acabar. Com tudo feito fica o
+        // último, para o ecrã não ficar sem nenhum aberto.
+        val current = escolhido?.takeIf { id -> exercises.any { it.exerciseId == id } }
+            ?: exercises.firstOrNull { !it.isComplete }?.exerciseId
+            ?: exercises.lastOrNull()?.exerciseId
+
+        return SessionUiState(
+            loading = false,
+            sessionId = sessionId,
+            exercises = exercises,
+            currentExerciseId = current,
+        )
     }
+
+    fun select(exerciseId: String) { picked.value = exerciseId }
 
     fun ensureStarted(routineId: String?) {
         viewModelScope.launch {
@@ -181,6 +210,12 @@ class WorkoutSessionViewModel(
         // Nem o aquecimento nem os exercícios em supersérie disparam descanso: no superset
         // passa-se logo ao exercício seguinte, que é o que o torna um superset.
         if (!warmup && exercise.supersetGroup == null) startRest(exercise.restSec)
+
+        // Com as séries do plano feitas, largar a escolha devolve o comando à ordem do plano —
+        // e é assim que o ecrã avança sozinho para o próximo por acabar. Enquanto faltarem
+        // séries, fica pregado a este, mesmo que outro atrás dele esteja por acabar.
+        val feitas = exercise.setsDone + if (warmup) 0 else 1
+        picked.value = if (!warmup && feitas >= exercise.targetSets) null else exercise.exerciseId
     }
 
     fun updateSet(set: WorkoutSetEntity, weightKg: Double, reps: Int) {
