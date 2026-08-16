@@ -99,6 +99,29 @@ fun RecipeEditScreen(
             }
 
             item {
+                OutlinedTextField(
+                    value = state.servingsText,
+                    onValueChange = viewModel::setServings,
+                    label = { Text(stringResource(Res.string.recipe_servings)) },
+                    supportingText = {
+                        // Com as doses escritas, diz-se já quanto pesa uma: é o número que
+                        // torna «uma dose» registável sem pesar o prato.
+                        val porDose = state.gramsPerServing
+                        Text(
+                            if (porDose == null) {
+                                stringResource(Res.string.recipe_servings_hint)
+                            } else {
+                                stringResource(Res.string.recipe_serving_weight, porDose.roundToInt())
+                            },
+                        )
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+
+            item {
                 AntaresCard(modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(Res.string.recipe_per100), style = MaterialTheme.typography.titleSmall)
                     val m = macroInitials()

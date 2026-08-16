@@ -71,9 +71,10 @@ class RecipeLogTest : ViewModelHarness() {
         nome: String,
         yieldGrams: Double?,
         ingredientes: List<Pair<String, Double>>,
+        doses: Int? = null,
     ) {
         db.recipeDao().upsert(
-            RecipeEntity(id = id, name = nome, yieldGrams = yieldGrams, updatedAt = 0L),
+            RecipeEntity(id = id, name = nome, yieldGrams = yieldGrams, servings = doses, updatedAt = 0L),
         )
         ingredientes.forEachIndexed { i, (foodId, gramas) ->
             db.recipeIngredientDao().upsert(

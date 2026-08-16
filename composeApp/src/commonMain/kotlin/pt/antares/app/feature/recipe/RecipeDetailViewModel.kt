@@ -29,8 +29,19 @@ data class RecipePortionState(
     val sex: Sex = Sex.MALE,
 
     val lifeStage: LifeStage? = null,
+
+    /** Quanto pesa uma dose, ou `null` na receita que não diz em quantas se divide. */
+    val gramsPerServing: Double? = null,
+
+    /** Com doses, o campo conta doses. Sem elas, conta gramas — como sempre contou. */
+    val byServings: Boolean = false,
 ) {
-    val quantityGrams: Double? get() = quantityText.replace(',', '.').toDoubleOrNull()?.takeIf { it in 1.0..5000.0 }
+    val quantityGrams: Double?
+        get() {
+            val escrito = quantityText.replace(',', '.').toDoubleOrNull() ?: return null
+            val gramas = if (byServings) escrito * (gramsPerServing ?: return null) else escrito
+            return gramas.takeIf { it in 1.0..MAX_GRAMAS }
+        }
     val previewKcal: Int get() = scale(nutrition.kcalPer100.toDouble()).roundToInt()
     val previewP: Double get() = scale(nutrition.proteinPer100)
     val previewC: Double get() = scale(nutrition.carbsPer100)
@@ -63,6 +74,45 @@ data class RecipePortionState(
     }
 }
 
+/**
+ * Quanto pesa uma dose, ou `null` na receita que não diz em quantas se divide.
+ *
+ * Fora do ViewModel porque o `load` não é testável: lê a referência da EFSA pelos recursos
+ * do Compose, que não existem num teste de unidade. A conta é que interessa guardar.
+ */
+fun gramasPorDose(doses: Int?, basisGrams: Double): Double? =
+    doses?.takeIf { it > 0 }?.let { n -> basisGrams.takeIf { it > 0 }?.div(n) }
+
+/**
+ * Trocar entre doses e gramas leva o valor consigo: quem escreveu duas doses e muda para
+ * gramas vê as gramas dessas duas doses, e não o campo a começar do zero.
+ */
+fun RecipePortionState.trocarUnidade(): RecipePortionState {
+    val porDose = gramsPerServing ?: return this
+    val gramas = quantityGrams
+    val paraDoses = !byServings
+    return copy(
+        byServings = paraDoses,
+        quantityText = when {
+            gramas == null -> quantityText
+            paraDoses -> formatDoses(gramas / porDose)
+            else -> gramas.roundToInt().toString()
+        },
+    )
+}
+
+// Cinco quilos de uma vez não é uma refeição; é um engano a caminho do histórico.
+private const val MAX_GRAMAS = 5000.0
+
+// Meia dose conta, um quarto de dose é precisão inventada.
+private const val MEIA_DOSE = 2
+
+private fun formatDoses(doses: Double): String {
+    val metades = (doses * MEIA_DOSE).roundToInt().coerceAtLeast(1)
+    val valor = metades.toDouble() / MEIA_DOSE
+    return if (valor == valor.toInt().toDouble()) valor.toInt().toString() else valor.toString()
+}
+
 class RecipeDetailViewModel(
     private val repository: RecipeRepository,
     private val profileRepository: ProfileRepository,
@@ -83,12 +133,22 @@ class RecipeDetailViewModel(
             val perfil = profileRepository.observeProfile().first()
             val sex = perfil?.sex ?: Sex.MALE
             val stage = perfil?.lifeStage
+            // Com doses declaradas, o campo abre em **uma** dose. Antes abria com o peso
+            // inteiro da receita: registar uma lasanha propunha comê-la toda.
+            val porDose = gramasPorDose(recipe?.servings, nutrition.basisGrams)
+
             _state.update {
                 it.copy(
                     loading = false,
                     name = recipe?.name.orEmpty(),
                     nutrition = nutrition,
-                    quantityText = recipe?.yieldGrams?.roundToInt()?.toString() ?: "100",
+                    gramsPerServing = porDose,
+                    byServings = porDose != null,
+                    quantityText = if (porDose != null) {
+                        "1"
+                    } else {
+                        recipe?.yieldGrams?.roundToInt()?.toString() ?: "100"
+                    },
                     reference = reference,
                     sex = sex,
                     lifeStage = stage,
@@ -100,6 +160,8 @@ class RecipeDetailViewModel(
     fun setQuantity(text: String) = _state.update {
         it.copy(quantityText = text.filter { ch -> ch.isDigit() || ch == '.' || ch == ',' }.take(6))
     }
+
+    fun toggleByServings() = _state.update { it.trocarUnidade() }
 
     fun save(slot: MealSlot, epochDay: Long) {
         val id = recipeId ?: return

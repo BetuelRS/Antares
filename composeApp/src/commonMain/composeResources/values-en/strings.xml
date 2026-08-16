@@ -440,6 +440,13 @@
     <string name="recipe_name">Name</string>
     <string name="recipe_yield">Cooked weight (g)</string>
     <string name="recipe_yield_hint">Optional — leave blank to use the sum of ingredients.</string>
+    <string name="recipe_servings">How many servings?</string>
+    <string name="recipe_servings_hint">Optional — with this filled in, you log by serving instead of by grams.</string>
+    <string name="recipe_serving_weight">One serving: %1$d g.</string>
+    <string name="recipe_quantity_servings">Servings</string>
+    <string name="recipe_servings_grams">%1$d g in total.</string>
+    <string name="recipe_log_by_grams">Log in grams</string>
+    <string name="recipe_log_by_servings">Log by serving</string>
     <string name="recipe_add_ingredient">Add ingredient</string>
     <string name="recipe_delete">Delete recipe</string>
     <string name="recipe_delete_title">Delete this recipe?</string>

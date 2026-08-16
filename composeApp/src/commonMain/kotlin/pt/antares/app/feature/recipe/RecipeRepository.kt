@@ -74,15 +74,30 @@ class RecipeRepository(
         nutritionOf(ingredientRows(recipeId), recipe?.yieldGrams)
     }
 
-    suspend fun createRecipe(name: String, yieldGrams: Double?): String = withContext(io) {
+    suspend fun createRecipe(name: String, yieldGrams: Double?, servings: Int? = null): String = withContext(io) {
         val id = Ids.newUuid()
-        recipeDao.upsert(RecipeEntity(id = id, name = name.trim(), yieldGrams = yieldGrams, updatedAt = now()))
+        recipeDao.upsert(
+            RecipeEntity(
+                id = id,
+                name = name.trim(),
+                yieldGrams = yieldGrams,
+                servings = servings,
+                updatedAt = now(),
+            ),
+        )
         id
     }
 
-    suspend fun updateRecipe(id: String, name: String, yieldGrams: Double?) = withContext(io) {
+    suspend fun updateRecipe(id: String, name: String, yieldGrams: Double?, servings: Int? = null) = withContext(io) {
         val existing = recipeDao.byId(id) ?: return@withContext
-        recipeDao.upsert(existing.copy(name = name.trim(), yieldGrams = yieldGrams, updatedAt = now()))
+        recipeDao.upsert(
+            existing.copy(
+                name = name.trim(),
+                yieldGrams = yieldGrams,
+                servings = servings,
+                updatedAt = now(),
+            ),
+        )
     }
 
     suspend fun addIngredient(recipeId: String, foodId: String, grams: Double) = withContext(io) {

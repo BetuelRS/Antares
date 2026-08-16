@@ -440,6 +440,13 @@
     <string name="recipe_name">Nome</string>
     <string name="recipe_yield">Peso final (g)</string>
     <string name="recipe_yield_hint">Opcional — deixa vazio para usar a soma dos ingredientes.</string>
+    <string name="recipe_servings">Dá quantas doses?</string>
+    <string name="recipe_servings_hint">Opcional — com isto preenchido, registas por dose em vez de por gramas.</string>
+    <string name="recipe_serving_weight">Uma dose: %1$d g.</string>
+    <string name="recipe_quantity_servings">Doses</string>
+    <string name="recipe_servings_grams">%1$d g no total.</string>
+    <string name="recipe_log_by_grams">Registar em gramas</string>
+    <string name="recipe_log_by_servings">Registar por dose</string>
     <string name="recipe_add_ingredient">Adicionar ingrediente</string>
     <string name="recipe_delete">Apagar receita</string>
     <string name="recipe_delete_title">Apagar esta receita?</string>

@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -72,11 +73,42 @@ fun RecipeDetailScreen(
             OutlinedTextField(
                 value = state.quantityText,
                 onValueChange = viewModel::setQuantity,
-                label = { Text(stringResource(Res.string.food_quantity_g)) },
+                label = {
+                    Text(
+                        if (state.byServings) {
+                            stringResource(Res.string.recipe_quantity_servings)
+                        } else {
+                            stringResource(Res.string.food_quantity_g)
+                        },
+                    )
+                },
+                // Em doses, as gramas ficam por baixo: continuam a ser elas que vão para o
+                // diário, e escondê-las era pedir confiança sem dar o número.
+                supportingText = {
+                    state.quantityGrams?.takeIf { state.byServings }?.let {
+                        Text(stringResource(Res.string.recipe_servings_grams, it.roundToInt()))
+                    }
+                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
             )
+
+            // A troca só existe na receita que diz em quantas doses se divide. Nas outras
+            // não haveria para onde trocar.
+            if (state.gramsPerServing != null) {
+                TextButton(onClick = viewModel::toggleByServings) {
+                    Text(
+                        stringResource(
+                            if (state.byServings) {
+                                Res.string.recipe_log_by_grams
+                            } else {
+                                Res.string.recipe_log_by_servings
+                            },
+                        ),
+                    )
+                }
+            }
 
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Text(

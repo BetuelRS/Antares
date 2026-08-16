@@ -132,7 +132,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 24,
+    version = 25,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -160,6 +160,9 @@ interface DbInfoDao {
         AutoMigration(from = 21, to = 22),
         AutoMigration(from = 22, to = 23),
         AutoMigration(from = 23, to = 24, spec = AntaresDb.DropDirty::class),
+        // Acrescenta `recipe.servings`, anulável: quem já tem receitas fica com elas a
+        // funcionar exatamente como antes, em gramas.
+        AutoMigration(from = 24, to = 25),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)

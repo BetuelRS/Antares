@@ -13,6 +13,9 @@ data class RecipeEntity(
     // Peso depois de cozinhar. Nulo usa a soma dos ingredientes — ver [RecipeCalc.compute],
     // onde a água evaporada concentra a nutrição por 100 g.
     val yieldGrams: Double?,
+    // Quantas doses a receita dá. Nulo é o que havia antes: regista-se em gramas, e quem
+    // fez uma lasanha tinha de saber quantos gramas comeu dela.
+    val servings: Int? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
 )
