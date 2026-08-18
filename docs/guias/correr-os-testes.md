@@ -14,10 +14,14 @@ Um teste só, ou um ficheiro:
 ./gradlew :composeApp:testDebugUnitTest --tests '*NomeDoTeste'
 ```
 
-Compilar e correr tudo, que é o que o CI faz:
+Correr tudo o que o CI corre — e **não** `./gradlew build`, que puxa o
+`testReleaseUnitTest`: os testes de interface não podem correr na release, por falta do
+manifesto que só a debug traz, e dão «Unable to resolve activity».
 
 ```bash
-./gradlew build
+./gradlew :composeApp:testDebugUnitTest :composeApp:assembleRelease
+./gradlew :composeApp:detekt :composeApp:lintDebug
+cd supabase && deno test -A functions/_shared/
 ```
 
 Os relatórios ficam em `composeApp/build/test-results/testDebugUnitTest/` (XML, um por classe) e

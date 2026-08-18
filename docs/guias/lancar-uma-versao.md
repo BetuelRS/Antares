@@ -46,14 +46,22 @@ migração é indolor.
 
 ## 5. Correr tudo
 
+Os mesmos quatro comandos do CI. **Não `./gradlew build`**: ele puxa o
+`testReleaseUnitTest`, onde os testes de interface não correm.
+
 ```bash
-./gradlew build
-cd supabase && deno test --allow-env --allow-net functions/_shared/
+./gradlew :composeApp:testDebugUnitTest :composeApp:assembleRelease
+./gradlew :composeApp:detekt :composeApp:lintDebug
+cd supabase && deno test -A functions/_shared/
 ```
 
-O `build` inclui o `DocumentationHonestyTest`, que falha se qualquer um dos passos 2 a 4 ficou
-por fazer: a versão do changelog, o cartaz do README e a fórmula do `versionCode` têm de bater
-todos.
+O `testDebugUnitTest` inclui o `DocumentationHonestyTest`, que falha se qualquer um dos passos
+2 a 4 ficou por fazer: a versão do changelog, o cartaz do README e a fórmula do `versionCode`
+têm de bater todos.
+
+E antes de etiquetar, **a varredura**: os testes-guarda novos estão documentados? Os números que
+os documentos citam ainda são verdade? Um defeito que pertence a esta versão e fica por corrigir
+não passa a pertencer à seguinte — regra D6.
 
 **Ler os relatórios**, e não a última linha — ver [Correr os testes](correr-os-testes.md).
 
