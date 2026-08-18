@@ -23,9 +23,38 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.0.2"
+    const val CURRENT = "2.0.3"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.0.3",
+            title = "Os números deixam de mudar sozinhos",
+            titleEn = "Numbers stop changing on their own",
+            highlights = listOf(
+                "Uma série feita a 62,5 kg voltava pré-preenchida a 63: a app arredondava em " +
+                    "silêncio um número que tinha sido registado",
+                "Uma série gravada com o peso errado só se resolvia apagando e refazendo — e o " +
+                    "descanso recomeçava. Agora toca-se na linha e corrige-se",
+                "Apagar uma série a meio fazia a seguinte repetir um número já usado, e é por " +
+                    "esse número que o histórico ordena",
+                "Oito estilos de letra caíam na fonte do sistema em vez da da app, em 176 " +
+                    "sítios — o maior deles o texto pequeno, que está em todo o lado",
+                "Uma altura fora de 100–250 cm era ignorada sem dizer nada, e o metabolismo " +
+                    "continuava a ser calculado com a altura antiga",
+            ),
+            highlightsEn = listOf(
+                "A set logged at 62.5 kg came back pre-filled as 63: the app silently rounded " +
+                    "a number you had recorded",
+                "A set saved with the wrong weight could only be deleted and redone — and the " +
+                    "rest timer restarted. Now you tap the row and fix it",
+                "Deleting a set mid-workout made the next one repeat an index already in use, " +
+                    "and that index is what the history sorts by",
+                "Eight text styles fell back to the system font instead of the app's, in 176 " +
+                    "places — the largest being small text, which is everywhere",
+                "A height outside 100–250 cm was ignored without a word, and your metabolism " +
+                    "kept being calculated from the old one",
+            ),
+        ),
         AppVersion(
             name = "2.0.2",
             title = "O imperial passa a ser imperial em todo o lado",

@@ -13,10 +13,49 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
-Nada que mude a app para quem a usa: uma correção no gerador de dados de demonstração, que
-só o dono alcança, e duas no CI, que não vai dentro do APK. Por isso não sobem número.
+Nada por lançar.
+
+---
+
+## [2.0.3] — 2026-08-18
+
+Cinco defeitos que mexem em números, e o teste que impede cada um de voltar. Nenhum parte a
+app: os cinco fazem-na dizer uma coisa e guardar outra, que é a única espécie de defeito que
+não se nota a usar. Esquema da base: **v26**, sem mudanças.
+
+Primeira versão saída do plano de produção. Os cinco achados foram confirmados no código
+antes de se lhes tocar — e dois números estavam errados: eram **oito** estilos de tipografia
+em falta e **176** usos, não sete e 175. Um achado estava meio errado: o peso já era
+validado, só a altura é que não.
 
 ### Fixed
+
+- **O peso da série anterior voltava arredondado a inteiro.** Uma série feita a 62,5 kg
+  reaparecia pré-preenchida como 63, e bastava não reparar para o registo do dia ficar com
+  meio quilo a mais. Passa a voltar como foi gravado.
+- **Uma série gravada não se corrigia.** A função existia e ninguém a chamava: com o peso
+  errado, a única saída era apagar e refazer — e o cronómetro de descanso recomeçava. Um
+  toque na linha abre agora a correção do peso e das repetições. O RPE e o aquecimento
+  ficam de fora de propósito: são o que se sentiu na altura, e mudá-los seria reescrever a
+  memória do treino em vez de corrigir um engano.
+- **Apagar uma série a meio deixava a seguinte com um índice repetido**, porque o índice
+  saía da contagem das séries e não do maior já usado. É por esse índice que o histórico
+  ordena. Apagar passa a deixar buracos na numeração, que ninguém vê — o ecrã mostra a
+  ordem, não o número.
+- **Oito dos quinze estilos do Material 3 não declaravam fonte**, e caíam no Roboto do
+  sistema sem erro nem aviso: **176 utilizações**, a maior delas o `bodySmall`, com 123. O
+  `TipografiaCompletaTest` passa a chumbar a compilação se algum voltar a ficar por
+  declarar.
+- **Uma altura fora de 100–250 cm era descartada em silêncio.** O campo ficava com o número
+  escrito, e o metabolismo continuava a ser calculado com a altura antiga. Passa a dizer o
+  intervalo aceite, em centímetros ou em pés e polegadas conforme as unidades.
+
+Três regras de trabalho ganharam testes que as cobram — os números do catálogo citados nos
+documentos, as dúvidas deixadas no código, e as migrações de esquema sobre uma base cheia —
+e os dois greps de segredos passaram a viver num `pre-push`. Não mudam a app; mudam o que
+pode entrar nela.
+
+### Fixed — antes desta versão
 
 - **O CI estava vermelho em todos os pushes** desde que os testes de interface entraram, e
   não havia por onde ver. O `gradlew build` corre também o `testReleaseUnitTest`, e o
