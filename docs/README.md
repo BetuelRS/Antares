@@ -29,6 +29,7 @@ Factos, para consultar. Sem opinião e sem narrativa.
 
 | | |
 |---|---|
+| [Regras de trabalho](referencia/regras.md) | as 27 regras da produção, e quem verifica cada uma |
 | [Base de dados](referencia/base-de-dados.md) | tabelas, versões do esquema, regras das migrações |
 | [Testes-guarda](referencia/testes-guarda.md) | o que cada um defende, e o que fazer quando falha |
 | [Versionamento](referencia/versionamento.md) | o esquema de números e a fórmula do `versionCode` |

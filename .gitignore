@@ -52,3 +52,8 @@ graphify-out/
 
 # O Excel da TCA — regenerável a partir do portal do INSA.
 tools/tca-importer/data/*.xlsx
+
+# O estudo e o plano de produção: documentos de trabalho, não código. Ficam locais
+# por decisão do dono, e o plano acaba em arquivos/ quando estiver cumprido.
+estudo/
+arquivos/
