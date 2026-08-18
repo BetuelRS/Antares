@@ -134,10 +134,31 @@ fun ProfileSettingsScreen(
                 ) { Text(stringResource(Res.string.onb_sex_female)) }
             }
 
+            // O intervalo vem do ViewModel, que é quem recusa gravar. Escrevê-lo aqui à mão
+            // fazia a mensagem e a regra descolarem ao primeiro que alguém mudasse.
+            val alturaMin = ProfileSettingsViewModel.ALTURA_CM.first
+            val alturaMax = ProfileSettingsViewModel.ALTURA_CM.last
+            val avisoDaAltura: @Composable () -> Unit = {
+                Text(
+                    stringResource(
+                        Res.string.settings_height_out_of_range,
+                        heightWithUnit(alturaMin, profile.unitSystem),
+                        heightWithUnit(alturaMax, profile.unitSystem),
+                    ),
+                )
+            }
+
             if (profile.unitSystem == UnitSystem.IMPERIAL) {
                 val (ft0, in0) = UnitConversions.cmToFtIn(profile.heightCm)
                 var feet by remember(profile.heightCm) { mutableStateOf("$ft0") }
                 var inches by remember(profile.heightCm) { mutableStateOf("$in0") }
+
+                val cmEscritos = feet.toIntOrNull()?.let { f ->
+                    inches.toIntOrNull()?.let { i -> UnitConversions.ftInToCm(f, i) }
+                }
+                val alturaMa = (feet.isNotBlank() || inches.isNotBlank()) &&
+                    (cmEscritos == null || cmEscritos !in ProfileSettingsViewModel.ALTURA_CM)
+
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     OutlinedTextField(
                         value = feet,
@@ -149,6 +170,7 @@ fun ProfileSettingsScreen(
                         },
                         label = { Text(stringResource(Res.string.settings_height_ft)) },
                         singleLine = true,
+                        isError = alturaMa,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
                     )
@@ -162,12 +184,17 @@ fun ProfileSettingsScreen(
                         },
                         label = { Text(stringResource(Res.string.settings_height_in)) },
                         singleLine = true,
+                        isError = alturaMa,
+                        supportingText = if (alturaMa) avisoDaAltura else null,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
                     )
                 }
             } else {
                 var heightText by remember(profile.heightCm) { mutableStateOf("${profile.heightCm}") }
+                val cmEscritos = heightText.toIntOrNull()
+                val alturaMa = heightText.isNotBlank() &&
+                    (cmEscritos == null || cmEscritos !in ProfileSettingsViewModel.ALTURA_CM)
                 OutlinedTextField(
                     value = heightText,
                     onValueChange = { text ->
@@ -175,6 +202,8 @@ fun ProfileSettingsScreen(
                         heightText.toIntOrNull()?.let(viewModel::setHeight)
                     },
                     label = { Text("${stringResource(Res.string.settings_height)} (${stringResource(Res.string.common_cm)})") },
+                    isError = alturaMa,
+                    supportingText = if (alturaMa) avisoDaAltura else null,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                 )

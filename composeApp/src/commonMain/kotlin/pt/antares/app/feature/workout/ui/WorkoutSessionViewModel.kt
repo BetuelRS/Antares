@@ -197,9 +197,11 @@ class WorkoutSessionViewModel(
                 id = Ids.newUuid(),
                 sessionId = sessionId,
                 exerciseId = exercise.exerciseId,
-                // O índice sai do número de séries já feitas, e é por isso que apagar uma
-                // série a meio deixa o próximo índice a repetir um número já usado.
-                setIndex = exercise.sets.size,
+                // O índice sai do maior já usado, e não da contagem: contar fazia a série
+                // seguinte repetir um número depois de se apagar uma a meio, e o histórico
+                // ordena por ele. Apagar deixa buracos na numeração, que ninguém vê — o
+                // ecrã mostra a ordem, não o número.
+                setIndex = (exercise.sets.maxOfOrNull { it.setIndex } ?: -1) + 1,
                 weightKg = weightKg,
                 reps = reps,
                 rpe = rpe,

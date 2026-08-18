@@ -220,8 +220,14 @@ class ProfileSettingsViewModel(
     }
 
     fun setSex(sex: Sex) = save { it.copy(sex = sex) }
+
+    /**
+     * Fora do intervalo não grava, e é o ecrã que o diz. Recusar em silêncio era pior do
+     * que aceitar: a pessoa via o número que escreveu no campo e ficava a pensar que estava
+     * guardado, enquanto o basal continuava a ser calculado com a altura antiga.
+     */
     fun setHeight(cm: Int) {
-        if (cm in 100..250) save { it.copy(heightCm = cm) }
+        if (cm in ALTURA_CM) save { it.copy(heightCm = cm) }
     }
 
     fun setActivity(level: ActivityLevel) {
@@ -352,6 +358,13 @@ class ProfileSettingsViewModel(
     }
 
     companion object {
+
+        /**
+         * O intervalo de alturas que se aceita. Público porque o ecrã o usa para escrever a
+         * mensagem: os limites têm de ser os mesmos nos dois sítios, e dois números escritos
+         * à mão descolam ao primeiro que alguém mude.
+         */
+        val ALTURA_CM = 100..250
 
         // Valores fora destes intervalos são engano de digitação, e são descartados em
         // silêncio: o campo volta ao que estava em vez de aceitar um objetivo impossível.

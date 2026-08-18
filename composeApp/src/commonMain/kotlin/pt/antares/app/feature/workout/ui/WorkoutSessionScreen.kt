@@ -41,6 +41,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.calc.SetLimits
 import pt.antares.app.core.designsystem.larguraDeLeitura
+import pt.antares.app.core.designsystem.trimmedDecimal
+import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
@@ -54,7 +56,6 @@ import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
-import kotlin.math.roundToInt
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 
@@ -132,6 +133,7 @@ fun WorkoutSessionScreen(
                         onDeleteSet = { id ->
                             apagar({ viewModel.deleteSet(id) }, { viewModel.restoreSet(id) })
                         },
+                        onEditSet = { set, peso, reps -> viewModel.updateSet(set, peso, reps) },
                     )
                 } else {
                     ExerciseRecolhido(ex = ex, onSelect = { viewModel.select(ex.exerciseId) })
@@ -182,9 +184,13 @@ private fun ExerciseBlock(
     ex: SessionExerciseUi,
     onLog: (Double, Int, Double?, Boolean) -> Unit,
     onDeleteSet: (String) -> Unit,
+    onEditSet: (WorkoutSetEntity, Double, Int) -> Unit,
 ) {
     var warmup by remember(ex.exerciseId) { mutableStateOf(false) }
     val unidades = rememberUnitSystem()
+
+    // Qual das séries já gravadas está aberta para corrigir. Nula quase sempre.
+    var aCorrigir by remember(ex.exerciseId) { mutableStateOf<WorkoutSetEntity?>(null) }
 
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -210,7 +216,13 @@ private fun ExerciseBlock(
         }
 
         ex.sets.forEachIndexed { i, set ->
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            Row(
+                // A linha inteira abre a correção. Uma série gravada com o peso errado só
+                // se resolvia apagando e refazendo, e a fila de descanso recomeçava.
+                modifier = Modifier.clickable(role = Role.Button) { aCorrigir = set },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+            ) {
                 Text("${i + 1}", style = MaterialTheme.typography.bodyMedium)
                 Text(
                     "${weightWithUnit(set.weightKg, unidades)} × ${set.reps} " +
@@ -234,6 +246,88 @@ private fun ExerciseBlock(
             onLog = onLog,
         )
     }
+
+    aCorrigir?.let { set ->
+        CorrigirSerieDialog(
+            set = set,
+            unidades = unidades,
+            onDismiss = { aCorrigir = null },
+            onConfirm = { peso, reps ->
+                onEditSet(set, peso, reps)
+                aCorrigir = null
+            },
+        )
+    }
+}
+
+/**
+ * Corrigir uma série já gravada. Mexe no peso e nas repetições e mais nada: o RPE e o
+ * aquecimento são o que se sentiu na altura, e mudá-los depois seria reescrever a memória
+ * do treino em vez de corrigir um erro de digitação.
+ */
+@Composable
+private fun CorrigirSerieDialog(
+    set: WorkoutSetEntity,
+    unidades: UnitSystem,
+    onDismiss: () -> Unit,
+    onConfirm: (Double, Int) -> Unit,
+) {
+    val virgula = virgulaDecimal()
+    var peso by remember(set.id) {
+        mutableStateOf(trimmedDecimal(UnitConversions.weightToDisplay(set.weightKg, unidades), comma = virgula))
+    }
+    var reps by remember(set.id) { mutableStateOf(set.reps.toString()) }
+
+    val emKg = peso.replace(',', '.').toDoubleOrNull()?.let {
+        if (unidades == UnitSystem.IMPERIAL) UnitConversions.lbToKg(it) else it
+    }
+    val r = reps.toIntOrNull()
+    val pesoMau = peso.isNotBlank() && (emKg == null || !SetLimits.isWeightValid(emKg))
+    val repsMau = reps.isNotBlank() && (r == null || !SetLimits.isRepsValid(r))
+
+    // O RPE gravado passa tal e qual pela validação: é ele que fica, e recusar a correção
+    // por causa de um valor que não se está a tocar não faria sentido nenhum.
+    val podeGravar = SetLimits.isSetValid(emKg, r, set.rpe)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.session_edit_set)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                    OutlinedTextField(
+                        value = peso,
+                        onValueChange = { peso = it.filter { c -> c.isDigit() || c == '.' || c == ',' }.take(6) },
+                        label = { Text(stringResource(weightUnitLabel(unidades))) },
+                        singleLine = true,
+                        isError = pesoMau,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        modifier = Modifier.width(112.dp),
+                    )
+                    OutlinedTextField(
+                        value = reps,
+                        onValueChange = { reps = it.filter(Char::isDigit).take(3) },
+                        label = { Text(stringResource(Res.string.session_reps)) },
+                        singleLine = true,
+                        isError = repsMau,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.width(96.dp),
+                    )
+                }
+                ErroDaSerie(pesoMau = pesoMau, repsMau = repsMau, rpeMau = false, unidades = unidades)
+            }
+        },
+        confirmButton = {
+            PrimaryButton(
+                text = stringResource(Res.string.common_save),
+                onClick = { if (podeGravar) onConfirm(emKg!!, r!!) },
+                enabled = podeGravar,
+            )
+        },
+        dismissButton = {
+            SecondaryButton(text = stringResource(Res.string.common_cancel), onClick = onDismiss)
+        },
+    )
 }
 
 /**
@@ -314,9 +408,15 @@ private fun NewSetRow(
         if (unidades == UnitSystem.IMPERIAL) UnitConversions.lbToKg(valor) else valor
     }
 
-    var weight by remember(prefill, unidades) {
+    // O peso da série anterior volta como estava, com decimal e tudo: arredondá-lo a
+    // inteiro fazia a app mudar em silêncio um número que a pessoa registou, e 62,5 kg
+    // reapareciam como 63.
+    val virgula = virgulaDecimal()
+    var weight by remember(prefill, unidades, virgula) {
         mutableStateOf(
-            prefill?.weightKg?.let { UnitConversions.weightToDisplay(it, unidades).roundToInt().toString() } ?: "",
+            prefill?.weightKg?.let {
+                trimmedDecimal(UnitConversions.weightToDisplay(it, unidades), comma = virgula)
+            } ?: "",
         )
     }
     var reps by remember(prefill) { mutableStateOf(prefill?.reps?.toString() ?: "") }

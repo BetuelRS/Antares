@@ -287,6 +287,7 @@
     <string name="settings_lifestage_disclaimer">Isto não é aconselhamento médico. Na gravidez e na amamentação, o acompanhamento clínico manda sobre qualquer app.</string>
     <string name="settings_section_units">Unidades</string>
     <string name="settings_height">Altura</string>
+    <string name="settings_height_out_of_range">Altura entre %1$s e %2$s. Fora disso não se grava — o basal saía errado e a app não o diria.</string>
     <string name="settings_activity">Atividade</string>
     <string name="settings_strategy_balanced">Equilibrado</string>
     <string name="settings_strategy_high_protein">Rico em proteína</string>
@@ -659,6 +660,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_discard_confirm">Descartar este treino? Os sets não contam.</string>
     <string name="session_add_exercise">Adicionar exercício</string>
     <string name="session_add_set">+ Série</string>
+    <string name="session_edit_set">Corrigir a série</string>
     <string name="session_weight">kg</string>
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>

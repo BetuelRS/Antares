@@ -287,6 +287,7 @@
     <string name="settings_lifestage_disclaimer">This is not medical advice. During pregnancy and breastfeeding, clinical guidance outranks any app.</string>
     <string name="settings_section_units">Units</string>
     <string name="settings_height">Height</string>
+    <string name="settings_height_out_of_range">Height between %1$s and %2$s. Outside that it is not saved — the basal rate would be wrong and the app would not say so.</string>
     <string name="settings_activity">Activity</string>
     <string name="settings_strategy_balanced">Balanced</string>
     <string name="settings_strategy_high_protein">High protein</string>
@@ -658,6 +659,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_discard_confirm">Discard this workout? Sets won't count.</string>
     <string name="session_add_exercise">Add exercise</string>
     <string name="session_add_set">+ Set</string>
+    <string name="session_edit_set">Edit set</string>
     <string name="session_weight">kg</string>
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
