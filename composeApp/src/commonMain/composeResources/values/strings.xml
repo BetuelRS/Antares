@@ -1119,6 +1119,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="measure_history_empty">Ainda só tens uma medição. Volta a medir daqui a umas semanas para veres a diferença.</string>
     <string name="measure_waist_change">Cintura: %1$s → %2$s</string>
     <string name="measure_fat_change">Gordura: %1$s% → %2$s%</string>
+    <string name="measure_fat_goal">Meta: %1$s% · faltam %2$s pontos</string>
+    <string name="measure_fat_goal_reached">Meta de %1$s% atingida</string>
     <string name="show_maths_title">Mostra-me a conta</string>
     <string name="show_maths_cta">Ver a conta</string>
     <string name="show_maths_lean">Massa magra: %1$s kg × %2$s + %3$d = %4$s kcal de metabolismo basal</string>

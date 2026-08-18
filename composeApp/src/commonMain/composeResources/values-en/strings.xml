@@ -1118,6 +1118,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="measure_history_empty">You only have one measurement so far. Measure again in a few weeks to see the difference.</string>
     <string name="measure_waist_change">Waist: %1$s → %2$s</string>
     <string name="measure_fat_change">Body fat: %1$s% → %2$s%</string>
+    <string name="measure_fat_goal">Goal: %1$s% · %2$s points to go</string>
+    <string name="measure_fat_goal_reached">Goal of %1$s% reached</string>
     <string name="show_maths_title">Show me the maths</string>
     <string name="show_maths_cta">See the maths</string>
     <string name="show_maths_lean">Lean mass: %1$s kg × %2$s + %3$d = %4$s kcal basal rate</string>

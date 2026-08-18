@@ -53,10 +53,22 @@ object WeightTrend {
     private const val MAX_STALL_WEEKS_COUNTED = 12
 
     /**
+     * A janela usada por quem não escolheu nenhuma. Vinte e oito dias apanham um ciclo
+     * menstrual inteiro, e é isso que impede a retenção de uma semana de se ler como
+     * gordura ganha.
+     */
+    const val JANELA_POR_OMISSAO_DIAS = 28
+
+    /**
      * Ritmo em kg por semana, ou null quando o histórico dentro da janela é curto
      * de mais para a resposta significar alguma coisa.
+     *
+     * A janela é escolhida nas definições, entre 7 e 28 dias.
      */
-    fun weeklyRateKg(entries: List<Pair<Long, Double>>, windowDays: Int = 28): Double? {
+    fun weeklyRateKg(
+        entries: List<Pair<Long, Double>>,
+        windowDays: Int = JANELA_POR_OMISSAO_DIAS,
+    ): Double? {
         if (entries.size < 2) return null
 
         val ema = trendSeries(entries)

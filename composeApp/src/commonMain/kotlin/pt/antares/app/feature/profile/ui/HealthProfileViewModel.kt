@@ -114,7 +114,13 @@ class HealthProfileViewModel(
             val values = chronological.map { it.weightKg }
             val latest = values.lastOrNull()
 
-            val rate = WeightTrend.weeklyRateKg(chronological.map { it.epochDay to it.weightKg })
+            // A janela que a pessoa escolheu nas definições. O cálculo sempre a aceitou e
+            // ninguém lha passava: escolher 7 ou 28 dias mudava a preferência gravada e não
+            // mudava o número no ecrã.
+            val rate = WeightTrend.weeklyRateKg(
+                chronological.map { it.epochDay to it.weightKg },
+                windowDays = profile?.trendWindowDays ?: WeightTrend.JANELA_POR_OMISSAO_DIAS,
+            )
 
             HealthProfileState(
                 loading = false,

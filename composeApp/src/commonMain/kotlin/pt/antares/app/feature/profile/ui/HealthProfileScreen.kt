@@ -126,7 +126,7 @@ fun HealthProfileScreen(
             }
 
             state.measurementProgress?.takeIf { it.isMeaningful }?.let {
-                ProgressCard(it, onMeasurementHistory)
+                ProgressCard(it, state.profile?.goalBodyFatPct, onMeasurementHistory)
             }
 
             SectionHeader(title = stringResource(Res.string.profile_health_goal_section))
@@ -381,7 +381,7 @@ private fun CycleNoteCard(onCycle: () -> Unit) {
 }
 
 @Composable
-private fun ProgressCard(progress: MeasurementProgress, onClick: () -> Unit) {
+private fun ProgressCard(progress: MeasurementProgress, metaGordaPct: Double?, onClick: () -> Unit) {
     AntaresCard(modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick)) {
         Text(
             stringResource(Res.string.measure_history_title),
@@ -405,6 +405,22 @@ private fun ProgressCard(progress: MeasurementProgress, onClick: () -> Unit) {
             Text(
                 stringResource(Res.string.measure_fat_change, fmtG(fatFrom), fmtG(fatTo)),
                 style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
+        // A meta de massa gorda escrevia-se nas definições e não aparecia em lado nenhum.
+        // Fica aqui, ao lado da medida a que se compara — sozinha num ecrã próprio não
+        // valeria o ecrã, e sem a medida atual não quer dizer nada.
+        if (metaGordaPct != null && fatTo != null) {
+            val faltam = fatTo - metaGordaPct
+            Text(
+                if (faltam > 0.1) {
+                    stringResource(Res.string.measure_fat_goal, fmtG(metaGordaPct), fmtG(faltam))
+                } else {
+                    stringResource(Res.string.measure_fat_goal_reached, fmtG(metaGordaPct))
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
