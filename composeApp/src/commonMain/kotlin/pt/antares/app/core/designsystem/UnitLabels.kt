@@ -49,10 +49,25 @@ fun portionUnitLabel(system: UnitSystem, liquid: Boolean): StringResource = when
 /**
  * Um peso com a unidade, arredondado ao inteiro. A base guarda sempre quilos: aqui converte-se
  * para ver, e é o único sítio onde isso acontece nos ecrãs de treino.
+ *
+ * É o formatador dos **volumes** — somas de milhares, onde uma casa decimal não diz nada.
+ * Para a carga de uma série, [loadWithUnit].
  */
 @Composable
 fun weightWithUnit(kg: Double, system: UnitSystem): String =
     "${UnitConversions.weightToDisplay(kg, system).roundToInt()} ${stringResource(weightUnitLabel(system))}"
+
+/**
+ * A carga de uma série, com a casa decimal quando ela existe. **62,5 kg é um disco a sério**,
+ * e arredondar punha o ecrã a dizer 63 sobre uma série que a pessoa gravou a 62,5 — a mesma
+ * série lia-se de duas maneiras conforme se olhasse para a linha ou para a correção.
+ *
+ * Os inteiros continuam a ler-se inteiros: o [trimmedDecimal] corta o zero à direita.
+ */
+@Composable
+fun loadWithUnit(kg: Double, system: UnitSystem): String =
+    trimmedDecimal(UnitConversions.weightToDisplay(kg, system), comma = virgulaDecimal()) +
+        " " + stringResource(weightUnitLabel(system))
 
 /**
  * Como [weightWithUnit], mas com uma casa decimal — a precisão a que uma pesagem se lê. Meio

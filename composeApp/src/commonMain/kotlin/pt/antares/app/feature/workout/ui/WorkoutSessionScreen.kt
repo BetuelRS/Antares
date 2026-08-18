@@ -46,7 +46,7 @@ import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
-import pt.antares.app.core.designsystem.weightWithUnit
+import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -225,7 +225,7 @@ private fun ExerciseBlock(
             ) {
                 Text("${i + 1}", style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "${weightWithUnit(set.weightKg, unidades)} × ${set.reps} " +
+                    "${loadWithUnit(set.weightKg, unidades)} × ${set.reps} " +
                         stringResource(Res.string.session_reps) +
                         (if (set.isWarmup) " · ${stringResource(Res.string.session_warmup)}" else ""),
                     modifier = Modifier.weight(1f),
@@ -351,7 +351,7 @@ private fun SeriesFantasma(ex: SessionExerciseUi, unidades: UnitSystem) {
             )
             Text(
                 if (fantasma != null) {
-                    "${weightWithUnit(fantasma.weightKg, unidades)} × ${fantasma.reps} $reps"
+                    "${loadWithUnit(fantasma.weightKg, unidades)} × ${fantasma.reps} $reps"
                 } else {
                     "${ex.repsMin}-${ex.repsMax} $reps"
                 },
@@ -487,7 +487,7 @@ private fun ErroDaSerie(pesoMau: Boolean, repsMau: Boolean, rpeMau: Boolean, uni
             // conta de cabeça para perceber o próprio erro.
             pesoMau -> stringResource(
                 Res.string.session_weight_out_of_range,
-                weightWithUnit(SetLimits.MAX_WEIGHT_KG, unidades),
+                loadWithUnit(SetLimits.MAX_WEIGHT_KG, unidades),
             )
             repsMau -> stringResource(
                 Res.string.session_reps_out_of_range,

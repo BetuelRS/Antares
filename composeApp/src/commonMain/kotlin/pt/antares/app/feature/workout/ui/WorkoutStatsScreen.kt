@@ -21,6 +21,7 @@ import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -78,7 +79,7 @@ fun WorkoutStatsScreen(
 
                             Text(r.name, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md))
                             Text(
-                                weightWithUnit(r.oneRm, unidades),
+                                loadWithUnit(r.oneRm, unidades),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.primary,
                             )

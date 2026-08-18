@@ -21,6 +21,7 @@ import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
+import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresTopBar
@@ -65,7 +66,7 @@ fun WorkoutDetailScreen(
                     Text(ex.name, style = MaterialTheme.typography.titleSmall)
                     ex.sets.forEachIndexed { i, set ->
                         Text(
-                            "${i + 1}. ${weightWithUnit(set.weightKg, unidades)} × ${set.reps}" +
+                            "${i + 1}. ${loadWithUnit(set.weightKg, unidades)} × ${set.reps}" +
                                 (if (set.isWarmup) " · ${stringResource(Res.string.session_warmup)}" else ""),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,

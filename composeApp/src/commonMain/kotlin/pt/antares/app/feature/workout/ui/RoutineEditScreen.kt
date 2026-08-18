@@ -40,7 +40,7 @@ import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
-import pt.antares.app.core.designsystem.weightWithUnit
+import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
 import kotlin.math.roundToInt
@@ -183,7 +183,7 @@ private fun RoutineItemCard(
                 Text(row.exerciseName, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
                 Text(
                     "${it.targetSets}×${it.targetRepsMin}-${it.targetRepsMax} · ${it.restSec}s" +
-                        (it.targetWeightKg?.let { w -> " · " + weightWithUnit(w, unidades) } ?: ""),
+                        (it.targetWeightKg?.let { w -> " · " + loadWithUnit(w, unidades) } ?: ""),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
