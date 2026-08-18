@@ -20,6 +20,9 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `KeyboardInsetsTest` | o teclado tapar os botões | falta o tratamento de *insets* num ecrã novo |
 | `SeederOrderTest` | ler megabytes de seed em todos os arranques | um semeador lê o ficheiro antes de verificar a marca |
 | `AppChangelogTest` | a versão da app descolar do changelog | falta o passo 3 de [Lançar uma versão](../guias/lancar-uma-versao.md) |
+| `NumerosDoCatalogoTest` | um número de alimentos citado no `README.md` ou em `docs/referencia/dados-e-licencas.md` descolar da semente | o catálogo mudou e o documento não. Reconta a semente e cobra a cada documento que nomeie a origem. O `CHANGELOG.md` fica de fora: as entradas antigas descrevem o que era verdade na versão delas |
+| `DuvidasForaDoCodigoTest` | uma dúvida ficar marcada no código com `TODO`, `FIXME`, `HACK` ou `DÚVIDA` | adiaste uma decisão dentro de um ficheiro. Vai para a lista à parte, que é onde o dono a responde |
+| `MigracaoComDadosTest` | uma migração nova perder linhas de quem já tem a app | constrói a base da v3 a partir do esquema exportado, enche todas as tabelas e abre com o Room. Não sabe nada do esquema de propósito — uma versão nova fica coberta sem ninguém lhe tocar |
 | `DocumentationHonestyTest` | a documentação apontar para ficheiros que não existem, e a versão descolar | mudaste um caminho e não o documento |
 | `BackupReachableTest` | o backup ficar sem caminho na interface | o ecrã ou a rota mudaram de nome |
 | `BackupRulesTest` | a cópia de segurança do Android levar o que não deve | as regras XML mudaram |
