@@ -31,8 +31,8 @@ object AppChangelog {
             title = "Os números deixam de mudar sozinhos",
             titleEn = "Numbers stop changing on their own",
             highlights = listOf(
-                "Uma série feita a 62,5 kg voltava pré-preenchida a 63: a app arredondava em " +
-                    "silêncio um número que tinha sido registado",
+                "Uma série feita a 62,5 kg voltava pré-preenchida a 63, e a linha da série " +
+                    "gravada dizia 63 enquanto a correção dizia 62,5 — a mesma série, dois números",
                 "Uma série gravada com o peso errado só se resolvia apagando e refazendo — e o " +
                     "descanso recomeçava. Agora toca-se na linha e corrige-se",
                 "Apagar uma série a meio fazia a seguinte repetir um número já usado, e é por " +
@@ -43,8 +43,8 @@ object AppChangelog {
                     "continuava a ser calculado com a altura antiga",
             ),
             highlightsEn = listOf(
-                "A set logged at 62.5 kg came back pre-filled as 63: the app silently rounded " +
-                    "a number you had recorded",
+                "A set logged at 62.5 kg came back pre-filled as 63, and the saved row said 63 " +
+                    "while the edit dialog said 62.5 — the same set, two numbers",
                 "A set saved with the wrong weight could only be deleted and redone — and the " +
                     "rest timer restarted. Now you tap the row and fix it",
                 "Deleting a set mid-workout made the next one repeat an index already in use, " +

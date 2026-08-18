@@ -30,9 +30,12 @@ validado, só a altura é que não.
 
 ### Fixed
 
-- **O peso da série anterior voltava arredondado a inteiro.** Uma série feita a 62,5 kg
-  reaparecia pré-preenchida como 63, e bastava não reparar para o registo do dia ficar com
-  meio quilo a mais. Passa a voltar como foi gravado.
+- **O peso de uma série era arredondado a inteiro, em dois sítios.** Uma série feita a
+  62,5 kg reaparecia pré-preenchida como 63, e bastava não reparar para o registo ficar com
+  meio quilo a mais. A linha da série gravada dizia 63 e a correção dizia 62,5 — a mesma
+  série, dois números, no mesmo cartão. Entra um formatador próprio para a carga, ao lado do
+  que já existia para o peso do corpo; os volumes somados continuam arredondados, que é o
+  que se quer em 20 587 lb.
 - **Uma série gravada não se corrigia.** A função existia e ninguém a chamava: com o peso
   errado, a única saída era apagar e refazer — e o cronómetro de descanso recomeçava. Um
   toque na linha abre agora a correção do peso e das repetições. O RPE e o aquecimento
