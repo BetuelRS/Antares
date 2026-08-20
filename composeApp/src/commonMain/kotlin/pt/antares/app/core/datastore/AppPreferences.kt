@@ -54,7 +54,7 @@ data class StoredAiUsage(
  * são dados fica na base. Cada leitura tem o valor por omissão embutido — nenhuma devolve
  * nulo por a chave ainda não existir, e é isso que faz a primeira abertura funcionar.
  */
-// Trinta e uma funções, e é para ter trinta e uma: são pares de ler e escrever, um por
+// Trinta e seis funções, e é para ter trinta e seis: são pares de ler e escrever, um por
 // preferência. Parti-las por classes daria a alguém dois sítios onde procurar a mesma chave,
 // e o comentário das `Keys` diz porque é que uma chave errada não dá erro nenhum.
 @Suppress("TooManyFunctions")
@@ -102,6 +102,8 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
             androidx.datastore.preferences.core.longPreferencesKey("notif_water_last_at")
         val weighInDayIso = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_day")
         val weighInMinute = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_min")
+        val lastBackupAt = androidx.datastore.preferences.core.longPreferencesKey("backup_last_at")
+        val lastBackupName = stringPreferencesKey("backup_last_name")
         val lastWeighInNotifDay =
             androidx.datastore.preferences.core.longPreferencesKey("notif_weighin_last_day")
     }
@@ -386,6 +388,31 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setLastHealthPublishAt(epochMs: Long) {
         dataStore.edit { it[Keys.lastHealthPublishAt] = epochMs }
+    }
+
+    /**
+     * Quando é que a cópia automática correu pela última vez, em milissegundos. Zero é
+     * «nunca», e é o que faz a primeira cópia acontecer logo no arranque depois de quem
+     * atualizou da 2.0.4 — a Google deixou de copiar e alguém tem de o fazer.
+     */
+    val lastBackupAt: Flow<Long> =
+        dataStore.data.map { it[Keys.lastBackupAt] ?: 0L }
+
+    suspend fun lastBackupAtOnce(): Long = lastBackupAt.first()
+
+    /** O nome do ficheiro da última cópia. Vazio enquanto não houver nenhuma. */
+    val lastBackupName: Flow<String> =
+        dataStore.data.map { it[Keys.lastBackupName].orEmpty() }
+
+    suspend fun lastBackupNameOnce(): String = lastBackupName.first()
+
+    // Os dois numa escrita só: gravados em separado, uma interrupção a meio deixava a data
+    // de uma cópia com o nome de outra, e o cartão dizia um ficheiro que não existe.
+    suspend fun setLastBackup(epochMs: Long, nome: String) {
+        dataStore.edit {
+            it[Keys.lastBackupAt] = epochMs
+            it[Keys.lastBackupName] = nome
+        }
     }
 
 }

@@ -65,6 +65,8 @@ val viewModelModule = module {
     viewModel { pt.antares.app.feature.profile.ui.CycleViewModel(get()) }
     viewModel { PrivacyViewModel(get(), get(), get(), get(), get(), get()) }
 
+    viewModel { pt.antares.app.feature.backup.CopiaViewModel(get(), get()) }
+
     viewModel { DiaryViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { FoodSearchViewModel(get(), get(), get(), get(), get()) }
     viewModel { FoodDetailViewModel(get(), get(), get(), get()) }

@@ -34,8 +34,11 @@ associado.
 
 **Mau, e assumido:**
 
-- **Quem perde o telemóvel sem ter feito backup, perde tudo.** Não há recuperação possível. Foi
-  por isso que o backup passou a ter lugar próprio nas definições, em vez de estar escondido.
+- **Quem perde o telemóvel perde o que não estiver numa cópia guardada fora dele.** Não há
+  recuperação possível a partir de servidor nenhum. Foi por isso que o backup passou a ter lugar
+  próprio nas definições — e, na 2.1.0, deixou de depender de alguém se lembrar dele: a app
+  escreve-o sozinha para «Documentos/Antares», que sobrevive à desinstalação. Trocar de telemóvel
+  continua a exigir levar o ficheiro à mão.
 - Não há forma de usar a app em dois dispositivos ao mesmo tempo.
 
 **Vestígios que confundem quem lê o código:**

@@ -48,6 +48,20 @@ class DataExporter(
     private suspend fun <T : Any> rowsOf(source: ExportSource<T>): JsonArray =
         JsonArray(source.rows().map { json.encodeToJsonElement(source.serializer, it) })
 
+    /**
+     * Quantas linhas tem cada tabela que sai na cópia. É o que o ecrã da cópia mostra: um
+     * ficheiro que diz «487 refeições, 92 treinos, 31 fotos» é verificável de relance, e um
+     * que só diz «cópia feita» podia estar vazio sem ninguém reparar.
+     *
+     * Lê as tabelas todas outra vez em vez de aproveitar a exportação: isto corre a pedido,
+     * ao abrir um ecrã, e não no caminho de escrever a cópia.
+     */
+    suspend fun counts(): Map<String, Int> {
+        val out = LinkedHashMap<String, Int>()
+        for (source in sources) out[source.name] = source.rows().size
+        return out
+    }
+
     suspend fun exportCsvFiles(): Map<String, String> {
         val out = LinkedHashMap<String, String>()
         for (source in sources) {

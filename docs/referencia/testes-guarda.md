@@ -26,7 +26,11 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `MigracaoComDadosTest` | uma migração nova perder linhas de quem já tem a app | constrói a base da v3 a partir do esquema exportado, enche todas as tabelas e abre com o Room. Não sabe nada do esquema de propósito — uma versão nova fica coberta sem ninguém lhe tocar |
 | `DocumentationHonestyTest` | a documentação apontar para ficheiros que não existem, e a versão descolar | mudaste um caminho e não o documento |
 | `BackupReachableTest` | o backup ficar sem caminho na interface | o ecrã ou a rota mudaram de nome |
-| `BackupRulesTest` | a cópia de segurança do Android levar o que não deve | as regras XML mudaram |
+| `SemCopiaNaNuvemTest` | o `allowBackup` voltar a `true`, ou a cópia local que o substituiu desaparecer | alguém repôs a cópia da Google, ou tirou a cópia automática sem repor outra coisa. Substituiu o `BackupRulesTest` na 2.1.0, que verificava exatamente o contrário |
+| `CopiaAutomaticaTest` | a rotação apagar a cópia errada | o nome deixou de se ordenar pela data. É só disso que a rotação depende: ordena por nome e deita fora tudo menos as cinco últimas |
+| `NomesDeCopiaUnicosTest` | duas cópias seguidas pedirem o mesmo nome ao sistema | tiraste os segundos do nome. O MediaStore resolve a colisão sozinho gravando «… (1).zip», e esse nome já não se ordena pela data |
+| `ResumoDaCopiaTest` | o resumo mostrado antes de importar mentir sobre o ficheiro | mudaste o cabeçalho da exportação. Substituir é irreversível e é este resumo que o decide |
+| `CartaoDaCopiaUiTest` | o aviso de cópia em atraso aparecer todos os dias, ou nunca | perdeu-se a condição do atraso. Um alarme que aparece sempre deixa de ser lido, e é assim que se volta ao defeito da cópia da Google: invisível |
 | `NumericFieldsTest` | campos numéricos abrirem o teclado errado | falta o `KeyboardType` |
 | `WeightDisplayTest` | o peso aparecer na unidade errada | a conversão saiu do sítio |
 | `ProveniencaHonestaTest` | a app prometer uma fonte de dados que não existe, e o INSA deixar de ser nomeado onde os dados dele aparecem | mudaste um texto de origem. A licença do INSA obriga a identificar a fonte **junto dos dados** |

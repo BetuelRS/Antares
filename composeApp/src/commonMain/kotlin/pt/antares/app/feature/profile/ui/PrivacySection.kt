@@ -35,6 +35,7 @@ internal fun PrivacySection(
 ) {
     val state by viewModel.state.collectAsState()
     var confirming by remember { mutableStateOf(false) }
+    var limparPesquisas by remember { mutableStateOf(false) }
 
     BackupActions(viewModel, state.busy, state.importDone)
 
@@ -75,9 +76,12 @@ internal fun PrivacySection(
                 }
             }
         }
+        // Apagar isto não é destrutivo para os dados, mas é irreversível para o trabalho:
+        // a lista é o registo do que falta no catálogo, e quem a limpa por engano perde
+        // meses de pesquisas falhadas que ninguém volta a repetir de propósito.
         SecondaryButton(
             text = stringResource(Res.string.privacy_misses_clear),
-            onClick = viewModel::clearSearchMisses,
+            onClick = { limparPesquisas = true },
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -100,6 +104,20 @@ internal fun PrivacySection(
             stringResource(Res.string.privacy_error, message),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
+        )
+    }
+
+    if (limparPesquisas) {
+        ConfirmDialog(
+            title = stringResource(Res.string.privacy_misses_clear_title),
+            message = stringResource(Res.string.privacy_misses_clear_body),
+            confirmLabel = stringResource(Res.string.privacy_misses_clear),
+            dismissLabel = stringResource(Res.string.common_cancel),
+            onConfirm = {
+                limparPesquisas = false
+                viewModel.clearSearchMisses()
+            },
+            onDismiss = { limparPesquisas = false },
         )
     }
 

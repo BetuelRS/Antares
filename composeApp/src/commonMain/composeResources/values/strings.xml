@@ -894,7 +894,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="admin_msg_error">Algo correu mal. Tenta outra vez.</string>
 
     <string name="backup_title">Backup</string>
-    <string name="backup_why">A Antares não tem servidor: tudo o que registas vive neste telemóvel. Guardar um ficheiro de vez em quando é a única forma de não perderes nada se mudares de aparelho ou o perderes.</string>
+    <string name="backup_why">A Antares não tem servidor: tudo o que registas vive neste telemóvel. A app guarda sozinha uma cópia em Documentos/Antares, que fica lá mesmo que desinstales a app. Aqui podes fazer uma cópia à mão, levá-la para outro sítio, ou voltar a abrir uma.</string>
 
     <string name="privacy_import">Restaurar de um backup</string>
     <string name="privacy_import_desc">Abre um ficheiro que exportaste antes. Fica tudo neste telemóvel — nada é enviado a lado nenhum.</string>
@@ -1203,5 +1203,39 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="share_card_filename">antares-progresso.png</string>
     <string name="share_card_footer">Antares</string>
     <string name="meal_detail_open">Ver os nutrientes desta refeição</string>
+
+    <string name="copia_titulo">Cópia de segurança</string>
+    <string name="copia_nunca">Nunca foi feita uma cópia.</string>
+    <string name="copia_hoje">Última cópia: hoje.</string>
+    <string name="copia_ontem">Última cópia: ontem.</string>
+    <string name="copia_ha_dias">Última cópia: há %1$s dias.</string>
+    <string name="copia_onde">%1$s cópias desta instalação, em %2$s.</string>
+    <string name="copia_automatica">A app faz esta cópia sozinha, de %1$s em %1$s dias, e guarda as últimas %2$s.</string>
+    <string name="copia_agora">Copiar agora</string>
+    <string name="copia_a_correr">A copiar…</string>
+    <string name="copia_falhou">Não foi possível escrever a cópia. Vê se há espaço no telemóvel.</string>
+    <string name="copia_feita">Cópia escrita: %1$s</string>
+    <string name="copia_sem_permissao">Falta a permissão para escrever em Documentos. Sem ela a cópia automática não corre, e neste Android não há outra pasta que sobreviva a desinstalar a app.</string>
+    <string name="copia_dar_permissao">Dar a permissão</string>
+    <string name="copia_atrasada_hoje">A tua última cópia de segurança tem %1$s dias.</string>
+    <string name="copia_nunca_hoje">Ainda não há nenhuma cópia de segurança dos teus dados.</string>
+    <string name="copia_inclui">O que vai na cópia</string>
+    <string name="copia_inclui_total">%1$s registos ao todo.</string>
+    <string name="copia_conta_linha">%1$s: %2$s</string>
+    <string name="copia_conta_food_log">Refeições</string>
+    <string name="copia_conta_weight_log">Pesagens</string>
+    <string name="copia_conta_workout_session">Treinos</string>
+    <string name="copia_conta_run">Corridas</string>
+    <string name="copia_conta_progress_photo">Fotos de progresso</string>
+    <string name="copia_conta_water_log">Registos de água</string>
+    <string name="copia_conta_foods">Alimentos criados por ti</string>
+    <string name="copia_conta_recipe">Receitas</string>
+    <string name="copia_conta_body_measurement_log">Medições do corpo</string>
+    <string name="copia_conta_outras">Outras tabelas</string>
+    <string name="copia_import_resumo">O que está neste ficheiro</string>
+    <string name="copia_import_de">Exportado em %1$s, pela versão %2$s.</string>
+    <string name="copia_import_sem_data">Este ficheiro não diz quando foi criado.</string>
+    <string name="privacy_misses_clear_title">Limpar as pesquisas falhadas?</string>
+    <string name="privacy_misses_clear_body">Apaga a lista toda. É ela que te diz que alimentos te faltam no catálogo, e depois de apagada não volta.</string>
 
 </resources>

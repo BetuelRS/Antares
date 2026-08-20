@@ -27,6 +27,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.feature.backup.CartaoDaCopia
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.generated.resources.Res
@@ -55,6 +56,11 @@ fun AppMenuScreen(
                 .padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
+            // Em cima de tudo, e não como mais uma linha da lista: desde a 2.1.0 esta é a
+            // única cópia que existe, e uma linha entre outras seis não diz a ninguém que
+            // está há um mês sem cópia.
+            CartaoDaCopia()
+
             MenuItem(Res.string.settings_general_title, Icons.Default.Settings, onSettingsClick)
 
             MenuItem(Res.string.backup_title, Icons.Default.Save, onBackupClick)

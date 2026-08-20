@@ -48,6 +48,7 @@ import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.AntaresColors
 import pt.antares.app.core.designsystem.cascadeIn
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.feature.backup.AvisoDeCopiaAtrasada
 import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
@@ -150,6 +151,11 @@ fun TodayScreen(
             )
         },
     ) {
+
+        // Em primeiro e não em último: o cartão só existe quando a cópia está atrasada, e
+        // quando existe é a coisa mais urgente do ecrã — todo o resto se volta a registar,
+        // três anos de diário não.
+        cartao { AvisoDeCopiaAtrasada() }
 
         cartao { CoachTeaserCard(onOpen = onOpenCoach) }
 

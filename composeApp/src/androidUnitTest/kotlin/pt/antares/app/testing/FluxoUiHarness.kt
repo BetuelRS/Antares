@@ -22,6 +22,12 @@ import org.koin.dsl.module
 import org.robolectric.Robolectric
 import pt.antares.app.core.database.AntaresDb
 import pt.antares.app.core.datastore.AppPreferences
+import pt.antares.app.core.privacy.AutoBackup
+import pt.antares.app.core.privacy.BackupStore
+import pt.antares.app.core.privacy.DataExporter
+import pt.antares.app.core.util.LocalPhotoStore
+import pt.antares.app.feature.about.AppChangelog
+import pt.antares.app.feature.backup.CopiaViewModel
 import pt.antares.app.core.datastore.createPreferencesDataStore
 import java.io.File
 import java.util.UUID
@@ -56,6 +62,8 @@ abstract class FluxoUiHarness {
 
     private lateinit var prefsFile: File
 
+    private lateinit var context: Context
+
     @Before
     fun arrancaOsRecursos() {
         @Suppress("UNCHECKED_CAST")
@@ -67,7 +75,7 @@ abstract class FluxoUiHarness {
         // isto ficava à espera do looper do Robolectric e o teste media a ordem errada.
         Dispatchers.setMain(Dispatchers.Unconfined)
 
-        val context = ApplicationProvider.getApplicationContext<Context>()
+        context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, AntaresDb::class.java)
             // O Room pede `limitedParallelism` ao contexto que recebe, e o `Unconfined`
             // recusa-o. Fica o `Default`: as escritas saem da linha da composição, e por
@@ -96,6 +104,26 @@ abstract class FluxoUiHarness {
                 module {
                     viewModel { Fabricas.coachViewModel(db, prefs, io) }
                     single { Fabricas.profileRepository(db, io) }
+
+                    // O cartão da cópia de segurança entra no Hoje e no menu, e pede o seu
+                    // ViewModel lá dentro. Sem fontes: o cartão só mostra contagens quando
+                    // alguém as pede, e nenhum destes testes as pede.
+                    viewModel {
+                        val exportador = DataExporter(
+                            sources = emptyList(),
+                            appVersion = AppChangelog.CURRENT,
+                        )
+                        CopiaViewModel(
+                            AutoBackup(
+                                prefs,
+                                exportador,
+                                db.progressPhotoDao(),
+                                LocalPhotoStore(context, io),
+                                BackupStore(context, io),
+                            ),
+                            exportador,
+                        )
+                    }
                 },
                 *extras,
             )

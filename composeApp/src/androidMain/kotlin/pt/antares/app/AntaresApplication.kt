@@ -8,6 +8,7 @@ import coil3.disk.directory
 import okio.Path.Companion.toOkioPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -22,6 +23,8 @@ import pt.antares.app.core.di.databaseModule
 import pt.antares.app.core.di.viewModelModule
 import pt.antares.app.core.notifications.NotificationScheduler
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
+import pt.antares.app.core.privacy.AutoBackup
 
 class AntaresApplication : Application() {
 
@@ -53,6 +56,15 @@ class AntaresApplication : Application() {
         runCatching { pt.antares.app.core.util.DayTicker.start(appScope) }
 
         runCatching { NotificationScheduler.scheduleAll(this) }
+
+        // A cópia de segurança automática, no arranque e não num trabalho agendado: um
+        // `WorkManager` que o fabricante mata não escreve nada e ninguém dá por isso — e
+        // desde a 2.1.0 esta é a única cópia que existe, porque a da Google está desligada.
+        // O `runCatching` é pela mesma razão dos outros: não conseguir escrever a cópia não
+        // é motivo para a app não abrir, e o cartão de estado diz-o na cara de quem entrar.
+        runCatching {
+            appScope.launch { get<AutoBackup>().correrSeNecessario() }
+        }
 
         instalarCacheDeImagens()
     }

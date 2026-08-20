@@ -12,8 +12,11 @@ ficheiros da própria app.
 Não há conta com os teus dados, não há servidor com uma cópia, e não há sincronização — ver
 [a decisão](decisoes/0001-a-app-nao-sincroniza.md).
 
-O caminho de volta, se perderes o telemóvel, é o **backup**: um ficheiro que exportas e guardas
-onde quiseres. Leva as fotos de progresso. Se não o fizeres, não há forma de recuperar nada.
+O caminho de volta, se perderes o telemóvel, é o **backup**: um ficheiro com tudo, fotos de
+progresso incluídas. Desde a 2.1.0 a app escreve-o sozinha, de três em três dias, para a pasta
+«Documentos/Antares» do telemóvel, e guarda as cinco últimas. Continua a poder ser exportado à
+mão para onde quiseres. Nada disto sai do aparelho: a cópia automática da Google foi desligada
+nessa mesma versão.
 
 ## O que sai
 

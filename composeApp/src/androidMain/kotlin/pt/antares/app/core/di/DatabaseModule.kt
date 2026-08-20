@@ -35,6 +35,8 @@ val databaseModule = module {
 
     single { LocalPhotoStore(androidContext(), get(IoDispatcher)) }
 
+    single { pt.antares.app.core.privacy.BackupStore(androidContext(), get(IoDispatcher)) }
+
     single<pt.antares.app.core.crash.CrashStore> {
         pt.antares.app.core.crash.FileCrashStore(androidContext())
     }

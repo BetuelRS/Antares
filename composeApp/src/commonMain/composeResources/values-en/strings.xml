@@ -893,7 +893,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="admin_msg_error">Something went wrong. Try again.</string>
 
     <string name="backup_title">Backup</string>
-    <string name="backup_why">Antares has no server: everything you log lives on this phone. Saving a file now and then is the only way not to lose it if you change phones or lose this one.</string>
+    <string name="backup_why">Antares has no server: everything you log lives on this phone. The app keeps a backup of its own in Documents/Antares, which stays there even if you uninstall the app. Here you can make one by hand, take it elsewhere, or open one again.</string>
 
     <string name="privacy_import">Restore from a backup</string>
     <string name="privacy_import_desc">Open a file you exported earlier. Everything stays on this phone — nothing is sent anywhere.</string>
@@ -1202,5 +1202,39 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="share_card_filename">antares-progress.png</string>
     <string name="share_card_footer">Antares</string>
     <string name="meal_detail_open">See this meal's nutrients</string>
+
+    <string name="copia_titulo">Backup</string>
+    <string name="copia_nunca">No backup has ever been made.</string>
+    <string name="copia_hoje">Last backup: today.</string>
+    <string name="copia_ontem">Last backup: yesterday.</string>
+    <string name="copia_ha_dias">Last backup: %1$s days ago.</string>
+    <string name="copia_onde">%1$s backups from this install, in %2$s.</string>
+    <string name="copia_automatica">The app makes this backup on its own, every %1$s days, and keeps the last %2$s.</string>
+    <string name="copia_agora">Back up now</string>
+    <string name="copia_a_correr">Backing up…</string>
+    <string name="copia_falhou">The backup could not be written. Check that the phone has space.</string>
+    <string name="copia_feita">Backup written: %1$s</string>
+    <string name="copia_sem_permissao">Permission to write to Documents is missing. Without it the automatic backup does not run, and on this Android version there is no other folder that survives uninstalling the app.</string>
+    <string name="copia_dar_permissao">Grant permission</string>
+    <string name="copia_atrasada_hoje">Your last backup is %1$s days old.</string>
+    <string name="copia_nunca_hoje">There is still no backup of your data.</string>
+    <string name="copia_inclui">What goes in the backup</string>
+    <string name="copia_inclui_total">%1$s records in total.</string>
+    <string name="copia_conta_linha">%1$s: %2$s</string>
+    <string name="copia_conta_food_log">Meals</string>
+    <string name="copia_conta_weight_log">Weigh-ins</string>
+    <string name="copia_conta_workout_session">Workouts</string>
+    <string name="copia_conta_run">Runs</string>
+    <string name="copia_conta_progress_photo">Progress photos</string>
+    <string name="copia_conta_water_log">Water entries</string>
+    <string name="copia_conta_foods">Foods you created</string>
+    <string name="copia_conta_recipe">Recipes</string>
+    <string name="copia_conta_body_measurement_log">Body measurements</string>
+    <string name="copia_conta_outras">Other tables</string>
+    <string name="copia_import_resumo">What is in this file</string>
+    <string name="copia_import_de">Exported on %1$s, by version %2$s.</string>
+    <string name="copia_import_sem_data">This file does not say when it was created.</string>
+    <string name="privacy_misses_clear_title">Clear the failed searches?</string>
+    <string name="privacy_misses_clear_body">Deletes the whole list. It is what tells you which foods are missing from the catalog, and once cleared it does not come back.</string>
 
 </resources>

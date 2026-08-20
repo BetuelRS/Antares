@@ -3,6 +3,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Só até ao Android 9. A partir do 10 a app escreve em Documentos/Antares pelo
+         MediaStore, que não pede permissão nenhuma; antes disso não havia MediaStore para
+         ficheiros e sem isto a cópia automática não sairia do armazenamento da app — que
+         é apagado com a desinstalação, ou seja exatamente o caso de que a cópia protege. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
 
@@ -38,9 +45,7 @@
 
     <application
         android:name="pt.antares.app.AntaresApplication"
-        android:allowBackup="true"
-        android:fullBackupContent="@xml/backup_rules"
-        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="Antares"

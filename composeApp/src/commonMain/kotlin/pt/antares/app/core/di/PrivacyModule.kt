@@ -218,4 +218,8 @@ val privacyModule = module {
     }
 
     single { PrivacyRepository(get(), get(), get(), get(), get(), get(), get(), get(IoDispatcher)) }
+
+    // Uma só instância: o estado da cópia é lido em três ecrãs, e duas instâncias davam
+    // duas respostas diferentes à mesma pergunta enquanto uma cópia estivesse a correr.
+    single { pt.antares.app.core.privacy.AutoBackup(get(), get(), get(), get(), get()) }
 }
