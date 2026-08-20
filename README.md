@@ -7,7 +7,7 @@
 Regista o que comes, o que treinas e quanto pesas. Mostra-te a aritmética por trás de cada meta,
 linha a linha, para poderes conferi-la à mão.
 
-![versão](https://img.shields.io/badge/vers%C3%A3o-2.0.4-orange)
+![versão](https://img.shields.io/badge/vers%C3%A3o-2.1.0-orange)
 ![Android 8.0+](https://img.shields.io/badge/Android-8.0%2B-green)
 ![licença GPL-3.0](https://img.shields.io/badge/licen%C3%A7a-GPL--3.0-blue)
 ![sem rastreio](https://img.shields.io/badge/rastreio-nenhum-lightgrey)
@@ -27,8 +27,9 @@ atividade, menos o teu défice. Só a multiplicação é arredondada.
 **Alimentos medidos em Portugal.** 1376 alimentos da Tabela de Composição de Alimentos do INSA,
 com nomes portugueses reais e micronutrientes — não traduções de uma tabela americana.
 
-**Não há conta, nem servidor com os teus dados.** Tudo vive no telemóvel. O backup é um ficheiro
-teu. A app funciona inteira em modo de avião, tirando a pesquisa em linha.
+**Não há conta, nem servidor com os teus dados.** Tudo vive no telemóvel, e a app guarda sozinha
+uma cópia em «Documentos/Antares» — uma pasta que fica lá mesmo que a desinstales. A app funciona
+inteira em modo de avião, tirando a pesquisa em linha.
 
 **Diz quando não sabe.** Se a semana tem dias por registar, a app diz que a conta está incompleta
 em vez de fingir um número.

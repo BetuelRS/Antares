@@ -17,6 +17,63 @@ Nada por lançar.
 
 ---
 
+## [2.1.0] — 2026-08-20
+
+A cópia de segurança deixa de depender de alguém se lembrar dela. Não melhora nada do que a
+app faz; evita perder três anos do que ela já guardou. Esquema da base: **v26**, sem
+mudanças.
+
+### Adicionado
+
+- **Cópia automática para «Documentos/Antares».** De três em três dias, no arranque, com as
+  cinco últimas em rotação. Vai lá o mesmo ZIP da exportação manual — dados, CSV e fotos de
+  progresso. A pasta é a de Documentos do telemóvel e não a da app: **continua lá depois de
+  desinstalar**, que é precisamente o caso de que uma cópia serve para proteger.
+- **Cartão de estado da cópia**, no menu e no Hoje. Diz há quantos dias foi a última, onde
+  ficou e quantas estão guardadas, e tem um botão para copiar já. No Hoje só aparece quando
+  passa uma semana sem cópia: um cartão permanente a dizer que está tudo bem é um cartão que
+  se deixa de ler.
+- **O que vai na cópia, com contagens.** O ecrã da cópia diz quantas refeições, treinos,
+  corridas, pesagens e fotos vão no ficheiro. Uma cópia vazia escrita por um erro passa a
+  ver-se de relance.
+- **Resumo do ficheiro antes de importar.** A data em que foi exportado, a versão que o
+  escreveu e quantos registos traz de cada tipo. Substituir os dados é irreversível e era
+  decidido às cegas.
+- **Confirmação antes de limpar as pesquisas falhadas.** A lista é o registo do que falta no
+  catálogo; apagá-la por engano perde meses de sinal que ninguém repete de propósito.
+
+### Removido
+
+- **A cópia automática da Google.** `allowBackup` passa a `false` e as duas regras de
+  extração foram apagadas. Era uma cópia que ninguém via, que dependia de haver sessão
+  Google iniciada e de a Google decidir corrê-la, e que **nunca levou as fotos de
+  progresso** — quem restaurasse por ela recuperava o histórico com as imagens em falta.
+
+  À letra da regra de versionamento isto é uma MAIOR: quem atualiza perde uma coisa com que
+  contava. Fica MENOR porque a capacidade é **substituída no mesmo lançamento** e não
+  retirada — a pasta nova sobrevive à desinstalação tal como a cópia da Google sobrevivia, e
+  a primeira cópia automática corre no primeiro arranque depois de atualizar, e não ao fim
+  dos três dias. Não há janela nenhuma em que alguém fique sem rede.
+
+### Notas
+
+- No Android 9 e anteriores a app pede a permissão de escrita para poder gravar em
+  Documentos; a partir do Android 10 escreve pelo MediaStore e não pede nada. A permissão
+  está declarada com `maxSdkVersion="28"`, ou seja não existe nos telemóveis modernos — e o
+  `READ_EXTERNAL_STORAGE` que o Android acrescenta sozinho ao lado dela herda o mesmo teto.
+- **Uma cópia feita antes de reinstalar deixa de ser gerida pela app.** O Android marca cada
+  ficheiro com a app que o criou e apaga essa marca quando a app é desinstalada — verificado
+  no emulador. O ficheiro fica na pasta e continua a poder ser aberto pelo botão de importar,
+  que é o que interessa; o que a app deixa de poder fazer é listá-lo e apagá-lo. Quem
+  reinstalar começa uma série nova de cinco, e as antigas ficam lá até serem apagadas à mão.
+  Não se resolve sem pedir acesso ao armazenamento inteiro, que é desproporcionado para gerir
+  cinco ficheiros.
+- O `BackupRulesTest`, que verificava as regras da cópia na nuvem, foi substituído pelo
+  `SemCopiaNaNuvemTest`, que verifica o contrário — e que a cópia local que a substitui não
+  desapareceu.
+
+---
+
 ## [2.0.4] — 2026-08-18
 
 Nove coisas que a app dizia e não eram verdade. Nenhuma parte nada — todas fazem quem lê

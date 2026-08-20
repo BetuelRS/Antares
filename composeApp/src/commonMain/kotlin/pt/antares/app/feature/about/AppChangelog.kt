@@ -23,9 +23,38 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.0.4"
+    const val CURRENT = "2.1.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.1.0",
+            title = "A cópia de segurança deixa de depender de ti",
+            titleEn = "The backup stops depending on you",
+            highlights = listOf(
+                "A app guarda sozinha uma cópia dos teus dados em **Documentos/Antares**, " +
+                    "de três em três dias, e mantém as cinco últimas. A pasta fica fora da " +
+                    "app: continua lá se desinstalares",
+                "Um cartão diz há quantos dias foi a última cópia, no menu e — quando passa " +
+                    "de uma semana — no Hoje",
+                "A cópia deixou de ir para a Google. Era uma cópia que ninguém via, que " +
+                    "dependia de estares com sessão iniciada, e que não levava as fotos",
+                "Antes de importar, a app diz o que está no ficheiro: a data, a versão que " +
+                    "o escreveu e quantos registos traz de cada tipo",
+                "Limpar as pesquisas falhadas passa a pedir confirmação",
+            ),
+            highlightsEn = listOf(
+                "The app keeps a backup of your data in **Documents/Antares** on its own, " +
+                    "every three days, keeping the last five. The folder sits outside the " +
+                    "app: it stays there if you uninstall",
+                "A card says how many days ago the last backup was, in the menu and — once " +
+                    "it passes a week — on Today",
+                "Backups no longer go to Google. That was a backup nobody could see, that " +
+                    "depended on being signed in, and that left the photos out",
+                "Before importing, the app says what is in the file: the date, the version " +
+                    "that wrote it, and how many records of each kind it brings",
+                "Clearing the failed searches now asks for confirmation",
+            ),
+        ),
         AppVersion(
             name = "2.0.4",
             title = "Nove coisas que a app dizia e não eram verdade",
@@ -291,23 +320,6 @@ object AppChangelog {
                 "Tick several foods and log them all at once",
                 "Your top 20 foods and top 5 meals up front in search",
                 "Liquids stopped being counted as solids",
-            ),
-        ),
-        AppVersion(
-            name = "0.9.0",
-            title = "A balança preenche-se sozinha",
-            titleEn = "The scale fills itself in",
-            highlights = listOf(
-                "**Health Connect**: o peso e os treinos entram sozinhos",
-                "A tua balança inteligente preenche a % de gordura sozinha",
-                "A app escreve a composição corporal no Health Connect, além de a ler",
-                "Cada pesagem passa a saber de onde veio, para não voltar a entrar duas vezes",
-            ),
-            highlightsEn = listOf(
-                "**Health Connect**: weight and workouts come in by themselves",
-                "Your smart scale fills in body fat by itself",
-                "The app writes body composition to Health Connect as well as reading it",
-                "Each weigh-in now knows where it came from, so it never lands twice",
             ),
         ),
     )
