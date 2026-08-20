@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -91,6 +92,29 @@ fun FoodSearchScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var aiMode by remember { mutableStateOf<AiMode?>(null) }
+
+    // Uma vez na vida da instalação, e antes da primeira procura sair. Não tem botão de
+    // fechar por fora: a escolha é o que dá valor ao interruptor, e um toque ao lado a
+    // valer «continuar» seria consentimento por acidente.
+    if (state.pedirAvisoDaOff) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text(stringResource(Res.string.search_off_notice_title)) },
+            text = { Text(stringResource(Res.string.search_off_notice_body)) },
+            confirmButton = {
+                SecondaryButton(
+                    text = stringResource(Res.string.search_off_notice_yes),
+                    onClick = { viewModel.responderAoAvisoDaOff(aceita = true) },
+                )
+            },
+            dismissButton = {
+                SecondaryButton(
+                    text = stringResource(Res.string.search_off_notice_no),
+                    onClick = { viewModel.responderAoAvisoDaOff(aceita = false) },
+                )
+            },
+        )
+    }
 
     var handledInitial by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -452,6 +476,20 @@ private fun SearchResults(
         }
         if (state.searchingOnline) {
             linhaInteira { LoadingState() }
+        }
+
+        // Dito e não escondido: sem esta linha, uma procura que não sai do telemóvel
+        // lê-se como um catálogo que não tem o produto — e a pessoa passa a duvidar do
+        // catálogo em vez de se lembrar do interruptor que ela própria desligou.
+        if (state.pesquisaDesligada) {
+            linhaInteira {
+                Text(
+                    stringResource(Res.string.search_online_off),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(Spacing.md),
+                )
+            }
         }
     }
 }

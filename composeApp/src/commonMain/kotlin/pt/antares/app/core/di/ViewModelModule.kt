@@ -68,7 +68,7 @@ val viewModelModule = module {
     viewModel { pt.antares.app.feature.backup.CopiaViewModel(get(), get()) }
 
     viewModel { DiaryViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { FoodSearchViewModel(get(), get(), get(), get(), get()) }
+    viewModel { FoodSearchViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { FoodDetailViewModel(get(), get(), get(), get()) }
     viewModel { FoodEditViewModel(get(), get()) }
 

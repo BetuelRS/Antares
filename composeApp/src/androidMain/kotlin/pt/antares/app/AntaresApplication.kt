@@ -23,7 +23,9 @@ import pt.antares.app.core.di.databaseModule
 import pt.antares.app.core.di.viewModelModule
 import pt.antares.app.core.notifications.NotificationScheduler
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import pt.antares.app.core.datastore.AppPreferences
 import pt.antares.app.core.privacy.AutoBackup
 
 class AntaresApplication : Application() {
@@ -60,10 +62,19 @@ class AntaresApplication : Application() {
         // A cópia de segurança automática, no arranque e não num trabalho agendado: um
         // `WorkManager` que o fabricante mata não escreve nada e ninguém dá por isso — e
         // desde a 2.1.0 esta é a única cópia que existe, porque a da Google está desligada.
+        //
+        // Espera pelo fim do arranque em vez de correr já. Quem atualiza tem-no feito e a
+        // cópia sai no mesmo instante; quem instala de fresco só a tem quando houver o que
+        // copiar — e sai nesse momento, sem esperar por outro arranque da app, senão o
+        // cartão do Hoje ficava vermelho no primeiro minuto de uso.
+        //
         // O `runCatching` é pela mesma razão dos outros: não conseguir escrever a cópia não
         // é motivo para a app não abrir, e o cartão de estado diz-o na cara de quem entrar.
         runCatching {
-            appScope.launch { get<AutoBackup>().correrSeNecessario() }
+            appScope.launch {
+                get<AppPreferences>().onboardingDone.first { feito -> feito }
+                get<AutoBackup>().correrSeNecessario()
+            }
         }
 
         instalarCacheDeImagens()

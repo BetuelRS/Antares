@@ -34,6 +34,14 @@ data class FoodSearchState(
     val onlineResults: List<FoodEntity> = emptyList(),
     val searchingOnline: Boolean = false,
 
+    // A pesquisa em linha está desligada, e o ecrã tem de o dizer. Sem isto lia-se como
+    // «não há resultados», que é a app a esconder uma escolha da própria pessoa.
+    val pesquisaDesligada: Boolean = false,
+
+    // O aviso de que a procura sai do telemóvel, ainda por mostrar. Trava a primeira
+    // procura em linha até haver resposta: mostrá-lo depois seria contar o que já foi.
+    val pedirAvisoDaOff: Boolean = false,
+
     val selected: Set<String> = emptySet(),
 )
 
@@ -44,6 +52,7 @@ class FoodSearchViewModel(
     recipeRepository: RecipeRepository,
     private val templateRepository: MealTemplateRepository,
     private val diaryRepository: pt.antares.app.feature.diary.DiaryRepository,
+    private val preferences: pt.antares.app.core.datastore.AppPreferences,
 ) : ViewModel() {
 
     val recipes: StateFlow<List<RecipeSummary>> = recipeRepository.observeSummaries()
@@ -116,20 +125,36 @@ class FoodSearchViewModel(
                 if (q.length < 3) {
                     _state.update { it.copy(onlineResults = emptyList(), searchingOnline = false) }
                 } else {
+                    // O indicador sobe antes de qualquer suspensão. Ler a preferência
+                    // primeiro deixava uma janela em que a app ia procurar e o ecrã dizia
+                    // que estava parado — e quem esperasse por esse estado via a lista
+                    // antiga a passar por resultado novo.
                     _state.update { it.copy(searchingOnline = true) }
 
-                    val online = offRepository.searchOnline(q)
+                    // O aviso trava a procura em vez de a acompanhar: contactar a Open Food
+                    // Facts e só depois avisar que se contactou não é um aviso, é um relato.
+                    if (!preferences.avisoDaOffVistoOnce()) {
+                        _state.update { it.copy(searchingOnline = false, pedirAvisoDaOff = true) }
+                        return@onEach
+                    }
+
+                    val online = offRepository.procurar(q)
+                    val encontrados = (online as? OffSearch.Resultados)?.foods
 
                     // Tira da lista de fora o que já está em baixo na local: um produto
                     // guardado numa leitura anterior aparecia duas vezes.
                     val localIds = _state.value.results.map { it.id }.toSet()
                     _state.update {
                         it.copy(
-                            onlineResults = online.orEmpty().filter { f -> f.id !in localIds },
+                            onlineResults = encontrados.orEmpty().filter { f -> f.id !in localIds },
                             searchingOnline = false,
+                            pesquisaDesligada = online is OffSearch.Desligada,
                         )
                     }
-                    recordMissIfWorthIt(q, online?.size)
+
+                    // Uma procura que não chegou a sair não é uma falha do catálogo: só se
+                    // regista o que faltava quando a Open Food Facts respondeu mesmo.
+                    if (online is OffSearch.Resultados) recordMissIfWorthIt(q, encontrados?.size)
                 }
             }
             .launchIn(viewModelScope)
@@ -148,6 +173,22 @@ class FoodSearchViewModel(
     fun setQuery(query: String) {
         _state.update { it.copy(query = query) }
         queryFlow.value = query
+    }
+
+    /**
+     * A resposta ao aviso da Open Food Facts. É aqui que o interruptor ganha o seu primeiro
+     * valor: dizer que não se quer usar desliga-o, em vez de perguntar outra vez amanhã.
+     */
+    fun responderAoAvisoDaOff(aceita: Boolean) {
+        viewModelScope.launch {
+            preferences.marcarAvisoDaOffVisto()
+            if (!aceita) preferences.setPesquisaEmLinha(false)
+            _state.update { it.copy(pedirAvisoDaOff = false, pesquisaDesligada = !aceita) }
+
+            // Reacende a procura com o texto que já lá está: sem isto, quem aceitou tinha de
+            // apagar uma letra e voltar a escrevê-la para o pedido sair.
+            if (aceita) setQuery(_state.value.query)
+        }
     }
 
     fun setTab(tab: SearchTab) = _state.update { it.copy(tab = tab) }

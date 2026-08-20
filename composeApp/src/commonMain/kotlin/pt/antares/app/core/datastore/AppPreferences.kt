@@ -54,7 +54,7 @@ data class StoredAiUsage(
  * são dados fica na base. Cada leitura tem o valor por omissão embutido — nenhuma devolve
  * nulo por a chave ainda não existir, e é isso que faz a primeira abertura funcionar.
  */
-// Trinta e seis funções, e é para ter trinta e seis: são pares de ler e escrever, um por
+// Quarenta e cinco funções, e é para ter quarenta e cinco: são pares de ler e escrever, um por
 // preferência. Parti-las por classes daria a alguém dois sítios onde procurar a mesma chave,
 // e o comentário das `Keys` diz porque é que uma chave errada não dá erro nenhum.
 @Suppress("TooManyFunctions")
@@ -102,6 +102,10 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
             androidx.datastore.preferences.core.longPreferencesKey("notif_water_last_at")
         val weighInDayIso = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_day")
         val weighInMinute = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_min")
+        val pesquisaEmLinha = booleanPreferencesKey("off_online_enabled")
+        val avisoDaOffVisto = booleanPreferencesKey("off_notice_seen")
+        val runType = stringPreferencesKey("run_type")
+        val runAutoPause = booleanPreferencesKey("run_auto_pause")
         val lastBackupAt = androidx.datastore.preferences.core.longPreferencesKey("backup_last_at")
         val lastBackupName = stringPreferencesKey("backup_last_name")
         val lastWeighInNotifDay =
@@ -145,6 +149,8 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     val onboardingDone: Flow<Boolean> =
         dataStore.data.map { it[Keys.onboardingDone] ?: false }
+
+    suspend fun onboardingDoneOnce(): Boolean = onboardingDone.first()
 
     suspend fun setOnboardingDone(done: Boolean) {
         dataStore.edit { it[Keys.onboardingDone] = done }
@@ -413,6 +419,58 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
             it[Keys.lastBackupAt] = epochMs
             it[Keys.lastBackupName] = nome
         }
+    }
+
+    /**
+     * O tipo de atividade e a auto-pausa da última corrida.
+     *
+     * Guardados porque não o eram: quem anda sempre a pé escolhia «caminhada» a cada
+     * arranque, e quem desligava a auto-pausa encontrava-a ligada na vez seguinte. A meta
+     * da corrida, aqui ao lado, já era guardada — eram estes dois que faltavam.
+     */
+    val runType: Flow<String> =
+        dataStore.data.map { it[Keys.runType].orEmpty() }
+
+    suspend fun runTypeOnce(): String = runType.first()
+
+    suspend fun setRunType(tipo: String) {
+        dataStore.edit { it[Keys.runType] = tipo }
+    }
+
+    val runAutoPause: Flow<Boolean> =
+        dataStore.data.map { it[Keys.runAutoPause] ?: true }
+
+    suspend fun runAutoPauseOnce(): Boolean = runAutoPause.first()
+
+    suspend fun setRunAutoPause(ligada: Boolean) {
+        dataStore.edit { it[Keys.runAutoPause] = ligada }
+    }
+
+    /**
+     * Se a app pode ir à Open Food Facts — a pesquisa por texto e a leitura de código de
+     * barras, que são a mesma porta. Ligada por omissão: é como a app sempre funcionou, e
+     * desligá-la de repente a quem atualiza tirava-lhe uma capacidade sem aviso.
+     */
+    val pesquisaEmLinha: Flow<Boolean> =
+        dataStore.data.map { it[Keys.pesquisaEmLinha] ?: true }
+
+    suspend fun pesquisaEmLinhaOnce(): Boolean = pesquisaEmLinha.first()
+
+    suspend fun setPesquisaEmLinha(ligada: Boolean) {
+        dataStore.edit { it[Keys.pesquisaEmLinha] = ligada }
+    }
+
+    /**
+     * Se o aviso de que a procura sai do telemóvel já foi mostrado. Mostra-se uma vez, e
+     * antes da primeira procura — depois dela seria contar o que já aconteceu.
+     */
+    val avisoDaOffVisto: Flow<Boolean> =
+        dataStore.data.map { it[Keys.avisoDaOffVisto] ?: false }
+
+    suspend fun avisoDaOffVistoOnce(): Boolean = avisoDaOffVisto.first()
+
+    suspend fun marcarAvisoDaOffVisto() {
+        dataStore.edit { it[Keys.avisoDaOffVisto] = true }
     }
 
 }

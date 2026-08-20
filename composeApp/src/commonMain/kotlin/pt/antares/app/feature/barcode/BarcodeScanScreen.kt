@@ -47,6 +47,7 @@ fun BarcodeScanScreen(
     onDetected: (String) -> Unit,
     onBack: () -> Unit,
     networkError: Boolean = false,
+    pesquisaDesligada: Boolean = false,
     onRetry: () -> Unit = {},
 
     continuous: Boolean = false,
@@ -77,16 +78,11 @@ fun BarcodeScanScreen(
         }
     }
 
-    if (networkError) {
+    // As duas falhas que param a leitura. Fora do corpo do ecrã porque são o mesmo desenho
+    // com palavras diferentes, e juntas dizem melhor o que as separa.
+    if (networkError || pesquisaDesligada) {
         LaunchedEffect(Unit) { handled = false }
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = onRetry,
-            title = { Text(stringResource(Res.string.scan_network_error_title)) },
-            text = { Text(stringResource(Res.string.scan_network_error_body)) },
-            confirmButton = {
-                PrimaryButton(text = stringResource(Res.string.scan_network_error_retry), onClick = onRetry)
-            },
-        )
+        DialogoDeFalha(desligada = pesquisaDesligada, onFechar = onRetry)
     }
 
     LaunchedEffect(Unit) { if (!permission.granted) permission.request() }
@@ -197,6 +193,41 @@ fun BarcodeScanScreen(
  *
  * O botão fica de fora quando ninguém o soube ligar — a lista continua a valer por si.
  */
+
+/**
+ * A leitura parou, e por uma de duas razões que não se podem confundir: não houve rede, ou a
+ * pessoa desligou a pesquisa em linha. A primeira convida a tentar outra vez; na segunda não
+ * há nada a repetir enquanto o interruptor estiver onde está.
+ */
+@Composable
+private fun DialogoDeFalha(desligada: Boolean, onFechar: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onFechar,
+        title = {
+            Text(
+                stringResource(
+                    if (desligada) Res.string.scan_off_disabled_title else Res.string.scan_network_error_title,
+                ),
+            )
+        },
+        text = {
+            Text(
+                stringResource(
+                    if (desligada) Res.string.scan_off_disabled_body else Res.string.scan_network_error_body,
+                ),
+            )
+        },
+        confirmButton = {
+            PrimaryButton(
+                text = stringResource(
+                    if (desligada) Res.string.common_ok else Res.string.scan_network_error_retry,
+                ),
+                onClick = onFechar,
+            )
+        },
+    )
+}
+
 @Composable
 private fun CodigosPorCriar(codigos: List<String>, onCreateMissing: ((String) -> Unit)?) {
     if (codigos.isEmpty()) return

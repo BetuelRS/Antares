@@ -52,7 +52,11 @@ fun RunSummaryScreen(
     val m = state.metrics
     val unidades = rememberUnitSystem()
     val virgula = virgulaDecimal()
-    var name by remember { mutableStateOf("") }
+    // Sugerido e não vazio, e fixado à primeira composição. Sem chave no `remember` de
+    // propósito: a sugestão depende da hora, e às 11:59 a mudar para 12:00 uma chave
+    // apagaria o nome que a pessoa estivesse a escrever nesse instante.
+    val sugerido = nomeSugeridoDaCorrida(state.type)
+    var name by remember { mutableStateOf(sugerido) }
 
     AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.run_summary_title)) },

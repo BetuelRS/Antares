@@ -55,7 +55,9 @@ class FoodSearchMergeTest : ViewModelHarness() {
         ) {
             install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
         }
-        return OffRepository(OffApi(client, "teste"), db.foodDao(), dispatcher)
+        // Ligada: o interruptor da 2.2.0 tem o seu próprio teste, e aqui o que se mede é o
+        // encontro das duas listas.
+        return OffRepository(OffApi(client, "teste"), db.foodDao(), dispatcher) { true }
     }
 
     private fun viewModel(off: OffRepository) = FoodSearchViewModel(
@@ -75,6 +77,7 @@ class FoodSearchMergeTest : ViewModelHarness() {
             dispatcher,
         ),
         diaryRepository = diaryRepository(),
+        preferences = prefs,
     )
 
     /**
@@ -83,6 +86,10 @@ class FoodSearchMergeTest : ViewModelHarness() {
      * virtual, e sem esperar pelo fim afirmava-se sobre listas ainda por preencher.
      */
     private suspend fun procurar(vm: FoodSearchViewModel, texto: String) {
+        // O aviso da Open Food Facts trava a primeira procura em linha até haver resposta.
+        // Aqui dá-se por visto: o que se mede neste ficheiro é o encontro das duas listas, e
+        // o aviso tem os seus testes noutro sítio.
+        prefs.marcarAvisoDaOffVisto()
         vm.setQuery(texto)
         dispatcher.scheduler.advanceUntilIdle()
         vm.state.first { !it.searching && !it.searchingOnline }

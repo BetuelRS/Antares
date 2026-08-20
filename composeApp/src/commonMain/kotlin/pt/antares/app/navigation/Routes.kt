@@ -121,6 +121,9 @@ sealed interface Route {
     data object Backup : Route
 
     @Serializable
+    data object Destinos : Route
+
+    @Serializable
     data object CrashLog : Route
 
     @Serializable

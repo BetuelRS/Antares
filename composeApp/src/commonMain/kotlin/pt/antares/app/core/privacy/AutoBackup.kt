@@ -61,13 +61,20 @@ class AutoBackup(
      * Corre se já passou tempo que chegue — ou se nunca correu, que é o caso de quem acaba
      * de atualizar da 2.0.4. Essa primeira cópia é a condição para desligar a da Google não
      * deixar ninguém a descoberto, e por isso não espera pelos três dias.
+     *
+     * Nunca antes do arranque estar feito. A 2.1.0 saiu sem esta guarda e escrevia a
+     * primeira cópia no primeiro segundo de uma instalação limpa: um ficheiro de 526 bytes,
+     * vinte e seis tabelas e zero linhas, com o cartão a dizer «última cópia: hoje». Uma
+     * cópia que não protege nada é pior do que nenhuma, porque cala o aviso.
      */
     suspend fun correrSeNecessario(): Boolean {
         if (!store.canWrite()) return false
-        val ultima = prefs.lastBackupAtOnce()
-        val passou = ultima <= 0L ||
-            Clock.System.now() - Instant.fromEpochMilliseconds(ultima) >= DIAS_ENTRE_COPIAS.days
-        if (!passou) return false
+        val deve = deveCorrer(
+            arranqueFeito = prefs.onboardingDoneOnce(),
+            ultimaMs = prefs.lastBackupAtOnce(),
+            agoraMs = Clock.System.now().toEpochMilliseconds(),
+        )
+        if (!deve) return false
         return correrAgora()
     }
 
@@ -138,5 +145,24 @@ class AutoBackup(
          */
         fun aApagar(existentes: List<String>, maximo: Int = MAX_COPIAS): List<String> =
             existentes.sorted().dropLast(maximo)
+
+        /**
+         * Se a cópia automática é devida. Fora da classe e sem tocar em nada para poder ser
+         * provada: é a decisão que a 2.1.0 errou, e um teste que precise de um MediaStore
+         * para a verificar não se escreve.
+         *
+         * Nunca antes do arranque estar feito — não há o que copiar, e uma cópia vazia cala
+         * o aviso sem proteger ninguém.
+         */
+        fun deveCorrer(
+            arranqueFeito: Boolean,
+            ultimaMs: Long,
+            agoraMs: Long,
+            dias: Int = DIAS_ENTRE_COPIAS,
+        ): Boolean {
+            if (!arranqueFeito) return false
+            if (ultimaMs <= 0L) return true
+            return agoraMs - ultimaMs >= dias.days.inWholeMilliseconds
+        }
     }
 }

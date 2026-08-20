@@ -24,6 +24,11 @@ sealed interface BarcodeResult {
     data class NotFound(val barcode: String) : BarcodeResult
 
     data class NetworkError(val barcode: String) : BarcodeResult
+
+    // Terceira falha, e distinta das outras duas: a pesquisa em linha está desligada. Dizer
+    // «sem rede» a quem desligou o interruptor é a app a culpar a ligação de uma escolha da
+    // pessoa; dizer «não existe» é pior ainda, porque é falso.
+    data class Desligada(val barcode: String) : BarcodeResult
 }
 
 class BarcodeResolveViewModel(
@@ -104,6 +109,7 @@ class BarcodeResolveViewModel(
                     is OffFetch.Found -> BarcodeResult.Found(fetched.food.id)
                     is OffFetch.NotFound -> BarcodeResult.NotFound(barcode)
                     is OffFetch.NetworkError -> BarcodeResult.NetworkError(barcode)
+                    is OffFetch.Desligada -> BarcodeResult.Desligada(barcode)
                 },
             )
         }

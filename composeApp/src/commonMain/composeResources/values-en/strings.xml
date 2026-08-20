@@ -71,7 +71,7 @@
     <string name="cycle_open">Not closed</string>
     <string name="cycle_days">%1$d days</string>
     <string name="more_cycle">Cycle</string>
-    <string name="photos_privacy">These photos stay on this phone. They go to no server, they are left out of the Android backup, and no other app can reach them. Deleting a photo deletes the file.</string>
+    <string name="photos_privacy">These photos never leave the phone: they go to no server, and the app shows them to no one else. They do travel inside the backup, which lives in Documents/Antares — a folder a file manager can open. That is the price of the photos surviving a lost phone. Deleting a photo deletes the file.</string>
     <string name="photos_take">Take photo</string>
     <string name="photos_pick">Pick from gallery</string>
     <string name="photos_empty_title">No photos yet</string>
@@ -1208,7 +1208,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_hoje">Last backup: today.</string>
     <string name="copia_ontem">Last backup: yesterday.</string>
     <string name="copia_ha_dias">Last backup: %1$s days ago.</string>
-    <string name="copia_onde">%1$s backups from this install, in %2$s.</string>
+    <string name="copia_onde">Backups from this install: %1$s, in %2$s.</string>
     <string name="copia_automatica">The app makes this backup on its own, every %1$s days, and keeps the last %2$s.</string>
     <string name="copia_agora">Back up now</string>
     <string name="copia_a_correr">Backing up…</string>
@@ -1219,7 +1219,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_atrasada_hoje">Your last backup is %1$s days old.</string>
     <string name="copia_nunca_hoje">There is still no backup of your data.</string>
     <string name="copia_inclui">What goes in the backup</string>
-    <string name="copia_inclui_total">%1$s records in total.</string>
+    <string name="copia_inclui_total">Records in total: %1$s.</string>
     <string name="copia_conta_linha">%1$s: %2$s</string>
     <string name="copia_conta_food_log">Meals</string>
     <string name="copia_conta_weight_log">Weigh-ins</string>
@@ -1236,5 +1236,45 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_import_sem_data">This file does not say when it was created.</string>
     <string name="privacy_misses_clear_title">Clear the failed searches?</string>
     <string name="privacy_misses_clear_body">Deletes the whole list. It is what tells you which foods are missing from the catalog, and once cleared it does not come back.</string>
+
+    <string name="common_ok">OK</string>
+    <string name="run_name_morning">Morning %1$s</string>
+    <string name="run_name_afternoon">Afternoon %1$s</string>
+    <string name="run_name_evening">Evening %1$s</string>
+    <string name="run_name_night">Night %1$s</string>
+    <string name="search_online_off">Online search is off. You are seeing only the catalog that ships with the app.</string>
+    <string name="search_off_notice_title">Your search leaves the phone</string>
+    <string name="search_off_notice_body">To find branded products, Antares sends what you type to Open Food Facts, a public food database. The search text goes and nothing else — not who you are, not what you logged. The same happens when you scan a barcode. You can decide now and change it later in settings.</string>
+    <string name="search_off_notice_yes">Use it</string>
+    <string name="search_off_notice_no">Leave it off</string>
+    <string name="scan_off_disabled_title">Online search is off</string>
+    <string name="scan_off_disabled_body">Reading a barcode needs to ask Open Food Facts. You can turn it back on in settings, or create the food by hand.</string>
+    <string name="settings_online_search">Online search</string>
+    <string name="settings_online_search_desc">Look up products and barcodes on Open Food Facts. With this off, the app uses only the catalog it ships with.</string>
+    <string name="outgoing_title">What leaves here</string>
+    <string name="outgoing_intro">Antares has no account and no server holding your data. But some things do leave, and none of them are obvious — so they are all here, with what goes and when.</string>
+    <string name="outgoing_section_network">Leaves the phone</string>
+    <string name="outgoing_section_device">Leaves the app, not the phone</string>
+    <string name="outgoing_what_label">What goes</string>
+    <string name="outgoing_when_label">When</string>
+    <string name="outgoing_off_title">Open Food Facts</string>
+    <string name="outgoing_off_what">The text you type in search, or the barcode you scan. Not who you are, not what you logged.</string>
+    <string name="outgoing_off_when">When you search for a product or scan a code. You can turn this off.</string>
+    <string name="outgoing_ai_title">Photo and text analysis</string>
+    <string name="outgoing_ai_what">The photo of the meal, or the description you wrote. The image is not kept on the other side.</string>
+    <string name="outgoing_ai_when">Only when you ask for an analysis. Never on its own.</string>
+    <string name="outgoing_delete_title">Deleting what the AI analysis kept</string>
+    <string name="outgoing_delete_what">The request to delete the anonymous account the AI analysis uses.</string>
+    <string name="outgoing_delete_when">When you tap delete, on the privacy screen.</string>
+    <string name="outgoing_map_title">The run map</string>
+    <string name="outgoing_map_what">The map tiles. The route is never sent — but the tiles the app asks for tell that service, by your address, which area you are looking at.</string>
+    <string name="outgoing_map_when">While you run with the map on screen.</string>
+    <string name="outgoing_images_title">Exercise images</string>
+    <string name="outgoing_images_what">Which exercise you opened. The catalog ships inside the app; the images do not.</string>
+    <string name="outgoing_images_when">The first time you open each exercise.</string>
+    <string name="outgoing_backup_title">The backup</string>
+    <string name="outgoing_backup_what">Everything you logged, progress photos included, in a file in Documents/Antares. It goes nowhere on the internet — but it is a folder a file manager can open.</string>
+    <string name="outgoing_backup_when">Every three days, on its own. It is what makes your data survive a lost phone.</string>
+    <string name="outgoing_footer">If any line here stops being true, that is a defect. Say so.</string>
 
 </resources>

@@ -45,4 +45,15 @@ class SettingsViewModel(
     fun setAdaptiveTargets(enabled: Boolean) = viewModelScope.launch {
         preferences.setAdaptiveTargets(enabled)
     }
+
+    /**
+     * A pesquisa em linha. Ligada por omissão, e este é o sítio onde se volta atrás depois
+     * de a recusar no aviso que aparece antes da primeira procura.
+     */
+    val pesquisaEmLinha: StateFlow<Boolean> = preferences.pesquisaEmLinha
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
+
+    fun setPesquisaEmLinha(ligada: Boolean) = viewModelScope.launch {
+        preferences.setPesquisaEmLinha(ligada)
+    }
 }

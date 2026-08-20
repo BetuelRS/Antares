@@ -53,6 +53,7 @@ internal fun NavGraphBuilder.rotasDeCodigoDeBarras(navController: NavHostControl
             onDetected = viewModel::resolve,
 
             networkError = result is BarcodeResult.NetworkError,
+            pesquisaDesligada = result is BarcodeResult.Desligada,
             onRetry = viewModel::reset,
             onBack = { navController.popBackStack() },
             continuous = continuous,

@@ -23,6 +23,14 @@ nessa mesma versão.
 Cinco destinos. Os dois últimos não são pedidos que faças de propósito, e por isso são os que mais
 importam.
 
+Desde a **2.2.0** esta lista está também **dentro da app**, no menu, com o que sai e quando — quem
+usa a app não lê este repositório. A primeira dela — a Open Food Facts — passou a ter interruptor,
+e a app avisa antes da primeira procura sair.
+
+Há ainda um sexto sítio que não é um destino de rede e por isso não está numerado aqui: a **cópia
+de segurança automática**, que escreve tudo, fotos de progresso incluídas, para «Documentos/Antares».
+Não sai para a Internet, mas sai do que só a app conseguia ler.
+
 ### 1. A pesquisa de alimentos, na Open Food Facts
 
 Quando procuras um produto ou lês um código de barras, o texto ou o código vão à
@@ -116,7 +124,9 @@ A localização só é pedida quando arrancas uma corrida, e a câmara quando ab
 grep -rhoE 'https?://[^"]+' composeApp/src --include=*.kt | sort -u
 ```
 
-Devolve os cinco destinos acima, e mais nada.
+Devolve os cinco destinos acima, e mais nada. O `DestinosDeclaradosTest` faz esta mesma varredura
+a cada corrida dos testes e obriga cada endereço novo a ganhar uma linha no ecrã da app — ou a ser
+declarado neste teste com a razão de não ser um pedido.
 
 | Teste | O que prova |
 |---|---|

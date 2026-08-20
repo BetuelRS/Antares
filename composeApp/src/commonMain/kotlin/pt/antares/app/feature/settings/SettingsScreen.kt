@@ -43,6 +43,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val adaptive by viewModel.adaptiveTargets.collectAsState()
+    val emLinha by viewModel.pesquisaEmLinha.collectAsState()
     val adminRevelado by viewModel.adminRevelado.collectAsState()
     val mealNames by viewModel.mealNames.collectAsState()
 
@@ -110,17 +111,12 @@ fun SettingsScreen(
                 }
             }
 
-            SectionHeader(title = stringResource(Res.string.settings_general_behaviour))
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Column {
-                    ToggleRow(
-                        title = stringResource(Res.string.settings_adaptive_title),
-                        desc = stringResource(Res.string.settings_adaptive_desc),
-                        checked = adaptive,
-                        onChange = viewModel::setAdaptiveTargets,
-                    )
-                }
-            }
+            SeccaoDoComportamento(
+                adaptativas = adaptive,
+                onAdaptativas = viewModel::setAdaptiveTargets,
+                emLinha = emLinha,
+                onEmLinha = viewModel::setPesquisaEmLinha,
+            )
 
             SectionHeader(title = stringResource(Res.string.settings_meal_names))
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
@@ -179,6 +175,38 @@ private fun LanguageRow(label: String, selected: Boolean, onClick: () -> Unit) {
     ) {
         RadioButton(selected = selected, onClick = onClick)
         Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(start = Spacing.sm))
+    }
+}
+
+
+/**
+ * O que a app faz sozinha, e o que ela deixa de fazer se lhe disserem. As duas linhas têm o
+ * mesmo peso de propósito: uma governa uma conta, a outra governa se alguma coisa sai do
+ * telemóvel — e a segunda só é uma escolha se estiver onde a primeira está.
+ */
+@Composable
+private fun SeccaoDoComportamento(
+    adaptativas: Boolean,
+    onAdaptativas: (Boolean) -> Unit,
+    emLinha: Boolean,
+    onEmLinha: (Boolean) -> Unit,
+) {
+    SectionHeader(title = stringResource(Res.string.settings_general_behaviour))
+    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+        Column {
+            ToggleRow(
+                title = stringResource(Res.string.settings_adaptive_title),
+                desc = stringResource(Res.string.settings_adaptive_desc),
+                checked = adaptativas,
+                onChange = onAdaptativas,
+            )
+            ToggleRow(
+                title = stringResource(Res.string.settings_online_search),
+                desc = stringResource(Res.string.settings_online_search_desc),
+                checked = emLinha,
+                onChange = onEmLinha,
+            )
+        }
     }
 }
 

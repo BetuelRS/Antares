@@ -50,6 +50,16 @@ class BackupImporter(
             return@withContext ImportResult.NotABackup("faltam os campos de um backup do Antares")
         }
 
+        // Substituir tudo por nada só pode destruir. A 2.1.0 pôs a app a escrever sozinha
+        // cópias na pasta de Documentos, e uma delas saiu vazia — vinte e seis tabelas, zero
+        // linhas, com os dois campos que a assinatura exige. Escolher «substituir» com esse
+        // ficheiro apagava o histórico inteiro e o catálogo, e o ficheiro tinha sido posto
+        // ali pela própria app. Não há caso nenhum em que trocar tudo por nada seja o que
+        // alguém quis: recusa-se antes de qualquer escrita.
+        if (modo == ImportMode.REPLACE && semLinhaNenhuma(raiz)) {
+            return@withContext ImportResult.NotABackup("a cópia não tem registo nenhum")
+        }
+
         // O `substituir` esvazia só as tabelas que a cópia sabe repor. Apagar uma tabela
         // sem `restore` deixá-la-ia vazia para sempre, e restaurar passaria a destruir
         // dados que ninguém mandou destruir.
@@ -72,6 +82,11 @@ class BackupImporter(
             ImportResult.Failed(e.message ?: "falhou a importar")
         }
     }
+
+    // Conta as linhas de todas as listas do ficheiro. Não distingue tabelas: qualquer
+    // linha, em qualquer tabela, chega para a cópia ter alguma coisa a repor.
+    private fun semLinhaNenhuma(raiz: JsonObject): Boolean =
+        raiz.values.filterIsInstance<JsonArray>().sumOf { it.size } == 0
 
     private suspend fun <T : Any> aplicar(
         source: ExportSource<T>,

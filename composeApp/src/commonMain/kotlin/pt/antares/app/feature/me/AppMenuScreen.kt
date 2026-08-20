@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -40,6 +41,7 @@ fun AppMenuScreen(
     onAttributionsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onBackupClick: () -> Unit,
+    onDestinosClick: () -> Unit,
     onCrashClick: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -64,6 +66,10 @@ fun AppMenuScreen(
             MenuItem(Res.string.settings_general_title, Icons.Default.Settings, onSettingsClick)
 
             MenuItem(Res.string.backup_title, Icons.Default.Save, onBackupClick)
+
+            // A seguir à cópia e não na secção do «sobre»: as duas respondem à mesma
+            // pergunta — onde é que os meus dados estão e para onde vão.
+            MenuItem(Res.string.outgoing_title, Icons.Default.Public, onDestinosClick)
             MenuItem(Res.string.health_connect_title, Icons.Default.Favorite, onHealthClick)
 
             SectionHeader(title = stringResource(Res.string.more_group_about))

@@ -71,7 +71,7 @@
     <string name="cycle_open">Por fechar</string>
     <string name="cycle_days">%1$d dias</string>
     <string name="more_cycle">Ciclo</string>
-    <string name="photos_privacy">Estas fotos ficam só neste telemóvel. Não vão para servidor nenhum, não entram na cópia de segurança do Android e nenhuma outra aplicação lhes chega. Apagar a foto apaga o ficheiro.</string>
+    <string name="photos_privacy">Estas fotos não saem do telemóvel: não vão para servidor nenhum e a app não as mostra a mais ninguém. Vão dentro da cópia de segurança, que fica em Documentos/Antares — uma pasta que um gestor de ficheiros consegue abrir. É o preço de as fotos sobreviverem à perda do telemóvel. Apagar a foto apaga o ficheiro.</string>
     <string name="photos_take">Tirar foto</string>
     <string name="photos_pick">Escolher da galeria</string>
     <string name="photos_empty_title">Ainda não há fotos</string>
@@ -1209,7 +1209,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_hoje">Última cópia: hoje.</string>
     <string name="copia_ontem">Última cópia: ontem.</string>
     <string name="copia_ha_dias">Última cópia: há %1$s dias.</string>
-    <string name="copia_onde">%1$s cópias desta instalação, em %2$s.</string>
+    <string name="copia_onde">Cópias desta instalação: %1$s, em %2$s.</string>
     <string name="copia_automatica">A app faz esta cópia sozinha, de %1$s em %1$s dias, e guarda as últimas %2$s.</string>
     <string name="copia_agora">Copiar agora</string>
     <string name="copia_a_correr">A copiar…</string>
@@ -1220,7 +1220,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_atrasada_hoje">A tua última cópia de segurança tem %1$s dias.</string>
     <string name="copia_nunca_hoje">Ainda não há nenhuma cópia de segurança dos teus dados.</string>
     <string name="copia_inclui">O que vai na cópia</string>
-    <string name="copia_inclui_total">%1$s registos ao todo.</string>
+    <string name="copia_inclui_total">Registos ao todo: %1$s.</string>
     <string name="copia_conta_linha">%1$s: %2$s</string>
     <string name="copia_conta_food_log">Refeições</string>
     <string name="copia_conta_weight_log">Pesagens</string>
@@ -1237,5 +1237,45 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_import_sem_data">Este ficheiro não diz quando foi criado.</string>
     <string name="privacy_misses_clear_title">Limpar as pesquisas falhadas?</string>
     <string name="privacy_misses_clear_body">Apaga a lista toda. É ela que te diz que alimentos te faltam no catálogo, e depois de apagada não volta.</string>
+
+    <string name="common_ok">Está bem</string>
+    <string name="run_name_morning">%1$s da manhã</string>
+    <string name="run_name_afternoon">%1$s da tarde</string>
+    <string name="run_name_evening">%1$s da noite</string>
+    <string name="run_name_night">%1$s da madrugada</string>
+    <string name="search_online_off">A pesquisa em linha está desligada. Estás a ver só o catálogo que a app traz dentro.</string>
+    <string name="search_off_notice_title">A tua procura sai do telemóvel</string>
+    <string name="search_off_notice_body">Para encontrar produtos de marca, a Antares envia o que escreves à Open Food Facts, uma base pública de alimentos. Vai o texto da procura e mais nada — não vai quem és nem o que registaste. O mesmo acontece ao ler um código de barras. Podes decidir agora e mudar depois nas definições.</string>
+    <string name="search_off_notice_yes">Usar</string>
+    <string name="search_off_notice_no">Não usar</string>
+    <string name="scan_off_disabled_title">A pesquisa em linha está desligada</string>
+    <string name="scan_off_disabled_body">Ler um código de barras precisa de consultar a Open Food Facts. Podes voltar a ligá-la nas definições, ou criar o alimento à mão.</string>
+    <string name="settings_online_search">Pesquisa em linha</string>
+    <string name="settings_online_search_desc">Procurar produtos e ler códigos de barras na Open Food Facts. Desligada, a app usa só o catálogo que traz dentro.</string>
+    <string name="outgoing_title">O que sai daqui</string>
+    <string name="outgoing_intro">A Antares não tem conta nem servidor com os teus dados. Mas há coisas que saem, e nenhuma delas é evidente — por isso estão todas aqui, com o que sai e quando.</string>
+    <string name="outgoing_section_network">Sai do telemóvel</string>
+    <string name="outgoing_section_device">Sai da app, mas não do telemóvel</string>
+    <string name="outgoing_what_label">O que vai</string>
+    <string name="outgoing_when_label">Quando</string>
+    <string name="outgoing_off_title">Open Food Facts</string>
+    <string name="outgoing_off_what">O texto que escreves na procura, ou o código de barras que lês. Não vai quem és nem o que registaste.</string>
+    <string name="outgoing_off_when">Quando procuras um produto ou lês um código. Podes desligar isto.</string>
+    <string name="outgoing_ai_title">Análise por foto ou por texto</string>
+    <string name="outgoing_ai_what">A fotografia da refeição, ou a descrição que escreveste. A imagem não fica guardada do outro lado.</string>
+    <string name="outgoing_ai_when">Só quando pedes uma análise. Nunca sozinha.</string>
+    <string name="outgoing_delete_title">Apagar o que a análise por AI guardou</string>
+    <string name="outgoing_delete_what">O pedido de apagamento da conta anónima que a análise por AI usa.</string>
+    <string name="outgoing_delete_when">Quando carregas em apagar, no ecrã de privacidade.</string>
+    <string name="outgoing_map_title">Mapa das corridas</string>
+    <string name="outgoing_map_what">Os quadrados do mapa. O percurso nunca é enviado — mas os quadrados que a app pede dizem, pelo teu endereço, que zona estás a ver.</string>
+    <string name="outgoing_map_when">Enquanto corres com o mapa à vista.</string>
+    <string name="outgoing_images_title">Imagens dos exercícios</string>
+    <string name="outgoing_images_what">Que exercício abriste. O catálogo vem dentro da app; as imagens não.</string>
+    <string name="outgoing_images_when">Da primeira vez que abres cada exercício.</string>
+    <string name="outgoing_backup_title">A cópia de segurança</string>
+    <string name="outgoing_backup_what">Tudo o que registaste, fotos de progresso incluídas, num ficheiro em Documentos/Antares. Não vai para lado nenhum na Internet — mas é uma pasta que um gestor de ficheiros abre.</string>
+    <string name="outgoing_backup_when">De três em três dias, sozinha. É o que faz os teus dados sobreviverem a perder o telemóvel.</string>
+    <string name="outgoing_footer">Se alguma destas linhas deixar de ser verdade, é um defeito. Diz.</string>
 
 </resources>

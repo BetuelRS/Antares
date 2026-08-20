@@ -27,7 +27,12 @@ val networkModule = module {
     // A versão sai do `AppChangelog`, que o `AppChangelogTest` mantém colado ao
     // `versionName` do build. É o que impede o `User-Agent` de envelhecer sozinho.
     single { OffApi(get(), userAgent = "Antares/${AppChangelog.CURRENT} (${OffApi.CONTACT})") }
-    single { OffRepository(get(), get(), get(IoDispatcher)) }
+    single {
+        val preferencias = get<pt.antares.app.core.datastore.AppPreferences>()
+        // Lido a cada chamada e não uma vez: desligar o interruptor tem de valer já, e não
+        // só depois de a app ser reaberta.
+        OffRepository(get(), get(), get(IoDispatcher)) { preferencias.pesquisaEmLinhaOnce() }
+    }
 
     single { AnonymousSession(get(), get(IoDispatcher)) }
 

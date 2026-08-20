@@ -45,6 +45,7 @@ internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
             onAttributionsClick = { navController.navigate(Route.Attributions) },
             onAboutClick = { navController.navigate(Route.About) },
             onBackupClick = { navController.navigate(Route.Backup) },
+            onDestinosClick = { navController.navigate(Route.Destinos) },
             onCrashClick = { navController.navigate(Route.CrashLog) },
             onBack = { navController.popBackStack() },
         )
@@ -66,6 +67,11 @@ internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
     }
     composable<Route.Backup> {
         BackupScreen(onBack = { navController.popBackStack() })
+    }
+    composable<Route.Destinos> {
+        pt.antares.app.feature.privacidade.DestinosScreen(
+            onBack = { navController.popBackStack() },
+        )
     }
     composable<Route.CrashLog> {
         CrashScreen(onBack = { navController.popBackStack() })

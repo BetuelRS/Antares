@@ -98,6 +98,10 @@ O que precisa mesmo de rede é a pesquisa na Open Food Facts, a análise por fot
 mapa das corridas e as imagens dos exercícios. Todas distinguem **falha de rede** de **não há
 resultados**, porque o ecrã diz coisas diferentes e a pessoa faz coisas diferentes a seguir.
 
+A Open Food Facts tem, desde a 2.2.0, um terceiro estado: **desligada**. O interruptor vive no
+`OffRepository` e não nos ecrãs — é a única porta da app para lá, e um ecrã novo que se esqueça de
+o consultar não é possível. O `InterruptorDaPesquisaTest` guarda esse desenho.
+
 Ver [Privacidade](privacidade.md) para o que sai e para onde.
 
 ## O que não está resolvido

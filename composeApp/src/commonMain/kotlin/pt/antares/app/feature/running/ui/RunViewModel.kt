@@ -29,11 +29,23 @@ class RunViewModel(
         viewModelScope.launch { preferences.setRunOemWarningShown() }
     }
 
+    // Semeados das preferências e não só em memória. Ficam em `MutableStateFlow` para o
+    // `start()` os poder ler sem suspender: um `stateIn` devolveria o valor por omissão à
+    // primeira leitura, e quem carregasse em começar mal a app abrisse arrancava uma
+    // corrida com o tipo errado.
     private val _autoPause = MutableStateFlow(true)
     val autoPause: StateFlow<Boolean> = _autoPause
 
     private val _type = MutableStateFlow(ActivityType.RUN)
     val type: StateFlow<ActivityType> = _type
+
+    init {
+        viewModelScope.launch {
+            _autoPause.value = preferences.runAutoPauseOnce()
+            _type.value = runCatching { ActivityType.valueOf(preferences.runTypeOnce()) }
+                .getOrDefault(ActivityType.RUN)
+        }
+    }
 
     val goalType: StateFlow<RunGoalType> = preferences.runGoalType
         .map { runCatching { RunGoalType.valueOf(it) }.getOrDefault(RunGoalType.NONE) }
@@ -46,8 +58,15 @@ class RunViewModel(
         viewModelScope.launch { preferences.setRunGoal(type.name, value) }
     }
 
-    fun setAutoPause(enabled: Boolean) { _autoPause.value = enabled }
-    fun setType(type: ActivityType) { _type.value = type }
+    fun setAutoPause(enabled: Boolean) {
+        _autoPause.value = enabled
+        viewModelScope.launch { preferences.setRunAutoPause(enabled) }
+    }
+
+    fun setType(type: ActivityType) {
+        _type.value = type
+        viewModelScope.launch { preferences.setRunType(type.name) }
+    }
 
     fun start() = controller.start(_type.value, _autoPause.value)
     fun finish() = controller.stop()
