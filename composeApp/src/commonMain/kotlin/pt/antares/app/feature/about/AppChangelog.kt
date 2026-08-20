@@ -23,9 +23,41 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.1.0"
+    const val CURRENT = "2.2.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.2.0",
+            title = "A app diz o que sai daqui, e deixa-te cortar",
+            titleEn = "The app says what leaves, and lets you cut it",
+            highlights = listOf(
+                "Um ecrã novo, no menu, com **tudo o que sai do telemóvel** e quando: a " +
+                    "pesquisa de alimentos, a análise por foto, o mapa das corridas, as " +
+                    "imagens dos exercícios — e a cópia de segurança, à parte, porque essa " +
+                    "não sai para a Internet",
+                "A app avisa **antes** de a primeira procura sair, e não depois. Recusar ali " +
+                    "desliga a pesquisa em linha",
+                "Interruptor para desligar a pesquisa em linha e a leitura de códigos de " +
+                    "barras. Desligada, a app di-lo em vez de fingir que não há resultados",
+                "A corrida passa a sugerir um nome — «Corrida da manhã» — e a lembrar-se do " +
+                    "tipo de atividade e da auto-pausa que escolheste",
+                "A primeira cópia de segurança já não sai vazia, e substituir os dados deixa " +
+                    "de aceitar uma cópia sem um único registo",
+            ),
+            highlightsEn = listOf(
+                "A new screen, in the menu, with **everything that leaves the phone** and " +
+                    "when: food search, photo analysis, the run map, exercise images — and " +
+                    "the backup, kept apart, because that one goes nowhere on the internet",
+                "The app warns **before** the first search leaves, not after. Declining " +
+                    "there turns online search off",
+                "A switch to turn off online search and barcode lookups. With it off, the " +
+                    "app says so instead of pretending there are no results",
+                "Runs now suggest a name — «Morning run» — and remember the activity type " +
+                    "and auto-pause you picked",
+                "The first backup is no longer empty, and replacing your data no longer " +
+                    "accepts a backup without a single record",
+            ),
+        ),
         AppVersion(
             name = "2.1.0",
             title = "A cópia de segurança deixa de depender de ti",
@@ -299,27 +331,6 @@ object AppChangelog {
                 "A proper BMI scale, FFMI, and maintenance always in view",
                 "Activity level now describes the day without workouts; exercise used to count twice",
                 "Height in feet and inches for anyone using imperial",
-            ),
-        ),
-        AppVersion(
-            name = "0.10.0",
-            title = "A app tira-se do caminho",
-            titleEn = "The app gets out of the way",
-            highlights = listOf(
-                "**Outra vez** — repete num toque a última vez que comeste essa refeição",
-                "A app aprende a tua dose habitual de cada alimento — e nunca inventa números",
-                "Guarda uma refeição inteira e repete-a; copia-a de qualquer dia",
-                "Marca vários alimentos e regista-os todos de uma vez",
-                "Os teus 20 alimentos e as tuas 5 refeições à cabeça da pesquisa",
-                "Os líquidos deixaram de ser contados como sólidos",
-            ),
-            highlightsEn = listOf(
-                "**Again** — repeat the last time you ate that meal, in one tap",
-                "The app learns your usual portion of each food — and never invents numbers",
-                "Save a whole meal and repeat it; copy it from any day",
-                "Tick several foods and log them all at once",
-                "Your top 20 foods and top 5 meals up front in search",
-                "Liquids stopped being counted as solids",
             ),
         ),
     )

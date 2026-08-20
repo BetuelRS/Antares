@@ -17,6 +17,68 @@ Nada por lançar.
 
 ---
 
+## [2.2.0] — 2026-08-21
+
+A app passa a dizer o que sai daqui, e a deixar cortar o que sai todos os dias. Leva também
+o que uma auditoria às três versões anteriores encontrou por fazer e por corrigir. Esquema
+da base: **v26**, sem mudanças.
+
+### Adicionado
+
+- **Ecrã «O que sai daqui»**, no menu. Seis linhas, cada uma com o que vai e quando: a Open
+  Food Facts, a análise por foto e por texto, o mapa das corridas, as imagens dos exercícios,
+  o pedido de apagamento — e, numa secção à parte porque não é rede, a cópia de segurança.
+  Estes cinco destinos estavam descritos no repositório desde sempre e em lado nenhum dentro
+  da app. Quem usa a app não lê o repositório.
+- **Aviso antes da primeira procura em linha.** A app diz que o texto vai à Open Food Facts
+  **antes** de o enviar, e não depois. Recusar ali desliga a pesquisa; é a mesma escolha que
+  o interruptor guarda.
+- **Interruptor da pesquisa em linha**, nas definições. Corta a procura por texto e a leitura
+  de código de barras — os dois vão ao mesmo sítio pela mesma razão. Fica ligado por omissão,
+  que é como a app sempre funcionou. Desligada, a app diz que está desligada em vez de fingir
+  que não há resultados.
+- **Nome sugerido para a corrida**: «Corrida da manhã», já escrito no campo e apagável. O
+  campo abria vazio, quase ninguém escrevia nada, e o detalhe de todas as corridas chamava-se
+  «Resumo» — o ficheiro GPX exportado saía sem nome nenhum.
+
+### Corrigido
+
+- **O tipo de atividade e a auto-pausa não eram guardados.** Quem anda sempre a pé escolhia
+  «caminhada» a cada arranque; quem desligava a auto-pausa encontrava-a ligada na vez
+  seguinte. A meta da corrida, na mesma linha de código, já era guardada.
+- **A primeira cópia de segurança automática saía vazia.** Numa instalação limpa a cópia
+  disparava antes de haver o que copiar: vinte e seis tabelas, zero linhas, 526 bytes — e o
+  cartão a dizer «última cópia: hoje». Uma cópia que não protege nada é pior do que nenhuma,
+  porque **cala o aviso**. A cópia passa a esperar pelo fim do arranque, e sai no instante em
+  que ele acaba.
+- **Substituir os dados aceitava uma cópia sem uma linha.** Esse ficheiro vazio tinha os dois
+  campos que a assinatura exige, portanto passava por cópia legítima, e substituir com ele
+  esvaziava todas as tabelas — catálogo incluído. Era um ficheiro que a própria app tinha
+  escrito e posto na pasta. Passa a ser recusado antes de a transação abrir.
+- **O texto das fotos de progresso deixou de ser verdade na 2.1.0**, e ninguém o disse. Dizia
+  que «nenhuma outra aplicação lhes chega»; desde que a cópia automática as leva para
+  «Documentos/Antares», uma pasta partilhada, isso é falso. O texto passa a dizer o que
+  acontece, e porquê: é o preço de as fotos sobreviverem à perda do telemóvel.
+- Duas frases diziam «1 backups» e «1 registos».
+
+### Alterado
+
+- `docs/referencia/regras.md` dizia **«vinte e oito»** regras — são vinte e nove — e **«38
+  testes-guarda»**, quando são cinquenta. Três testes-guarda que existiam desde antes do
+  plano — `PlateauHonestyTest`, `GoalGuardrailsTest` e `TargetBreakdownSweepTest` — estavam
+  sem documentação.
+
+### Notas
+
+- **A frase do primeiro ecrã continua a dizer «Nada sai do telemóvel», e é falsa.** Ler um
+  código de barras vai à Open Food Facts e uma análise por foto vai à Anthropic, nenhuma das
+  duas por exportação de ninguém. Corrigi-la ficou para a **2.40.0**, onde o arranque é
+  reescrito, por decisão do dono. Fica dito aqui para não se perder.
+- O interruptor **não é um modo avião**: o mapa das corridas, as imagens dos exercícios e a
+  análise por AI continuam a poder sair, cada uma quando é pedida. O ecrã novo diz quando.
+
+---
+
 ## [2.1.0] — 2026-08-20
 
 A cópia de segurança deixa de depender de alguém se lembrar dela. Não melhora nada do que a
