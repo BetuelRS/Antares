@@ -56,6 +56,14 @@ object UnitConversions {
 
     // Arredonda para polegadas inteiras antes de separar pés: sem isso, 5 pés e 12
     // polegadas era um resultado possível.
+    /**
+     * Metros para pés. O desnível de uma corrida lê-se em pés para quem usa imperial, e não
+     * havia por onde: era o último número da corrida ainda preso ao sistema métrico.
+     */
+    fun mToFt(m: Double): Double = m / M_PER_FT
+
+    private const val M_PER_FT = 0.3048
+
     fun cmToFtIn(cm: Int): Pair<Int, Int> {
         val totalInches = (cm / CM_PER_IN).roundToInt()
         return Pair(totalInches / 12, totalInches % 12)

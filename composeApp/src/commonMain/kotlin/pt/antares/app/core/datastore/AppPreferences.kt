@@ -78,6 +78,7 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         val quietEndMin = androidx.datastore.preferences.core.intPreferencesKey("notif_quiet_end")
         val runOemWarningShown = booleanPreferencesKey("run_oem_warning_shown")
         val adminUnlimited = booleanPreferencesKey("admin_unlimited")
+        val adminRevelado = booleanPreferencesKey("admin_revelado")
         val adaptiveTargets = booleanPreferencesKey("adaptive_targets_enabled")
         val runGoalType = androidx.datastore.preferences.core.stringPreferencesKey("run_goal_type")
         val runGoalValue = androidx.datastore.preferences.core.intPreferencesKey("run_goal_value")
@@ -306,6 +307,18 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setAdminUnlimited(enabled: Boolean) {
         dataStore.edit { it[Keys.adminUnlimited] = enabled }
+    }
+
+    /**
+     * Se a entrada da administração aparece nas definições. Fica falsa até alguém tocar
+     * sete vezes na versão, como o Android faz com o modo de programador — e mesmo depois
+     * de revelada continua a pedir o código, que nunca entra em ficheiro nenhum.
+     */
+    val adminRevelado: Flow<Boolean> =
+        dataStore.data.map { it[Keys.adminRevelado] ?: false }
+
+    suspend fun revelarAdmin() {
+        dataStore.edit { it[Keys.adminRevelado] = true }
     }
 
     val adaptiveTargets: Flow<Boolean> =

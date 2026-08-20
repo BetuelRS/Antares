@@ -84,7 +84,12 @@ fun FastingScreen(
     LaunchedEffect(Unit) {
         while (true) {
             now = Clock.System.now().toEpochMilliseconds()
-            delay(1_000)
+
+            // Dorme até à mudança do minuto, e não um segundo de cada vez. O relógio mostra
+            // horas e minutos: acordar de segundo a segundo redesenhava o ecrã sessenta
+            // vezes para o número mudar uma — e, por acumular desvio, mudava-o com até um
+            // segundo de atraso. Assim muda no instante em que o minuto muda.
+            delay(MIN_MS - now % MIN_MS)
         }
     }
 

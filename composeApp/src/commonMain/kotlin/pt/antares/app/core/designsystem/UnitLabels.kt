@@ -10,6 +10,8 @@ import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.common_cm
 import pt.antares.app.generated.resources.common_floz
 import pt.antares.app.generated.resources.common_ft
+import pt.antares.app.generated.resources.common_ft_short
+import pt.antares.app.generated.resources.common_m
 import pt.antares.app.generated.resources.common_in
 import pt.antares.app.generated.resources.common_grams_short
 import pt.antares.app.generated.resources.common_kg
@@ -45,6 +47,10 @@ fun portionUnitLabel(system: UnitSystem, liquid: Boolean): StringResource = when
     liquid -> Res.string.common_floz
     else -> Res.string.common_oz
 }
+
+/** Metros ou pés, para o desnível de uma corrida. */
+fun elevationUnitLabel(system: UnitSystem): StringResource =
+    if (system == UnitSystem.IMPERIAL) Res.string.common_ft_short else Res.string.common_m
 
 /**
  * Um peso com a unidade, arredondado ao inteiro. A base guarda sempre quilos: aqui converte-se

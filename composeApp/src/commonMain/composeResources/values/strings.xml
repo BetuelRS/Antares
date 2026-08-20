@@ -99,6 +99,8 @@
     <string name="common_cm">cm</string>
     <string name="common_in">pol</string>
     <string name="common_ft">pé</string>
+    <string name="common_m">m</string>
+    <string name="common_ft_short">ft</string>
     <string name="common_grams_short">g</string>
     <string name="common_oz">oz</string>
     <string name="common_floz">fl oz</string>
@@ -1012,7 +1014,10 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="bodycomp_arm">Braço (cm)</string>
     <string name="bodycomp_thigh">Coxa (cm)</string>
     <string name="bodycomp_chest">Peito (cm)</string>
-    <string name="bodycomp_measure_hint">Mede de manhã, relaxado, com a fita justa mas sem apertar. A cintura ao nível do umbigo.</string>
+    <string name="bodycomp_measure_hint">Mede de manhã, relaxado, com a fita justa mas sem apertar.</string>
+    <string name="bodycomp_waist_hint_male">A cintura ao nível do umbigo.</string>
+    <string name="bodycomp_waist_hint_female">A cintura no ponto mais estreito do tronco, que costuma ficar acima do umbigo.</string>
+    <string name="bodycomp_neck_hint">O pescoço abaixo da laringe, com a fita ligeiramente descaída à frente.</string>
     <string name="bodycomp_known_note">Valor dado por ti. É este que a app usa.</string>
     <string name="bodycomp_navy_note">Estimativa pelas circunferências (US Navy). É uma estimativa, não uma medição.</string>
     <string name="bodycomp_bmi_note">Estimativa pelo IMC. É a mais grosseira das três e não entra no cálculo da tua meta.</string>

@@ -21,6 +21,16 @@ class SettingsViewModel(
         preferences.setMealName(slot, name)
     }
 
+    /**
+     * A administração só aparece depois de sete toques na versão. Não é segurança — o código
+     * é que a guarda — é para o ecrã de definições de uma app pessoal não ter uma porta de
+     * manutenção à vista de quem só quer mudar o tema.
+     */
+    val adminRevelado: StateFlow<Boolean> = preferences.adminRevelado
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+    fun revelarAdmin() = viewModelScope.launch { preferences.revelarAdmin() }
+
     val adaptiveTargets: StateFlow<Boolean> = preferences.adaptiveTargets
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 

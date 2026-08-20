@@ -558,27 +558,11 @@ fun ProfileSettingsScreen(
                 AiQuotaMeter(usage)
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-            ) {
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        stringResource(Res.string.settings_adaptive_title),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(
-                        stringResource(Res.string.settings_adaptive_desc),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Switch(
-                    checked = state.adaptiveTargets,
-                    onCheckedChange = viewModel::setAdaptiveTargets,
-                )
-            }
+            // O interruptor das metas adaptativas vivia aqui e nas definições, com o mesmo
+            // título e a mesma descrição. Lê a mesma preferência nos dois sítios, por isso
+            // nunca chegaram a discordar — mas dois interruptores iguais fazem quem os vê
+            // procurar a diferença que não existe. Fica o das definições, na secção do
+            // comportamento, que é onde os interruptores da app vivem.
 
             SectionHeader(title = stringResource(Res.string.settings_section_privacy))
             PrivacySection(onCreateFood = onCreateFood)

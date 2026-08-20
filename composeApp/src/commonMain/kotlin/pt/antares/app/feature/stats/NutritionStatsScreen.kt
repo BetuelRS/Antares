@@ -1,5 +1,6 @@
 package pt.antares.app.feature.stats
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.PathEffect
@@ -46,6 +48,7 @@ import kotlin.math.roundToInt
 @Composable
 fun NutritionStatsScreen(
     onBack: () -> Unit,
+    onOpenRichIn: (String) -> Unit,
     viewModel: NutritionStatsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -127,7 +130,7 @@ fun NutritionStatsScreen(
                         )
                     }
                     items(rows, key = { it.key }) {
-                        CoverageRow(it, dayMeasuredPct = state.measuredAnyPct)
+                        CoverageRow(it, dayMeasuredPct = state.measuredAnyPct, onOpenRichIn = onOpenRichIn)
                     }
                 }
             }
@@ -145,8 +148,16 @@ fun NutritionStatsScreen(
 }
 
 @Composable
-private fun CoverageRow(c: MicroCoverage, dayMeasuredPct: Int) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.xs)) {
+private fun CoverageRow(c: MicroCoverage, dayMeasuredPct: Int, onOpenRichIn: (String) -> Unit) {
+    // A linha diz que um nutriente está a 34 % e não levava a lado nenhum. O ecrã que
+    // responde — os alimentos ricos nele — já existe e já se alcança do cartão do Hoje e
+    // do perfil; faltava a porta no único sítio onde a falta se vê.
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(role = Role.Button) { onOpenRichIn(c.key) }
+            .padding(vertical = Spacing.xs),
+    ) {
 
         SplitRow(
             leading = {

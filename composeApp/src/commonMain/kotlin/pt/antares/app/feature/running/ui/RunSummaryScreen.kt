@@ -26,6 +26,7 @@ import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.distanceUnitLabel
+import pt.antares.app.core.designsystem.elevationUnitLabel
 import pt.antares.app.core.designsystem.paceUnitLabel
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -35,6 +36,7 @@ import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.run_summary_discard
+import pt.antares.app.generated.resources.run_summary_elev
 import pt.antares.app.generated.resources.run_summary_name_hint
 import pt.antares.app.generated.resources.run_summary_save
 import pt.antares.app.generated.resources.run_summary_no_map
@@ -87,6 +89,19 @@ fun RunSummaryScreen(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text("${m.kcal} kcal", style = MaterialTheme.typography.bodyLarge)
+                }
+                // O desnível era medido, gravado e mostrado no detalhe — e faltava aqui,
+                // que é o único ecrã que se vê logo a seguir a correr. Só aparece quando
+                // houve subida: um «0 m» num percurso plano é ruído.
+                if (m.elevGainM >= 1.0) {
+                    Text(
+                        "${stringResource(Res.string.run_summary_elev)}: " +
+                            "${RunFormat.elevation(m.elevGainM, unidades)} " +
+                            stringResource(elevationUnitLabel(unidades)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.xs),
+                    )
                 }
             }
             SplitsTable(viewModel.splits())

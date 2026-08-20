@@ -295,14 +295,19 @@ fun CoachTeaserCard(
                     text = stringResource(Res.string.coach_teaser_title),
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Text(
-                    text = report.focus,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = Spacing.xs),
-                )
+                // O foco pode vir vazio — há semanas em que o treinador não tem nada de
+                // novo a apontar. Sem esta condição ficava uma linha em branco com espaço
+                // por cima, que se lê como um texto que não carregou.
+                if (report.focus.isNotBlank()) {
+                    Text(
+                        text = report.focus,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(top = Spacing.xs),
+                    )
+                }
             }
             Text(
                 text = stringResource(Res.string.coach_teaser_cta),

@@ -1,5 +1,6 @@
 package pt.antares.app.feature.running.ui
 
+import kotlin.math.roundToInt
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.designsystem.twoDecimals
 import pt.antares.app.core.util.UnitConversions
@@ -19,6 +20,17 @@ object RunFormat {
      */
     fun distance(distanceM: Double, system: UnitSystem, comma: Boolean): String =
         twoDecimals(UnitConversions.distanceToDisplay(distanceM / 1000.0, system), comma)
+
+    /**
+     * O desnível acumulado, arredondado à unidade: uma subida não se lê às décimas. Em
+     * imperial vai em pés, como o resto da corrida.
+     */
+    fun elevation(m: Double, system: UnitSystem): String =
+        if (system == UnitSystem.IMPERIAL) {
+            UnitConversions.mToFt(m).roundToInt().toString()
+        } else {
+            m.roundToInt().toString()
+        }
 
     fun clock(ms: Long): String {
         val total = ms / 1000

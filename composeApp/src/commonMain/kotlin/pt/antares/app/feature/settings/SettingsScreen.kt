@@ -43,6 +43,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val adaptive by viewModel.adaptiveTargets.collectAsState()
+    val adminRevelado by viewModel.adminRevelado.collectAsState()
     val mealNames by viewModel.mealNames.collectAsState()
 
     val selectedLanguage = currentAppLanguage()
@@ -145,6 +146,7 @@ fun SettingsScreen(
                 }
             }
 
+            if (adminRevelado) {
             SectionHeader(title = stringResource(Res.string.admin_title))
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
                 Row(
@@ -160,6 +162,7 @@ fun SettingsScreen(
                         modifier = Modifier.weight(1f),
                     )
                 }
+            }
             }
         }
     }

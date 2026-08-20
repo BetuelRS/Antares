@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.util.rememberFileSharer
+import pt.antares.app.core.designsystem.elevationUnitLabel
 import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
@@ -72,7 +73,9 @@ fun RunDetailScreen(
                     Text("${run.kcal} kcal")
                 }
                 Text(
-                    "${stringResource(Res.string.run_summary_elev)}: ${run.elevGainM.toInt()} m",
+                    "${stringResource(Res.string.run_summary_elev)}: " +
+                        "${RunFormat.elevation(run.elevGainM, unidades)} " +
+                        stringResource(elevationUnitLabel(unidades)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = Spacing.xs),

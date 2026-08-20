@@ -104,6 +104,9 @@ internal fun NavGraphBuilder.rotasDeComida(navController: NavHostController) {
         )
     }
     composable<Route.NutritionStats> {
-        NutritionStatsScreen(onBack = { navController.popBackStack() })
+        NutritionStatsScreen(
+            onBack = { navController.popBackStack() },
+            onOpenRichIn = { chave -> navController.navigate(Route.RichIn(chave)) },
+        )
     }
 }

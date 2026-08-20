@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.model.Sex
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.bodyWeightWithUnit
 import pt.antares.app.core.designsystem.larguraDeLeitura
@@ -114,10 +115,33 @@ fun BodyCompositionScreen(
                         value = state.waist,
                         onChange = viewModel::setWaist,
                     )
+                    // O sítio da cintura não é o mesmo nos dois sexos, e a fórmula da
+                    // Marinha conta com isso: ao umbigo no homem, no ponto mais estreito na
+                    // mulher. Uma instrução só, igual para ambos, media a coisa errada em
+                    // metade das pessoas — e o erro-padrão de 3,6 pontos que a app declara
+                    // pressupõe a medida certa.
+                    Text(
+                        stringResource(
+                            if (state.sex == Sex.FEMALE) {
+                                Res.string.bodycomp_waist_hint_female
+                            } else {
+                                Res.string.bodycomp_waist_hint_male
+                            },
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                     NumberField(
                         label = stringResource(Res.string.bodycomp_neck),
                         value = state.neck,
                         onChange = viewModel::setNeck,
+                    )
+                    // O pescoço é o outro valor que a fórmula usa, e era o único dos três
+                    // sem instrução nenhuma.
+                    Text(
+                        stringResource(Res.string.bodycomp_neck_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     if (state.needsHip) {
                         NumberField(

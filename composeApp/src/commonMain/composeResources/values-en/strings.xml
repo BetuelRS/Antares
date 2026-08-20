@@ -99,6 +99,8 @@
     <string name="common_cm">cm</string>
     <string name="common_in">in</string>
     <string name="common_ft">ft</string>
+    <string name="common_m">m</string>
+    <string name="common_ft_short">ft</string>
     <string name="common_grams_short">g</string>
     <string name="common_oz">oz</string>
     <string name="common_floz">fl oz</string>
@@ -1011,7 +1013,10 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="bodycomp_arm">Arm (cm)</string>
     <string name="bodycomp_thigh">Thigh (cm)</string>
     <string name="bodycomp_chest">Chest (cm)</string>
-    <string name="bodycomp_measure_hint">Measure in the morning, relaxed, tape snug but not tight. Waist at navel level.</string>
+    <string name="bodycomp_measure_hint">Measure in the morning, relaxed, with the tape snug but not tight.</string>
+    <string name="bodycomp_waist_hint_male">Waist at navel level.</string>
+    <string name="bodycomp_waist_hint_female">Waist at the narrowest point of the torso, usually above the navel.</string>
+    <string name="bodycomp_neck_hint">Neck below the larynx, with the tape sloping slightly downward at the front.</string>
     <string name="bodycomp_known_note">Your own number. This is the one the app uses.</string>
     <string name="bodycomp_navy_note">Estimated from circumferences (US Navy). An estimate, not a measurement.</string>
     <string name="bodycomp_bmi_note">Estimated from BMI. The roughest of the three, and it does not feed your target.</string>
