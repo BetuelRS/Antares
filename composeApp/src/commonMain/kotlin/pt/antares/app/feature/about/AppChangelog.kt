@@ -23,9 +23,44 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.0.3"
+    const val CURRENT = "2.0.4"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.0.4",
+            title = "Nove coisas que a app dizia e não eram verdade",
+            titleEn = "Nine things the app said that were not true",
+            highlights = listOf(
+                "A janela da tendência e a meta de massa gorda escolhiam-se, gravavam-se, e " +
+                    "nada as lia: agora a janela governa mesmo a conta, e a meta aparece ao " +
+                    "lado da medida a que se compara",
+                "A instrução de medir a cintura era igual para os dois sexos, e a fórmula " +
+                    "pede sítios diferentes — o umbigo no homem, o ponto mais estreito na " +
+                    "mulher. O pescoço ganhou a instrução que nunca teve",
+                "Tocar num micronutriente que está a 34 % não levava a lado nenhum, e o ecrã " +
+                    "dos alimentos ricos nele já existia",
+                "O desnível da corrida era medido e gravado, e faltava no resumo — e no " +
+                    "detalhe vinha em metros a quem usa pés",
+                "O interruptor das metas adaptativas estava em dois ecrãs, o relógio do jejum " +
+                    "redesenhava-se sessenta vezes por minuto para mudar uma, e a " +
+                    "administração estava à vista de quem só queria mudar o tema",
+            ),
+            highlightsEn = listOf(
+                "The trend window and the body-fat goal were chosen, saved, and read by " +
+                    "nothing: the window now drives the calculation, and the goal shows next " +
+                    "to the measurement it compares against",
+                "The waist measuring instruction was the same for both sexes, and the formula " +
+                    "asks for different places — the navel for men, the narrowest point for " +
+                    "women. The neck got the instruction it never had",
+                "Tapping a micronutrient sitting at 34% led nowhere, and the screen listing " +
+                    "foods rich in it already existed",
+                "Run elevation was measured and saved, and missing from the summary — and the " +
+                    "detail screen showed metres to people using feet",
+                "The adaptive-targets switch lived on two screens, the fasting clock redrew " +
+                    "sixty times a minute to change once, and admin sat in plain sight of " +
+                    "anyone who just wanted to change the theme",
+            ),
+        ),
         AppVersion(
             name = "2.0.3",
             title = "Os números deixam de mudar sozinhos",
@@ -273,21 +308,6 @@ object AppChangelog {
                 "Your smart scale fills in body fat by itself",
                 "The app writes body composition to Health Connect as well as reading it",
                 "Each weigh-in now knows where it came from, so it never lands twice",
-            ),
-        ),
-        AppVersion(
-            name = "0.8.0",
-            title = "A semana passada, em factos",
-            titleEn = "Last week, in facts",
-            highlights = listOf(
-                "**Relatório semanal**: a app diz-te como comeste — factos, e não conselhos",
-                "Quando a balança e o registo discordam ao longo de semanas, propõe um ajuste ao ritmo",
-                "A proposta só se aplica se a aceitares",
-            ),
-            highlightsEn = listOf(
-                "**Weekly report**: the app tells you how you have been eating — facts, not advice",
-                "When the scale and the log disagree over weeks, it proposes an adjustment to your rate",
-                "The proposal only applies if you accept it",
             ),
         ),
     )

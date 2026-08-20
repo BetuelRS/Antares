@@ -17,6 +17,45 @@ Nada por lançar.
 
 ---
 
+## [2.0.4] — 2026-08-18
+
+Nove coisas que a app dizia e não eram verdade. Nenhuma parte nada — todas fazem quem lê
+acreditar numa coisa que não acontece. Esquema da base: **v26**, sem mudanças.
+
+Os quatro achados que mais decidiam a versão foram confirmados no código antes de se lhes
+tocar, e um estava mal lido: **a administração não estava escondida** — tinha secção própria
+e uma entrada à vista no fim das definições. O item era para a esconder, não para lhe abrir
+uma porta.
+
+### Corrigido
+
+- **Dois controlos do perfil gravavam e não faziam nada.** A janela da tendência (7 ou 28
+  dias) escolhia-se e a conta ignorava-a; a meta de massa gorda escrevia-se e não voltava a
+  aparecer. Ligados em vez de apagados: a app já prometia as duas coisas, e tornar
+  verdadeira uma promessa feita é corrigir. A meta mostra-se ao lado da medida a que se
+  compara, com os pontos que faltam.
+- **A instrução de medir a cintura era igual para os dois sexos.** A fórmula da Marinha pede
+  o umbigo no homem e o ponto mais estreito na mulher, e medir no sítio errado invalida o
+  erro-padrão de 3,6 pontos que a app declara. São agora duas frases, escolhidas pelo
+  perfil — e **o pescoço**, o outro valor da fórmula, ganha a instrução que nunca teve.
+- **Os micronutrientes não levavam a lado nenhum.** Uma linha dizia que um nutriente está a
+  34 % e não era tocável, quando o ecrã dos alimentos ricos nele já existe e já se alcança
+  do Hoje e do perfil.
+- **O desnível da corrida faltava no resumo**, que é o ecrã que se vê logo a seguir a
+  correr, e no detalhe vinha em metros a quem usa pés. Nasce um formatador de altitude, e
+  os dois ecrãs passam a usá-lo.
+- **O interruptor das metas adaptativas estava em dois ecrãs** com o mesmo título e a mesma
+  descrição. Fica o das definições, na secção do comportamento.
+- **O relógio do jejum acordava de segundo a segundo** para mostrar horas e minutos:
+  cinquenta e nove em cada sessenta voltas redesenhavam o ecrã sem mudar um algarismo, e o
+  desvio acumulado atrasava a mudança até um segundo. Dorme até à mudança do minuto.
+- **O cartão do treinador desenhava uma linha em branco** quando o foco vinha vazio.
+- **A administração estava à vista** no fim das definições. Aparece agora só depois de sete
+  toques na versão, como o Android faz com o modo de programador. Continua a pedir o
+  código.
+
+---
+
 ## [2.0.3] — 2026-08-18
 
 Cinco defeitos que mexem em números, e o teste que impede cada um de voltar. Nenhum parte a
