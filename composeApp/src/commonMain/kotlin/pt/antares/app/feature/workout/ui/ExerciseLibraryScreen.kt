@@ -40,6 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.ListaAdaptavel
@@ -185,10 +186,12 @@ private fun ExerciseListItem(ex: Exercise, onClick: () -> Unit) {
     val equipText = ex.equipment?.let { stringResource(equipmentLabel(it)) }
     val subtitle = listOfNotNull(muscleText, equipText).joinToString(" · ")
 
-    AntaresCard(modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
-            // Sem texto no erro: numa miniatura de 56 dp uma frase não cabe, e o ícone
-            // sozinho já distingue «ainda a carregar» de «não veio».
+    LinhaDaLista(
+        titulo = ex.displayName,
+        subtitulo = subtitle.takeIf { it.isNotEmpty() },
+        // Sem texto no erro: numa miniatura de 56 dp uma frase não cabe, e o ícone sozinho
+        // já distingue «ainda a carregar» de «não veio».
+        inicio = {
             ExerciseImage(
                 url = ex.imageUrls.firstOrNull(),
                 exerciseName = ex.displayName,
@@ -196,18 +199,9 @@ private fun ExerciseListItem(ex: Exercise, onClick: () -> Unit) {
                 comTexto = false,
                 modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
             )
-            Column(Modifier.weight(1f)) {
-                Text(ex.displayName, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
-                if (subtitle.isNotEmpty()) {
-                    Text(
-                        subtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-        }
-    }
+        },
+        onClick = onClick,
+    )
 }
 
 // Altura do botão flutuante estendido mais a margem que ele guarda do fundo.

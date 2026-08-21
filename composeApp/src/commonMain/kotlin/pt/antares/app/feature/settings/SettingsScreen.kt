@@ -1,6 +1,7 @@
 package pt.antares.app.feature.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +27,7 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.ThemeMode
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.LinhaDaLista
-import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.core.model.MealSlot
@@ -51,116 +52,108 @@ fun SettingsScreen(
     val selectedLanguage = currentAppLanguage()
     val setLanguage = rememberLanguageSetter()
 
-    AntaresScaffold(
+    AntaresScreen(
         topBar = { AntaresTopBar(title = stringResource(Res.string.settings_general_title), onBack = onBack) },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .larguraDeLeitura()
-                .padding(horizontal = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
-        ) {
-            SectionHeader(title = stringResource(Res.string.settings_language))
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Column {
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_language_system),
-                        selected = selectedLanguage == AppLanguage.SYSTEM,
-                        onClick = { if (selectedLanguage != AppLanguage.SYSTEM) setLanguage(AppLanguage.SYSTEM) },
-                    )
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_language_pt),
-                        selected = selectedLanguage == AppLanguage.PT,
-                        onClick = { if (selectedLanguage != AppLanguage.PT) setLanguage(AppLanguage.PT) },
-                    )
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_language_en),
-                        selected = selectedLanguage == AppLanguage.EN,
-                        onClick = { if (selectedLanguage != AppLanguage.EN) setLanguage(AppLanguage.EN) },
+        espaco = Spacing.sm,
+        margem = PaddingValues(horizontal = Spacing.lg),
+    ) {
+        SectionHeader(title = stringResource(Res.string.settings_language))
+        AntaresCard(modifier = Modifier.fillMaxWidth()) {
+            Column {
+                LanguageRow(
+                    label = stringResource(Res.string.settings_language_system),
+                    selected = selectedLanguage == AppLanguage.SYSTEM,
+                    onClick = { if (selectedLanguage != AppLanguage.SYSTEM) setLanguage(AppLanguage.SYSTEM) },
+                )
+                LanguageRow(
+                    label = stringResource(Res.string.settings_language_pt),
+                    selected = selectedLanguage == AppLanguage.PT,
+                    onClick = { if (selectedLanguage != AppLanguage.PT) setLanguage(AppLanguage.PT) },
+                )
+                LanguageRow(
+                    label = stringResource(Res.string.settings_language_en),
+                    selected = selectedLanguage == AppLanguage.EN,
+                    onClick = { if (selectedLanguage != AppLanguage.EN) setLanguage(AppLanguage.EN) },
+                )
+            }
+        }
+        Text(
+            stringResource(Res.string.settings_language_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = Spacing.sm),
+        )
+
+        val themeMode by viewModel.themeMode.collectAsState()
+        SectionHeader(title = stringResource(Res.string.settings_appearance))
+        AntaresCard(modifier = Modifier.fillMaxWidth()) {
+            Column {
+                LanguageRow(
+                    label = stringResource(Res.string.settings_theme_system),
+                    selected = themeMode == ThemeMode.SYSTEM,
+                    onClick = { viewModel.setThemeMode(ThemeMode.SYSTEM) },
+                )
+                LanguageRow(
+                    label = stringResource(Res.string.settings_theme_light),
+                    selected = themeMode == ThemeMode.LIGHT,
+                    onClick = { viewModel.setThemeMode(ThemeMode.LIGHT) },
+                )
+                LanguageRow(
+                    label = stringResource(Res.string.settings_theme_dark),
+                    selected = themeMode == ThemeMode.DARK,
+                    onClick = { viewModel.setThemeMode(ThemeMode.DARK) },
+                )
+            }
+        }
+
+        SeccaoDoComportamento(
+            adaptativas = adaptive,
+            onAdaptativas = viewModel::setAdaptiveTargets,
+            emLinha = emLinha,
+            onEmLinha = viewModel::setPesquisaEmLinha,
+        )
+
+        SectionHeader(title = stringResource(Res.string.settings_meal_names))
+        AntaresCard(modifier = Modifier.fillMaxWidth()) {
+            Column {
+                Text(
+                    stringResource(Res.string.settings_meal_names_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = Spacing.sm),
+                )
+                MealSlot.entries.forEach { slot ->
+                    val padrao = mealSlotLabelDefault(slot)
+                    OutlinedTextField(
+                        value = mealNames[slot].orEmpty(),
+                        onValueChange = { viewModel.setMealName(slot, it) },
+
+                        label = { Text(padrao) },
+                        placeholder = { Text(padrao) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xs),
                     )
                 }
             }
-            Text(
-                stringResource(Res.string.settings_language_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = Spacing.sm),
-            )
+        }
 
-            val themeMode by viewModel.themeMode.collectAsState()
-            SectionHeader(title = stringResource(Res.string.settings_appearance))
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Column {
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_theme_system),
-                        selected = themeMode == ThemeMode.SYSTEM,
-                        onClick = { viewModel.setThemeMode(ThemeMode.SYSTEM) },
-                    )
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_theme_light),
-                        selected = themeMode == ThemeMode.LIGHT,
-                        onClick = { viewModel.setThemeMode(ThemeMode.LIGHT) },
-                    )
-                    LanguageRow(
-                        label = stringResource(Res.string.settings_theme_dark),
-                        selected = themeMode == ThemeMode.DARK,
-                        onClick = { viewModel.setThemeMode(ThemeMode.DARK) },
-                    )
-                }
+        if (adminRevelado) {
+        SectionHeader(title = stringResource(Res.string.admin_title))
+        AntaresCard(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(selected = false, onClick = onAdminClick)
+                    .padding(vertical = Spacing.sm),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    stringResource(Res.string.admin_open),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f),
+                )
             }
-
-            SeccaoDoComportamento(
-                adaptativas = adaptive,
-                onAdaptativas = viewModel::setAdaptiveTargets,
-                emLinha = emLinha,
-                onEmLinha = viewModel::setPesquisaEmLinha,
-            )
-
-            SectionHeader(title = stringResource(Res.string.settings_meal_names))
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Column {
-                    Text(
-                        stringResource(Res.string.settings_meal_names_desc),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = Spacing.sm),
-                    )
-                    MealSlot.entries.forEach { slot ->
-                        val padrao = mealSlotLabelDefault(slot)
-                        OutlinedTextField(
-                            value = mealNames[slot].orEmpty(),
-                            onValueChange = { viewModel.setMealName(slot, it) },
-
-                            label = { Text(padrao) },
-                            placeholder = { Text(padrao) },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.xs),
-                        )
-                    }
-                }
-            }
-
-            if (adminRevelado) {
-            SectionHeader(title = stringResource(Res.string.admin_title))
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(selected = false, onClick = onAdminClick)
-                        .padding(vertical = Spacing.sm),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        stringResource(Res.string.admin_open),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-            }
-            }
+        }
         }
     }
 }

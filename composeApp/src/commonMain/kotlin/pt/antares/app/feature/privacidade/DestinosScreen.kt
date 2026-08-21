@@ -1,6 +1,7 @@
 package pt.antares.app.feature.privacidade
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +20,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
-import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.core.designsystem.larguraDeLeitura
@@ -41,37 +42,29 @@ import pt.antares.app.generated.resources.outgoing_when_label
  */
 @Composable
 fun DestinosScreen(onBack: () -> Unit) {
-    AntaresScaffold(
+    AntaresScreen(
         topBar = { AntaresTopBar(title = stringResource(Res.string.outgoing_title), onBack = onBack) },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .larguraDeLeitura()
-                .padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
-            Text(
-                stringResource(Res.string.outgoing_intro),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+        espaco = Spacing.md,
+        margem = PaddingValues(Spacing.lg),
+    ) {
+        Text(
+            stringResource(Res.string.outgoing_intro),
+            style = MaterialTheme.typography.bodyMedium,
+        )
 
-            SectionHeader(title = stringResource(Res.string.outgoing_section_network))
-            DESTINOS_DE_REDE.forEach { CartaoDoDestino(it) }
+        SectionHeader(title = stringResource(Res.string.outgoing_section_network))
+        DESTINOS_DE_REDE.forEach { CartaoDoDestino(it) }
 
-            SectionHeader(title = stringResource(Res.string.outgoing_section_device))
-            DESTINOS_NO_APARELHO.forEach { CartaoDoDestino(it) }
+        SectionHeader(title = stringResource(Res.string.outgoing_section_device))
+        DESTINOS_NO_APARELHO.forEach { CartaoDoDestino(it) }
 
-            Text(
-                stringResource(Res.string.outgoing_footer),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
-            )
-        }
+        Text(
+            stringResource(Res.string.outgoing_footer),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
+        )
     }
 }
 

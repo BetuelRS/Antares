@@ -37,6 +37,11 @@ fun LinhaDaLista(
     subtitulo: String? = null,
     icone: ImageVector? = null,
 
+    // Para quando o que vai à esquerda não é um ícone: a miniatura de um exercício, uma cor,
+    // um número. O [icone] é o açúcar do caso comum e este é o caso geral — dois parâmetros
+    // onde um chegava, para as dezenas de chamadas simples não escreverem uma lambda.
+    inicio: (@Composable () -> Unit)? = null,
+
     // O que fica à direita: um valor, um interruptor, uma seta. Entra como conteúdo e não
     // como texto porque metade dos casos não é texto nenhum.
     aoLado: (@Composable () -> Unit)? = null,
@@ -56,7 +61,10 @@ fun LinhaDaLista(
         ) {
             // Decorativo e sem descrição de propósito: o nome da linha está escrito ao lado,
             // e um leitor de ecrã que anuncie os dois lê tudo a dobrar.
-            if (icone != null) Icon(icone, contentDescription = null)
+            when {
+                inicio != null -> inicio()
+                icone != null -> Icon(icone, contentDescription = null)
+            }
 
             Column(Modifier.weight(1f)) {
                 Text(titulo, style = MaterialTheme.typography.bodyLarge)

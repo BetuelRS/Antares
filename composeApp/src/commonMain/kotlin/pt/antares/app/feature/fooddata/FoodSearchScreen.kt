@@ -58,6 +58,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.EmptyState
@@ -389,22 +390,12 @@ private fun YourStuff(
                 )
             }
             items(templates, key = { "tpl-${it.id}" }) { template ->
-                Card(
+                LinhaDaLista(
+                    titulo = template.name,
+                    subtitulo = mealSlotLabel(template.slot),
                     onClick = { onTemplate(template.id) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Spacing.lg, vertical = Spacing.xs),
-                ) {
-                    ListItem(
-                        headlineContent = { Text(template.name, maxLines = 2) },
-                        supportingContent = {
-                            Text(
-                                mealSlotLabel(template.slot),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        },
-                    )
-                }
+                    modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+                )
             }
         }
         if (foods.isNotEmpty()) {
@@ -513,29 +504,19 @@ private fun RecipesTab(
             linhaInteira { EmptyState(title = stringResource(Res.string.search_empty_title)) }
         }
         items(recipes, key = { it.recipe.id }) { summary ->
-            Card(
+            LinhaDaLista(
+                titulo = summary.recipe.name,
+                subtitulo = "${summary.nutrition.kcalPer100} ${stringResource(Res.string.common_kcal)} / 100 " +
+                    "${stringResource(Res.string.common_grams_short)} · " +
+                    "${summary.ingredientCount} ${stringResource(Res.string.recipe_ingredients)}",
                 onClick = { onSelect(summary.recipe.id) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Spacing.lg, vertical = Spacing.xs),
-            ) {
-                ListItem(
-                    headlineContent = { Text(summary.recipe.name, maxLines = 2) },
-                    supportingContent = {
-                        Text(
-                            "${summary.nutrition.kcalPer100} ${stringResource(Res.string.common_kcal)} / 100 " +
-                                "${stringResource(Res.string.common_grams_short)} · " +
-                                "${summary.ingredientCount} ${stringResource(Res.string.recipe_ingredients)}",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
-                    trailingContent = {
-                        IconButton(onClick = { onEdit(summary.recipe.id) }) {
-                            Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.recipe_edit))
-                        }
-                    },
-                )
-            }
+                aoLado = {
+                    IconButton(onClick = { onEdit(summary.recipe.id) }) {
+                        Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.recipe_edit))
+                    }
+                },
+                modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+            )
         }
     }
 }
@@ -555,30 +536,20 @@ private fun TemplatesTab(
     }
     ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
         items(templates, key = { it.id }) { template ->
-            Card(
+            LinhaDaLista(
+                titulo = template.name,
+                subtitulo = mealSlotLabel(template.slot),
                 onClick = { onApply(template.id) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Spacing.lg, vertical = Spacing.xs),
-            ) {
-                ListItem(
-                    headlineContent = { Text(template.name, maxLines = 2) },
-                    supportingContent = {
-                        Text(
-                            mealSlotLabel(template.slot),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                aoLado = {
+                    IconButton(onClick = { onDelete(template.id) }) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(Res.string.templates_delete),
                         )
-                    },
-                    trailingContent = {
-                        IconButton(onClick = { onDelete(template.id) }) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = stringResource(Res.string.templates_delete),
-                            )
-                        }
-                    },
-                )
-            }
+                    }
+                },
+                modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+            )
         }
     }
 }

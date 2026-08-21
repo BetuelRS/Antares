@@ -78,7 +78,9 @@ fun AntaresScreen(
     // querem a zero — um que desenhe as suas próprias secções coladas, por exemplo. O que
     // não entra por parâmetro é a largura de leitura: essa é a regra.
     espaco: Dp = Spacing.md,
-    margem: Dp = Spacing.lg,
+    // `PaddingValues` e não `Dp`: há ecrãs com margem só nos lados, e um parâmetro que só
+    // sabe pôr a mesma margem nos quatro obrigava-os a ficar de fora.
+    margem: PaddingValues = PaddingValues(Spacing.lg),
     rolavel: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {

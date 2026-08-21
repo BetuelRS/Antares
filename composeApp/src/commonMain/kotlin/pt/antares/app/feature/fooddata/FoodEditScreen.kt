@@ -2,6 +2,7 @@ package pt.antares.app.feature.fooddata
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
-import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -59,7 +60,7 @@ fun FoodEditScreen(
     LaunchedEffect(foodId, barcode) { viewModel.start(foodId, barcode, initialName) }
     LaunchedEffect(state.saved) { if (state.saved) onSaved() }
 
-    AntaresScaffold(
+    AntaresScreen(
         topBar = {
             AntaresTopBar(
                 title = stringResource(
@@ -68,77 +69,69 @@ fun FoodEditScreen(
                 onBack = onBack,
             )
         },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .larguraDeLeitura()
-                .padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
-        ) {
-            NumField(
-                value = state.name,
-                onValueChange = viewModel::setName,
-                label = stringResource(Res.string.food_edit_name),
-                numeric = false,
-            )
+        espaco = Spacing.sm,
+        margem = PaddingValues(Spacing.lg),
+    ) {
+        NumField(
+            value = state.name,
+            onValueChange = viewModel::setName,
+            label = stringResource(Res.string.food_edit_name),
+            numeric = false,
+        )
 
-            if (state.duplicados.isNotEmpty()) {
-                DuplicadosCard(state.duplicados, onUseExisting)
-            }
+        if (state.duplicados.isNotEmpty()) {
+            DuplicadosCard(state.duplicados, onUseExisting)
+        }
 
-            LabelScanRow(
-                reading = state.readingLabel,
-                incomplete = state.labelIncomplete,
-                needsCheck = state.labelNeedsCheck,
-                error = state.labelError,
-                onImage = { img -> viewModel.readLabel(img.base64, img.mime) },
-            )
+        LabelScanRow(
+            reading = state.readingLabel,
+            incomplete = state.labelIncomplete,
+            needsCheck = state.labelNeedsCheck,
+            error = state.labelError,
+            onImage = { img -> viewModel.readLabel(img.base64, img.mime) },
+        )
 
-            SectionHeader(title = stringResource(Res.string.food_edit_per_100g))
-            NumField(state.kcal, viewModel::setKcal, stringResource(Res.string.food_edit_kcal))
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                NumField(state.protein, viewModel::setProtein, stringResource(Res.string.food_edit_protein), Modifier.weight(1f))
-                NumField(state.carbs, viewModel::setCarbs, stringResource(Res.string.food_edit_carbs), Modifier.weight(1f))
-                NumField(state.fat, viewModel::setFat, stringResource(Res.string.food_edit_fat), Modifier.weight(1f))
-            }
+        SectionHeader(title = stringResource(Res.string.food_edit_per_100g))
+        NumField(state.kcal, viewModel::setKcal, stringResource(Res.string.food_edit_kcal))
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            NumField(state.protein, viewModel::setProtein, stringResource(Res.string.food_edit_protein), Modifier.weight(1f))
+            NumField(state.carbs, viewModel::setCarbs, stringResource(Res.string.food_edit_carbs), Modifier.weight(1f))
+            NumField(state.fat, viewModel::setFat, stringResource(Res.string.food_edit_fat), Modifier.weight(1f))
+        }
 
-            if (state.kcalMismatch) {
-                Text(
-                    stringResource(Res.string.food_edit_kcal_mismatch),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-
-            SectionHeader(title = stringResource(Res.string.food_edit_section_optional))
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                NumField(state.sugars, viewModel::setSugars, stringResource(Res.string.food_edit_sugars), Modifier.weight(1f))
-                NumField(state.satFat, viewModel::setSatFat, stringResource(Res.string.food_edit_satfat), Modifier.weight(1f))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                NumField(state.fiber, viewModel::setFiber, stringResource(Res.string.food_edit_fiber), Modifier.weight(1f))
-                NumField(state.sodium, viewModel::setSodium, stringResource(Res.string.food_edit_sodium), Modifier.weight(1f))
-            }
-
-            SectionHeader(title = stringResource(Res.string.food_edit_section_serving))
-            NumField(
-                value = state.servingName,
-                onValueChange = viewModel::setServingName,
-                label = stringResource(Res.string.food_edit_serving_name),
-                numeric = false,
-            )
-            NumField(state.servingGrams, viewModel::setServingGrams, stringResource(Res.string.food_edit_serving_grams))
-
-            PrimaryButton(
-                text = stringResource(Res.string.common_save),
-                onClick = viewModel::save,
-                enabled = state.valid,
-                modifier = Modifier.fillMaxWidth().padding(top = Spacing.md),
+        if (state.kcalMismatch) {
+            Text(
+                stringResource(Res.string.food_edit_kcal_mismatch),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
             )
         }
+
+        SectionHeader(title = stringResource(Res.string.food_edit_section_optional))
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            NumField(state.sugars, viewModel::setSugars, stringResource(Res.string.food_edit_sugars), Modifier.weight(1f))
+            NumField(state.satFat, viewModel::setSatFat, stringResource(Res.string.food_edit_satfat), Modifier.weight(1f))
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            NumField(state.fiber, viewModel::setFiber, stringResource(Res.string.food_edit_fiber), Modifier.weight(1f))
+            NumField(state.sodium, viewModel::setSodium, stringResource(Res.string.food_edit_sodium), Modifier.weight(1f))
+        }
+
+        SectionHeader(title = stringResource(Res.string.food_edit_section_serving))
+        NumField(
+            value = state.servingName,
+            onValueChange = viewModel::setServingName,
+            label = stringResource(Res.string.food_edit_serving_name),
+            numeric = false,
+        )
+        NumField(state.servingGrams, viewModel::setServingGrams, stringResource(Res.string.food_edit_serving_grams))
+
+        PrimaryButton(
+            text = stringResource(Res.string.common_save),
+            onClick = viewModel::save,
+            enabled = state.valid,
+            modifier = Modifier.fillMaxWidth().padding(top = Spacing.md),
+        )
     }
 }
 

@@ -1,6 +1,7 @@
 package pt.antares.app.feature.me
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,10 +15,8 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,7 +27,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
-import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.SectionHeader
@@ -46,7 +45,7 @@ fun MeScreen(
     onRichInClick: () -> Unit,
     onCoachClick: () -> Unit,
 ) {
-    AntaresScaffold(
+    AntaresScreen(
         topBar = {
             AntaresTopBar(
                 title = stringResource(Res.string.nav_profile),
@@ -60,29 +59,21 @@ fun MeScreen(
                 },
             )
         },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .larguraDeLeitura()
-                .padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
-        ) {
+        espaco = Spacing.sm,
+        margem = PaddingValues(Spacing.lg),
+    ) {
 
-            ProgressSections(
-                onWeightHistory = onWeightClick,
-                onPhotos = onPhotosClick,
-            )
+        ProgressSections(
+            onWeightHistory = onWeightClick,
+            onPhotos = onPhotosClick,
+        )
 
-            SectionHeader(title = stringResource(Res.string.more_group_body))
-            MeItem(Res.string.more_profile_goals, Icons.Default.Person, onProfileClick)
+        SectionHeader(title = stringResource(Res.string.more_group_body))
+        MeItem(Res.string.more_profile_goals, Icons.Default.Person, onProfileClick)
 
-            MeItem(Res.string.more_nutrition_stats, Icons.Default.BarChart, onStatsClick)
-            MeItem(Res.string.rich_title, Icons.Default.Search, onRichInClick)
-            MeItem(Res.string.coach_history_title, Icons.Default.AutoAwesome, onCoachClick)
-        }
+        MeItem(Res.string.more_nutrition_stats, Icons.Default.BarChart, onStatsClick)
+        MeItem(Res.string.rich_title, Icons.Default.Search, onRichInClick)
+        MeItem(Res.string.coach_history_title, Icons.Default.AutoAwesome, onCoachClick)
     }
 }
 

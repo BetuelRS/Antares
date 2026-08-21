@@ -1,6 +1,7 @@
 package pt.antares.app.feature.backup
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +25,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
-import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -73,39 +74,31 @@ fun BackupScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    AntaresScaffold(
+    AntaresScreen(
         topBar = { AntaresTopBar(title = stringResource(Res.string.backup_title), onBack = onBack) },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .larguraDeLeitura()
-                .padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
+        espaco = Spacing.md,
+        margem = PaddingValues(Spacing.lg),
+    ) {
 
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    stringResource(Res.string.backup_why),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+        AntaresCard(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(Res.string.backup_why),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
 
-            CartaoDaCopia()
+        CartaoDaCopia()
 
-            OQueVaiNaCopia()
+        OQueVaiNaCopia()
 
-            BackupActions(viewModel, state.busy, state.importDone)
+        BackupActions(viewModel, state.busy, state.importDone)
 
-            state.error?.let { message ->
-                Text(
-                    stringResource(Res.string.privacy_error, message),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
+        state.error?.let { message ->
+            Text(
+                stringResource(Res.string.privacy_error, message),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
         }
     }
 }

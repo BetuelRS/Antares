@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.ListaAdaptavel
@@ -87,20 +86,15 @@ fun RichInScreen(
                     // linhas da lista das opções que estão por cima delas.
                     ListaAdaptavel(contentPadding = PaddingValues(), espaco = Spacing.xs) {
                         items(state.results, key = { it.foodId }) { r ->
-                            Card(
+                            LinhaDaLista(
+                                titulo = r.name,
+                                subtitulo = stringResource(
+                                    Res.string.rich_row,
+                                    r.perKcalPct,
+                                    r.per100gPct,
+                                ),
                                 onClick = { onFoodSelected(r.foodId) },
-                                modifier = Modifier.fillMaxWidth(),
-                            ) {
-                                ListItem(
-                                    headlineContent = { Text(r.name, maxLines = 2) },
-                                    supportingContent = {
-                                        Text(
-                                            stringResource(Res.string.rich_row, r.perKcalPct, r.per100gPct),
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    },
-                                )
-                            }
+                            )
                         }
                     }
                 }

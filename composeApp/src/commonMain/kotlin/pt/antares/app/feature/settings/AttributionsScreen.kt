@@ -1,6 +1,7 @@
 package pt.antares.app.feature.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,43 +17,35 @@ import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
-import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 
 @Composable
 fun AttributionsScreen(onBack: () -> Unit) {
-    AntaresScaffold(
+    AntaresScreen(
         topBar = { AntaresTopBar(title = stringResource(Res.string.attrib_title), onBack = onBack) },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .larguraDeLeitura()
-                .padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
-            Text(
-                stringResource(Res.string.attrib_intro),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        espaco = Spacing.md,
+        margem = PaddingValues(Spacing.lg),
+    ) {
+        Text(
+            stringResource(Res.string.attrib_intro),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
-            Text(
-                stringResource(Res.string.attrib_coverage, CATALOGUE_FOODS, CATALOGUE_MICRO_PCT),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        Text(
+            stringResource(Res.string.attrib_coverage, CATALOGUE_FOODS, CATALOGUE_MICRO_PCT),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
-            Source(Res.string.attrib_tca_title, Res.string.attrib_tca_desc)
-            Source(Res.string.attrib_ciqual_title, Res.string.attrib_ciqual_desc)
-            Source(Res.string.attrib_usda_title, Res.string.attrib_usda_desc)
-            Source(Res.string.attrib_off_title, Res.string.attrib_off_desc)
-            Source(Res.string.attrib_efsa_title, Res.string.attrib_efsa_desc)
-        }
+        Source(Res.string.attrib_tca_title, Res.string.attrib_tca_desc)
+        Source(Res.string.attrib_ciqual_title, Res.string.attrib_ciqual_desc)
+        Source(Res.string.attrib_usda_title, Res.string.attrib_usda_desc)
+        Source(Res.string.attrib_off_title, Res.string.attrib_off_desc)
+        Source(Res.string.attrib_efsa_title, Res.string.attrib_efsa_desc)
     }
 }
 

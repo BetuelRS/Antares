@@ -1,6 +1,7 @@
 package pt.antares.app.feature.health
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,7 @@ import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
-import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -50,29 +51,21 @@ fun HealthPermissionsScreen(
         onResult = viewModel::refresh,
     )
 
-    AntaresScaffold(
+    AntaresScreen(
         topBar = { AntaresTopBar(title = stringResource(Res.string.health_connect_title), onBack = onBack) },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .larguraDeLeitura()
-                .padding(Spacing.md),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
-            when {
-                state.loading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+        espaco = Spacing.md,
+        margem = PaddingValues(Spacing.md),
+    ) {
+        when {
+            state.loading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
 
-                state.availability == HealthAvailability.NOT_SUPPORTED ->
-                    Text(stringResource(Res.string.health_not_supported), style = MaterialTheme.typography.bodyLarge)
+            state.availability == HealthAvailability.NOT_SUPPORTED ->
+                Text(stringResource(Res.string.health_not_supported), style = MaterialTheme.typography.bodyLarge)
 
-                state.availability == HealthAvailability.PROVIDER_UPDATE_REQUIRED ->
-                    Text(stringResource(Res.string.health_update_required), style = MaterialTheme.typography.bodyLarge)
+            state.availability == HealthAvailability.PROVIDER_UPDATE_REQUIRED ->
+                Text(stringResource(Res.string.health_update_required), style = MaterialTheme.typography.bodyLarge)
 
-                else -> Connected(state, viewModel, request)
-            }
+            else -> Connected(state, viewModel, request)
         }
     }
 }
