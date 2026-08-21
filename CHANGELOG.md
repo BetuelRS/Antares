@@ -17,6 +17,64 @@ Nada por lançar.
 
 ---
 
+## [2.3.0] — 2026-08-21
+
+A app ganha movimento e uma linguagem de ecrã só. Esquema da base: **v26**, sem mudanças.
+
+### Adicionado
+
+- **Transições entre ecrãs**, e cinco delas, porque cada uma diz uma coisa diferente sobre a
+  relação entre dois ecrãs. Os separadores desvanecem — não há hierarquia entre eles. Um
+  detalhe entra da direita com o ecrã de trás a acompanhar a **um terço** da velocidade e a
+  escurecer, que é a paralaxe que os faz lerem-se como folhas empilhadas. A câmara e o leitor
+  sobem de baixo. Uma sessão de treino ou uma corrida **crescem de dentro**, com o ecrã
+  anterior a recuar para trás: não se está a navegar, está-se a entrar noutro estado da app.
+  Um resumo sobe e **assenta**, com um travar no fim — é o único movimento com peso, e
+  acontece uma vez por sessão. Voltar é sempre o movimento ao contrário, e não outro.
+- **Quem desligou as animações no telemóvel não as recebe.** A app lê a definição do sistema.
+  Não é uma preferência da app: quem as desliga fá-lo por enjoo com movimento, por bateria,
+  ou porque num aparelho lento cada animação é meio segundo de espera.
+- **Num tablet, o alimento abre ao lado do diário** em vez de o tapar. Abrir um registo,
+  voltar atrás e abrir o seguinte era o percurso mais cansativo da app num ecrã grande — a
+  biblioteca de exercícios já o tinha resolvido, e o diário passa a usar o mesmo painel.
+- **Numa janela larga a lista do painel pára de crescer** e fica com 340 dp, e o espaço que
+  sobra vai para o detalhe, que é o lado com imagens e instruções. Antes, os dois modos de
+  ecrã largo desenhavam exactamente o mesmo.
+
+### Corrigido
+
+- **Trinta e dois ecrãs perdiam o conteúdo por baixo do teclado.** Usavam o andaime do
+  Material em vez do da app, e é no da app que vive o empurrão que faz o conteúdo subir
+  quando o teclado abre. Escrever num campo em baixo do ecrã significava deixar de o ver.
+  Não dava erro nem aviso.
+
+### Alterado
+
+- Nasce o **`AntaresScreen`**: andaime, rolagem, largura de leitura e margem por omissão.
+  Trinta e sete ficheiros escreviam a largura à mão, o que quer dizer que um ecrã novo ficava
+  sem ela por esquecimento e se esticava por 1200 dp num tablet.
+- O **`AntaresCard` passa a aceitar clique**, que era a razão de vinte ficheiros usarem o
+  cartão do Material — e levarem com ele cantos, elevação e espaçamento a diferir de ecrã
+  para ecrã sem ninguém ter decidido isso. Ficam duas excepções, escritas com a razão.
+- Nasce a **`LinhaDaLista`**. O `MenuItem` e o `MeItem` eram cópias exactas um do outro,
+  comentário incluído; o `ToggleRow` e o `SettingSwitchRow` também.
+
+### Notas
+
+- **A migração não foi de sete implementações para uma**, como o plano dizia. Foram contados
+  vinte e quatro composables de linha e só quatro eram mesmo repetição: as outras são linhas
+  de domínio com afordâncias próprias — apagar, deslizar, editar, mover — e colapsá-las seria
+  tirar-lhes coisas.
+- **O Progresso não ganhou painel lista-e-detalhe**, e não por falta de tempo: não tem lista
+  nem detalhe. É uma coluna de cartões, e o que se abre a partir deles são ecrãs inteiros, o
+  que é um menu e não uma lista.
+- O teste da largura de leitura foi escrito duas vezes. À primeira exigia o mecanismo e
+  acusou dez ecrãs que estão certos: são listas, e a lista adaptável transforma largura em
+  colunas. **A regra é sobre o resultado** — ou se limita a linha, ou se entrega a largura a
+  um contentor que a converte em colunas.
+
+---
+
 ## [2.2.0] — 2026-08-21
 
 A app passa a dizer o que sai daqui, e a deixar cortar o que sai todos os dias. Leva também

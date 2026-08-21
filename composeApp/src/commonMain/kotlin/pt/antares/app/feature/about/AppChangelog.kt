@@ -23,9 +23,36 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.2.0"
+    const val CURRENT = "2.3.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.3.0",
+            title = "A app passa a ter movimento",
+            titleEn = "The app starts to move",
+            highlights = listOf(
+                "**Transições entre ecrãs**, e cada uma diz uma coisa: os separadores " +
+                    "desvanecem, um detalhe entra da direita com o ecrã de trás a " +
+                    "acompanhar, um treino a começar cresce de dentro, e um resumo assenta",
+                "Se desligaste as animações no telemóvel, a app respeita isso",
+                "Num tablet, tocar num alimento do diário **abre-o ao lado** em vez de " +
+                    "tapar o diário",
+                "O teclado deixou de tapar o que estás a escrever em trinta e dois ecrãs",
+                "Cartões, linhas e margens iguais em toda a app — e num ecrã grande nada " +
+                    "se estica para lá do que se lê bem",
+            ),
+            highlightsEn = listOf(
+                "**Screen transitions**, and each one says something: tabs cross-fade, a " +
+                    "detail slides in from the right with the screen behind following " +
+                    "along, a workout grows from within, and a summary settles",
+                "If you turned animations off on your phone, the app respects that",
+                "On a tablet, tapping a food in the diary **opens it beside** the diary " +
+                    "instead of covering it",
+                "The keyboard no longer covers what you are typing, on thirty-two screens",
+                "Cards, rows and margins the same across the app — and on a big screen " +
+                    "nothing stretches past what reads well",
+            ),
+        ),
         AppVersion(
             name = "2.2.0",
             title = "A app diz o que sai daqui, e deixa-te cortar",
@@ -308,29 +335,6 @@ object AppChangelog {
                 "Reaching your goal weight no longer keeps you in a deficit — the app proposes maintenance",
                 "A goal weight below what is healthy for your height is now said out loud",
                 "From 65 the protein minimum rises; under 18 the rate is more conservative",
-            ),
-        ),
-        AppVersion(
-            name = "0.11.0",
-            title = "O teu corpo, e o teu rumo",
-            titleEn = "Your body, and your direction",
-            highlights = listOf(
-                "Composição corporal: sabes o valor, estimas por medidas ou pelo IMC — e a app diz sempre qual foi",
-                "Com a tua % de gordura, a meta é calculada pela massa magra em vez do peso todo",
-                "O ritmo escolhe-se em kg por semana; as calorias são a consequência, com zona segura à vista",
-                "Peso-alvo com data prevista pelo teu ritmo real — e a app cala-se quando os dados não chegam",
-                "Régua do IMC a sério, FFMI, e a manutenção sempre à vista",
-                "O nível de atividade passou a contar o dia sem treinos; antes o exercício contava duas vezes",
-                "Altura em pés e polegadas para quem usa imperial",
-            ),
-            highlightsEn = listOf(
-                "Body composition: you know the value, estimate from measurements or from BMI — and the app always says which",
-                "With your body fat known, the target is computed from lean mass instead of total weight",
-                "Rate is chosen in kg per week; the calories are the consequence, with the safe zone in view",
-                "Goal weight with a date projected from your real rate — and the app stays quiet when the data is not enough",
-                "A proper BMI scale, FFMI, and maintenance always in view",
-                "Activity level now describes the day without workouts; exercise used to count twice",
-                "Height in feet and inches for anyone using imperial",
             ),
         ),
     )
