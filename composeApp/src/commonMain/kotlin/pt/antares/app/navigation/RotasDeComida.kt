@@ -1,9 +1,18 @@
 package pt.antares.app.navigation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import org.jetbrains.compose.resources.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import pt.antares.app.core.designsystem.components.EmptyState
+import pt.antares.app.core.designsystem.components.PainelDeListaEDetalhe
+import pt.antares.app.core.designsystem.components.cabeDetalheAoLado
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.feature.diary.DiaryScreen
@@ -11,6 +20,8 @@ import pt.antares.app.feature.fooddata.FoodDetailScreen
 import pt.antares.app.feature.fooddata.FoodEditScreen
 import pt.antares.app.feature.fooddata.FoodSearchScreen
 import pt.antares.app.feature.stats.NutritionStatsScreen
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.painel_escolhe_registo
 import pt.antares.app.feature.fooddata.RichInScreen
 
 /**
@@ -21,20 +32,61 @@ import pt.antares.app.feature.fooddata.RichInScreen
  */
 internal fun NavGraphBuilder.rotasDeComida(navController: NavHostController) {
     composable<Route.Diary> {
-        DiaryScreen(
-            onAddFood = { slot, epochDay, mode ->
-                navController.navigate(Route.FoodSearch(slot.name, epochDay, mode.name))
-            },
-            onAddExercise = { epochDay -> navController.navigate(Route.AddExercise(epochDay)) },
-            onQuickLog = { slot, epochDay, mode, query ->
-                navController.navigate(Route.FoodSearch(slot.name, epochDay, mode.name, query))
-            },
-            // Leva o dia e a refeição do próprio registo: voltar atrás cai no dia onde se
-            // estava, e não em hoje.
-            onOpenFood = { foodId, slot, epochDay ->
-                navController.navigate(Route.FoodDetail(foodId, slot.name, epochDay))
-            },
-        )
+
+        // Numa janela larga o alimento abre ao lado em vez de tapar o diário. Abrir um
+        // registo, voltar atrás e abrir o seguinte era, num tablet, o mesmo percurso
+        // cansativo que a biblioteca de exercícios já tinha resolvido.
+        //
+        // O diário em si continua numa coluna só, e isso não muda: as refeições são secções,
+        // e parti-las por colunas separaria o que se comeu ao almoço do cabeçalho «Almoço».
+        // O que ganha espaço é o detalhe, ao lado — não o diário, aos bocados.
+        val aoLado = cabeDetalheAoLado()
+        var escolhido by rememberSaveable { mutableStateOf<Triple<String, String, Long>?>(null) }
+
+        val diario = @Composable {
+            DiaryScreen(
+                onAddFood = { slot, epochDay, mode ->
+                    navController.navigate(Route.FoodSearch(slot.name, epochDay, mode.name))
+                },
+                onAddExercise = { epochDay -> navController.navigate(Route.AddExercise(epochDay)) },
+                onQuickLog = { slot, epochDay, mode, query ->
+                    navController.navigate(Route.FoodSearch(slot.name, epochDay, mode.name, query))
+                },
+                // Leva o dia e a refeição do próprio registo: voltar atrás cai no dia onde se
+                // estava, e não em hoje.
+                onOpenFood = { foodId, slot, epochDay ->
+                    if (aoLado) {
+                        escolhido = Triple(foodId, slot.name, epochDay)
+                    } else {
+                        navController.navigate(Route.FoodDetail(foodId, slot.name, epochDay))
+                    }
+                },
+            )
+        }
+
+        if (!aoLado) {
+            diario()
+        } else {
+            PainelDeListaEDetalhe(
+                lista = diario,
+                detalhe = escolhido?.let { (foodId, slot, epochDay) ->
+                    {
+                        FoodDetailScreen(
+                            foodId = foodId,
+                            slot = MealSlot.valueOf(slot),
+                            epochDay = epochDay,
+                            // Gravar fecha o painel e mais nada: o diário ao lado já se
+                            // atualizou sozinho, e sair dele seria perder o dia onde se está.
+                            onSaved = { escolhido = null },
+                            onBack = { escolhido = null },
+                        )
+                    }
+                },
+                vazio = {
+                    EmptyState(title = stringResource(Res.string.painel_escolhe_registo))
+                },
+            )
+        }
     }
     composable<Route.FoodSearch> { entry ->
         val route = entry.toRoute<Route.FoodSearch>()

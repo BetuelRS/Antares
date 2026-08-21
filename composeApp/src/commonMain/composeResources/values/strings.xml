@@ -584,6 +584,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exlib_filter_all">Todos</string>
     <string name="exlib_empty">Sem exercícios para estes filtros.</string>
     <string name="painel_escolhe_da_lista">Escolhe um exercício à esquerda para o ver aqui.</string>
+    <string name="painel_escolhe_registo">Escolhe um registo à esquerda para o ver aqui.</string>
     <string name="chart_vertical_range">Eixo vertical: %1$s a %2$s %3$s</string>
     <string name="exlib_create_custom">Criar exercício</string>
     <string name="exlib_pick_title">Escolher exercício</string>
