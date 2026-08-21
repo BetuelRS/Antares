@@ -98,15 +98,15 @@ A etiqueta sozinha não dá nada a descarregar a quem chega ao repositório: cri
 release e põe-lhe os ficheiros.
 
 ```bash
-gh release create v1.1.0 \
-  apks/1.1.0/antares-1.1.0-universal-release.apk \
-  apks/1.1.0/antares-1.1.0-arm64-release.apk \
-  apks/1.1.0/antares-1.1.0-x86_64-release.apk \
-  apks/1.1.0/antares-1.1.0-armv7-release.apk \
-  --title "1.1.0 - o titulo desta versao" \
-  --notes-file notas-desta-versao.md \
-  --latest
+gh release create v2.3.0 \
+  composeApp/build/outputs/apk/release/*.apk \
+  --title "2.3.0 — o título desta versão" \
+  --notes-file notas-desta-versao.md
 ```
+
+Os quatro ficheiros saem já com o nome certo — `Antares-2.3.0-arm64-v8a.apk` e companhia —
+porque o `build.gradle.kts` os renomeia a partir da versão. Não é preciso copiá-los para lado
+nenhum antes de os anexar.
 
 O `gh auth login` é interativo e abre o browser — tem de ser corrido por uma pessoa, uma vez
 por máquina.

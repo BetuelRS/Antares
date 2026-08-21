@@ -195,6 +195,23 @@ android {
             isUniversalApk = true
         }
     }
+
+    // O nome do ficheiro é a primeira coisa que alguém vê ao descarregar, e
+    // `composeApp-arm64-v8a-release.apk` não diz nem a app nem a versão — diz o nome do
+    // módulo Gradle, que é detalhe de quem compila. Passa a `Antares-2.3.0-arm64-v8a.apk`,
+    // que se percebe fora de contexto e ordena-se sozinho numa pasta de transferências.
+    applicationVariants.all {
+        val versao = versionName
+        outputs.all {
+            val saida = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val abi = saida.filters
+                .firstOrNull { it.filterType == "ABI" }
+                ?.identifier
+                ?: "universal"
+            val sufixo = if (buildType.name == "release") "" else "-" + buildType.name
+            saida.outputFileName = "Antares-$versao-$abi$sufixo.apk"
+        }
+    }
 }
 
 tasks.withType<Test>().configureEach {

@@ -24,16 +24,16 @@ Saem **quatro** APKs para `composeApp/build/outputs/apk/debug/`, um por arquitet
 universal — a configuração de `splits` divide-os:
 
 ```
-composeApp-arm64-v8a-debug.apk      telemóveis modernos
-composeApp-armeabi-v7a-debug.apk    telemóveis antigos, 32 bits
-composeApp-x86_64-debug.apk         emuladores
-composeApp-universal-debug.apk      as três juntas, maior
+Antares-<versão>-arm64-v8a-debug.apk      telemóveis modernos
+Antares-<versão>-armeabi-v7a-debug.apk    telemóveis antigos, 32 bits
+Antares-<versão>-x86_64-debug.apk         emuladores
+Antares-<versão>-universal-debug.apk      as três juntas, maior
 ```
 
 ## Instalar num telemóvel
 
 ```bash
-adb install -r composeApp/build/outputs/apk/debug/composeApp-arm64-v8a-debug.apk
+adb install -r composeApp/build/outputs/apk/debug/Antares-<versão>-arm64-v8a-debug.apk
 ```
 
 Num emulador, o `x86_64`. Se não souberes qual, o `universal` serve em qualquer caso.
