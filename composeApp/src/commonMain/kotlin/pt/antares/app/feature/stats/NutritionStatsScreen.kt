@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,6 +37,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.components.SplitRow
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.nutrition.MicroCoverage
@@ -53,12 +53,12 @@ fun NutritionStatsScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.stat_title), onBack = onBack) },
     ) { padding ->
         if (state.loading) {
             LoadingState(Modifier.padding(padding))
-            return@Scaffold
+            return@AntaresScaffold
         }
         LazyColumn(
             modifier = Modifier

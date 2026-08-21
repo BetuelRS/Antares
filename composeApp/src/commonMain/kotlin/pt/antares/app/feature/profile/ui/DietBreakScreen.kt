@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,6 +26,7 @@ import pt.antares.app.core.calc.WeightTrend
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -82,13 +82,13 @@ fun DietBreakScreen(
     val suggestion by viewModel.suggestion.collectAsState()
     val accepted by viewModel.accepted.collectAsState()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.diet_break_title), onBack = onBack) },
     ) { padding ->
         val s = suggestion
         if (s == null) {
             LoadingState(Modifier.padding(padding))
-            return@Scaffold
+            return@AntaresScaffold
         }
         Column(
             modifier = Modifier

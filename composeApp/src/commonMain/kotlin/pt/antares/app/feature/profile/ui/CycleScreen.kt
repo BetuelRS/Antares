@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,6 +41,7 @@ import pt.antares.app.core.database.entities.CycleEntity
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.DateDialog
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
@@ -153,7 +153,7 @@ fun CycleScreen(
     var aEscolher by remember { mutableStateOf<EscolhaDeData?>(null) }
     val apagar = rememberApagarComDesfazer()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.cycle_title), onBack = onBack) },
     ) { padding ->
         LazyColumn(

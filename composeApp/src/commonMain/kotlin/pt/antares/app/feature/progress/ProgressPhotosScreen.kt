@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +39,7 @@ import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.ConfirmDialog
 import pt.antares.app.core.designsystem.components.EmptyState
@@ -61,7 +61,7 @@ fun ProgressPhotosScreen(
 
     val picker = rememberImagePicker { imagem -> viewModel.add(imagem.base64) }
 
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(title = stringResource(Res.string.photos_title), onBack = onBack)
         },

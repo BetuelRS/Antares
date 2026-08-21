@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +40,7 @@ import pt.antares.app.core.nutrition.NutritionFactsCard
 import pt.antares.app.core.nutrition.provenanceRes
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -64,7 +64,7 @@ fun FoodDetailScreen(
     LaunchedEffect(foodId) { viewModel.load(foodId) }
     LaunchedEffect(state.saved) { if (state.saved) onSaved() }
 
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(title = stringResource(Res.string.food_portion_title), onBack = onBack)
         },
@@ -72,7 +72,7 @@ fun FoodDetailScreen(
         val food = state.food
         if (state.loading || food == null) {
             LoadingState(Modifier.padding(padding))
-            return@Scaffold
+            return@AntaresScaffold
         }
 
         Column(

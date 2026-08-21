@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +39,7 @@ import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.feature.fooddata.paraCampo
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.ConfirmDialog
@@ -65,7 +65,7 @@ fun RecipeEditScreen(
     LaunchedEffect(recipeId) { viewModel.start(recipeId) }
     LaunchedEffect(state.saved) { if (state.saved) onDone() }
 
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(
                 title = stringResource(if (recipeId == null) Res.string.recipe_new else Res.string.recipe_edit),

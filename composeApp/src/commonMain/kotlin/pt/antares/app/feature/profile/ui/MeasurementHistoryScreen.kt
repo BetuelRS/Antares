@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,6 +28,7 @@ import pt.antares.app.core.database.entities.BodyMeasurementEntity
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.ListaAdaptavel
@@ -55,7 +55,7 @@ fun MeasurementHistoryScreen(
 ) {
     val entries by viewModel.entries.collectAsState()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.measure_history_title), onBack = onBack) },
     ) { padding ->
         if (entries.size < 2) {
@@ -64,7 +64,7 @@ fun MeasurementHistoryScreen(
                 subtitle = stringResource(Res.string.measure_history_empty),
                 modifier = Modifier.padding(padding),
             )
-            return@Scaffold
+            return@AntaresScaffold
         }
 
         // Os cartões de medida ficam lado a lado numa janela larga, e não é só arrumação: as

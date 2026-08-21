@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,6 +42,7 @@ import pt.antares.app.core.designsystem.activityLevelLabel
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.BmiScale
 import pt.antares.app.core.designsystem.components.LoadingState
@@ -75,13 +75,13 @@ fun HealthProfileScreen(
     val state by viewModel.state.collectAsState()
     val goalChange by goalChangeViewModel.change.collectAsState()
 
-    Scaffold(
+    AntaresScaffold(
 
         topBar = { AntaresTopBar(title = stringResource(Res.string.profile_health_title), onBack = onBack) },
     ) { padding ->
         if (state.loading || state.profile == null) {
             LoadingState(Modifier.padding(padding))
-            return@Scaffold
+            return@AntaresScaffold
         }
 
         Column(

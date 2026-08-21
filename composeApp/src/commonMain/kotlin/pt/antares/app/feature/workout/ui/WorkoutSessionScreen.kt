@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,6 +48,7 @@ import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -81,7 +81,7 @@ fun WorkoutSessionScreen(
     var confirmDiscard by remember { mutableStateOf(false) }
     val apagar = rememberApagarComDesfazer()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(
                 title = stringResource(Res.string.session_title),
@@ -94,7 +94,7 @@ fun WorkoutSessionScreen(
     ) { padding ->
         if (state.loading) {
             LoadingState(Modifier.padding(padding))
-            return@Scaffold
+            return@AntaresScaffold
         }
         Column(Modifier.fillMaxSize().padding(padding)) {
 

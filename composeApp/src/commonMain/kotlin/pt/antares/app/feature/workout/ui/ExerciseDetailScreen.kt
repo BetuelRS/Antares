@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.generated.resources.Res
@@ -47,7 +47,7 @@ fun ExerciseDetailScreen(
     LaunchedEffect(exerciseId) { viewModel.load(exerciseId) }
     LaunchedEffect(state.deleted) { if (state.deleted) onDeleted() }
 
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(
                 title = state.exercise?.displayName ?: "",
@@ -65,7 +65,7 @@ fun ExerciseDetailScreen(
         val ex = state.exercise
         if (state.loading || ex == null) {
             LoadingState(Modifier.padding(padding))
-            return@Scaffold
+            return@AntaresScaffold
         }
 
         Column(

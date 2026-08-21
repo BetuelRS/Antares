@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +39,7 @@ import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.generated.resources.ai_describe
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.exercise.MetActivity
@@ -57,7 +57,7 @@ fun AddExerciseScreen(
 
     LaunchedEffect(state.saved) { if (state.saved) onDone() }
 
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(title = stringResource(Res.string.exercise_add_title), onBack = onBack)
         },
@@ -66,7 +66,7 @@ fun AddExerciseScreen(
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-            return@Scaffold
+            return@AntaresScaffold
         }
 
         Column(

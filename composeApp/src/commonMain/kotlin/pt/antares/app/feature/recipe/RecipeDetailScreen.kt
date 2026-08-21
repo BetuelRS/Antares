@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,6 +27,7 @@ import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.nutrition.MicroGap
 import pt.antares.app.core.nutrition.NutritionFactsCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -50,12 +50,12 @@ fun RecipeDetailScreen(
     LaunchedEffect(recipeId) { viewModel.load(recipeId) }
     LaunchedEffect(state.saved) { if (state.saved) onSaved() }
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.recipe_log), onBack = onBack) },
     ) { padding ->
         if (state.loading) {
             LoadingState(Modifier.padding(padding))
-            return@Scaffold
+            return@AntaresScaffold
         }
         Column(
             modifier = Modifier

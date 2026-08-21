@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +23,7 @@ import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LabeledBar
 import pt.antares.app.generated.resources.Res
@@ -38,7 +38,7 @@ fun WorkoutStatsScreen(
     val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.workout_stats_title), onBack = onBack) },
     ) { padding ->
         Column(

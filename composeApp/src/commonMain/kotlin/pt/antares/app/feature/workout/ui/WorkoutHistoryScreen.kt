@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +24,7 @@ import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.FilterBar
 import pt.antares.app.core.designsystem.components.FilterDropdownChip
@@ -47,7 +47,7 @@ fun WorkoutHistoryScreen(
     val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.workout_history_title), onBack = onBack) },
     ) { padding ->
         if (state.todos.isEmpty()) {
@@ -57,7 +57,7 @@ fun WorkoutHistoryScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            return@Scaffold
+            return@AntaresScaffold
         }
         ListaAdaptavel(
             modifier = Modifier.fillMaxSize().padding(padding),

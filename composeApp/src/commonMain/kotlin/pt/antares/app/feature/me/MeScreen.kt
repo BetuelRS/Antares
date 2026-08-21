@@ -18,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,6 +28,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.feature.progress.ProgressSections
@@ -45,7 +45,7 @@ fun MeScreen(
     onRichInClick: () -> Unit,
     onCoachClick: () -> Unit,
 ) {
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(
                 title = stringResource(Res.string.nav_profile),

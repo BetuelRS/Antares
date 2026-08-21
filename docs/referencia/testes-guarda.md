@@ -39,6 +39,7 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `ImportacaoDeCopiaVaziaTest` | «substituir» aceitar uma cópia sem uma linha e apagar tudo | a recusa saiu de antes da transação. O ficheiro vazio que a 2.1.0 escrevia tinha a assinatura toda e passava por cópia legítima |
 | `InterruptorDaPesquisaTest` | haver caminho até à Open Food Facts que não passe pelo interruptor | alguém usou o `OffApi` fora do repositório, ou chamou o caminho interno de fora. Um interruptor de privacidade que se pode contornar por esquecimento não é um interruptor |
 | `DestinosDeclaradosTest` | a app contactar um endereço que o ecrã dos destinos não declara | entrou um `https://` novo no código. A lista tem de crescer com ele, ou a decisão de o esconder passa a ser deliberada e escrita |
+| `AndaimeUnicoTest` | um ecrã usar o `Scaffold` do Material e perder o `imePadding` | o teclado passa a tapar o conteúdo em vez de o empurrar. Eram trinta e dois ecrãs assim antes da 2.3.0, e o problema não dá erro nenhum: só se vê a escrever num campo em baixo |
 | `NumericFieldsTest` | campos numéricos abrirem o teclado errado | falta o `KeyboardType` |
 | `WeightDisplayTest` | o peso aparecer na unidade errada | a conversão saiu do sítio |
 | `ProveniencaHonestaTest` | a app prometer uma fonte de dados que não existe, e o INSA deixar de ser nomeado onde os dados dele aparecem | mudaste um texto de origem. A licença do INSA obriga a identificar a fonte **junto dos dados** |

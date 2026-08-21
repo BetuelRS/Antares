@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +44,7 @@ import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
 import kotlin.math.roundToInt
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.SecondaryButton
@@ -70,7 +70,7 @@ fun RoutineEditScreen(
     var editItem by remember { mutableStateOf<RoutineItemView?>(null) }
     val apagar = rememberApagarComDesfazer()
 
-    Scaffold(
+    AntaresScaffold(
         topBar = {
             AntaresTopBar(
                 title = stringResource(Res.string.routine_edit_title),

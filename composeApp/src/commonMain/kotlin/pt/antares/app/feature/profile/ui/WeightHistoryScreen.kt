@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,6 +43,7 @@ import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresChart
+import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.ConfirmDialog
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
@@ -132,7 +132,7 @@ fun WeightHistoryScreen(
     val imperial = state.unitSystem == UnitSystem.IMPERIAL
     val unitLabel = stringResource(if (imperial) Res.string.common_lb else Res.string.common_kg)
 
-    Scaffold(
+    AntaresScaffold(
         topBar = { AntaresTopBar(title = stringResource(Res.string.weight_title), onBack = onBack) },
         floatingActionButton = {
             FloatingActionButton(onClick = { showAddDialog = true }) {

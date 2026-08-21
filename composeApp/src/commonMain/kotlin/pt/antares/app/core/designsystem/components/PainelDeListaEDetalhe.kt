@@ -3,9 +3,11 @@ package pt.antares.app.core.designsystem.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import pt.antares.app.core.designsystem.LocalModoDeEsquema
 import pt.antares.app.core.designsystem.ModoDeEsquema
 
@@ -35,7 +37,16 @@ fun PainelDeListaEDetalhe(
     vazio: @Composable () -> Unit = {},
 ) {
     Row(modifier = modifier.fillMaxSize()) {
-        Box(modifier = Modifier.weight(LADO_DA_LISTA)) { lista() }
+        // Numa janela larga a lista para de crescer. Nomes de exercícios não ficam mais
+        // legíveis com 480 dp do que com 340, e o espaço que sobra vale mais ao detalhe, que
+        // tem imagens e instruções. É esta a diferença entre os dois modos com detalhe ao
+        // lado — antes da 2.3.0 não havia nenhuma, e o `LISTA_E_DETALHE` e o `DUAS_COLUNAS`
+        // desenhavam exatamente o mesmo.
+        val ladoDaLista = when (LocalModoDeEsquema.current) {
+            ModoDeEsquema.DUAS_COLUNAS -> Modifier.width(LARGURA_FIXA_DA_LISTA)
+            else -> Modifier.weight(LADO_DA_LISTA)
+        }
+        Box(modifier = ladoDaLista) { lista() }
         VerticalDivider()
         Box(modifier = Modifier.weight(LADO_DO_DETALHE)) {
             if (detalhe != null) detalhe() else vazio()
@@ -45,3 +56,6 @@ fun PainelDeListaEDetalhe(
 
 private const val LADO_DA_LISTA = 2f
 private const val LADO_DO_DETALHE = 3f
+
+// Cabe um nome de exercício com marca e músculo sem partir, e não mais do que isso.
+private val LARGURA_FIXA_DA_LISTA = 340.dp
