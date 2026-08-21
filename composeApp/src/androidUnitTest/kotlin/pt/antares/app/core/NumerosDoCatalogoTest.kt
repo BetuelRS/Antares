@@ -20,33 +20,33 @@ class NumerosDoCatalogoTest {
     private val semente = File("src/commonMain/composeResources/files")
 
     /**
-     * Cada origem, o padrão que a conta na semente, e o nome por que os documentos lhe
-     * chamam. A contagem é por expressão e não por leitura do JSON: os dois ficheiros têm
-     * formatações diferentes — um compacto, outro indentado — e quatro megabytes lidos
-     * para um `size` seriam desperdício.
+     * Cada origem, o padrão que a conta no catálogo, e o nome por que os documentos lhe
+     * chamam. A origem lê-se do identificador porque é ele que a fixa: `ciqual-` vem da
+     * ANSES, `tca-` do INSA, `pt-` são os extras escritos à mão e `ptx` os curados.
+     *
+     * A contagem é por expressão e não por leitura do JSON: são cinco megabytes, e lê-los
+     * para um `size` seria desperdício.
      */
     private val origens = listOf(
-        Origem("CIQUAL", "seed_foods.json", Regex(""""id"\s*:\s*"ciqual-""")),
-        Origem("USDA", "seed_foods.json", Regex(""""id"\s*:\s*"usda-""")),
-        Origem("INSA", "seed_foods_tca.json", Regex(""""id"\s*:\s*"tca-""")),
-        Origem("PT_EXTRA", "seed_foods.json", Regex(""""origin"\s*:\s*"PT_EXTRA"""")),
+        Origem("CIQUAL", Regex(""""id"\s*:\s*"ciqual-""")),
+        Origem("USDA", Regex(""""id"\s*:\s*"usda-""")),
+        Origem("INSA", Regex(""""id"\s*:\s*"tca-""")),
+        Origem("PT_EXTRA", Regex(""""id"\s*:\s*"pt-""")),
     )
 
     private val documentos = listOf("README.md", "docs/referencia/dados-e-licencas.md")
 
-    private data class Origem(val nome: String, val ficheiro: String, val padrao: Regex)
+    private data class Origem(val nome: String, val padrao: Regex)
 
     @Test
     fun `os numeros de alimentos citados batem com a semente`() {
-        val contagens = origens.associateWith { origem ->
-            val texto = File(semente, origem.ficheiro).readText()
-            origem.padrao.findAll(texto).count()
-        }
+        val catalogo = File(semente, "catalogo.json").readText()
+        val contagens = origens.associateWith { origem -> origem.padrao.findAll(catalogo).count() }
 
-        // Uma semente vazia faria o teste passar por vacuidade: zero alimentos batem com
+        // Um catálogo vazio faria o teste passar por vacuidade: zero alimentos batem com
         // zero linhas citadas, e ninguém dava por isso.
         for ((origem, n) in contagens) {
-            assertTrue(n > 0, "não se encontrou nenhum alimento de ${origem.nome} na semente")
+            assertTrue(n > 0, "não se encontrou nenhum alimento de ${origem.nome} no catálogo")
         }
 
         val erros = mutableListOf<String>()

@@ -57,3 +57,6 @@ tools/tca-importer/data/*.xlsx
 # por decisão do dono, e o plano acaba em arquivos/ quando estiver cumprido.
 estudo/
 arquivos/
+
+# A base tirada do telemóvel para extrair as correções do catálogo. É grande e é derivada.
+extracao/

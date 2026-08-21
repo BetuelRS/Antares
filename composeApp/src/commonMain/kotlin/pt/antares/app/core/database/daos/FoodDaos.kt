@@ -29,6 +29,19 @@ data class FoodNameRow(
     val brand: String?,
 )
 
+/**
+ * O que é da pessoa dentro de uma linha do catálogo. Viaja à parte porque o catálogo é
+ * substituído por inteiro a cada versão, e estas quatro colunas são as únicas que não vêm
+ * do ficheiro — perdê-las é perder favoritos e recentes sem dar erro nenhum.
+ */
+data class MarcaDeUtilizadorRow(
+    val id: String,
+    val isFavorite: Boolean,
+    val lastUsedAt: Long,
+    val lastAmountG: Double?,
+    val deleted: Boolean,
+)
+
 @Dao
 interface FoodDao {
 
@@ -58,31 +71,6 @@ interface FoodDao {
         deleteFts(food.id)
         insertFts(FoodFtsEntity(foodId = food.id, searchText = searchText))
     }
-
-    @Query("SELECT id, namePt, nameEn, brand FROM foods WHERE deleted = 0")
-    suspend fun nameRows(): List<FoodNameRow>
-
-    @Query("SELECT id, namePt, nameEn, brand FROM foods WHERE id LIKE 'usda-%' AND deleted = 0")
-    suspend fun usdaNameRows(): List<FoodNameRow>
-
-    @Query("UPDATE foods SET isLiquid = 1 WHERE id IN (:ids)")
-    suspend fun markLiquid(ids: List<String>)
-
-    @Query("UPDATE foods SET isLiquid = 0 WHERE isLiquid = 1")
-    suspend fun clearAllLiquid()
-
-    @Transaction
-    suspend fun setDisplayNameWithFts(id: String, name: String, searchText: String) {
-        setDisplayName(id, name)
-        deleteFts(id)
-        insertFts(FoodFtsEntity(foodId = id, searchText = searchText))
-    }
-
-    @Query("UPDATE foods SET namePt = :name WHERE id = :id")
-    suspend fun setDisplayName(id: String, name: String)
-
-    @Query("UPDATE foods SET microsJson = :json WHERE id = :id")
-    suspend fun setMicros(id: String, json: String)
 
     @Query("SELECT * FROM foods WHERE id = :id AND deleted = 0")
     suspend fun byId(id: String): FoodEntity?
@@ -125,68 +113,46 @@ interface FoodDao {
     )
     suspend fun search(ftsQuery: String, limit: Int = 50): List<FoodEntity>
 
+    /**
+     * As linhas em que a pessoa deixou alguma coisa. Só essas — num catálogo de oito mil
+     * alimentos são umas dezenas, e trazer as outras seria carregar o catálogo inteiro
+     * para memória para não fazer nada com ele.
+     */
     @Query(
         """
-        UPDATE foods SET namePt = nameEn
-        WHERE id LIKE 'usda-%'
+        SELECT id, isFavorite, lastUsedAt, lastAmountG, deleted FROM foods
+        WHERE isFavorite = 1 OR lastUsedAt != 0 OR lastAmountG IS NOT NULL OR deleted = 1
         """,
     )
-    suspend fun cleanUsdaDisplayNames(): Int
+    suspend fun marcasDoUtilizador(): List<MarcaDeUtilizadorRow>
 
     /**
-     * Limpa alimentos importados que a versão nova do catálogo já não traz. As quatro
-     * condições finais repetem-se em todas as limpezas deste ficheiro e são a mesma regra:
-     * nunca apagar um alimento que a pessoa tocou — favorito, usado, com porção guardada,
-     * ou presente em qualquer registo do diário, mesmo apagado.
+     * Apaga o que ficou da versão anterior do catálogo: o que não foi reescrito agora tem
+     * o `updatedAt` para trás do instante desta instalação.
+     *
+     * As condições finais são a regra que atravessa o ficheiro todo — **nunca apagar um
+     * alimento que a pessoa tocou.** Tocar é ter posto como favorito, ter usado, ter
+     * guardado uma porção, ou aparecer num registo do diário, numa receita ou numa
+     * refeição-tipo, mesmo apagados. As receitas e as refeições faltavam a esta lista, e
+     * sem elas uma receita perdia um ingrediente em silêncio na primeira limpeza.
+     *
+     * Alimentos criados pela pessoa, vindos da Open Food Facts ou estimados por AI não são
+     * catálogo e nunca entram aqui.
      */
     @Query(
         """
         DELETE FROM foods
-        WHERE id LIKE 'usda-%'
-          AND updatedAt < :importedAt
+        WHERE source = 'SEED'
+          AND updatedAt < :instaladoEm
           AND isFavorite = 0
           AND lastUsedAt = 0
           AND lastAmountG IS NULL
           AND id NOT IN (SELECT foodId FROM food_log WHERE foodId IS NOT NULL)
+          AND id NOT IN (SELECT foodId FROM recipe_ingredient)
+          AND id NOT IN (SELECT foodId FROM meal_template_item WHERE foodId IS NOT NULL)
         """,
     )
-    suspend fun pruneStaleUsda(importedAt: Long): Int
-
-    // Quando a mesma comida existe nas duas listas portuguesas, fica a `ptx`, que é a
-    // revista; o nome é o único critério possível porque os identificadores não coincidem.
-    @Query(
-        """
-        DELETE FROM foods
-        WHERE id LIKE 'pt-%'
-          AND namePt IN (SELECT namePt FROM foods WHERE id LIKE 'ptx%')
-          AND isFavorite = 0
-          AND lastUsedAt = 0
-          AND lastAmountG IS NULL
-          AND id NOT IN (SELECT foodId FROM food_log WHERE foodId IS NOT NULL)
-        """,
-    )
-    suspend fun pruneDuplicateCurated(): Int
-
-    @Query("UPDATE foods SET verified = 1 WHERE (id LIKE 'ciqual-%' OR id LIKE 'usda-%') AND deleted = 0")
-    suspend fun markAnalysedAsVerified(): Int
-
-    @Query(
-        """
-        DELETE FROM foods
-        WHERE id IN (:ids)
-          AND isFavorite = 0
-          AND lastUsedAt = 0
-          AND lastAmountG IS NULL
-          AND id NOT IN (SELECT foodId FROM food_log WHERE foodId IS NOT NULL)
-        """,
-    )
-    suspend fun pruneByIds(ids: List<String>): Int
-
-    @Query("SELECT id, namePt FROM foods WHERE deleted = 0 AND (id LIKE 'pt-%' OR id LIKE 'ptx%')")
-    suspend fun curatedIdsAndNames(): List<FoodIdName>
-
-    @Query("SELECT id, namePt FROM foods WHERE deleted = 0 AND id LIKE 'tca-%'")
-    suspend fun tcaIdsAndNames(): List<FoodIdName>
+    suspend fun podarCatalogoAnterior(instaladoEm: Long): Int
 
     // O FTS não tem chave estrangeira: apagar um alimento deixa a linha de pesquisa para
     // trás, e essa linha continuaria a aparecer nos resultados sem alimento por trás.
@@ -195,16 +161,6 @@ interface FoodDao {
 
     @Query("DELETE FROM foods_fts WHERE foodId IN (:ids)")
     suspend fun deleteFtsIn(ids: List<String>)
-
-    // Guarda a primeira linha de cada alimento e apaga as outras. O `docid` é a coluna
-    // interna do FTS4, a única identidade que estas linhas têm.
-    @Query(
-        """
-        DELETE FROM foods_fts
-        WHERE docid NOT IN (SELECT MIN(docid) FROM foods_fts GROUP BY foodId)
-        """,
-    )
-    suspend fun dedupeFts(): Int
 
     @Query("SELECT * FROM foods WHERE deleted = 0 AND lastUsedAt > 0 ORDER BY lastUsedAt DESC LIMIT 30")
     fun observeRecents(): Flow<List<FoodEntity>>

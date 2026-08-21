@@ -158,6 +158,6 @@ for (const o of out) {
   ids.add(o.id);
 }
 
-const target = "../../composeApp/src/commonMain/composeResources/files/seed_foods_pt3.json";
+const target = "../catalogo/dados/seed_foods_pt3.json";
 writeFileSync(new URL(target, import.meta.url), JSON.stringify(out, null, 0));
 console.log("Gerados", out.length, "alimentos curados (parte 2) →", target);

@@ -23,14 +23,20 @@ class DicionarioUsdaTest {
 
     private val recursos = File("src/commonMain/composeResources/files")
 
+    // O dicionário deixou de viajar dentro da app na 2.4.0: a tradução passou a acontecer
+    // no oleoduto, e o que a app recebe já vem em português. Continua a medir-se aqui
+    // porque é a 2.13.0 que lhe vai pegar, e uma cobertura que desce sem ninguém ver é
+    // trabalho perdido antes de começar.
+    private val dicionario = File("../tools/catalogo/dados")
+
     private fun segmentos(): Map<String, String> =
         json.decodeFromString<Map<String, String>>(
-            File(recursos, "seed_pt_usda_names.json").readText(),
+            File(dicionario, "seed_pt_usda_names.json").readText(),
         ).filterKeys { !it.startsWith("_") }
 
     private fun nomesUsda(): List<String> =
         Regex(""""id":"(usda-[^"]+)","source":"[^"]*","sourceRef":("[^"]*"|null),"nameEn":"((?:[^"\\]|\\.)*)"""")
-            .findAll(File(recursos, "seed_foods.json").readText())
+            .findAll(File(recursos, "catalogo.json").readText())
             .map { it.groupValues[3].replace("\\\"", "\"") }
             .toList()
 

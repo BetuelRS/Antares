@@ -5,8 +5,7 @@ import { fileURLToPath } from "node:url";
 import { catalogue, curated, propose, words } from "./match-pt.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, "..", "..", "composeApp", "src", "commonMain",
-  "composeResources", "files", "seed_pt_micros.json");
+const OUT = join(HERE, "..", "catalogo", "dados", "seed_pt_micros.json");
 
 const overrides = JSON.parse(readFileSync(join(HERE, "pt-micro-overrides.json"), "utf8"));
 const byId = new Map(catalogue.map((e) => [e.id, e]));

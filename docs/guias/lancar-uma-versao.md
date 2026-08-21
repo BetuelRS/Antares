@@ -78,8 +78,15 @@ publicar.
 ## 7. Compilar e guardar o APK
 
 ```bash
+rm -rf composeApp/build/generated/assets composeApp/build/intermediates/assets        composeApp/build/outputs/apk
 ./gradlew :composeApp:assembleRelease
+unzip -l composeApp/build/outputs/apk/release/Antares-<versão>-x86_64.apk   | grep assets/composeResources
 ```
+
+**Apagar as saídas de recursos antes, e conferir o conteúdo depois.** Um ficheiro que se
+tenha apagado ou movido continua na pasta intermédia do Gradle e viaja dentro do APK — e
+nem o `--rerun-tasks` a limpa. Na 2.4.0 foram cinco megabytes de ficheiros de catálogo já
+substituídos, e o único sinal era a listagem do `unzip`.
 
 Os APKs ficam fora do repositório, em `apks/`, que o `.gitignore` exclui.
 

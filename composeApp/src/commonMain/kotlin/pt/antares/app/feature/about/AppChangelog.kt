@@ -23,9 +23,28 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.3.0"
+    const val CURRENT = "2.4.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.4.0",
+            title = "O catálogo passa a ser reconstruível",
+            titleEn = "The catalogue can be rebuilt",
+            highlights = listOf(
+                "**Dezasseis alimentos que faltavam** — sumo de arando, puré de castanha, " +
+                    "tomate comprido, cavala marinada e seis salsichas",
+                "Uma receita já não pode perder um ingrediente quando o catálogo é " +
+                    "atualizado",
+                "Os teus favoritos, os recentes e as porções que guardaste sobrevivem à " +
+                    "atualização do catálogo",
+            ),
+            highlightsEn = listOf(
+                "**Sixteen foods that were missing** — cranberry juice, chestnut purée, " +
+                    "long tomato, marinated mackerel and six sausages",
+                "A recipe can no longer lose an ingredient when the catalogue updates",
+                "Your favourites, recents and saved portions survive a catalogue update",
+            ),
+        ),
         AppVersion(
             name = "2.3.0",
             title = "A app passa a ter movimento",
@@ -314,27 +333,6 @@ object AppChangelog {
                 "**1376 Portuguese foods from INSA**, measured in Portugal, all with micronutrients",
                 "\"You have been here\": the same weight, but the body is no longer the same",
                 "Arm, thigh and chest join the waist in measurements",
-            ),
-        ),
-        AppVersion(
-            name = "0.12.0",
-            title = "Mostra-me a conta",
-            titleEn = "Show me the maths",
-            highlights = listOf(
-                "**«Mostra-me a conta»** — a aritmética da tua meta, aberta, com os teus números",
-                "Quando a balança não responde há semanas, a app pára de cortar e explica porquê",
-                "Pausa de dieta: comer à manutenção umas semanas em vez de cortar mais",
-                "Chegar ao peso-alvo deixa de te manter em défice — a app propõe manutenção",
-                "Um peso-alvo abaixo do saudável para a tua altura passa a ser dito",
-                "A partir dos 65 o mínimo de proteína sobe; abaixo dos 18 o ritmo é mais conservador",
-            ),
-            highlightsEn = listOf(
-                "**\"Show me the maths\"** — the arithmetic of your target, open, with your numbers",
-                "When the scale has not moved for weeks, the app stops cutting and explains why",
-                "Diet break: eat at maintenance for a few weeks instead of cutting further",
-                "Reaching your goal weight no longer keeps you in a deficit — the app proposes maintenance",
-                "A goal weight below what is healthy for your height is now said out loud",
-                "From 65 the protein minimum rises; under 18 the rate is more conservative",
             ),
         ),
     )

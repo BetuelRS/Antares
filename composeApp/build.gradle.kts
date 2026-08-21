@@ -16,7 +16,7 @@ fun localProp(key: String): String = localProps.getProperty(key, "")
  *
  * O `AppChangelogTest` falha se o `AppChangelog.CURRENT` deixar de acompanhar este valor.
  */
-val appVersion = "2.3.0"
+val appVersion = "2.4.0"
 
 /**
  * O `versionCode` deriva do nome em vez de ser contado à mão: `1.2.3` dá `10203`, e lê-se ao

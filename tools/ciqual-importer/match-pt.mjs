@@ -2,10 +2,14 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const SEED = join("..", "..", "composeApp", "src", "commonMain", "composeResources", "files");
-const read = (f) => JSON.parse(readFileSync(join(SEED, f), "utf8"));
+const DADOS = join("..", "catalogo", "dados");
+const read = (f) => JSON.parse(readFileSync(join(DADOS, f), "utf8"));
 
-export const catalogue = read("seed_foods.json");
+// O catálogo já construído, e não a semente antiga: desde a 2.4.0 há um ficheiro só, e é
+// dele que saem os alimentos com micronutrientes que servem de dador aos curados.
+const CATALOGO = join("..", "..", "composeApp", "src", "commonMain", "composeResources",
+  "files", "catalogo.json");
+export const catalogue = JSON.parse(readFileSync(CATALOGO, "utf8")).alimentos;
 export const curated = [
   ...read("seed_foods_pt.json"),
   ...read("seed_foods_pt2.json"),

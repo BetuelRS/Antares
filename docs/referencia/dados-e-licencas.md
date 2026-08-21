@@ -19,8 +19,8 @@ não mede, e a portuguesa manda em tudo o que é comida portuguesa.
 
 | Fonte | O que dá | Licença | O que obriga |
 |---|---|---|---|
-| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) (França) | **a base do catálogo** — 3385 alimentos europeus | [Licence Ouverte / Etalab 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/) | citar a fonte e a data da versão |
-| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2940 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) | atribuição pedida, não exigida |
+| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) (França) | **a base do catálogo** — 3401 alimentos europeus | [Licence Ouverte / Etalab 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/) | citar a fonte e a data da versão |
+| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2937 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) | atribuição pedida, não exigida |
 | [INSA — Tabela de Composição de Alimentos](https://portfir.insa.min-saude.pt/pt/) | 1376 alimentos portugueses, com nomes portugueses reais | **com direitos de autor** | a fonte tem de aparecer **visivelmente onde os dados são mostrados** |
 | [EFSA](https://www.efsa.europa.eu/) | valores de referência dietéticos, para o painel de micronutrientes | dados públicos da autoridade europeia | citar a fonte |
 | [free-exercise-db](https://github.com/yuhonas/free-exercise-db) | catálogo e imagens de exercícios | Unlicense (domínio público) | nada |
@@ -60,15 +60,21 @@ Estão em `composeApp/src/commonMain/composeResources/files/`:
 
 | Ficheiro | Origem |
 |---|---|
-| `seed_foods.json` | **CIQUAL, enriquecida com USDA**, via `tools/ciqual-importer/` |
-| `seed_foods_tca.json` | INSA, via `tools/tca-importer/` |
-| `seed_foods_pt.json`, `seed_foods_pt2.json`, `seed_foods_pt3.json` | listas escritas à mão, via `tools/food-curated/` |
-| `seed_pt_micros.json` | micronutrientes portugueses, via `tools/ciqual-importer/` |
+| `catalogo.json` | as quatro fontes já fundidas, via `tools/catalogo/construir.mjs` |
 | `seed_exercises.json` | free-exercise-db, via `tools/exercise-importer/` |
 | `seed_efsa_drv.csv` | valores de referência da EFSA |
 
-O campo `origin` de cada registo diz de onde veio: hoje o `seed_foods.json` tem 3385 `CIQUAL`,
-2940 `USDA` e 17 `PT_EXTRA`.
+Até à 2.3.0 eram cinco ficheiros de alimentos, semeados por ordem, mais treze correções que
+corriam no telemóvel a cada arranque. Desde a 2.4.0 é um só, construído fora da app.
+
+**O identificador diz a origem**, e é por ele que se conta: 3401 `ciqual-`, 2937 `usda-`,
+1376 `tca-`, 284 `ptx` — os portugueses curados — e 13 `pt-`, os extras escritos à mão.
+São 8011 alimentos.
+
+**Oitenta e três alimentos que a CIQUAL declara não entram**, e estão nomeados um a um em
+[`tools/catalogo/desvios.json`](../../tools/catalogo/desvios.json) com a razão: a fonte não
+determinou a energia nem um dos macronutrientes, e derivar um sem o outro seria inventar o
+número. A construção chumba se aparecer um desvio que não esteja nessa lista.
 
 Os conjuntos em bruto de que partem **não estão no repositório** — são grandes e voltam a
 descarregar-se. Ver [tools/README.md](../../tools/README.md).

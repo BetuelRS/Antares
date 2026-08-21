@@ -10,21 +10,19 @@ import pt.antares.app.core.crash.CrashStore
 import pt.antares.app.core.crash.registarEngolida
 import pt.antares.app.core.database.AntaresDb
 import pt.antares.app.core.database.DbInfo
+import pt.antares.app.core.database.daos.MarcaDeUtilizadorRow
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodFtsEntity
 import pt.antares.app.core.database.entities.FoodNutrientEntity
-import pt.antares.app.core.nutrition.Nutrients
-import pt.antares.app.core.nutrition.microsDeJson
-import pt.antares.app.core.fooddata.DrinkClassifier
-import pt.antares.app.core.fooddata.UsdaNameCleaner
-import pt.antares.app.core.fooddata.UsdaNameTranslator
 import pt.antares.app.core.model.FoodSource
+import pt.antares.app.core.nutrition.microsDeJson
 import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.generated.resources.Res
 
+/** Um alimento tal como o oleoduto o escreve. */
 @Serializable
-data class SeedFood(
+data class AlimentoDoCatalogo(
     val id: String,
     val source: String,
     val sourceRef: String? = null,
@@ -42,9 +40,72 @@ data class SeedFood(
     val micros: Map<String, Double>? = null,
     val servingName: String? = null,
     val servingGrams: Double? = null,
+    val isLiquid: Boolean = false,
     val verified: Boolean = false,
 )
 
+/** O catálogo inteiro, com a versão à cabeça — é ela que decide se se lê o resto. */
+@Serializable
+data class Catalogo(val versao: Int, val alimentos: List<AlimentoDoCatalogo>)
+
+/**
+ * Monta a linha que vai ser gravada: o alimento como o oleoduto o escreveu, mais o que era
+ * da pessoa naquela linha.
+ *
+ * Está fora da classe, e recebe a marca em vez de a ir buscar, porque é aqui que mora o
+ * risco calado desta versão. A escrita do catálogo grava a linha inteira por cima; se estas
+ * quatro colunas não viajarem dentro dela, os favoritos e as porções guardadas desaparecem
+ * numa actualização sem erro nenhum, sem aviso, e sem nada no ecrã a dizer que existiram.
+ */
+internal fun linhaDe(
+    alimento: AlimentoDoCatalogo,
+    marca: MarcaDeUtilizadorRow?,
+    agora: Long,
+): FoodEntity = FoodEntity(
+    id = alimento.id,
+    source = FoodSource.valueOf(alimento.source),
+    sourceRef = alimento.sourceRef,
+    namePt = alimento.namePt,
+    nameEn = alimento.nameEn,
+    brand = alimento.brand,
+    kcal = alimento.kcal,
+    proteinG = alimento.proteinG,
+    carbsG = alimento.carbsG,
+    sugarsG = alimento.sugarsG,
+    fatG = alimento.fatG,
+    satFatG = alimento.satFatG,
+    fiberG = alimento.fiberG,
+    sodiumMg = alimento.sodiumMg,
+    microsJson = alimento.micros?.let { Json.encodeToString(it) },
+    servingName = alimento.servingName,
+    servingGrams = alimento.servingGrams,
+    isLiquid = alimento.isLiquid,
+    isFavorite = marca?.isFavorite ?: false,
+    lastUsedAt = marca?.lastUsedAt ?: 0L,
+    lastAmountG = marca?.lastAmountG,
+    verified = alimento.verified,
+    updatedAt = agora,
+
+    // Uma lápide também é decisão da pessoa: ela escondeu aquele alimento, e reescrevê-lo
+    // do ficheiro fá-lo reaparecer na pesquisa como se nada fosse.
+    deleted = marca?.deleted ?: false,
+)
+
+/**
+ * Instala o catálogo de alimentos, e faz uma pergunta só: **o que está gravado é mais
+ * antigo do que o que veio no ficheiro?**
+ *
+ * Até à 2.3.0 eram dezoito passos por ordem fixa — cinco ficheiros importados e treze
+ * correções — e cada alimento mal escrito que se quisesse corrigir acrescentava um
+ * décimo-nono. O estado final dependia do caminho: quem instalava a app hoje passava por
+ * passos diferentes de quem a tinha desde março, e as correções não podiam ser fundidas
+ * nem reordenadas sem mudar o resultado de alguém.
+ *
+ * O catálogo passa a ser construído fora da app, por `tools/catalogo/construir.mjs`, e a
+ * chegar cozido num ficheiro só. **Corrigir um alimento deixa de custar código.** Aqui só
+ * se escreve o que veio e se apaga o que deixou de vir, e por isso todas as instalações
+ * convergem para o mesmo estado, venham de onde vierem.
+ */
 class FoodSeeder(
     private val db: AntaresDb,
     private val io: CoroutineDispatcher,
@@ -52,91 +113,71 @@ class FoodSeeder(
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
-    /**
-     * Semeia o catálogo e aplica-lhe as correções acumuladas. Corre a cada arranque, e
-     * cada passo verifica primeiro a sua marca na `db_info` — é isso que o torna barato e
-     * seguro de repetir.
-     *
-     * A ordem é a das dependências: importar antes de limpar, limpar antes de deduplicar.
-     * Cada passo é uma correção ao catálogo que já foi distribuído, e por isso não podem
-     * ser fundidos num só nem reordenados — quem tem a app instalada há muito passou por
-     * uns e não por outros.
-     */
     suspend fun seedIfNeeded() = withContext(io) {
+        val instalada = db.dbInfoDao().get(KEY_CATALOGO)?.value?.toIntOrNull() ?: NENHUMA
 
-        val importedAt = importIfNeeded("files/seed_foods.json", KEY, DONE)
-        if (importedAt != null) pruneOldCatalog(importedAt)
-        importIfNeeded("files/seed_foods_pt.json", KEY_PT, DONE_PT)
+        // A pergunta faz-se antes de abrir o ficheiro, e não depois: são cinco megabytes,
+        // e lê-los a cada arranque só para concluir que não há nada a fazer era o custo
+        // que a marca existe para evitar.
+        if (instalada >= VERSAO_DO_CATALOGO) return@withContext
 
-        importIfNeeded("files/seed_foods_pt2.json", KEY_PT2, DONE_PT2)
+        val catalogo = lerOuRegistar(FICHEIRO) {
+            json.decodeFromString<Catalogo>(it.decodeToString())
+        } ?: return@withContext
 
-        importIfNeeded("files/seed_foods_pt3.json", KEY_PT3, DONE_PT3)
-
-        importIfNeeded("files/seed_foods_tca.json", KEY_TCA, DONE_TCA)
-        cleanUsdaNamesIfNeeded()
-        markLiquidsIfNeeded()
-        cleanUsdaNamesV2IfNeeded()
-        dedupeFtsIfNeeded()
-        restoreCuratedNamesIfNeeded()
-        pruneCuratedCoveredByTcaIfNeeded()
-        pruneDuplicateCuratedIfNeeded()
-        markAnalysedVerifiedIfNeeded()
-        enrichCuratedWithMicrosIfNeeded()
-        traduzirNomesUsdaIfNeeded()
-        alargarMicrosIfNeeded(jaVeioNaImportacao = importedAt != null)
-        stampCatalogueRebuildIfNeeded()
-        indexarMicrosIfNeeded()
+        instalar(catalogo)
     }
 
-    /**
-     * Leva os dez nutrientes novos — cloro, ómega-3 e -6, EPA, DHA, amido, lactose, polióis,
-     * retinol e beta-caroteno — a quem já tem o catálogo instalado.
-     *
-     * Não se faz subindo a versão do `seed_foods.json`, apesar de ser o caminho curto:
-     * reimportar reescreve o `namePt`, e cinco passos deste ficheiro já corrigiram esses
-     * nomes e estão marcados como feitos. O catálogo voltava aos nomes de laboratório em
-     * inglês, e nada os tornaria a limpar.
-     *
-     * O que já lá está ganha ao ficheiro. A tabela só preenche as chaves em falta.
-     */
-    private suspend fun alargarMicrosIfNeeded(jaVeioNaImportacao: Boolean) {
-        if (db.dbInfoDao().get(KEY_MICROS_LARGOS)?.value == DONE_MICROS_LARGOS) return
+    private suspend fun instalar(catalogo: Catalogo) {
+        val agora = Clock.System.now().toEpochMilliseconds()
 
-        // Numa instalação nova o ficheiro acabou de entrar inteiro. Lê-lo outra vez seriam
-        // quatro megabytes para não mudar uma linha.
-        if (!jaVeioNaImportacao) {
-            val seeds = lerOuRegistar("files/seed_foods.json") {
-                json.decodeFromString<List<SeedFood>>(it.decodeToString())
-            } ?: return
+        // O que é do utilizador lê-se **antes** de escrever, e viaja dentro da linha nova.
+        // Restaurá-lo a seguir deixava uma janela em que uma interrupção lhe apagava os
+        // favoritos, e o `insertAll` grava por cima da linha inteira.
+        val marcas = db.foodDao().marcasDoUtilizador().associateBy { it.id }
 
-            for (s in seeds) {
-                val doFicheiro = s.micros ?: continue
-                val food = db.foodDao().byId(s.id) ?: continue
-                val atual = microsDeJson(food.microsJson)
-                val junto = Nutrients.merge(primary = atual, fallback = doFicheiro)
-                if (junto.size == atual.size) continue
-                db.foodDao().setMicros(s.id, Json.encodeToString(junto))
-            }
+        val alimentos = catalogo.alimentos.map { linhaDe(it, marcas[it.id], agora) }
+
+        // Em blocos por causa do limite de variáveis de uma instrução SQLite: são oito mil
+        // alimentos, e uma escrita única rebentava.
+        alimentos.chunked(LOTE_DE_ESCRITA).forEach { db.foodDao().insertAll(it) }
+
+        db.foodDao().podarCatalogoAnterior(agora)
+        db.foodDao().pruneOrphanFts()
+
+        val linhasDePesquisa = alimentos.map { f ->
+            FoodFtsEntity(
+                foodId = f.id,
+                searchText = TextNormalize.normalize("${f.namePt} ${f.nameEn} ${f.brand.orEmpty()}"),
+            )
         }
-        db.dbInfoDao().upsert(DbInfo(KEY_MICROS_LARGOS, DONE_MICROS_LARGOS))
+        // Apagar antes de reinserir: o FTS4 não tem chave primária, e reimportar sem isto
+        // duplicava cada alimento nos resultados.
+        alimentos.map { it.id }.chunked(LOTE_DE_ESCRITA).forEach { db.foodDao().deleteFtsIn(it) }
+        linhasDePesquisa.chunked(LOTE_DE_ESCRITA).forEach { db.foodDao().insertFtsAll(it) }
+
+        reindexarMicros()
+
+        if (db.dbInfoDao().get(KEY_REBUILT_DAY) == null) {
+            db.dbInfoDao().upsert(DbInfo(KEY_REBUILT_DAY, todayEpochDay().toString()))
+        }
+
+        // A marca fica em último: uma instalação interrompida a meio recomeça na abertura
+        // seguinte em vez de dar o catálogo por semeado.
+        db.dbInfoDao().upsert(DbInfo(KEY_CATALOGO, catalogo.versao.toString()))
     }
 
     /**
-     * Enche a `food_nutrient` a partir do JSON que já está no catálogo.
-     *
-     * Corre **depois** de todos os passos que mexem em alimentos, porque é deles que
-     * copia. A tabela é derivada: se a marca sumir, reconstrói-se sem perder nada.
+     * Reconstrói a tabela por nutriente a partir do JSON que acabou de entrar. É derivada:
+     * apagá-la inteira e refazê-la não perde nada, e é mais barato do que descobrir o que
+     * mudou.
      */
-    private suspend fun indexarMicrosIfNeeded() {
-        if (db.dbInfoDao().get(KEY_MICROS_INDEXADOS)?.value == DONE_MICROS_INDEXADOS) return
-
+    private suspend fun reindexarMicros() {
         db.foodNutrientDao().clearAll()
         db.foodDao().microsParaIndexar()
             .flatMap { linha -> linhasDe(linha.id, linha.microsJson) }
             .chunked(LOTE_DE_ESCRITA)
             .forEach { db.foodNutrientDao().upsertAll(it) }
-
-        db.dbInfoDao().upsert(DbInfo(KEY_MICROS_INDEXADOS, DONE_MICROS_INDEXADOS))
     }
 
     // Valores a zero ficam de fora: um nutriente declarado a zero não é o alimento ser
@@ -146,161 +187,8 @@ class FoodSeeder(
             .filterValues { it > 0 }
             .map { (chave, valor) -> FoodNutrientEntity(foodId = foodId, key = chave, value = valor) }
 
-    private suspend fun stampCatalogueRebuildIfNeeded() {
-        if (db.dbInfoDao().get(KEY_REBUILT_DAY) != null) return
-        db.dbInfoDao().upsert(DbInfo(KEY_REBUILT_DAY, todayEpochDay().toString()))
-    }
-
-    private suspend fun markAnalysedVerifiedIfNeeded() {
-        if (db.dbInfoDao().get(KEY_VERIFIED)?.value == DONE_VERIFIED) return
-        db.foodDao().markAnalysedAsVerified()
-        db.dbInfoDao().upsert(DbInfo(KEY_VERIFIED, DONE_VERIFIED))
-    }
-
-    private suspend fun pruneCuratedCoveredByTcaIfNeeded() {
-        if (db.dbInfoDao().get(KEY_TCA_DUPES)?.value == DONE_TCA_DUPES) return
-        val tcaNames = db.foodDao().tcaIdsAndNames()
-            .map { normalizeForDedupe(it.namePt) }
-            .toHashSet()
-        if (tcaNames.isEmpty()) return
-
-        val duplicados = db.foodDao().curatedIdsAndNames()
-            .filter { normalizeForDedupe(it.namePt) in tcaNames }
-            .map { it.id }
-
-        duplicados.chunked(400).forEach { db.foodDao().pruneByIds(it) }
-        db.foodDao().pruneOrphanFts()
-        db.dbInfoDao().upsert(DbInfo(KEY_TCA_DUPES, DONE_TCA_DUPES))
-    }
-
-    private suspend fun pruneDuplicateCuratedIfNeeded() {
-        if (db.dbInfoDao().get(KEY_PT_DUPES)?.value == DONE_PT_DUPES) return
-        db.foodDao().pruneDuplicateCurated()
-        db.foodDao().pruneOrphanFts()
-        db.dbInfoDao().upsert(DbInfo(KEY_PT_DUPES, DONE_PT_DUPES))
-    }
-
-    private suspend fun markLiquidsIfNeeded() {
-        if (db.dbInfoDao().get(KEY_LIQUID)?.value == DONE_LIQUID) return
-
-        db.foodDao().clearAllLiquid()
-        val liquidIds = db.foodDao().nameRows()
-            .filter { DrinkClassifier.isLiquid(it.namePt, it.nameEn) }
-            .map { it.id }
-        liquidIds.chunked(400).forEach { db.foodDao().markLiquid(it) }
-        db.dbInfoDao().upsert(DbInfo(KEY_LIQUID, DONE_LIQUID))
-    }
-
     /**
-     * Põe em português os nomes americanos que o dicionário cobre por inteiro.
-     *
-     * Corre **depois** dos dois passos que arrumam o inglês, e não em vez deles: o que não
-     * for traduzível continua com o nome inglês limpo, que é o melhor que há para ele. Os
-     * dois nomes vão para o índice de pesquisa, para quem procurar em qualquer das línguas
-     * encontrar o mesmo alimento.
-     *
-     * Traduz do `nameEn`, que nunca muda, e não do `namePt`, que estes passos reescrevem.
-     */
-    private suspend fun traduzirNomesUsdaIfNeeded() {
-        if (db.dbInfoDao().get(KEY_PT_USDA)?.value == DONE_PT_USDA) return
-
-        val segmentos = lerOuRegistar("files/seed_pt_usda_names.json") {
-            json.decodeFromString<Map<String, String>>(it.decodeToString())
-                .filterKeys { chave -> !chave.startsWith("_") }
-        } ?: return
-
-        db.foodDao().usdaNameRows().forEach { row ->
-            val pt = UsdaNameTranslator.traduzir(row.nameEn, segmentos) ?: return@forEach
-            if (pt == row.namePt) return@forEach
-            val fts = TextNormalize.normalize("$pt ${row.nameEn} ${row.brand.orEmpty()}")
-            db.foodDao().setDisplayNameWithFts(row.id, pt, fts)
-        }
-        db.dbInfoDao().upsert(DbInfo(KEY_PT_USDA, DONE_PT_USDA))
-    }
-
-    private suspend fun cleanUsdaNamesV2IfNeeded() {
-        if (db.dbInfoDao().get(KEY_CLEAN2)?.value == DONE_CLEAN2) return
-        db.foodDao().usdaNameRows().forEach { row ->
-            val cleaned = UsdaNameCleaner.clean(row.nameEn)
-            if (cleaned.isNotBlank() && cleaned != row.namePt) {
-                val fts = TextNormalize.normalize("$cleaned ${row.nameEn} ${row.brand.orEmpty()}")
-                db.foodDao().setDisplayNameWithFts(row.id, cleaned, fts)
-            }
-        }
-        db.dbInfoDao().upsert(DbInfo(KEY_CLEAN2, DONE_CLEAN2))
-    }
-
-    private suspend fun cleanUsdaNamesIfNeeded() {
-        if (db.dbInfoDao().get(KEY_CLEAN)?.value == DONE_CLEAN) return
-        db.foodDao().cleanUsdaDisplayNames()
-        db.dbInfoDao().upsert(DbInfo(KEY_CLEAN, DONE_CLEAN))
-    }
-
-    private suspend fun pruneOldCatalog(importedAt: Long) {
-        db.foodDao().pruneStaleUsda(importedAt)
-        db.foodDao().pruneOrphanFts()
-    }
-
-    private suspend fun dedupeFtsIfNeeded() {
-        if (db.dbInfoDao().get(KEY_FTS_DEDUPE)?.value == DONE_FTS_DEDUPE) return
-        db.foodDao().dedupeFts()
-        db.dbInfoDao().upsert(DbInfo(KEY_FTS_DEDUPE, DONE_FTS_DEDUPE))
-    }
-
-    private suspend fun restoreCuratedNamesIfNeeded() {
-        if (db.dbInfoDao().get(KEY_PT_NAMES)?.value == DONE_PT_NAMES) return
-        var restored = 0
-        for ((file, onlyPtExtras) in PT_SEED_FILES) {
-            @OptIn(ExperimentalResourceApi::class)
-            // Saltar o ficheiro é a recuperação certa — os nomes curados são uma correção,
-            // não o catálogo — mas sem rasto ninguém percebe porque é que os alimentos
-            // portugueses ficaram com o nome de origem.
-            val seeds = lerOuRegistar(file) {
-                json.decodeFromString<List<SeedFood>>(it.decodeToString())
-            } ?: continue
-            for (s in seeds) {
-
-                if (onlyPtExtras && !s.id.startsWith("pt-")) continue
-                val current = db.foodDao().byId(s.id) ?: continue
-                if (current.namePt == s.namePt) continue
-                val fts = TextNormalize.normalize(
-                    "${s.namePt} ${s.nameEn} ${s.brand.orEmpty()}",
-                )
-                db.foodDao().setDisplayNameWithFts(s.id, s.namePt, fts)
-                restored++
-            }
-        }
-        db.dbInfoDao().upsert(DbInfo(KEY_PT_NAMES, DONE_PT_NAMES))
-    }
-
-    private suspend fun enrichCuratedWithMicrosIfNeeded() {
-        if (db.dbInfoDao().get(KEY_PT_MICROS)?.value == DONE_PT_MICROS) return
-
-        @OptIn(ExperimentalResourceApi::class)
-        val table = lerOuRegistar("files/seed_pt_micros.json") {
-            json.decodeFromString<Map<String, Map<String, Double>>>(it.decodeToString())
-        }
-        if (table != null) {
-            for ((id, micros) in table) {
-                if (micros.isEmpty()) continue
-
-                val food = db.foodDao().byId(id) ?: continue
-                if (food.microsJson != null) continue
-                db.foodDao().setMicros(id, Json.encodeToString(micros))
-            }
-        }
-        db.dbInfoDao().upsert(DbInfo(KEY_PT_MICROS, DONE_PT_MICROS))
-    }
-
-    /**
-     * Importa um ficheiro de catálogo se ainda não foi, ou se a sua versão mudou. Devolve
-     * o instante da importação, que serve para limpar o que ficou da versão anterior.
-     *
-     * A marca é chave e versão: subir a versão faz o ficheiro ser reimportado por cima de
-     * quem já o tinha, sem tocar em mais nada.
-     */
-    /**
-     * Lê um ficheiro semeado, ou devolve nulo e deixa rasto. Um recurso que não abre é
+     * Lê o ficheiro do catálogo, ou devolve nulo e deixa rasto. Um recurso que não abre é
      * quase sempre um ficheiro que mudou de nome sem alguém reparar, e é um defeito da
      * app — não uma condição do telemóvel de quem a usa.
      */
@@ -317,140 +205,23 @@ class FoodSeeder(
             null
         }
 
-    private suspend fun importIfNeeded(file: String, key: String, doneVersion: String): Long? {
-        if (db.dbInfoDao().get(key)?.value == doneVersion) return null
-
-        // Sem proteção, uma leitura falhada aqui rebentava o arranque da app: o
-        // `seedIfNeeded` corre num `launch` sem tratador. Devolver nulo deixa a marca por
-        // pôr, e a próxima abertura tenta outra vez.
-        val seeds = lerOuRegistar(file) {
-            json.decodeFromString<List<SeedFood>>(it.decodeToString())
-        } ?: return null
-        val now = Clock.System.now().toEpochMilliseconds()
-
-        val foods = seeds.map { s ->
-            FoodEntity(
-                id = s.id,
-                source = FoodSource.valueOf(s.source),
-                sourceRef = s.sourceRef,
-                namePt = s.namePt,
-                nameEn = s.nameEn,
-                brand = s.brand,
-                kcal = s.kcal,
-                proteinG = s.proteinG,
-                carbsG = s.carbsG,
-                sugarsG = s.sugarsG,
-                fatG = s.fatG,
-                satFatG = s.satFatG,
-                fiberG = s.fiberG,
-                sodiumMg = s.sodiumMg,
-                microsJson = s.micros?.let { m ->
-                    Json.encodeToString(kotlinx.serialization.serializer(), m)
-                },
-                servingName = s.servingName,
-                servingGrams = s.servingGrams,
-                verified = s.verified,
-                updatedAt = now,
-            )
-        }
-        val fts = foods.map { f ->
-            FoodFtsEntity(
-                foodId = f.id,
-                searchText = TextNormalize.normalize("${f.namePt} ${f.nameEn} ${f.brand.orEmpty()}"),
-            )
-        }
-
-        // Em blocos de 400 por causa do limite de variáveis de uma instrução SQLite: os
-        // ficheiros têm milhares de alimentos, e uma inserção única rebentava.
-        foods.chunked(400).forEach { db.foodDao().insertAll(it) }
-
-        // Apagar as linhas de pesquisa antes de as reinserir: o FTS4 não tem chave
-        // primária, e reimportar sem isto duplicava cada alimento nos resultados.
-        foods.map { it.id }.chunked(400).forEach { db.foodDao().deleteFtsIn(it) }
-        fts.chunked(400).forEach { db.foodDao().insertFtsAll(it) }
-        // A marca fica em último: uma importação interrompida a meio recomeça na abertura
-        // seguinte em vez de dar o catálogo por semeado.
-        db.dbInfoDao().upsert(DbInfo(key, doneVersion))
-        return now
-    }
-
     companion object {
-        private const val KEY = "seed_foods_imported"
+        const val FICHEIRO = "files/catalogo.json"
 
-        private const val DONE = "v2"
-        private const val KEY_PT = "seed_foods_pt_imported"
-        private const val DONE_PT = "v1"
-        private const val KEY_PT2 = "seed_foods_pt2_imported"
-        private const val DONE_PT2 = "v1"
-        private const val KEY_PT3 = "seed_foods_pt3_imported"
-        private const val DONE_PT3 = "v1"
-        private const val KEY_TCA = "seed_foods_tca_imported"
-        private const val DONE_TCA = "v1"
-        private const val KEY_TCA_DUPES = "curated_dupes_tca_pruned"
-        private const val DONE_TCA_DUPES = "v1"
-        private const val KEY_CLEAN = "usda_names_cleaned"
-        private const val DONE_CLEAN = "v1"
-        private const val KEY_FTS_DEDUPE = "fts_deduped"
-        private const val DONE_FTS_DEDUPE = "v1"
-        private const val KEY_PT_NAMES = "curated_names_restored"
-        private const val DONE_PT_NAMES = "v1"
-        private const val KEY_PT_DUPES = "curated_dupes_pruned"
-        private const val DONE_PT_DUPES = "v1"
-        private const val KEY_VERIFIED = "analysed_verified"
-        private const val DONE_VERIFIED = "v1"
+        /**
+         * A versão que esta compilação traz. **Sobe com a do `construir.mjs`**, e o
+         * [CatalogoTemVersaoTest] não deixa que uma suba sem a outra: se ficasse para
+         * trás, o catálogo novo viajava dentro do APK e não entrava em telemóvel nenhum.
+         */
+        const val VERSAO_DO_CATALOGO = 1
+
+        private const val NENHUMA = 0
+        private const val KEY_CATALOGO = "catalogo_versao"
 
         const val KEY_REBUILT_DAY = "catalogue_rebuilt_day"
 
-        private const val KEY_PT_MICROS = "curated_micros_enriched"
-
-        private const val KEY_PT_USDA = "usda_names_translated"
-        private const val DONE_PT_USDA = "v1"
-
-        private const val KEY_MICROS_LARGOS = "micros_widened"
-        private const val DONE_MICROS_LARGOS = "v1"
-
-        private const val KEY_MICROS_INDEXADOS = "micros_indexed"
-        // Sobe com o alargamento: a `food_nutrient` é copiada do JSON, e os dez nutrientes
-        // novos não aparecem em nenhuma pergunta enquanto ela não for refeita.
-        private const val DONE_MICROS_INDEXADOS = "v2"
-
         // Lotes de escrita, para não montar uma instrução com dezenas de milhares de
         // parâmetros de uma vez.
-        private const val LOTE_DE_ESCRITA = 500
-
-        private const val DONE_PT_MICROS = "v2"
-
-        private val PT_SEED_FILES = listOf(
-            "files/seed_foods_pt.json" to false,
-            "files/seed_foods_pt2.json" to false,
-            "files/seed_foods_pt3.json" to false,
-            "files/seed_foods_tca.json" to false,
-            "files/seed_foods.json" to true,
-        )
-        private const val KEY_LIQUID = "drinks_marked"
-        private const val DONE_LIQUID = "v3"
-        private const val KEY_CLEAN2 = "usda_names_cleaned_v2"
-        private const val DONE_CLEAN2 = "v2"
+        private const val LOTE_DE_ESCRITA = 400
     }
-}
-
-internal fun normalizeForDedupe(name: String): String {
-    val semAcentos = name.map { ch ->
-        when (ch) {
-            'á', 'à', 'â', 'ã', 'ä' -> 'a'
-            'é', 'è', 'ê', 'ë' -> 'e'
-            'í', 'ì', 'î', 'ï' -> 'i'
-            'ó', 'ò', 'ô', 'õ', 'ö' -> 'o'
-            'ú', 'ù', 'û', 'ü' -> 'u'
-            'ç' -> 'c'
-            'ñ' -> 'n'
-            else -> ch
-        }
-    }.joinToString("")
-    return semAcentos.lowercase()
-        .map { if (it.isLetterOrDigit()) it else ' ' }
-        .joinToString("")
-        .split(' ')
-        .filter { it.isNotBlank() }
-        .joinToString(" ")
 }

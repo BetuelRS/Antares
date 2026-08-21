@@ -17,6 +17,67 @@ Nada por lançar.
 
 ---
 
+## [2.4.0] — 2026-08-21
+
+O catálogo de alimentos passa a ser construído fora da app. Esquema da base: **v26**, sem
+mudanças.
+
+### Adicionado
+
+- **Dezasseis alimentos que se perdiam há meses.** A CIQUAL publica `-` quando um valor não foi
+  determinado, e o importador antigo, ao encontrar um macronutriente por determinar, deitava fora
+  o alimento inteiro — noventa e nove ao todo. Catorze recuperam-se pela própria equação da
+  energia ao contrário: se a energia está publicada e falta um macro, o macro sai de lá. Dois
+  vêm de um par exacto no USDA. Entre eles, sumo de arando, puré de castanha, agar seco, tomate
+  comprido cru, cavala marinada e seis salsichas.
+- **Uma lista do que não entra, com nome e razão.** Oitenta e três alimentos da CIQUAL ficam de
+  fora porque lhes falta a energia **e** um macronutriente, e derivar um sem o outro seria
+  inventar o número. Estão nomeados um a um em `tools/catalogo/desvios.json`. Antes
+  desapareciam sem rasto.
+
+### Corrigido
+
+- **Uma receita podia perder um ingrediente em silêncio.** As limpezas do catálogo nunca
+  apagavam um alimento que a pessoa tivesse posto como favorito, usado, ou registado no diário —
+  mas não olhavam para as receitas nem para as refeições-tipo. Um ingrediente que só existisse
+  numa receita podia ser apagado numa importação, e nada no ecrã dizia que faltava.
+- **Favoritos, recentes e porções guardadas sobrevivem à troca do catálogo.** A escrita do
+  catálogo grava a linha inteira por cima, e essas quatro colunas são as únicas que não vêm do
+  ficheiro. Passam a viajar dentro da linha nova, e não a ser repostas a seguir: reposição tem
+  uma janela em que uma interrupção as apagava.
+
+### Alterado
+
+- **Dezoito passos passam a uma pergunta.** O catálogo era cinco ficheiros semeados por ordem e
+  treze correções que corriam no telemóvel a cada arranque, e o comentário do próprio ficheiro
+  dizia que não podiam ser fundidos nem reordenados — quem tinha a app desde março passara por
+  uns e não por outros. **O estado final dependia do caminho.** Agora o catálogo chega cozido num
+  ficheiro só, e a app pergunta apenas se o que está gravado é mais antigo do que o que veio.
+  Todas as instalações convergem para o mesmo estado, venham de onde vierem.
+- **Corrigir um alimento deixa de custar código.** Custava uma versão na Play Store, porque cada
+  correção era um passo novo no semeador. Passa a ser uma execução de `tools/catalogo/construir.mjs`.
+- **A construção chumba quando perde um alimento.** A fonte declara quantos traz; se algum não
+  chegar ao ficheiro e não estiver declarado, a construção falha. Foi assim que os noventa e nove
+  se perderam sem ninguém dar por isso durante meses.
+- A construção é **determinística** — duas execuções dão bytes idênticos — e a ordem é por código
+  de caracteres e não pela localização da máquina, para que o `git diff` diga a verdade.
+
+### Notas
+
+- **Os nomes corrigidos à mão não regridem.** Cinco dos dezoito passos arrumaram nomes americanos
+  ao longo de meses; reconstruir das fontes devolvia-lhes o nome de laboratório. Foram extraídos
+  de uma instalação com os dezoito passos corridos até ao fim, e a reconstrução foi comparada
+  alimento a alimento: **zero diferenças em 7 995 alimentos**, mais os dezasseis recuperados.
+- **O plano dizia dezassete passos, e eram dezoito.** Contados no ficheiro: cinco importações e
+  treze correções.
+- **O plano prometia recuperar os noventa e nove, e só dezasseis eram recuperáveis.** Os outros
+  oitenta e três não têm energia nem macronutriente publicados, e entrar com eles obrigava a
+  escrever números que ninguém mediu. Ficam declarados, à espera da ausência tipada da 2.7.0.
+- O catálogo passa de 7 998 para **8 011 alimentos**: 3 401 da CIQUAL, 2 937 do USDA, 1 376 do
+  INSA, 284 portugueses curados e 13 extras escritos à mão.
+
+---
+
 ## [2.3.0] — 2026-08-21
 
 A app ganha movimento e uma linguagem de ecrã só. Esquema da base: **v26**, sem mudanças.

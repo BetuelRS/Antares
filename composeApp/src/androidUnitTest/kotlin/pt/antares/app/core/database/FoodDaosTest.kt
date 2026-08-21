@@ -153,22 +153,6 @@ class FoodDaosTest {
     }
 
     @Test
-    fun `dedupeFts repara um indice que ja ficou duplicado`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
-        val f = food("1", "Pão de centeio")
-        insertSearchable(f)
-
-        db.foodDao().insertFtsAll(
-            listOf(FoodFtsEntity(foodId = f.id, searchText = TextNormalize.normalize(f.namePt))),
-        )
-        assertEquals(2, repo.search("pao").size, "o cenário partido tem de reproduzir-se")
-
-        db.foodDao().dedupeFts()
-
-        assertEquals(1, repo.search("pao").size)
-    }
-
-    @Test
     fun `pesquisa sem acentos encontra com acentos`() = runTest {
         val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
         insertSearchable(food("1", "Pão de centeio"))
@@ -203,39 +187,6 @@ class FoodDaosTest {
     }
 
     @Test
-    fun `limpeza troca nome USDA por ingles mas poupa curados`() = runTest {
-
-        db.foodDao().upsert(
-            food("usda-9", namePt = "Waffle, buttermilk, congelado", nameEn = "Waffle, buttermilk, frozen"),
-        )
-
-        db.foodDao().upsert(food("ptx_leite", namePt = "Leite meio-gordo", nameEn = "Milk, semi-skimmed"))
-
-        db.foodDao().upsert(food("pt-arroz", namePt = "Arroz cozido", nameEn = "Rice, cooked"))
-
-        val changed = db.foodDao().cleanUsdaDisplayNames()
-        assertEquals(1, changed)
-        assertEquals("Waffle, buttermilk, frozen", db.foodDao().byId("usda-9")?.namePt)
-        assertEquals("Leite meio-gordo", db.foodDao().byId("ptx_leite")?.namePt)
-        assertEquals("Arroz cozido", db.foodDao().byId("pt-arroz")?.namePt)
-    }
-
-    @Test
-    fun `limpeza mantem pesquisa PT via indice FTS intacto`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
-
-        insertSearchable(
-            food("usda-5", namePt = "Leite dessert, congelado", nameEn = "Milk dessert, frozen"),
-        )
-        db.foodDao().cleanUsdaDisplayNames()
-
-        val hits = repo.search("leite")
-        assertEquals(1, hits.size)
-
-        assertEquals("Milk dessert, frozen", hits.single().namePt)
-    }
-
-    @Test
     fun `barcode cacheado resolve sem rede no segundo scan`() = runTest {
         val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
 
@@ -250,63 +201,6 @@ class FoodDaosTest {
         assertEquals("Água com gás", cached?.namePt)
 
         assertEquals(null, repo.byBarcode("000000"))
-    }
-
-    @Test
-    fun `so as tabelas analisadas ficam verificadas`() = runTest {
-
-        db.foodDao().insertAll(
-            listOf(
-                food("ciqual-4003", "Batata cozida").copy(verified = false),
-                food("usda-171413", "Azeite").copy(verified = false),
-                food("ptx_feijoada", "Feijoada").copy(verified = false),
-            ),
-        )
-        db.foodDao().markAnalysedAsVerified()
-
-        val byId = db.foodDao().let { dao ->
-            listOf("ciqual-4003", "usda-171413", "ptx_feijoada").associateWith { dao.byId(it)!!.verified }
-        }
-        assertTrue(byId["ciqual-4003"]!!, "CIQUAL é análise de laboratório")
-        assertTrue(byId["usda-171413"]!!, "USDA é análise de laboratório")
-        assertTrue(
-            !byId["ptx_feijoada"]!!,
-            "os curados são fichas escritas à mão — o aviso de 'aproximado' é verdade neles",
-        )
-    }
-
-    @Test
-    fun `pt- duplicado de um curado e apagado, o curado fica`() = runTest {
-        db.foodDao().insertAll(
-            listOf(
-                food("pt-arroz-cozido", "Arroz branco cozido"),
-                food("ptx_arroz_branco", "Arroz branco cozido"),
-                food("pt-bacalhau", "Bacalhau cozido"),
-            ),
-        )
-        db.foodDao().pruneDuplicateCurated()
-
-        val ids = db.foodDao().nameRows().map { it.id }.toSet()
-        assertTrue("pt-arroz-cozido" !in ids, "o pt- duplicado devia sair")
-        assertTrue("ptx_arroz_branco" in ids, "o curado fica sempre — tem porção e micros")
-        assertTrue("pt-bacalhau" in ids, "um pt- sem par curado não é duplicado")
-    }
-
-    @Test
-    fun `pt- duplicado que a pessoa usou nunca e apagado`() = runTest {
-        db.foodDao().insertAll(
-            listOf(
-                food("pt-favorito", "Batata cozida", favorite = true),
-                food("pt-usado", "Caldo verde", lastUsed = 123L),
-                food("ptx_batata_cozida", "Batata cozida"),
-                food("ptx_caldo_verde", "Caldo verde"),
-            ),
-        )
-        db.foodDao().pruneDuplicateCurated()
-
-        val ids = db.foodDao().nameRows().map { it.id }.toSet()
-        assertTrue("pt-favorito" in ids, "favorito da pessoa não se apaga, nem duplicado")
-        assertTrue("pt-usado" in ids, "alimento já usado não se apaga")
     }
 
     @Test

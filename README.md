@@ -7,7 +7,7 @@
 Regista o que comes, o que treinas e quanto pesas. Mostra-te a aritmética por trás de cada meta,
 linha a linha, para poderes conferi-la à mão.
 
-![versão](https://img.shields.io/badge/vers%C3%A3o-2.3.0-orange)
+![versão](https://img.shields.io/badge/vers%C3%A3o-2.4.0-orange)
 ![Android 8.0+](https://img.shields.io/badge/Android-8.0%2B-green)
 ![licença GPL-3.0](https://img.shields.io/badge/licen%C3%A7a-GPL--3.0-blue)
 ![sem rastreio](https://img.shields.io/badge/rastreio-nenhum-lightgrey)
@@ -77,8 +77,8 @@ Quem quiser contribuir: [CONTRIBUTING.md](CONTRIBUTING.md). Vulnerabilidades:
 
 | Fonte | O que dá | Licença |
 |---|---|---|
-| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) | a base do catálogo — 3385 alimentos europeus | Licence Ouverte / Etalab 2.0 |
-| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2940 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) |
+| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) | a base do catálogo — 3401 alimentos europeus | Licence Ouverte / Etalab 2.0 |
+| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2937 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) |
 | [INSA — Tabela de Composição de Alimentos](https://portfir.insa.min-saude.pt/pt/) | 1376 alimentos portugueses | com direitos de autor; **uso sujeito a referenciação visível**, que a app faz no ecrã de atribuições e em cada alimento |
 | [EFSA](https://www.efsa.europa.eu/) | valores de referência dos micronutrientes | dados públicos |
 | [free-exercise-db](https://github.com/yuhonas/free-exercise-db) | catálogo e imagens de exercícios | Unlicense (domínio público) |
