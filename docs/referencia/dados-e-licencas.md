@@ -48,7 +48,7 @@ condição de uso dos dados.
 
 | Fonte | Quando | Licença | Redistribuído? |
 |---|---|---|---|
-| [Open Food Facts](https://world.openfoodfacts.org/) | ao ler um código de barras ou procurar um produto | [ODbL](https://opendatacommons.org/licenses/odbl/) | não — os produtos ficam só no telemóvel de quem os leu |
+| [Open Food Facts](https://world.openfoodfacts.org/) | ao ler um código de barras ou procurar um produto, e só com a pesquisa em linha ligada — ver o interruptor da 2.2.0 | [ODbL](https://opendatacommons.org/licenses/odbl/) | não — os produtos ficam só no telemóvel de quem os leu |
 
 A Open Food Facts exige que quem chama se identifique no `User-Agent`, com nome e contacto, sob
 pena de bloquear. A app monta esse cabeçalho a partir da versão e de um endereço de contacto — ver
