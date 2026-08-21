@@ -30,6 +30,7 @@ import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
+import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.feature.progress.ProgressSections
 import pt.antares.app.generated.resources.Res
@@ -87,11 +88,5 @@ fun MeScreen(
 
 @Composable
 private fun MeItem(label: StringResource, icon: ImageVector, onClick: () -> Unit) {
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        ListItem(
-            headlineContent = { Text(stringResource(label)) },
-            // Decorativo: cada linha do menu tem o seu nome escrito ao lado.
-            leadingContent = { Icon(icon, contentDescription = null) },
-        )
-    }
+    LinhaDaLista(titulo = stringResource(label), icone = icon, onClick = onClick)
 }

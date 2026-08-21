@@ -44,6 +44,7 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.ConfirmDialog
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.components.AntaresScaffold
@@ -653,21 +654,12 @@ private fun SettingSwitchRow(
     checked: Boolean,
     onChange: (Boolean) -> Unit,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-    ) {
-        Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-            Text(
-                desc,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Switch(checked = checked, onCheckedChange = onChange)
-    }
+    LinhaDaLista(
+        titulo = title,
+        subtitulo = desc,
+        aoLado = { Switch(checked = checked, onCheckedChange = onChange) },
+        emCartao = false,
+    )
 }
 
 /**
