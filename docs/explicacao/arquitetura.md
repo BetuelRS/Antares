@@ -88,6 +88,41 @@ O `KoinGraphTest` constrói os repositórios todos e rebenta no teste, em vez de
 primeira vez que alguém abre o ecrã. Percorre uma **lista escrita à mão**: um serviço novo só é
 coberto depois de ser acrescentado a essa lista.
 
+## Uma linguagem de ecrã só
+
+Os ecrãs não escolhem como se desenham. O sistema de desenho vive em
+`composeApp/src/commonMain/kotlin/pt/antares/app/core/designsystem/`, e a regra é
+que haja **um** de cada coisa:
+
+- **`AntaresScreen`** — andaime, rolagem, largura de leitura e margem, para os ecrãs que são
+  uma coluna de conteúdo. Os que são listas usam o `AntaresScaffold` e põem a largura na
+  própria lista: numa lista preguiçosa a largura tem de ir no conteúdo, senão a rolagem fica
+  presa a uma coluna estreita.
+- **`AntaresCard`** e **`LinhaDaLista`** — o cartão e a linha. O `Card` do Material tem duas
+  excepções, e estão escritas com a razão no `CartaoUnicoTest`.
+- **`ListaAdaptavel`**, **`GrelhaDeCartoes`** e **`PainelDeListaEDetalhe`** — as três
+  respostas a uma janela larga. Uma lista de alimentos numa coluna de 1200 dp seria tão má
+  como um parágrafo com essa largura.
+
+O `imePadding` vive no andaime partilhado, e é a razão de a regra ser a regra: trinta e dois
+ecrãs usavam o `Scaffold` do Material e nesses o teclado tapava o conteúdo em vez de o
+empurrar. Não dava erro nem aviso.
+
+### O movimento diz a relação
+
+A pasta do movimento, dentro do sistema de desenho, tem cinco movimentos, e cada um diz uma
+coisa diferente sobre a relação entre dois ecrãs: irmãos desvanecem, um detalhe entra da
+direita com o de trás a acompanhar a um terço, um modo sobe de baixo, uma sessão cresce de
+dentro, e um resultado assenta. **Voltar é o movimento ao contrário**, e não outro movimento.
+
+A escolha vive no `MovimentoDasRotas` e não nos sete ficheiros de rotas, porque uma relação
+não se lê olhando para um lado só. O `MovimentoDeTodasAsRotasTest` lê o `Routes.kt` e exige
+que todas as rotas estejam classificadas.
+
+**Quem desligou as animações no sistema não as recebe.** Lê-se o `ANIMATOR_DURATION_SCALE`,
+que é o que as definições de acessibilidade mexem — não é uma preferência da app, é a do
+aparelho.
+
 ## Sem rede
 
 A app funciona sem rede, e isso é uma propriedade defendida por testes, não uma consequência
