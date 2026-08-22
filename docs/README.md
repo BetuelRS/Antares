@@ -29,6 +29,7 @@ Factos, para consultar. Sem opinião e sem narrativa.
 
 | | |
 |---|---|
+| [Como continuar](referencia/como-continuar.md) | o que se lê ao começar uma sessão: onde estamos, as regras que mais mandam, e as armadilhas já pagas |
 | [Regras de trabalho](referencia/regras.md) | as 29 regras da produção, e quem verifica cada uma |
 | [Base de dados](referencia/base-de-dados.md) | tabelas, versões do esquema, regras das migrações |
 | [Testes-guarda](referencia/testes-guarda.md) | o que cada um defende, e o que fazer quando falha |

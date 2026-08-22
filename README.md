@@ -66,7 +66,7 @@ aqui](docs/README.md).
 | | |
 |---|---|
 | **Guias** | [compilar](docs/guias/compilar.md) · [correr os testes](docs/guias/correr-os-testes.md) · [lançar uma versão](docs/guias/lancar-uma-versao.md) · [publicar o servidor](docs/guias/publicar-o-servidor.md) |
-| **Referência** | [base de dados](docs/referencia/base-de-dados.md) · [testes-guarda](docs/referencia/testes-guarda.md) · [versionamento](docs/referencia/versionamento.md) · [dados e licenças](docs/referencia/dados-e-licencas.md) |
+| **Referência** | [como continuar](docs/referencia/como-continuar.md) · [base de dados](docs/referencia/base-de-dados.md) · [testes-guarda](docs/referencia/testes-guarda.md) · [versionamento](docs/referencia/versionamento.md) · [dados e licenças](docs/referencia/dados-e-licencas.md) |
 | **Explicação** | [arquitetura](docs/explicacao/arquitetura.md) · [privacidade](docs/explicacao/privacidade.md) · [registo de decisões](docs/explicacao/decisoes/) |
 | **Histórico** | [CHANGELOG.md](CHANGELOG.md) |
 
