@@ -87,7 +87,7 @@ fica calado e vai para a Play Store.**
 
 ## O plano e o relatório
 
-O plano está em `estudo/PLANO-DE-PRODUCAO.md`, fora do git por decisão do dono — o registo
+O plano vive na pasta **estudo**, fora do git por decisão do dono — o registo
 durável é o `git log`. As respostas às perguntas de abertura ficam escritas por baixo de cada
 versão, e o que se aprendeu a construir fica por baixo dessas.
 
