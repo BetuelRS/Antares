@@ -20,7 +20,10 @@ import pt.antares.app.core.model.MealSlot
 @Serializable
 @Entity(
     tableName = "foods",
-    indices = [Index("lastUsedAt"), Index("isFavorite"), Index("source")],
+
+    // O que a pessoa marcou saiu daqui na v27 e vive no [FoodMarkEntity]. Sobra o índice
+    // por origem, que é o que separa o catálogo do que ela própria criou.
+    indices = [Index("source")],
 )
 data class FoodEntity(
     @PrimaryKey val id: String,
@@ -52,12 +55,6 @@ data class FoodEntity(
 
     // Separa mililitros de gramas na apresentação; a nutrição continua toda por 100 g.
     @ColumnInfo(defaultValue = "0") val isLiquid: Boolean = false,
-    val isFavorite: Boolean = false,
-    val lastUsedAt: Long = 0L,
-
-    // A última quantidade serve de sugestão quando ainda não há registos que cheguem para
-    // a porção habitual do [UsualPortion].
-    val lastAmountG: Double? = null,
 
     val verified: Boolean = false,
     val updatedAt: Long,

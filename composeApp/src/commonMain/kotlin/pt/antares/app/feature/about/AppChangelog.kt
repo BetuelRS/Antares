@@ -23,9 +23,25 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.4.0"
+    const val CURRENT = "2.5.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.5.0",
+            title = "Os teus favoritos passam a ir na cópia",
+            titleEn = "Your favourites now travel in the backup",
+            highlights = listOf(
+                "**Os favoritos, os recentes e as porções que guardaste passam a ir na " +
+                    "cópia de segurança.** Não iam, e restaurar uma cópia apagava-os",
+                "A cópia diz agora com que versão do catálogo foi feita, antes de a " +
+                    "importares",
+            ),
+            highlightsEn = listOf(
+                "**Your favourites, recents and saved portions now travel in the backup.** " +
+                    "They did not, and restoring a backup wiped them",
+                "The backup now says which catalogue version made it, before you import it",
+            ),
+        ),
         AppVersion(
             name = "2.4.0",
             title = "O catálogo passa a ser reconstruível",
@@ -306,33 +322,6 @@ object AppChangelog {
                 "Cycle retention is 1 to 3 kg — the app says so instead of letting you think it is fat",
                 "Nutrient references for pregnancy, breastfeeding and post-menopause",
                 "During pregnancy and breastfeeding the app no longer proposes a deficit",
-            ),
-        ),
-        AppVersion(
-            name = "0.13.0",
-            title = "A app lembra-se",
-            titleEn = "The app remembers",
-            highlights = listOf(
-                "Separador **Progresso** — o único ecrã que olha para trás",
-                "Gráfico do peso a sério, com escala, tendência e o teu peso-alvo marcado",
-                "Mapa de consistência: doze semanas de dias registados, de relance",
-                "A linha do tempo dos teus objetivos — quando os puseste e quando lá chegaste",
-                "Marcos: 30 dias registados, 5 kg de mudança, factuais e sem elogios vazios",
-                "Fotos de progresso, **só neste telemóvel**",
-                "**1376 alimentos portugueses do INSA**, medidos em Portugal, todos com micros",
-                "«Já estiveste aqui»: o mesmo peso, mas o corpo já não é o mesmo",
-                "Braço, coxa e peito juntam-se à cintura nas medições",
-            ),
-            highlightsEn = listOf(
-                "New **Progress** tab — the one screen that looks backwards",
-                "A real weight chart, with scale, trend and your goal weight marked",
-                "Consistency map: twelve weeks of logged days, at a glance",
-                "The timeline of your goals — when you set them and when you got there",
-                "Milestones: 30 days logged, 5 kg of change, factual and without empty praise",
-                "Progress photos, **on this phone only**",
-                "**1376 Portuguese foods from INSA**, measured in Portugal, all with micronutrients",
-                "\"You have been here\": the same weight, but the body is no longer the same",
-                "Arm, thigh and chest join the waist in measurements",
             ),
         ),
     )

@@ -10,7 +10,6 @@ import pt.antares.app.core.crash.CrashStore
 import pt.antares.app.core.crash.registarEngolida
 import pt.antares.app.core.database.AntaresDb
 import pt.antares.app.core.database.DbInfo
-import pt.antares.app.core.database.daos.MarcaDeUtilizadorRow
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodFtsEntity
 import pt.antares.app.core.database.entities.FoodNutrientEntity
@@ -49,17 +48,16 @@ data class AlimentoDoCatalogo(
 data class Catalogo(val versao: Int, val alimentos: List<AlimentoDoCatalogo>)
 
 /**
- * Monta a linha que vai ser gravada: o alimento como o oleoduto o escreveu, mais o que era
- * da pessoa naquela linha.
+ * Monta a linha que vai ser gravada, tal como o oleoduto a escreveu.
  *
- * Está fora da classe, e recebe a marca em vez de a ir buscar, porque é aqui que mora o
- * risco calado desta versão. A escrita do catálogo grava a linha inteira por cima; se estas
- * quatro colunas não viajarem dentro dela, os favoritos e as porções guardadas desaparecem
- * numa actualização sem erro nenhum, sem aviso, e sem nada no ecrã a dizer que existiram.
+ * Na 2.4.0 esta função também transportava o que era da pessoa — o favorito, o uso, a porção
+ * e a lápide — porque essas colunas viviam dentro da linha do alimento e a escrita do
+ * catálogo gravava a linha inteira por cima. **Na v27 saíram daqui** para a `food_marca`, e o
+ * risco deixou de existir em vez de ser contornado: o que não vive na linha do alimento não
+ * pode ser apagado ao escrevê-la.
  */
 internal fun linhaDe(
     alimento: AlimentoDoCatalogo,
-    marca: MarcaDeUtilizadorRow?,
     agora: Long,
 ): FoodEntity = FoodEntity(
     id = alimento.id,
@@ -80,15 +78,9 @@ internal fun linhaDe(
     servingName = alimento.servingName,
     servingGrams = alimento.servingGrams,
     isLiquid = alimento.isLiquid,
-    isFavorite = marca?.isFavorite ?: false,
-    lastUsedAt = marca?.lastUsedAt ?: 0L,
-    lastAmountG = marca?.lastAmountG,
     verified = alimento.verified,
     updatedAt = agora,
-
-    // Uma lápide também é decisão da pessoa: ela escondeu aquele alimento, e reescrevê-lo
-    // do ficheiro fá-lo reaparecer na pesquisa como se nada fosse.
-    deleted = marca?.deleted ?: false,
+    deleted = false,
 )
 
 /**
@@ -131,12 +123,7 @@ class FoodSeeder(
     private suspend fun instalar(catalogo: Catalogo) {
         val agora = Clock.System.now().toEpochMilliseconds()
 
-        // O que é do utilizador lê-se **antes** de escrever, e viaja dentro da linha nova.
-        // Restaurá-lo a seguir deixava uma janela em que uma interrupção lhe apagava os
-        // favoritos, e o `insertAll` grava por cima da linha inteira.
-        val marcas = db.foodDao().marcasDoUtilizador().associateBy { it.id }
-
-        val alimentos = catalogo.alimentos.map { linhaDe(it, marcas[it.id], agora) }
+        val alimentos = catalogo.alimentos.map { linhaDe(it, agora) }
 
         // Em blocos por causa do limite de variáveis de uma instrução SQLite: são oito mil
         // alimentos, e uma escrita única rebentava.

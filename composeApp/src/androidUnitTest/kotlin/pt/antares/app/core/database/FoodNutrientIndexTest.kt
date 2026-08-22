@@ -124,6 +124,7 @@ class FoodNutrientIndexTest {
     fun `um produto guardado de um codigo de barras entra logo no indice`() = runTest {
         val repo = pt.antares.app.feature.fooddata.FoodRepository(
             db.foodDao(),
+            db.foodMarkDao(),
             db.foodNutrientDao(),
             db.searchMissDao(),
             Dispatchers.Default,

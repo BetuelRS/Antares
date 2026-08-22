@@ -50,6 +50,7 @@ import pt.antares.app.generated.resources.copia_conta_run
 import pt.antares.app.generated.resources.copia_conta_water_log
 import pt.antares.app.generated.resources.copia_conta_weight_log
 import pt.antares.app.generated.resources.copia_conta_workout_session
+import pt.antares.app.generated.resources.copia_import_catalogo
 import pt.antares.app.generated.resources.copia_import_de
 import pt.antares.app.generated.resources.copia_import_resumo
 import pt.antares.app.generated.resources.copia_import_sem_data
@@ -295,6 +296,15 @@ private fun ResumoDoFicheiro(resumo: ResumoDaCopia?) {
                 resumo.exportadoEm.substringBefore('T'),
                 resumo.versaoApp.orEmpty(),
             ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+    // Só aparece quando existe: as cópias feitas antes da 2.5.0 não a trazem, e escrever
+    // «versão do catálogo: desconhecida» era ruído sobre uma coisa que não muda nada.
+    resumo?.versaoCatalogo?.let { versao ->
+        Text(
+            stringResource(Res.string.copia_import_catalogo, versao.toString()),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

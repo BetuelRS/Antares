@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodFtsEntity
 import pt.antares.app.core.database.entities.FoodLogEntity
+import pt.antares.app.core.database.entities.FoodMarkEntity
 import pt.antares.app.core.database.entities.WaterLogEntity
 import pt.antares.app.core.model.MealSlot
 
@@ -30,17 +31,58 @@ data class FoodNameRow(
 )
 
 /**
- * O que é da pessoa dentro de uma linha do catálogo. Viaja à parte porque o catálogo é
- * substituído por inteiro a cada versão, e estas quatro colunas são as únicas que não vêm
- * do ficheiro — perdê-las é perder favoritos e recentes sem dar erro nenhum.
+ * O que a pessoa deixou sobre um alimento: o favorito, o uso e a porção.
+ *
+ * Tabela à parte desde a v27. Enquanto vivia dentro da linha do alimento, escrever o
+ * catálogo por cima apagava-a — e não ia na cópia de segurança, porque o catálogo não se
+ * exporta. Ver [pt.antares.app.core.database.entities.FoodMarkEntity].
  */
-data class MarcaDeUtilizadorRow(
-    val id: String,
-    val isFavorite: Boolean,
-    val lastUsedAt: Long,
-    val lastAmountG: Double?,
-    val deleted: Boolean,
-)
+@Dao
+interface FoodMarkDao {
+
+    @Upsert
+    suspend fun upsert(marca: FoodMarkEntity)
+
+    @Query("SELECT * FROM food_marca WHERE foodId = :foodId")
+    suspend fun byFoodId(foodId: String): FoodMarkEntity?
+
+    /**
+     * Marca ou desmarca como favorito sem tocar no resto. O `INSERT … ON CONFLICT` existe
+     * porque a marca pode ainda não existir: um alimento que nunca foi usado nem marcado
+     * não tem linha nenhuma aqui, e é isso que faz a tabela ter dezenas de linhas em vez
+     * de oito mil.
+     */
+    @Query(
+        """
+        INSERT INTO food_marca (foodId, isFavorite, lastUsedAt, lastAmountG, updatedAt, deleted)
+        VALUES (:foodId, :favorito, 0, NULL, :agora, 0)
+        ON CONFLICT(foodId) DO UPDATE SET
+            isFavorite = :favorito, updatedAt = :agora, deleted = 0
+        """,
+    )
+    suspend fun marcarFavorito(foodId: String, favorito: Boolean, agora: Long)
+
+    // O COALESCE preserva a última quantidade quando a chamada não traz nenhuma: marcar o
+    // uso não pode apagar a porção que a app tinha aprendido.
+    @Query(
+        """
+        INSERT INTO food_marca (foodId, isFavorite, lastUsedAt, lastAmountG, updatedAt, deleted)
+        VALUES (:foodId, 0, :agora, :gramas, :agora, 0)
+        ON CONFLICT(foodId) DO UPDATE SET
+            lastUsedAt = :agora,
+            lastAmountG = COALESCE(:gramas, lastAmountG),
+            updatedAt = :agora,
+            deleted = 0
+        """,
+    )
+    suspend fun marcarUso(foodId: String, agora: Long, gramas: Double? = null)
+
+    @Query("SELECT * FROM food_marca WHERE deleted = 0")
+    suspend fun exportRows(): List<FoodMarkEntity>
+
+    @Query("SELECT COUNT(*) FROM food_marca")
+    suspend fun count(): Int
+}
 
 @Dao
 interface FoodDao {
@@ -96,10 +138,11 @@ interface FoodDao {
         """
         SELECT f.* FROM foods f
         JOIN foods_fts s ON s.foodId = f.id
+        LEFT JOIN food_marca m ON m.foodId = f.id
         WHERE foods_fts MATCH :ftsQuery AND f.deleted = 0
         ORDER BY
-            f.isFavorite DESC,
-            f.lastUsedAt DESC,
+            COALESCE(m.isFavorite, 0) DESC,
+            COALESCE(m.lastUsedAt, 0) DESC,
             (CASE
                 WHEN f.id LIKE 'pt-%' OR f.id LIKE 'ptx%' OR f.source = 'CUSTOM' THEN 0
                 WHEN f.id LIKE 'ciqual-%' THEN 1
@@ -114,27 +157,13 @@ interface FoodDao {
     suspend fun search(ftsQuery: String, limit: Int = 50): List<FoodEntity>
 
     /**
-     * As linhas em que a pessoa deixou alguma coisa. Só essas — num catálogo de oito mil
-     * alimentos são umas dezenas, e trazer as outras seria carregar o catálogo inteiro
-     * para memória para não fazer nada com ele.
-     */
-    @Query(
-        """
-        SELECT id, isFavorite, lastUsedAt, lastAmountG, deleted FROM foods
-        WHERE isFavorite = 1 OR lastUsedAt != 0 OR lastAmountG IS NOT NULL OR deleted = 1
-        """,
-    )
-    suspend fun marcasDoUtilizador(): List<MarcaDeUtilizadorRow>
-
-    /**
      * Apaga o que ficou da versão anterior do catálogo: o que não foi reescrito agora tem
      * o `updatedAt` para trás do instante desta instalação.
      *
      * As condições finais são a regra que atravessa o ficheiro todo — **nunca apagar um
-     * alimento que a pessoa tocou.** Tocar é ter posto como favorito, ter usado, ter
-     * guardado uma porção, ou aparecer num registo do diário, numa receita ou numa
-     * refeição-tipo, mesmo apagados. As receitas e as refeições faltavam a esta lista, e
-     * sem elas uma receita perdia um ingrediente em silêncio na primeira limpeza.
+     * alimento que a pessoa tocou.** Tocar é ter deixado uma marca — favorito, uso ou
+     * porção guardada — ou aparecer num registo do diário, numa receita ou numa
+     * refeição-tipo, mesmo apagados.
      *
      * Alimentos criados pela pessoa, vindos da Open Food Facts ou estimados por AI não são
      * catálogo e nunca entram aqui.
@@ -144,9 +173,7 @@ interface FoodDao {
         DELETE FROM foods
         WHERE source = 'SEED'
           AND updatedAt < :instaladoEm
-          AND isFavorite = 0
-          AND lastUsedAt = 0
-          AND lastAmountG IS NULL
+          AND id NOT IN (SELECT foodId FROM food_marca)
           AND id NOT IN (SELECT foodId FROM food_log WHERE foodId IS NOT NULL)
           AND id NOT IN (SELECT foodId FROM recipe_ingredient)
           AND id NOT IN (SELECT foodId FROM meal_template_item WHERE foodId IS NOT NULL)
@@ -162,7 +189,17 @@ interface FoodDao {
     @Query("DELETE FROM foods_fts WHERE foodId IN (:ids)")
     suspend fun deleteFtsIn(ids: List<String>)
 
-    @Query("SELECT * FROM foods WHERE deleted = 0 AND lastUsedAt > 0 ORDER BY lastUsedAt DESC LIMIT 30")
+    // A junção é para dentro (`JOIN`, não `LEFT JOIN`): recente é quem tem marca de uso, e
+    // um alimento sem marca nenhuma não pode aparecer aqui.
+    @Query(
+        """
+        SELECT f.* FROM foods f
+        JOIN food_marca m ON m.foodId = f.id
+        WHERE f.deleted = 0 AND m.deleted = 0 AND m.lastUsedAt > 0
+        ORDER BY m.lastUsedAt DESC
+        LIMIT 30
+        """,
+    )
     fun observeRecents(): Flow<List<FoodEntity>>
 
     @Query(
@@ -173,26 +210,26 @@ interface FoodDao {
             WHERE deleted = 0 AND foodId IS NOT NULL AND epochDay >= :sinceEpochDay
             GROUP BY foodId
         ) u ON u.foodId = f.id
+        LEFT JOIN food_marca m ON m.foodId = f.id
         WHERE f.deleted = 0
-        ORDER BY u.n DESC, f.lastUsedAt DESC
+        ORDER BY u.n DESC, COALESCE(m.lastUsedAt, 0) DESC
         LIMIT :limit
         """,
     )
     fun observeMostLogged(sinceEpochDay: Long, limit: Int = 20): Flow<List<FoodEntity>>
 
-    @Query("SELECT * FROM foods WHERE deleted = 0 AND isFavorite = 1 ORDER BY namePt ASC")
+    @Query(
+        """
+        SELECT f.* FROM foods f
+        JOIN food_marca m ON m.foodId = f.id
+        WHERE f.deleted = 0 AND m.deleted = 0 AND m.isFavorite = 1
+        ORDER BY f.namePt ASC
+        """,
+    )
     fun observeFavorites(): Flow<List<FoodEntity>>
 
     @Query("SELECT * FROM foods WHERE deleted = 0 AND source = 'CUSTOM' ORDER BY namePt ASC")
     fun observeMyFoods(): Flow<List<FoodEntity>>
-
-    @Query("UPDATE foods SET isFavorite = :favorite, updatedAt = :now WHERE id = :id")
-    suspend fun setFavorite(id: String, favorite: Boolean, now: Long)
-
-    // O COALESCE preserva a última quantidade quando a chamada não traz nenhuma: marcar o
-    // uso não pode apagar a porção que a app tinha aprendido.
-    @Query("UPDATE foods SET lastUsedAt = :now, lastAmountG = COALESCE(:amountG, lastAmountG) WHERE id = :id")
-    suspend fun touchLastUsed(id: String, now: Long, amountG: Double? = null)
 
     @Query("SELECT COUNT(*) FROM foods")
     suspend fun count(): Int

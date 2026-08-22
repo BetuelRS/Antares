@@ -33,6 +33,17 @@ class CartaoUnicoTest {
                 "estado escolhido — não é um cartão de conteúdo",
     )
 
+    /**
+     * O import inteiro, e por isso a linha inteira: sem isto, o `Card` apanhava também o
+     * `CardDefaults` e o `ElevatedCard`. A leitura normaliza os fins de linha porque no
+     * Windows os ficheiros são gravados com `CRLF`, e um teste que dependa disso acusa
+     * quem mexeu no ficheiro em vez de quem usou o cartão errado.
+     */
+    private fun File.importa(classe: String): Boolean =
+        readText()
+            .replace("\r\n", "\n")
+            .contains("import androidx.compose.material3.$classe\n")
+
     private val ecras = File("src/commonMain/kotlin/pt/antares/app/feature")
         .walkTopDown()
         .filter { it.extension == "kt" }
@@ -41,7 +52,7 @@ class CartaoUnicoTest {
     @Test
     fun `so as excepcoes usam o cartao do Material`() {
         val usam = ecras
-            .filter { it.readText().contains("import androidx.compose.material3.Card\n") }
+            .filter { it.importa("Card") }
             .map { it.name }
             .toSet()
 
@@ -57,7 +68,7 @@ class CartaoUnicoTest {
     @Test
     fun `so as excepcoes usam o ListItem`() {
         val usam = ecras
-            .filter { it.readText().contains("import androidx.compose.material3.ListItem\n") }
+            .filter { it.importa("ListItem") }
             .map { it.name }
             .toSet()
 

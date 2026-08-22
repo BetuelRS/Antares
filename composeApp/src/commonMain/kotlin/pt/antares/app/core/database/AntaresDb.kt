@@ -25,6 +25,7 @@ import pt.antares.app.core.database.daos.ExerciseLogDao
 import pt.antares.app.core.database.daos.FastingProtocolDao
 import pt.antares.app.core.database.daos.FastingSessionDao
 import pt.antares.app.core.database.daos.FoodDao
+import pt.antares.app.core.database.daos.FoodMarkDao
 import pt.antares.app.core.database.daos.FoodNutrientDao
 import pt.antares.app.core.database.daos.FoodLogDao
 import pt.antares.app.core.database.daos.MealTemplateDao
@@ -50,6 +51,7 @@ import pt.antares.app.core.database.entities.DailyTargetOverrideEntity
 import pt.antares.app.core.database.entities.ExerciseLogEntity
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodFtsEntity
+import pt.antares.app.core.database.entities.FoodMarkEntity
 import pt.antares.app.core.database.entities.FoodNutrientEntity
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.database.entities.MealTemplateEntity
@@ -108,6 +110,7 @@ interface DbInfoDao {
         FoodEntity::class,
         FoodFtsEntity::class,
         FoodNutrientEntity::class,
+        FoodMarkEntity::class,
         FoodLogEntity::class,
         WaterLogEntity::class,
         RecipeEntity::class,
@@ -132,7 +135,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 26,
+    version = 27,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -224,6 +227,7 @@ abstract class AntaresDb : RoomDatabase() {
     abstract fun cycleDao(): CycleDao
     abstract fun foodDao(): FoodDao
     abstract fun foodNutrientDao(): FoodNutrientDao
+    abstract fun foodMarkDao(): FoodMarkDao
     abstract fun foodLogDao(): FoodLogDao
     abstract fun waterLogDao(): WaterLogDao
     abstract fun recipeDao(): RecipeDao

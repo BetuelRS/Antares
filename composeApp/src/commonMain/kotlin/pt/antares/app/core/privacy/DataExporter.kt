@@ -1,6 +1,7 @@
 package pt.antares.app.core.privacy
 
 import kotlinx.datetime.Clock
+import pt.antares.app.feature.fooddata.FoodSeeder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -15,6 +16,16 @@ class DataExporter(
 
     val sources: List<ExportSource<*>>,
     private val appVersion: String,
+
+    /**
+     * A versão do catálogo com que esta cópia foi feita.
+     *
+     * **Guarda-se, e não se usa para recusar nada.** O diário copia a nutrição toda no
+     * momento do registo, por isso um histórico restaurado não depende do catálogo — e
+     * recusar uma cópia mais nova bloquearia quem trocou de telemóvel sem proteger de nada.
+     * Serve para se perceber, mais tarde, com que números aquela cópia foi feita.
+     */
+    private val versaoDoCatalogo: Int = FoodSeeder.VERSAO_DO_CATALOGO,
 ) {
     // Indentado e com os valores por omissão escritos: isto é para uma pessoa abrir e ler,
     // e um campo em falta lê-se como dado perdido em vez de valor por omissão.
@@ -33,6 +44,7 @@ class DataExporter(
         val root = buildJsonObject {
             put("exportadoEm", Clock.System.now().toString())
             put("versaoApp", appVersion)
+            put("versaoCatalogo", versaoDoCatalogo)
             put("nota", "Dados pessoais exportados do Antares. O catálogo de alimentos e a biblioteca de exercícios que vêm com a app não estão incluídos.")
         }
 

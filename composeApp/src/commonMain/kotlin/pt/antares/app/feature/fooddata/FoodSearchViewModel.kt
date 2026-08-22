@@ -43,6 +43,10 @@ data class FoodSearchState(
     val pedirAvisoDaOff: Boolean = false,
 
     val selected: Set<String> = emptySet(),
+
+    // Quais dos resultados a pessoa marcou. Vem à parte desde a v27: o favorito saiu da
+    // linha do alimento, e a linha da lista já não o sabe olhando para si própria.
+    val favoritos: Set<String> = emptySet(),
 )
 
 @OptIn(FlowPreview::class)
@@ -101,6 +105,13 @@ class FoodSearchViewModel(
     private val queryFlow = MutableStateFlow("")
 
     init {
+
+        // Os favoritos entram no estado por identificador, e não por lista de alimentos: o
+        // que a linha da lista precisa de saber é «este está marcado?», e a lista inteira
+        // dos favoritos já vive no separador que a mostra.
+        favorites
+            .onEach { lista -> _state.update { it.copy(favoritos = lista.map { f -> f.id }.toSet()) } }
+            .launchIn(viewModelScope)
 
         // Duas pesquisas sobre o mesmo texto, com esperas e mínimos diferentes: a local é
         // barata e responde a partir de duas letras, a de rede custa um pedido a um serviço

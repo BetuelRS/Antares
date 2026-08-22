@@ -38,6 +38,14 @@ class FoodDaosTest {
     @After
     fun tearDown() = db.close()
 
+    private fun repositorio() = FoodRepository(
+        db.foodDao(),
+        db.foodMarkDao(),
+        db.foodNutrientDao(),
+        db.searchMissDao(),
+        Dispatchers.Default,
+    )
+
     private fun food(
         id: String,
         namePt: String,
@@ -46,13 +54,11 @@ class FoodDaosTest {
         p: Double = 1.0,
         c: Double = 1.0,
         f: Double = 1.0,
-        favorite: Boolean = false,
-        lastUsed: Long = 0L,
     ) = FoodEntity(
         id = id, source = FoodSource.SEED, sourceRef = null, namePt = namePt, nameEn = nameEn,
         brand = null, kcal = kcal, proteinG = p, carbsG = c, sugarsG = null, fatG = f,
         satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
-        servingName = null, servingGrams = null, isFavorite = favorite, lastUsedAt = lastUsed,
+        servingName = null, servingGrams = null,
         verified = true, updatedAt = 1L,
     )
 
@@ -139,7 +145,7 @@ class FoodDaosTest {
 
     @Test
     fun `reimportar nao duplica o alimento na pesquisa`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
         val f = food("1", "Pão de centeio")
         insertSearchable(f)
 
@@ -154,7 +160,7 @@ class FoodDaosTest {
 
     @Test
     fun `pesquisa sem acentos encontra com acentos`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
         insertSearchable(food("1", "Pão de centeio"))
         insertSearchable(food("2", "Maçã reineta"))
 
@@ -165,10 +171,15 @@ class FoodDaosTest {
 
     @Test
     fun `ranking favorito antes de recente antes de alfabetico`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
         insertSearchable(food("b", "Arroz basmati"))
-        insertSearchable(food("i", "Arroz integral", lastUsed = 100L))
-        insertSearchable(food("w", "Arroz branco", favorite = true))
+        insertSearchable(food("i", "Arroz integral"))
+        insertSearchable(food("w", "Arroz branco"))
+
+        // As marcas vivem à parte desde a v27: a ordem da pesquisa junta-as ao alimento,
+        // em vez de as ler da linha dele.
+        repo.touchLastUsed("i")
+        repo.toggleFavorite("w")
 
         val names = repo.search("arroz").map { it.namePt }
         assertEquals(listOf("Arroz branco", "Arroz integral", "Arroz basmati"), names)
@@ -176,7 +187,7 @@ class FoodDaosTest {
 
     @Test
     fun `curados PT aparecem antes dos USDA na pesquisa`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
 
         insertSearchable(food("usda-1", "Beverages, cafe substitute, cereal grain, powder"))
         insertSearchable(food("ptx_cafe_leite", "Café com leite"))
@@ -188,7 +199,7 @@ class FoodDaosTest {
 
     @Test
     fun `barcode cacheado resolve sem rede no segundo scan`() = runTest {
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
 
         val product = food("off_560123", "Água com gás").copy(
             source = pt.antares.app.core.model.FoodSource.OFF,
@@ -215,7 +226,7 @@ class FoodDaosTest {
         foods.chunked(400).forEach { db.foodDao().insertAll(it) }
         fts.chunked(400).forEach { db.foodDao().insertFtsAll(it) }
 
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
 
         repeat(5) { repo.search(categorias[it % categorias.size]) }
 
@@ -234,38 +245,41 @@ class FoodDaosTest {
     @Test
     fun `touchLastUsed guarda a quantidade usada`() = runTest {
         db.foodDao().insertAll(listOf(food("f1", "Arroz")))
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
 
         repo.touchLastUsed("f1", amountG = 85.0)
 
-        assertEquals(85.0, db.foodDao().byId("f1")?.lastAmountG)
+        assertEquals(85.0, db.foodMarkDao().byFoodId("f1")?.lastAmountG)
     }
 
     @Test
     fun `touchLastUsed sem quantidade NAO apaga a que la estava`() = runTest {
         db.foodDao().insertAll(listOf(food("f1", "Arroz")))
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
         repo.touchLastUsed("f1", amountG = 85.0)
 
         repo.touchLastUsed("f1")
 
-        assertEquals(85.0, db.foodDao().byId("f1")?.lastAmountG)
+        assertEquals(85.0, db.foodMarkDao().byFoodId("f1")?.lastAmountG)
     }
 
     @Test
     fun `registar outra vez substitui a quantidade anterior`() = runTest {
         db.foodDao().insertAll(listOf(food("f1", "Arroz")))
-        val repo = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), Dispatchers.Default)
+        val repo = repositorio()
 
         repo.touchLastUsed("f1", amountG = 85.0)
         repo.touchLastUsed("f1", amountG = 120.0)
 
-        assertEquals(120.0, db.foodDao().byId("f1")?.lastAmountG)
+        assertEquals(120.0, db.foodMarkDao().byFoodId("f1")?.lastAmountG)
     }
 
     @Test
-    fun `alimento nunca registado nao tem quantidade`() = runTest {
+    fun `alimento nunca registado nao tem marca nenhuma`() = runTest {
         db.foodDao().insertAll(listOf(food("f1", "Arroz")))
-        assertEquals(null, db.foodDao().byId("f1")?.lastAmountG)
+
+        // Sem marca, e não com uma marca vazia: é isso que faz a tabela ter dezenas de
+        // linhas num catálogo de oito mil alimentos.
+        assertEquals(null, db.foodMarkDao().byFoodId("f1"))
     }
 }

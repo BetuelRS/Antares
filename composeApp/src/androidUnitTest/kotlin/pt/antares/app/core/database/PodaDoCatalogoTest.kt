@@ -11,6 +11,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodLogEntity
+import pt.antares.app.core.database.entities.FoodMarkEntity
 import pt.antares.app.core.database.entities.MealTemplateItemEntity
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
 import pt.antares.app.core.model.FoodSource
@@ -59,15 +60,24 @@ class PodaDoCatalogoTest {
         id: String,
         quando: Long = antes,
         source: FoodSource = FoodSource.SEED,
-        favorito: Boolean = false,
-        usadoEm: Long = 0L,
-        porcao: Double? = null,
     ) = FoodEntity(
         id = id, source = source, sourceRef = null, namePt = id, nameEn = id,
         brand = null, kcal = 100, proteinG = 1.0, carbsG = 1.0, sugarsG = null, fatG = 1.0,
         satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
-        servingName = null, servingGrams = null, isFavorite = favorito, lastUsedAt = usadoEm,
-        lastAmountG = porcao, verified = true, updatedAt = quando,
+        servingName = null, servingGrams = null, verified = true, updatedAt = quando,
+    )
+
+    /** Deixar uma marca é a maneira mais leve de a pessoa tocar num alimento. */
+    private suspend fun marcar(
+        id: String,
+        favorito: Boolean = false,
+        usadoEm: Long = 0L,
+        porcao: Double? = null,
+    ) = db.foodMarkDao().upsert(
+        FoodMarkEntity(
+            foodId = id, isFavorite = favorito, lastUsedAt = usadoEm,
+            lastAmountG = porcao, updatedAt = antes,
+        ),
     )
 
     private suspend fun podar() = db.foodDao().podarCatalogoAnterior(agora)
@@ -84,21 +94,24 @@ class PodaDoCatalogoTest {
 
     @Test
     fun `um favorito nunca e apagado`() = runTest {
-        db.foodDao().upsert(alimento("ciqual-favorito", favorito = true))
+        db.foodDao().upsert(alimento("ciqual-favorito"))
+        marcar("ciqual-favorito", favorito = true)
         assertEquals(0, podar())
         assertNotNull(db.foodDao().byId("ciqual-favorito"))
     }
 
     @Test
     fun `um alimento usado nunca e apagado`() = runTest {
-        db.foodDao().upsert(alimento("ciqual-usado", usadoEm = 42L))
+        db.foodDao().upsert(alimento("ciqual-usado"))
+        marcar("ciqual-usado", usadoEm = 42L)
         assertEquals(0, podar())
         assertNotNull(db.foodDao().byId("ciqual-usado"))
     }
 
     @Test
     fun `um alimento com porcao guardada nunca e apagado`() = runTest {
-        db.foodDao().upsert(alimento("ciqual-porcao", porcao = 80.0))
+        db.foodDao().upsert(alimento("ciqual-porcao"))
+        marcar("ciqual-porcao", porcao = 80.0)
         assertEquals(0, podar())
         assertNotNull(db.foodDao().byId("ciqual-porcao"))
     }

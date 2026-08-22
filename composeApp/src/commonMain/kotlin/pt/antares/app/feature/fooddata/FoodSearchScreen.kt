@@ -294,6 +294,7 @@ fun FoodSearchScreen(
                 SearchTab.SEARCH -> if (state.query.length < 2) {
 
                     YourStuff(
+                        favoritos = state.favoritos,
                         foods = mostLogged,
                         selectable = multiSelect,
                         selectedIds = state.selected,
@@ -353,6 +354,7 @@ fun FoodSearchScreen(
                             items(list, key = { it.id }) { food ->
                                 FoodRow(
                                     food = food,
+                                    favorito = food.id in state.favoritos,
                                     selectable = multiSelect,
                                     selected = food.id in state.selected,
                                     onToggle = { viewModel.toggleSelect(food.id) },
@@ -370,6 +372,7 @@ fun FoodSearchScreen(
 @Composable
 private fun YourStuff(
     foods: List<FoodEntity>,
+    favoritos: Set<String>,
     selectable: Boolean,
     selectedIds: Set<String>,
     onToggle: (String) -> Unit,
@@ -408,6 +411,7 @@ private fun YourStuff(
             items(foods, key = { "top-${it.id}" }) { food ->
                 FoodRow(
                     food = food,
+                    favorito = food.id in favoritos,
                     selectable = selectable,
                     selected = food.id in selectedIds,
                     onToggle = { onToggle(food.id) },
@@ -447,6 +451,7 @@ private fun SearchResults(
             items(state.results, key = { "local-${it.id}" }) { food ->
                 FoodRow(
                     food = food,
+                    favorito = food.id in state.favoritos,
                     selectable = selectable,
                     selected = food.id in state.selected,
                     onToggle = { onToggle(food.id) },
@@ -557,6 +562,7 @@ private fun TemplatesTab(
 @Composable
 private fun FoodRow(
     food: FoodEntity,
+    favorito: Boolean = false,
     online: Boolean = false,
     selectable: Boolean = false,
     selected: Boolean = false,
@@ -593,7 +599,7 @@ private fun FoodRow(
                             contentDescription = stringResource(Res.string.search_section_online),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        food.isFavorite -> Icon(
+                        favorito -> Icon(
                             Icons.Default.Star,
                             // A estrela é a única coisa que diz que este alimento é
                             // favorito: nada no texto da linha o repete.

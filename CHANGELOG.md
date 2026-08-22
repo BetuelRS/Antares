@@ -17,6 +17,46 @@ Nada por lançar.
 
 ---
 
+## [2.5.0] — 2026-08-22
+
+O que é teu sai de dentro da linha do alimento. Esquema da base: **v27**.
+
+### Corrigido
+
+- **Os favoritos e os recentes passam a ir na cópia de segurança.** Não iam, e ninguém tinha
+  como saber: da tabela de alimentos só se exportam os que tu crias — o catálogo não se
+  exporta, por ser grande e reconstruível — e os favoritos viviam lá dentro. **Quem
+  restaurasse uma cópia perdia tudo o que tinha marcado**, sem aviso e sem erro. Agora são
+  uma tabela como as outras, e viajam como as outras.
+
+### Alterado
+
+- **O favorito, a última utilização e a porção guardada mudaram de casa.** Viviam dentro da
+  linha do alimento, e o catálogo é substituído por inteiro a cada versão: a escrita gravava
+  a linha toda por cima. A 2.4.0 corrigiu isso transportando-as à mão; agora o problema
+  **deixa de poder existir** — o que não vive na linha do alimento não pode ser apagado ao
+  escrevê-la.
+- **A cópia de segurança passa a dizer com que versão do catálogo foi feita**, e aparece no
+  resumo antes de importares. Não recusa nada: o diário copia a nutrição toda no momento do
+  registo, por isso um histórico restaurado não depende do catálogo — recusar uma cópia mais
+  recente bloqueava quem trocou de telemóvel sem proteger de nada.
+- A limpeza do catálogo passa a olhar para a tabela nova ao decidir o que nunca se apaga.
+
+### Notas
+
+- **Esta versão é a primeira metade da 2.5.0 do plano**, que se partiu em duas ao ser medida.
+  A tabela `foods` não é só catálogo: também lá vivem os alimentos que crias, os da Open Food
+  Facts e os estimados por AI. A separação das bases é a 2.5.1, e depois desta é mecânica.
+  A excepção de numeração está escrita em [docs/referencia/versionamento.md](docs/referencia/versionamento.md).
+- **A cópia de segurança nunca levou o catálogo às costas**, ao contrário do que o plano
+  dizia: já só se exportavam os alimentos criados pela pessoa. O que encolhe com a separação
+  é a base do telemóvel, e não a cópia.
+- **A migração é escrita à mão**, e é a primeira. O Room sabe criar e apagar tabelas, mas não
+  sabe mudar dados de sítio: uma migração automática criava a tabela nova vazia e deitava as
+  colunas fora com o que estava lá dentro.
+
+---
+
 ## [2.4.0] — 2026-08-21
 
 O catálogo de alimentos passa a ser construído fora da app. Esquema da base: **v26**, sem

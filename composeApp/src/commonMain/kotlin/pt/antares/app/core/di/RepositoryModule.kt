@@ -51,7 +51,7 @@ val repositoryModule = module {
             io = get(IoDispatcher),
         )
     }
-    single { FoodRepository(get(), get(), get(), get(IoDispatcher)) }
+    single { FoodRepository(get(), get(), get(), get(), get(IoDispatcher)) }
     single { DiaryRepository(get(), get(), get(IoDispatcher)) }
     single {
         MealTemplateRepository(

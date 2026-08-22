@@ -35,7 +35,9 @@ import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.BodyMeasurementDao
 import pt.antares.app.core.database.daos.GoalHistoryDao
 import pt.antares.app.core.database.entities.FoodEntity
+import pt.antares.app.core.database.entities.FoodMarkEntity
 import pt.antares.app.core.database.daos.FoodDao
+import pt.antares.app.core.database.daos.FoodMarkDao
 import pt.antares.app.core.database.entities.RecipeEntity
 import pt.antares.app.core.database.daos.RecipeDao
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
@@ -117,6 +119,16 @@ val privacyModule = module {
                     FoodEntity.serializer(),
                     restore = { linhas -> linhas.forEach { get<FoodDao>().upsert(it) } },
                 ) { get<FoodDao>().exportRows() },
+
+                // O que a pessoa marcou. Até à v27 vivia dentro da linha do alimento, e como
+                // dos alimentos só se exportam os que ela criou, **os favoritos e os
+                // recentes do catálogo não iam na cópia**: quem a restaurava perdia-os sem
+                // aviso nenhum. Numa tabela própria são uma tabela como as outras.
+                ExportSource(
+                    "food_marca",
+                    FoodMarkEntity.serializer(),
+                    restore = { linhas -> linhas.forEach { get<FoodMarkDao>().upsert(it) } },
+                ) { get<FoodMarkDao>().exportRows() },
                 ExportSource(
                     "recipe",
                     RecipeEntity.serializer(),

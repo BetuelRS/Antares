@@ -37,14 +37,12 @@ class DefaultPortionTest {
 
     private fun food(
         id: String,
-        lastAmountG: Double? = null,
         servingGrams: Double? = null,
     ) = FoodEntity(
         id = id, source = FoodSource.SEED, sourceRef = null, namePt = id, nameEn = id,
         brand = null, kcal = 100, proteinG = 1.0, carbsG = 1.0, sugarsG = null, fatG = 1.0,
         satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
-        servingName = null, servingGrams = servingGrams, isFavorite = false, lastUsedAt = 0L,
-        lastAmountG = lastAmountG, verified = true, updatedAt = 1L,
+        servingName = null, servingGrams = servingGrams, verified = true, updatedAt = 1L,
     )
 
     private suspend fun logar(foodId: String, gramas: Double, dia: Long) {
@@ -71,7 +69,7 @@ class DefaultPortionTest {
 
     @Test
     fun `a ultima usada ganha a porcao do alimento`() = runTest {
-        assertEquals(45.0, repo.defaultPortionFor(food("x", lastAmountG = 45.0, servingGrams = 30.0)))
+        assertEquals(45.0, repo.defaultPortionFor(food("x", servingGrams = 30.0), ultimaPorcaoG = 45.0))
     }
 
     @Test
@@ -82,6 +80,6 @@ class DefaultPortionTest {
         logar("x", 60.0, 102)
         logar("x", 300.0, 103)
 
-        assertEquals(60.0, repo.defaultPortionFor(food("x", lastAmountG = 300.0, servingGrams = 30.0)))
+        assertEquals(60.0, repo.defaultPortionFor(food("x", servingGrams = 30.0), ultimaPorcaoG = 300.0))
     }
 }

@@ -34,11 +34,11 @@ class MostLoggedTest {
     @After
     fun tearDown() = db.close()
 
-    private fun food(id: String, nome: String, lastUsed: Long = 0L) = FoodEntity(
+    private fun food(id: String, nome: String) = FoodEntity(
         id = id, source = FoodSource.SEED, sourceRef = null, namePt = nome, nameEn = nome,
         brand = null, kcal = 100, proteinG = 1.0, carbsG = 1.0, sugarsG = null, fatG = 1.0,
         satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
-        servingName = null, servingGrams = null, isFavorite = false, lastUsedAt = lastUsed,
+        servingName = null, servingGrams = null,
         verified = true, updatedAt = 1L,
     )
 
@@ -56,8 +56,8 @@ class MostLoggedTest {
         val foods = db.foodDao()
         val logs = db.foodLogDao()
 
-        foods.upsert(food("aveia", "Aveia", lastUsed = 1_000L))
-        foods.upsert(food("gelado", "Gelado", lastUsed = 9_999L))
+        foods.upsert(food("aveia", "Aveia"))
+        foods.upsert(food("gelado", "Gelado"))
         repeat(10) { i -> logs.upsert(log("a$i", 100L + i, "aveia")) }
         logs.upsert(log("g1", 110, "gelado"))
 

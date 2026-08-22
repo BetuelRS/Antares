@@ -1235,6 +1235,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_conta_outras">Outras tabelas</string>
     <string name="copia_import_resumo">O que está neste ficheiro</string>
     <string name="copia_import_de">Exportado em %1$s, pela versão %2$s.</string>
+    <string name="copia_import_catalogo">Catálogo de alimentos na versão %1$s.</string>
     <string name="copia_import_sem_data">Este ficheiro não diz quando foi criado.</string>
     <string name="privacy_misses_clear_title">Limpar as pesquisas falhadas?</string>
     <string name="privacy_misses_clear_body">Apaga a lista toda. É ela que te diz que alimentos te faltam no catálogo, e depois de apagada não volta.</string>

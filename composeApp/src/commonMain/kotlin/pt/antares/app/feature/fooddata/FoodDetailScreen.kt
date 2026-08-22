@@ -99,9 +99,13 @@ fun FoodDetailScreen(
                 }
                 IconButton(onClick = viewModel::toggleFavorite) {
                     Icon(
-                        if (food.isFavorite) Icons.Default.Star else Icons.Outlined.StarOutline,
+                        if (state.favorito) Icons.Default.Star else Icons.Outlined.StarOutline,
                         contentDescription = stringResource(Res.string.food_favorite),
-                        tint = if (food.isFavorite) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (state.favorito) {
+                            MaterialTheme.colorScheme.secondary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
                     )
                 }
             }
@@ -193,7 +197,7 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
         horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
         verticalArrangement = Arrangement.spacedBy(Spacing.xs),
     ) {
-        food.lastAmountG?.let { last ->
+        state.ultimaPorcaoG?.let { last ->
             val duplicate = last.roundToInt() == PORCAO_BASE_G.roundToInt() ||
                 last.roundToInt() == COLHER_DE_SOPA_G.roundToInt() ||
                 food.servingGrams?.roundToInt() == last.roundToInt()

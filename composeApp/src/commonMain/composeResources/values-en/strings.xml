@@ -1234,6 +1234,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_conta_outras">Other tables</string>
     <string name="copia_import_resumo">What is in this file</string>
     <string name="copia_import_de">Exported on %1$s, by version %2$s.</string>
+    <string name="copia_import_catalogo">Food catalogue version %1$s.</string>
     <string name="copia_import_sem_data">This file does not say when it was created.</string>
     <string name="privacy_misses_clear_title">Clear the failed searches?</string>
     <string name="privacy_misses_clear_body">Deletes the whole list. It is what tells you which foods are missing from the catalog, and once cleared it does not come back.</string>

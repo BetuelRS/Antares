@@ -12,6 +12,10 @@ import kotlinx.serialization.json.jsonPrimitive
 data class ResumoDaCopia(
     val exportadoEm: String?,
     val versaoApp: String?,
+
+    // Guardada desde a 2.5.0, e nula nas cópias mais antigas. Não impede nada: serve para
+    // se perceber com que números do catálogo aquela cópia foi feita.
+    val versaoCatalogo: Int? = null,
     val contagens: Map<String, Int>,
 ) {
     val total: Int get() = contagens.values.sum()
@@ -40,6 +44,7 @@ object LeitorDeResumo {
         ResumoDaCopia(
             exportadoEm = raiz["exportadoEm"]?.jsonPrimitive?.contentOrNull(),
             versaoApp = raiz["versaoApp"]?.jsonPrimitive?.contentOrNull(),
+            versaoCatalogo = raiz["versaoCatalogo"]?.jsonPrimitive?.contentOrNull()?.toIntOrNull(),
             contagens = contagens,
         )
     }.getOrNull()

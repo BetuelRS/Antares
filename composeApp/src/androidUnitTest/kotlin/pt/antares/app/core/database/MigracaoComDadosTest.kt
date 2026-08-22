@@ -44,6 +44,10 @@ class MigracaoComDadosTest {
     // não provava nada, e um virtual table do FTS4 não aceita as mesmas inserções.
     private val derivadas = setOf("foods_fts")
 
+    // Tabelas a que uma migração pode acrescentar linhas suas. Só há uma, e é a que as
+    // migrações usam para deixar rasto do que fizeram.
+    private val cresceComAsMigracoes = setOf("db_info")
+
     @Before fun antes() = context.deleteDatabase(dbName).let { }
 
     @After fun depois() = context.deleteDatabase(dbName).let { }
@@ -54,6 +58,7 @@ class MigracaoComDadosTest {
         assertTrue(tabelas.size >= 7, "a v$versaoDePartida devia ter as tabelas todas: $tabelas")
 
         val db = Room.databaseBuilder(context, AntaresDb::class.java, dbName)
+            .addMigrations(MIGRACAO_26_PARA_27)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
 
@@ -66,6 +71,17 @@ class MigracaoComDadosTest {
             for (tabela in tabelas) {
                 aberta.query("SELECT COUNT(*) FROM `$tabela`").use { cursor ->
                     assertTrue(cursor.moveToFirst())
+
+                    // A `db_info` é o caderno das próprias migrações: a da v27 escreve lá
+                    // quantas marcas mudou de casa. O que se exige dela é que a linha que já
+                    // existia continue lá, e não que ninguém tenha escrito mais nenhuma.
+                    if (tabela in cresceComAsMigracoes) {
+                        assertTrue(
+                            cursor.getInt(0) >= 1,
+                            "a linha de `$tabela` não sobreviveu à migração para a v$versaoFinal",
+                        )
+                        return@use
+                    }
                     assertEquals(
                         1,
                         cursor.getInt(0),

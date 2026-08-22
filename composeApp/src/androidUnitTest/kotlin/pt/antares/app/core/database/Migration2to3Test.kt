@@ -93,6 +93,7 @@ class Migration2to3Test {
         createV2Database()
 
         val db = Room.databaseBuilder(context, AntaresDb::class.java, dbName)
+            .addMigrations(MIGRACAO_26_PARA_27)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
 
@@ -131,6 +132,7 @@ class Migration2to3Test {
         createV2Database()
 
         val db = Room.databaseBuilder(context, AntaresDb::class.java, dbName)
+            .addMigrations(MIGRACAO_26_PARA_27)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
 

@@ -19,9 +19,10 @@ complexity:
     constructorThreshold: 12
     ignoreDefaultParameters: true
   TooManyFunctions:
-    # Os DAOs e os ViewModels são listas de operações; contá-las não diz nada.
-    thresholdInFiles: 30
-    thresholdInClasses: 30
+    # Os DAOs e os ViewModels são listas de operações; contá-las não diz nada. A `AntaresDb`
+    # é o caso extremo: cada função é um DAO, e o número diz quantas tabelas a app tem.
+    thresholdInFiles: 40
+    thresholdInClasses: 40
     thresholdInInterfaces: 40
     ignorePrivate: true
     ignoreOverridden: true

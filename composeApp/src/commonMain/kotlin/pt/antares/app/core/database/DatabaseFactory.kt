@@ -11,6 +11,9 @@ expect class DatabaseFactory {
 }
 
 fun RoomDatabase.Builder<AntaresDb>.buildAntaresDb(): AntaresDb = this
+    // A única migração escrita à mão. O Room sabe criar e apagar, mas não sabe mudar dados
+    // de sítio — e foi isso que a v27 fez com o que a pessoa tinha marcado.
+    .addMigrations(MIGRACAO_26_PARA_27)
     // SQLite empacotado com a app em vez do que vem no sistema: o mesmo comportamento em
     // todas as versões de Android, incluindo o FTS4 de que a pesquisa depende.
     .setDriver(BundledSQLiteDriver())

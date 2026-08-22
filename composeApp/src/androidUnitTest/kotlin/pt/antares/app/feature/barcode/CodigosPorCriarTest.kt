@@ -56,6 +56,7 @@ class CodigosPorCriarTest : ViewModelHarness() {
         val vm = BarcodeResolveViewModel(
             foodRepository = FoodRepository(
                 db.foodDao(),
+                db.foodMarkDao(),
                 db.foodNutrientDao(),
                 db.searchMissDao(),
                 dispatcher,

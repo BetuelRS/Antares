@@ -5,8 +5,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import pt.antares.app.core.database.daos.FoodDao
+import pt.antares.app.core.database.daos.FoodMarkDao
 import pt.antares.app.core.database.daos.SearchMissDao
 import pt.antares.app.core.database.entities.FoodEntity
+import pt.antares.app.core.database.entities.FoodMarkEntity
 import pt.antares.app.core.model.FoodSource
 import pt.antares.app.core.util.FtsQuery
 import pt.antares.app.core.util.Ids
@@ -20,6 +22,7 @@ import pt.antares.app.core.nutrition.microsDeJson
 
 class FoodRepository(
     private val foodDao: FoodDao,
+    private val markDao: FoodMarkDao,
     private val nutrientDao: FoodNutrientDao,
     private val searchMissDao: SearchMissDao,
     private val io: CoroutineDispatcher,
@@ -101,12 +104,24 @@ class FoodRepository(
         const val BARCODE_CACHE_TTL_MS = 90L * 24 * 60 * 60 * 1000
     }
 
-    suspend fun toggleFavorite(food: FoodEntity) = withContext(io) {
-        foodDao.setFavorite(food.id, !food.isFavorite, now())
+    /**
+     * O que a pessoa deixou sobre um alimento, ou nulo se nunca lhe tocou.
+     *
+     * Nulo é o caso comum e não é falta de nada: num catálogo de oito mil alimentos, a
+     * tabela de marcas tem dezenas de linhas. Quem lê isto trata o nulo como «não é
+     * favorito, nunca foi usado, sem porção guardada».
+     */
+    suspend fun marcaDe(foodId: String): FoodMarkEntity? = withContext(io) {
+        markDao.byFoodId(foodId)
+    }
+
+    suspend fun toggleFavorite(foodId: String) = withContext(io) {
+        val agora = markDao.byFoodId(foodId)?.isFavorite ?: false
+        markDao.marcarFavorito(foodId, !agora, now())
     }
 
     suspend fun touchLastUsed(foodId: String, amountG: Double? = null) = withContext(io) {
-        foodDao.touchLastUsed(foodId, now(), amountG)
+        markDao.marcarUso(foodId, now(), amountG)
     }
 
     /**
@@ -176,8 +191,6 @@ class FoodRepository(
             microsJson = existing?.microsJson,
             servingName = servingName,
             servingGrams = servingGrams,
-            isFavorite = existing?.isFavorite ?: false,
-            lastUsedAt = existing?.lastUsedAt ?: 0L,
             // Verificado por definição: os números são da pessoa, e não há mais ninguém a
             // quem os confirmar.
             verified = true,

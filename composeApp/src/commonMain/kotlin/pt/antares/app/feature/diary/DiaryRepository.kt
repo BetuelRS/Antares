@@ -222,8 +222,8 @@ class DiaryRepository(
      * A quantidade que o campo já traz preenchida, do mais pessoal para o mais genérico: o
      * hábito da pessoa, a última vez que a usou, a dose do rótulo, e por fim 100 g.
      */
-    suspend fun defaultPortionFor(food: FoodEntity): Double =
-        usualPortionOf(food.id) ?: food.lastAmountG ?: food.servingGrams ?: DEFAULT_PORTION_G
+    suspend fun defaultPortionFor(food: FoodEntity, ultimaPorcaoG: Double? = null): Double =
+        usualPortionOf(food.id) ?: ultimaPorcaoG ?: food.servingGrams ?: DEFAULT_PORTION_G
 
     suspend fun moveMeal(epochDay: Long, from: MealSlot, to: MealSlot): Int = withContext(io) {
         if (from == to) return@withContext 0

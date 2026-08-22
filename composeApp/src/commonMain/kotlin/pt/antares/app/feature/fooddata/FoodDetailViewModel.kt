@@ -26,6 +26,11 @@ import pt.antares.app.core.nutrition.microsDeJson
 data class PortionState(
     val loading: Boolean = true,
     val food: FoodEntity? = null,
+
+    // O favorito e a última porção deixaram de viver na linha do alimento na v27. Vêm à
+    // parte porque são da pessoa, e o alimento é do catálogo.
+    val favorito: Boolean = false,
+    val ultimaPorcaoG: Double? = null,
     val quantityText: String = "100",
     val saved: Boolean = false,
 
@@ -105,13 +110,16 @@ class FoodDetailViewModel(
             val sex = perfil?.sex ?: Sex.MALE
             val stage = perfil?.lifeStage
 
+            val marca = food?.let { foodRepository.marcaDe(it.id) }
             val usual = food?.let { diaryRepository.usualPortionOf(it.id) }
             val unidades = perfil?.unitSystem ?: UnitSystem.METRIC
-            val inicial = (usual ?: food?.lastAmountG ?: food?.servingGrams) ?: PORCAO_DE_RECURSO_G
+            val inicial = (usual ?: marca?.lastAmountG ?: food?.servingGrams) ?: PORCAO_DE_RECURSO_G
             _state.update {
                 it.copy(
                     loading = false,
                     food = food,
+                    favorito = marca?.isFavorite == true,
+                    ultimaPorcaoG = marca?.lastAmountG,
                     unitSystem = unidades,
                     quantityText = paraCampo(inicial, unidades, food?.isLiquid == true),
                     usualG = usual,
@@ -135,8 +143,8 @@ class FoodDetailViewModel(
     fun toggleFavorite() {
         val food = _state.value.food ?: return
         viewModelScope.launch {
-            foodRepository.toggleFavorite(food)
-            _state.update { s -> s.copy(food = s.food?.copy(isFavorite = !food.isFavorite)) }
+            foodRepository.toggleFavorite(food.id)
+            _state.update { s -> s.copy(favorito = !s.favorito) }
         }
     }
 

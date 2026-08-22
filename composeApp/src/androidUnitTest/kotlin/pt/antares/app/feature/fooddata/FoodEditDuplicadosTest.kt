@@ -30,7 +30,9 @@ import kotlin.test.assertTrue
 class FoodEditDuplicadosTest : ViewModelHarness() {
 
     private fun viewModel() = FoodEditViewModel(
-        repository = FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), dispatcher),
+        repository = FoodRepository(
+            db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), dispatcher,
+        ),
         ai = AiRepository(
             client = NenhumaIa,
             ensureAccount = {},

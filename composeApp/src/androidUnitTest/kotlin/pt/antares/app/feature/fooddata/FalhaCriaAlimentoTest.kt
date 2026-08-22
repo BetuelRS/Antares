@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 class FalhaCriaAlimentoTest : ViewModelHarness() {
 
     private fun repository() =
-        FoodRepository(db.foodDao(), db.foodNutrientDao(), db.searchMissDao(), dispatcher)
+        FoodRepository(db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), dispatcher)
 
     private fun viewModel(repo: FoodRepository) = FoodEditViewModel(
         repository = repo,
