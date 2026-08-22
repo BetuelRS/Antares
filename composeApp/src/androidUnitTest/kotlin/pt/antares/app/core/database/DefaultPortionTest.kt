@@ -41,7 +41,7 @@ class DefaultPortionTest {
     ) = FoodEntity(
         id = id, source = FoodSource.SEED, sourceRef = null, namePt = id, nameEn = id,
         brand = null, kcal = 100, proteinG = 1.0, carbsG = 1.0, sugarsG = null, fatG = 1.0,
-        satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
+        satFatG = null, microsJson = null,
         servingName = null, servingGrams = servingGrams, verified = true, updatedAt = 1L,
     )
 

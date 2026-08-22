@@ -17,6 +17,8 @@ import pt.antares.app.core.util.AppError
 import pt.antares.app.core.util.AppResult
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import pt.antares.app.core.nutrition.Nutrients
+import pt.antares.app.core.nutrition.microsDeJson
 
 data class FoodEditState(
     val editingId: String? = null,
@@ -167,8 +169,8 @@ class FoodEditViewModel(
                     fat = "${f.fatG}",
                     sugars = f.sugarsG?.toString().orEmpty(),
                     satFat = f.satFatG?.toString().orEmpty(),
-                    fiber = f.fiberG?.toString().orEmpty(),
-                    sodium = f.sodiumMg?.toString().orEmpty(),
+                    fiber = microsDeJson(f.microsJson)[Nutrients.FIBER]?.toString().orEmpty(),
+                    sodium = microsDeJson(f.microsJson)[Nutrients.SODIUM]?.toString().orEmpty(),
                     servingName = f.servingName.orEmpty(),
                     servingGrams = f.servingGrams?.toString().orEmpty(),
                 )

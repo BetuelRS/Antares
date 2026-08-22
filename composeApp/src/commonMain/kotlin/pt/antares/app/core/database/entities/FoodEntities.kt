@@ -43,8 +43,6 @@ data class FoodEntity(
     val sugarsG: Double?,
     val fatG: Double,
     val satFatG: Double?,
-    val fiberG: Double?,
-    val sodiumMg: Int?,
 
     // Micronutrientes por 100 g, em JSON: são umas dezenas, quase sempre ausentes, e uma
     // coluna por cada deixaria a tabela quase toda a null. Nulo aqui é o que faz um

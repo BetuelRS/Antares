@@ -21,6 +21,7 @@ import pt.antares.app.core.util.Ids
 import pt.antares.app.feature.diary.DiaryRepository
 import kotlin.math.roundToInt
 import pt.antares.app.core.nutrition.microsDeJson
+import pt.antares.app.core.nutrition.Nutrients
 
 data class IngredientRow(
     val ingredient: RecipeIngredientEntity,
@@ -155,11 +156,11 @@ class RecipeRepository(
             sugarsG = n.sugarsPer100,
             fatG = n.fatPer100,
             satFatG = n.satFatPer100,
-            fiberG = n.fiberPer100,
-            sodiumMg = n.sodiumMgPer100?.roundToInt(),
-
-            microsJson = n.microsPer100.takeIf { it.isNotEmpty() }
-                ?.let { json.encodeToString(it) },
+            microsJson = buildMap {
+                putAll(n.microsPer100)
+                n.fiberPer100?.let { put(Nutrients.FIBER, it) }
+                n.sodiumMgPer100?.let { put(Nutrients.SODIUM, it) }
+            }.takeIf { it.isNotEmpty() }?.let { json.encodeToString(it) },
             servingName = null,
             servingGrams = recipe.yieldGrams,
             updatedAt = now(),
@@ -188,8 +189,8 @@ class RecipeRepository(
                 grams = row.ingredient.grams,
                 sugarsPer100 = f.sugarsG,
                 satFatPer100 = f.satFatG,
-                fiberPer100 = f.fiberG,
-                sodiumMgPer100 = f.sodiumMg?.toDouble(),
+                fiberPer100 = microsOf(f)[Nutrients.FIBER],
+                sodiumMgPer100 = microsOf(f)[Nutrients.SODIUM],
                 microsPer100 = microsOf(f),
             )
         }

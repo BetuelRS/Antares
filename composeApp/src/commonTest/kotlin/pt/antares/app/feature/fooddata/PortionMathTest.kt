@@ -21,8 +21,6 @@ class PortionMathTest {
         sugarsG = null,
         fatG = f,
         satFatG = null,
-        fiberG = null,
-        sodiumMg = null,
         microsJson = null,
         servingName = servingGrams?.let { "porção" },
         servingGrams = servingGrams,

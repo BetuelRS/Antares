@@ -41,8 +41,6 @@ class DesfazerApagamentoTest : ViewModelHarness() {
         sugarsG = null,
         fatG = 6.9,
         satFatG = null,
-        fiberG = null,
-        sodiumMg = null,
         microsJson = null,
         servingName = null,
         servingGrams = null,

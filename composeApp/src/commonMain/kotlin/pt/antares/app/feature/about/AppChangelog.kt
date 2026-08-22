@@ -23,9 +23,28 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.5.0"
+    const val CURRENT = "2.6.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.6.0",
+            title = "O sódio e a fibra contam em todo o catálogo",
+            titleEn = "Sodium and fibre count across the catalogue",
+            highlights = listOf(
+                "**Ver que alimentos são ricos em fibra ou em sódio passa a olhar para o " +
+                    "catálogo todo**, e não só para os portugueses: de 1 376 alimentos " +
+                    "para mais de 7 600",
+                "O sódio deixa de poder aparecer com dois valores diferentes para o " +
+                    "mesmo alimento, conforme o ecrã",
+            ),
+            highlightsEn = listOf(
+                "**Finding which foods are rich in fibre or sodium now looks at the whole " +
+                    "catalogue**, not just the Portuguese ones: from 1,376 foods to over " +
+                    "7,600",
+                "Sodium can no longer show two different values for the same food, " +
+                    "depending on the screen",
+            ),
+        ),
         AppVersion(
             name = "2.5.0",
             title = "Os teus favoritos passam a ir na cópia",
@@ -305,23 +324,6 @@ object AppChangelog {
                 "When the app closes on its own, the reason is saved and you can **share it**",
                 "Two exercises with the same name no longer crash the workout detail",
                 "The app was reading a megabyte of exercises on **every single start**, even with them already loaded",
-            ),
-        ),
-        AppVersion(
-            name = "0.14.0",
-            title = "O ciclo, e o que ele faz à balança",
-            titleEn = "The cycle, and what it does to the scale",
-            highlights = listOf(
-                "Registo do ciclo, **só neste telemóvel**, para a balança deixar de confundir retenção com gordura",
-                "A retenção do ciclo dá 1 a 3 kg — a app diz isso em vez de te deixar pensar que é gordura",
-                "Referências de nutrientes na gravidez, amamentação e pós-menopausa",
-                "Em gravidez e amamentação a app deixa de propor défice",
-            ),
-            highlightsEn = listOf(
-                "Cycle logging, **on this phone only**, so the scale stops mistaking retention for fat",
-                "Cycle retention is 1 to 3 kg — the app says so instead of letting you think it is fat",
-                "Nutrient references for pregnancy, breastfeeding and post-menopause",
-                "During pregnancy and breastfeeding the app no longer proposes a deficit",
             ),
         ),
     )

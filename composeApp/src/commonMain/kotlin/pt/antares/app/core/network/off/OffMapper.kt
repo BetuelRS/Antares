@@ -53,9 +53,7 @@ object OffMapper {
             sugarsG = n?.sugars100g,
             fatG = n?.fat100g ?: 0.0,
             satFatG = n?.saturatedFat100g,
-            fiberG = n?.fiber100g,
-            sodiumMg = sodiumMg,
-            microsJson = microsJson(n),
+            microsJson = microsJson(n, sodiumMg),
 
             servingName = porcao.name,
             servingGrams = porcao.grams,
@@ -64,7 +62,7 @@ object OffMapper {
         )
     }
 
-    private fun microsJson(n: OffNutriments?): String? {
+    private fun microsJson(n: OffNutriments?, sodiumMg: Int?): String? {
         if (n == null) return null
 
         // A Open Food Facts dá tudo em gramas; a app guarda cada nutriente na unidade que a
@@ -80,6 +78,11 @@ object OffMapper {
         }
 
         val micros = listOfNotNull(
+            // O sódio e a fibra são micronutrientes com meta diária, e desde a v28 vivem no
+            // mapa como os outros — antes eram coluna, e a app tinha dois sítios para o
+            // mesmo número.
+            sodiumMg?.let { Nutrients.SODIUM to it.toDouble() },
+            scaled(Nutrients.FIBER, n.fiber100g),
             scaled(Nutrients.CALCIUM, n.calcium100g),
             scaled(Nutrients.IRON, n.iron100g),
             scaled(Nutrients.MAGNESIUM, n.magnesium100g),

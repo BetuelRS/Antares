@@ -58,8 +58,6 @@ class RecipeLogTest : ViewModelHarness() {
         sugarsG = null,
         fatG = fatG,
         satFatG = null,
-        fiberG = null,
-        sodiumMg = null,
         microsJson = microsJson,
         servingName = null,
         servingGrams = null,

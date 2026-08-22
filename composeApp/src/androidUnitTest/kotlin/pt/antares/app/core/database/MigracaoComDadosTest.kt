@@ -58,7 +58,7 @@ class MigracaoComDadosTest {
         assertTrue(tabelas.size >= 7, "a v$versaoDePartida devia ter as tabelas todas: $tabelas")
 
         val db = Room.databaseBuilder(context, AntaresDb::class.java, dbName)
-            .addMigrations(MIGRACAO_26_PARA_27)
+            .addMigrations(MIGRACAO_26_PARA_27, MIGRACAO_27_PARA_28)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
 

@@ -55,10 +55,29 @@ data class PortionState(
     val previewC: Double get() = scale { it.carbsG }
     val previewF: Double get() = scale { it.fatG }
 
-    val previewFiber: Double? get() = scaleOrNull { it.fiberG }
+    // O sódio e a fibra vêm do mapa desde a v28; o açúcar e a gordura saturada continuam
+    // em coluna, por não terem meta diária.
+    val previewFiber: Double? get() = escalarDoMapa(Nutrients.FIBER)
     val previewSugar: Double? get() = scaleOrNull { it.sugarsG }
     val previewSatFat: Double? get() = scaleOrNull { it.satFatG }
-    val previewSodiumMg: Double? get() = scaleOrNull { it.sodiumMg?.toDouble() }
+    val previewSodiumMg: Double? get() = escalarDoMapa(Nutrients.SODIUM)
+
+    /**
+     * A energia em quilojoules e o sal, que é o que está escrito na embalagem.
+     *
+     * **Não são nutrientes novos, e não se guardam:** os quilojoules são as calorias vezes o
+     * factor com que a própria unidade se define, e o sal é o sódio vezes 2,5. Guardá-los era
+     * ter o mesmo número duas vezes, e dois sítios onde ele pode passar a discordar. Aparecem
+     * aqui porque é aqui que a pessoa está a comparar com o rótulo.
+     */
+    val previewKj: Int get() = (previewKcal * KJ_POR_KCAL).roundToInt()
+    val previewSalG: Double? get() = previewSodiumMg?.let { it * SAL_POR_SODIO / MG_POR_G }
+
+    private fun escalarDoMapa(chave: String): Double? {
+        val por100 = microsPer100[chave] ?: return null
+        val q = quantityGrams ?: return null
+        return por100 * q / POR_CEM_GRAMAS
+    }
 
     val breakdown: NutritionBreakdown?
         get() {
@@ -67,9 +86,7 @@ data class PortionState(
             val per100 = buildMap {
                 putAll(microsPer100)
                 f.sugarsG?.let { put(Nutrients.SUGARS, it) }
-                f.fiberG?.let { put(Nutrients.FIBER, it) }
                 f.satFatG?.let { put(Nutrients.SAT_FAT, it) }
-                f.sodiumMg?.let { put(Nutrients.SODIUM, it.toDouble()) }
             }
             if (per100.isEmpty()) return null
             return NutritionFacts.build(per100, q, reference, sex, lifeStage).takeIf { !it.isEmpty }
@@ -173,4 +190,16 @@ fun paraCampo(quantidade: Double, system: UnitSystem, liquido: Boolean = false):
     }
 
 private const val UMA_CASA = 10
+
+// A definição da caloria: uma quilocaloria são 4,184 quilojoules, e os rótulos da UE são
+// obrigados a trazer os dois. Não é uma medição nova — é a mesma, noutra escala.
+private const val KJ_POR_KCAL = 4.184
+
+// O sal é cloreto de sódio: 2,5 gramas de sal por cada grama de sódio. É o número que está
+// na embalagem, e o sódio é o que as fontes medem.
+private const val SAL_POR_SODIO = 2.5
+private const val MG_POR_G = 1000.0
+
+// Os micronutrientes ficam por 100 g e escalam na leitura, ao contrário dos macros.
+private const val POR_CEM_GRAMAS = 100.0
 private const val PORCAO_DE_RECURSO_G = 100.0

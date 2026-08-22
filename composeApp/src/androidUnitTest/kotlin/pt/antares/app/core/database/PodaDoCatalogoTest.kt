@@ -63,7 +63,7 @@ class PodaDoCatalogoTest {
     ) = FoodEntity(
         id = id, source = source, sourceRef = null, namePt = id, nameEn = id,
         brand = null, kcal = 100, proteinG = 1.0, carbsG = 1.0, sugarsG = null, fatG = 1.0,
-        satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
+        satFatG = null, microsJson = null,
         servingName = null, servingGrams = null, verified = true, updatedAt = quando,
     )
 

@@ -25,6 +25,7 @@ import { lerCiqual } from "./fontes/ciqual.mjs";
 import { lerUsda, chaveDeNome, isLabDescriptor, energiaConcorda } from "./fontes/usda.mjs";
 import { lerTca } from "./fontes/tca.mjs";
 import { lerCurados, lerMicrosCurados } from "./fontes/curados.mjs";
+import { lerVocabulario, conferirComAEfsa } from "./vocabulario.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(HERE, "..", "..");
@@ -40,7 +41,7 @@ const SAIDA = join(RAIZ, "composeApp", "src", "commonMain", "composeResources", 
  * do que o que está gravado, importa; se não, não lê o ficheiro sequer. Deixá-la para trás
  * numa alteração de conteúdo é distribuir um catálogo que ninguém recebe.
  */
-const VERSAO = 1;
+const VERSAO = 2;
 
 const aceitarDesvios = process.argv.includes("--aceitar-desvios");
 
@@ -172,6 +173,39 @@ console.log(`\npodados por decisão anterior: ${tudo.length - vivos.length}`);
 console.log(`nomes corrigidos aplicados:   ${nomesAplicados}`);
 console.log(`marcados como líquido:        ${vivos.filter((e) => e.isLiquid).length}`);
 
+// --------------------------------------------------------------------- o vocabulário
+
+const vocabulario = lerVocabulario(join(HERE, "vocabulario.csv"));
+
+const desacordos = conferirComAEfsa(
+  vocabulario,
+  join(RAIZ, "composeApp", "src", "commonMain", "composeResources", "files", "seed_efsa_drv.csv"),
+);
+if (desacordos.length) {
+  console.error("\nO VOCABULÁRIO E AS REFERÊNCIAS DA EFSA DISCORDAM:");
+  for (const d of desacordos) console.error(`  ${d}`);
+  console.error("\nSão os mesmos números em dois ficheiros. Enquanto for assim, manda o que a app lê.");
+  process.exit(1);
+}
+
+// Uma chave emitida e não declarada é um nutriente escrito de duas maneiras — e a app
+// mostra os dois, cada um com metade dos alimentos, sem que nada dê erro.
+// Sobre o que sai, e não sobre o que está a meio: o sódio e a fibra só entram no mapa no
+// momento de escrever, e uma verificação feita antes disso não via as chaves que interessam.
+const emitidas = new Set();
+for (const e of vivos) for (const k of Object.keys(microsCom(e) || {})) emitidas.add(k);
+
+const naoDeclaradas = [...emitidas].filter((k) => !vocabulario.has(k)).sort();
+if (naoDeclaradas.length) {
+  console.error(`\nCHAVES POR DECLARAR: ${naoDeclaradas.join(", ")}`);
+  console.error("Ou se acrescentam ao `vocabulario.csv`, ou o importador que as emite está errado.");
+  process.exit(1);
+}
+
+const semUso = [...vocabulario.keys()].filter((k) => !emitidas.has(k)).sort();
+console.log(`\nvocabulário: ${vocabulario.size} chaves, ${emitidas.size} em uso`);
+if (semUso.length) console.log(`  declaradas e nunca emitidas: ${semUso.join(", ")}`);
+
 // --------------------------------------------------------------------- a cobertura
 
 const foraDeAlcance = [
@@ -212,6 +246,31 @@ if (aceitarDesvios) {
 // a ordem que o `sorted()` do Kotlin usa, e há um teste-guarda a comparar as duas.
 vivos.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 
+/**
+ * Junta ao mapa de micronutrientes os dois que até à v27 viviam em coluna.
+ *
+ * O que já está no mapa ganha à coluna, e não o contrário: a coluna do sódio era um inteiro
+ * arredondado, e é por isso que 29 alimentos mostravam dois valores diferentes conforme o
+ * ecrã. Fica o número com casas decimais, que é o que a fonte publicou.
+ *
+ * O açúcar e a gordura saturada **continuam em coluna** e não entram aqui: não têm referência
+ * da EFSA, não aparecem nos ecrãs de micronutrientes, e duplicá-los era escrever o mesmo
+ * número duas vezes em oito mil linhas por nada.
+ */
+function microsCom(e) {
+  const micros = { ...(e.micros ?? {}) };
+  if (micros.sodium_mg == null && e.sodiumMg != null) micros.sodium_mg = e.sodiumMg;
+  if (micros.fiber_g == null && e.fiberG != null) micros.fiber_g = e.fiberG;
+  return Object.keys(micros).length ? ordenar(micros) : null;
+}
+
+/** Por ordem de chave, para o `git diff` do catálogo dizer o que mudou e não onde mudou. */
+function ordenar(mapa) {
+  const saida = {};
+  for (const k of Object.keys(mapa).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))) saida[k] = mapa[k];
+  return saida;
+}
+
 const alimentos = vivos.map((e) => ({
   id: e.id,
   source: e.source ?? "SEED",
@@ -225,9 +284,11 @@ const alimentos = vivos.map((e) => ({
   sugarsG: e.sugarsG ?? null,
   fatG: e.fatG,
   satFatG: e.satFatG ?? null,
-  fiberG: e.fiberG ?? null,
-  sodiumMg: e.sodiumMg ?? null,
-  micros: e.micros ?? null,
+
+  // O sódio e a fibra deixaram de ter coluna na v28: têm referência da EFSA, são
+  // micronutrientes a sério, e viver nos dois sítios era a app poder mostrar dois números
+  // para o mesmo alimento — já acontecia em 29 deles, porque a coluna arredondava.
+  micros: microsCom(e),
   servingName: e.servingName ?? null,
   servingGrams: e.servingGrams ?? null,
   isLiquid: Boolean(e.isLiquid),

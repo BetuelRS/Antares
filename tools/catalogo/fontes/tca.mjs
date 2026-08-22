@@ -77,6 +77,12 @@ export function lerTca(caminho) {
       if (v != null) micros[chave] = v;
     }
 
+    // O açúcar e a gordura saturada ficam só na coluna. São lidos daqui para a preencher,
+    // logo abaixo, e depois saem do mapa: não têm referência da EFSA, não aparecem nos
+    // ecrãs de micronutrientes, e guardá-los nos dois sítios era escrever o mesmo número
+    // duas vezes em mil trezentos e setenta e seis linhas.
+    const soColuna = { sugars_g: micros.sugars_g, satFat_g: micros.satFat_g };
+
     alimentos.push({
       id: `tca-${String(r[COLUNAS.code]).trim()}`,
       source: "SEED",
@@ -88,11 +94,19 @@ export function lerTca(caminho) {
       proteinG: num(r[COLUNAS.protein]) ?? 0,
       carbsG: num(r[COLUNAS.carbs]) ?? 0,
       fatG: num(r[COLUNAS.fat]) ?? 0,
-      sugarsG: micros.sugars_g ?? null,
-      satFatG: micros.satFat_g ?? null,
+      sugarsG: soColuna.sugars_g ?? null,
+      satFatG: soColuna.satFat_g ?? null,
       fiberG: micros.fiber_g ?? null,
-      sodiumMg: micros.sodium_mg != null ? Math.round(micros.sodium_mg) : null,
-      micros: Object.keys(micros).length ? micros : null,
+
+      // Sem arredondar: até à v27 o sódio era um inteiro na linha do alimento e um decimal
+      // no mapa de micronutrientes, e 29 alimentos mostravam números diferentes conforme o
+      // ecrã que os lia. Agora há uma casa só, e é a que a fonte publicou.
+      sodiumMg: micros.sodium_mg ?? null,
+      micros: (() => {
+        delete micros.sugars_g;
+        delete micros.satFat_g;
+        return Object.keys(micros).length ? micros : null;
+      })(),
       servingName: null,
       servingGrams: null,
       verified: true,

@@ -2,6 +2,7 @@ package pt.antares.app.core.network.off
 
 import kotlinx.serialization.json.Json
 import pt.antares.app.core.model.FoodSource
+import pt.antares.app.core.nutrition.microsDeJson
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -33,7 +34,7 @@ class OffMapperTest {
         assertEquals(56.3, food.sugarsG!!, 1e-9)
         assertEquals(30.9, food.fatG, 1e-9)
         assertEquals(10.6, food.satFatG!!, 1e-9)
-        assertEquals(43, food.sodiumMg)
+        assertEquals(43.0, microsDeJson(food.microsJson)["sodium_mg"])
         assertEquals(15.0, food.servingGrams!!, 1e-9)
         assertNotNull(food.microsJson)
         assertEquals(true, food.verified)
@@ -67,13 +68,13 @@ class OffMapperTest {
         assertEquals(0.5, food.proteinG, 1e-9)
         assertEquals(11.0, food.carbsG, 1e-9)
         assertNull(food.sugarsG)
-        assertNull(food.sodiumMg)
+        assertNull(microsDeJson(food.microsJson)["sodium_mg"])
     }
 
     @Test
     fun `sodio derivado do sal quando sodium ausente`() {
         val food = map(FIXTURE_SALT_ONLY, "222")
-        assertEquals(1000, food.sodiumMg)
+        assertEquals(1000.0, microsDeJson(food.microsJson)["sodium_mg"])
         assertEquals(100, food.kcal)
     }
 
@@ -86,8 +87,6 @@ class OffMapperTest {
         assertEquals(0.0, food.fatG, 1e-9)
         assertNull(food.sugarsG)
         assertNull(food.satFatG)
-        assertNull(food.fiberG)
-        assertNull(food.sodiumMg)
         assertNull(food.microsJson)
         assertNull(food.servingGrams)
         assertEquals("Vazio", food.namePt)

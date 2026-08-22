@@ -56,8 +56,6 @@ class HoraDaRefeicaoTest {
         fatG = 7.0,
         sugarsG = null,
         satFatG = null,
-        fiberG = null,
-        sodiumMg = null,
         microsJson = null,
         servingName = null,
         servingGrams = null,

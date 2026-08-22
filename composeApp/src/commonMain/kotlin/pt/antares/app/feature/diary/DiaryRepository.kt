@@ -48,17 +48,18 @@ class DiaryRepository(
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
-     * Junta os micronutrientes do alimento com os quatro valores de rótulo, que vivem em
-     * colunas próprias. O registo guarda tudo num mapa só, e é isso que faz a ficha
-     * nutricional de um registo antigo continuar completa.
+     * Junta os micronutrientes do alimento com os dois valores de rótulo que ainda vivem em
+     * colunas próprias — o açúcar e a gordura saturada, que não têm meta diária. O sódio e a
+     * fibra têm, e desde a v28 vivem no mapa como os outros. O registo guarda tudo num mapa
+     * só, e é isso que faz a ficha nutricional de um registo antigo continuar completa.
      */
     private fun snapshotMicros(food: FoodEntity): String? {
         val micros = buildMap<String, Double> {
-            food.microsJson?.let { runCatching { putAll(json.decodeFromString<Map<String, Double>>(it)) } }
-            food.fiberG?.let { put("fiber_g", it) }
+            food.microsJson?.let { bruto ->
+                runCatching { putAll(json.decodeFromString<Map<String, Double>>(bruto)) }
+            }
             food.sugarsG?.let { put("sugars_g", it) }
             food.satFatG?.let { put("satFat_g", it) }
-            food.sodiumMg?.let { put("sodium_mg", it.toDouble()) }
         }
         return if (micros.isEmpty()) null else json.encodeToString(micros)
     }

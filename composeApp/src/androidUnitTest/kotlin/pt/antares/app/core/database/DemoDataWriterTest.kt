@@ -60,8 +60,6 @@ class DemoDataWriterTest {
                     sugarsG = null,
                     fatG = 2.0 + n * 0.5,
                     satFatG = null,
-                    fiberG = null,
-                    sodiumMg = null,
                     microsJson = null,
                     servingName = null,
                     servingGrams = null,

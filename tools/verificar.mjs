@@ -14,7 +14,7 @@
  * Corre também as funções do servidor e as duas buscas de segredos que o gancho de envio faz.
  */
 import { spawnSync } from "node:child_process";
-import { readFileSync, readdirSync, existsSync, rmSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, statSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 const rapido = process.argv.includes("--rapido");
@@ -42,14 +42,39 @@ function correr(comando, args, opcoes = {}) {
 
 // ------------------------------------------------------------------ os testes Kotlin
 
-// Apagar os relatórios antigos **antes** de correr. Sem isto, uma execução que nem chegue a
-// começar deixa este script a ler e a somar os resultados da vez passada, e a dizer que está
-// tudo bem sobre código que ninguém testou. Já aconteceu na primeira execução deste ficheiro:
-// leu quatro testes de uma sonda apagada e deu-os por verdade.
 const pastaDosResultados = join(raiz, "composeApp", "build", "test-results", "testDebugUnitTest");
-rmSync(pastaDosResultados, { recursive: true, force: true });
 
-const tarefas = ["--rerun-tasks", ":composeApp:testDebugUnitTest", "detekt"];
+/**
+ * A hora de arranque, para só contar relatórios escritos depois dela.
+ *
+ * Sem isto, uma execução que nem chegue a começar deixa este script a somar os resultados da
+ * vez passada e a dizer que está tudo bem sobre código que ninguém testou. Aconteceu na
+ * primeira execução deste ficheiro: leu quatro testes de uma sonda já apagada e deu-os por
+ * verdade.
+ *
+ * Apagar a pasta antes de correr seria mais directo, e não serve: no Windows o serviço do
+ * Gradle mantém-na aberta e a remoção falha com falta de permissão.
+ */
+const arranque = Date.now();
+
+// Apagar os relatórios um a um, e não a pasta: a pasta **é** a saída da tarefa, e sem ela o
+// Gradle repete os testes em vez de os dar por actualizados. No Windows o serviço do Gradle
+// mantém a pasta aberta e removê-la inteira falha por falta de permissão; os ficheiros lá
+// dentro saem.
+if (existsSync(pastaDosResultados)) {
+  for (const f of readdirSync(pastaDosResultados).filter((x) => x.endsWith(".xml"))) {
+    try {
+      rmSync(join(pastaDosResultados, f));
+    } catch {
+      // Um relatório preso não impede a execução: a hora de arranque acima trata dele.
+    }
+  }
+}
+
+// Sem `--rerun-tasks`: forçar a repetição de tudo fazia o Gradle reempacotar recursos, e no
+// Windows isso choca com ficheiros que outro processo tem abertos — a verificação falhava
+// por uma razão que não tem nada a ver com o código.
+const tarefas = [":composeApp:testDebugUnitTest", "detekt"];
 if (!rapido) tarefas.push(":composeApp:lintDebug");
 
 process.stderr.write("a correr o Gradle…\n");
@@ -65,7 +90,12 @@ if (!/BUILD SUCCESSFUL|BUILD FAILED/.test(saidaGradle)) {
 }
 
 const erros = saidaGradle.split("\n").filter((l) => l.startsWith("e: "));
-const detekt = saidaGradle.split("\n").filter((l) => /\.kt:\d+:\d+:/.test(l));
+// Só os achados do detekt. As linhas de aviso do compilador têm a mesma forma — ficheiro,
+// linha, coluna — e contá-las era chumbar a versão por causa de ruído que o Kotlin escreve
+// em todas as compilações.
+const detekt = saidaGradle
+  .split("\n")
+  .filter((l) => /\.kt:\d+:\d+:/.test(l) && !/warning:|exception:/.test(l));
 
 // O relatório, e não a última linha: é a regra D1 escrita em código.
 const pasta = pastaDosResultados;
@@ -76,6 +106,8 @@ const falharam = [];
 
 if (existsSync(pasta)) {
   for (const f of readdirSync(pasta).filter((x) => x.endsWith(".xml"))) {
+    // Só os desta execução: um relatório velho conta testes que não correram agora.
+    if (statSync(join(pasta, f)).mtimeMs < arranque) continue;
     const xml = readFileSync(join(pasta, f), "utf8");
     const m = xml.match(/tests="(\d+)" skipped="(\d+)" failures="(\d+)" errors="(\d+)"/);
     if (!m) continue;
@@ -95,6 +127,9 @@ if (erros.length) {
 } else if (!testes) {
   vermelho = true;
   linhas.push("testes Kotlin: nenhum relatório — a tarefa nem chegou a correr");
+  for (const l of saidaGradle.split("\n").filter((x) => /Task :composeApp:test|FAILED|error/i.test(x)).slice(-4)) {
+    linhas.push(`    ${l.trim().slice(0, 140)}`);
+  }
 } else {
   if (falhas) vermelho = true;
   linhas.push(`testes Kotlin: ${testes}, ${saltados} saltados, ${falhas} a falhar`);

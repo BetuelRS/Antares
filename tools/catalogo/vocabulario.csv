@@ -1,0 +1,43 @@
+chave,tagname,unidade,grupo,drv_homem,drv_mulher,limite,nota
+alcohol_g,ALC,g,composicao,,,,
+betaCarotene_ug,CARTB,ug,vitamina,,,,de onde veio a vitamina A; nao soma ao vitA_ug
+calcium_mg,CA,mg,mineral,950,950,meta,
+chloride_mg,CLD,mg,mineral,3100,3100,meta,
+cholesterol_mg,CHOLE,mg,lipido,,,,
+copper_mg,CU,mg,mineral,1.6,1.3,meta,
+dha_g,F22D6N3,g,lipido,,,,em gramas porque e assim que a CIQUAL o publica
+epa_g,F20D5N3,g,lipido,,,,em gramas porque e assim que a CIQUAL o publica
+fatMono_g,FAMS,g,lipido,,,,
+fatPoly_g,FAPU,g,lipido,,,,
+fatTrans_g,FATRN,g,lipido,,,,
+fiber_g,FIBTG,g,macro,25,25,meta,tambem coluna da linha do alimento ate a v27
+iodine_ug,ID,ug,mineral,150,150,meta,
+iron_mg,FE,mg,mineral,11,16,meta,
+lactose_g,LACS,g,hidrato,,,,
+magnesium_mg,MG,mg,mineral,350,300,meta,
+manganese_mg,MN,mg,mineral,3,3,meta,
+omega3_g,FAPUN3,g,lipido,,,,
+omega6_g,FAPUN6,g,lipido,,,,
+phosphorus_mg,P,mg,mineral,550,550,meta,
+polyols_g,POLYL,g,hidrato,,,,
+potassium_mg,K,mg,mineral,3500,3500,meta,
+retinol_ug,RETOL,ug,vitamina,,,,de onde veio a vitamina A; nao soma ao vitA_ug
+satFat_g,FASAT,g,lipido,,,,tambem coluna da linha do alimento
+selenium_ug,SE,ug,mineral,70,70,meta,
+sodium_mg,NA,mg,mineral,2000,2000,teto,tambem coluna da linha do alimento ate a v27
+starch_g,STARCH,g,hidrato,,,,
+sugars_g,SUGAR,g,hidrato,,,,tambem coluna da linha do alimento
+vitA_ug,VITA_RAE,ug,vitamina,750,650,meta,equivalentes de retinol
+vitB12_ug,VITB12,ug,vitamina,4,4,meta,
+vitB1_mg,THIA,mg,vitamina,1.1,0.9,meta,
+vitB2_mg,RIBF,mg,vitamina,1.6,1.6,meta,
+vitB3_mg,NIA,mg,vitamina,16,14,meta,
+vitB5_mg,PANTAC,mg,vitamina,5,5,meta,
+vitB6_mg,VITB6A,mg,vitamina,1.7,1.6,meta,
+vitB9_ug,FOL,ug,vitamina,330,330,meta,
+vitC_mg,VITC,mg,vitamina,110,95,meta,
+vitD_ug,VITD,ug,vitamina,15,15,meta,
+vitE_mg,,mg,vitamina,13,11,meta,alfa-tocoferol; o tagname fica por confirmar
+vitK_ug,,ug,vitamina,70,70,meta,filoquinona; o tagname fica por confirmar
+water_g,WATER,g,composicao,,,,
+zinc_mg,ZN,mg,mineral,10,8,meta,

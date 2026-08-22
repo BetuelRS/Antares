@@ -37,7 +37,7 @@ class MostLoggedTest {
     private fun food(id: String, nome: String) = FoodEntity(
         id = id, source = FoodSource.SEED, sourceRef = null, namePt = nome, nameEn = nome,
         brand = null, kcal = 100, proteinG = 1.0, carbsG = 1.0, sugarsG = null, fatG = 1.0,
-        satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
+        satFatG = null, microsJson = null,
         servingName = null, servingGrams = null,
         verified = true, updatedAt = 1L,
     )

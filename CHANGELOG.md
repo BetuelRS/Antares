@@ -17,6 +17,50 @@ Nada por lançar.
 
 ---
 
+## [2.6.0] — 2026-08-23
+
+Cada nutriente passa a ter um nome só. Esquema da base: **v28**.
+
+### Corrigido
+
+- **O sódio podia aparecer com dois valores diferentes para o mesmo alimento**, conforme o
+  ecrã que o lia. Vivia em dois sítios ao mesmo tempo — numa coluna da linha do alimento e no
+  mapa de micronutrientes — e a coluna guardava um inteiro arredondado enquanto o mapa
+  guardava as casas decimais que a fonte publicou. Acontecia em 29 alimentos.
+
+### Alterado
+
+- **O sódio e a fibra passam a viver só no vocabulário**, como os outros nutrientes com meta
+  diária. Deixam de ter coluna própria na linha do alimento.
+- **Passam também a estar em quase todos os alimentos**, e não só nos do INSA: de 1 376 para
+  7 686 e 7 754. Vinham da fonte para uma coluna que os ecrãs de micronutrientes não liam.
+- A mediana de nutrientes por alimento sobe de **18 para 20**.
+
+### Adicionado
+
+- **Um vocabulário congelado**, com as 42 chaves de nutriente que a app conhece: o nome
+  internacional do INFOODS ao lado de cada uma, a unidade, o grupo, e a referência da EFSA
+  quando existe — com a indicação de ser meta a atingir ou tecto a não passar.
+- **A construção do catálogo chumba se um importador emitir uma chave não declarada.** Dois
+  nomes para o mesmo nutriente são dois nutrientes: a app mostrava os dois, cada um com
+  metade dos alimentos, e as barras de ambos ficavam a meio sem razão nenhuma.
+
+### Notas
+
+- **Cinco dos oito nutrientes que o plano queria acrescentar não existem em fonte nenhuma.**
+  A biotina, o crómio, o molibdénio, o flúor e a cafeína não estão na CIQUAL, nem na tabela do
+  INSA, nem no USDA. Declará-los dava cinco chaves eternamente vazias.
+- Dos outros três, o **sal** e a **energia em kJ** não são nutrientes novos: são o sódio ×2,5 e
+  as kcal ×4,184 — o mesmo número noutra escala. A **frutose** só existe numa das fontes e não
+  tem referência. Nenhum entra no catálogo.
+- **Uma ferramenta nova**: `node tools/verificar.mjs` corre os testes, o detekt, o lint, as
+  funções do servidor e as buscas de segredos, e responde em cinco linhas. Escreveu-se por
+  causa da regra D1, e apanhou-se a si própria duas vezes enquanto era escrita — a somar
+  relatórios de uma execução anterior, e a contar avisos do compilador como achados de estilo.
+
+---
+
+
 ## [2.5.0] — 2026-08-22
 
 O que é teu sai de dentro da linha do alimento. Esquema da base: **v27**.

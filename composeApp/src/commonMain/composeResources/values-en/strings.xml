@@ -345,6 +345,8 @@
     <string name="food_quantity">Amount (%1$s)</string>
     <string name="food_quantity_g">Amount (g)</string>
     <string name="food_favorite">Favorite</string>
+    <string name="food_kj">%1$s kJ</string>
+    <string name="food_salt">%1$s g salt</string>
     <string name="food_serving">Serving</string>
     <string name="food_estimated_hint">Approximate values per 100 g — you can edit them to correct.</string>
     <string name="food_tbsp">Tbsp (15 g)</string>

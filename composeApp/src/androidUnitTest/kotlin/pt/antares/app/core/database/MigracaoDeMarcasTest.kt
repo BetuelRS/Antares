@@ -161,7 +161,7 @@ class MigracaoDeMarcasTest {
 
     private suspend fun abrirComORoom(bloco: suspend (AntaresDb) -> Unit) {
         val db = Room.databaseBuilder(context, AntaresDb::class.java, nome)
-            .addMigrations(MIGRACAO_26_PARA_27)
+            .addMigrations(MIGRACAO_26_PARA_27, MIGRACAO_27_PARA_28)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
         try {

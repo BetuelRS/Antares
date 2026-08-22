@@ -19,6 +19,8 @@ import pt.antares.app.core.database.entities.FoodNutrientEntity
 import pt.antares.app.core.database.entities.SearchMissEntity
 import pt.antares.app.core.nutrition.NutrientDensity
 import pt.antares.app.core.nutrition.microsDeJson
+import kotlinx.serialization.json.Json
+import pt.antares.app.core.nutrition.Nutrients
 
 class FoodRepository(
     private val foodDao: FoodDao,
@@ -142,6 +144,20 @@ class FoodRepository(
      * traz micronutrientes, e sem isto ficava fora do «rico em» até à próxima sementeira
      * — ou seja, para sempre.
      */
+    /**
+     * Mete no mapa de micronutrientes os dois números de rótulo que a pessoa escreveu.
+     *
+     * O sódio e a fibra deixaram de ter coluna na v28: têm meta diária, e um nutriente com
+     * meta é um micronutriente como os outros. Enquanto tiveram os dois sítios, a app podia
+     * mostrar valores diferentes para o mesmo alimento conforme o ecrã.
+     */
+    private fun microsComRotulo(existente: String?, fiberG: Double?, sodiumMg: Int?): String? {
+        val micros = microsDeJson(existente).toMutableMap()
+        fiberG?.let { micros[Nutrients.FIBER] = it }
+        sodiumMg?.let { micros[Nutrients.SODIUM] = it.toDouble() }
+        return micros.takeIf { it.isNotEmpty() }?.let { Json.encodeToString(it) }
+    }
+
     private suspend fun guardarComIndice(food: FoodEntity, searchText: String) {
         foodDao.upsertWithFts(food, searchText)
         nutrientDao.clearFood(food.id)
@@ -186,9 +202,7 @@ class FoodRepository(
             sugarsG = sugarsG,
             fatG = fatG,
             satFatG = satFatG,
-            fiberG = fiberG,
-            sodiumMg = sodiumMg,
-            microsJson = existing?.microsJson,
+            microsJson = microsComRotulo(existing?.microsJson, fiberG, sodiumMg),
             servingName = servingName,
             servingGrams = servingGrams,
             // Verificado por definição: os números são da pessoa, e não há mais ninguém a

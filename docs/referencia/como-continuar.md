@@ -7,10 +7,10 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.5.0 publicada.** Esquema da base **v27**. Sete versões feitas.
-- O bloco **D · O catálogo** está a meio: 2.4.0 e 2.5.0 saíram, a **2.5.1 foi fechada sem
-  sair** (a razão está no plano, e não se reabre sem a ler), e a seguir é a **2.6.0 · O
-  vocabulário**.
+- **2.6.0 publicada.** Esquema da base **v28**. Oito versões feitas.
+- O bloco **D · O catálogo** está a meio: 2.4.0, 2.5.0 e 2.6.0 saíram, a **2.5.1 foi fechada
+  sem sair** (a razão está no plano, e não se reabre sem a ler), e a seguir é a **2.7.0 · A
+  ausência tipada**.
 
 ## As regras
 

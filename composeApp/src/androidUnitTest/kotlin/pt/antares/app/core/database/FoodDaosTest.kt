@@ -57,7 +57,7 @@ class FoodDaosTest {
     ) = FoodEntity(
         id = id, source = FoodSource.SEED, sourceRef = null, namePt = namePt, nameEn = nameEn,
         brand = null, kcal = kcal, proteinG = p, carbsG = c, sugarsG = null, fatG = f,
-        satFatG = null, fiberG = null, sodiumMg = null, microsJson = null,
+        satFatG = null, microsJson = null,
         servingName = null, servingGrams = null,
         verified = true, updatedAt = 1L,
     )

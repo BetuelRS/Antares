@@ -34,8 +34,9 @@ data class AlimentoDoCatalogo(
     val sugarsG: Double? = null,
     val fatG: Double,
     val satFatG: Double? = null,
-    val fiberG: Double? = null,
-    val sodiumMg: Int? = null,
+
+    // O sódio e a fibra vêm aqui dentro desde a v28, e não em campo próprio: têm meta
+    // diária, e um nutriente com meta é um micronutriente como os outros.
     val micros: Map<String, Double>? = null,
     val servingName: String? = null,
     val servingGrams: Double? = null,
@@ -72,8 +73,6 @@ internal fun linhaDe(
     sugarsG = alimento.sugarsG,
     fatG = alimento.fatG,
     satFatG = alimento.satFatG,
-    fiberG = alimento.fiberG,
-    sodiumMg = alimento.sodiumMg,
     microsJson = alimento.micros?.let { Json.encodeToString(it) },
     servingName = alimento.servingName,
     servingGrams = alimento.servingGrams,
@@ -200,7 +199,7 @@ class FoodSeeder(
          * [CatalogoTemVersaoTest] não deixa que uma suba sem a outra: se ficasse para
          * trás, o catálogo novo viajava dentro do APK e não entrava em telemóvel nenhum.
          */
-        const val VERSAO_DO_CATALOGO = 1
+        const val VERSAO_DO_CATALOGO = 2
 
         private const val NENHUMA = 0
         private const val KEY_CATALOGO = "catalogo_versao"

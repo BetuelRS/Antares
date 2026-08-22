@@ -147,6 +147,18 @@ fun FoodDetailScreen(
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
+                // O que está escrito na embalagem, para se poder comparar sem fazer contas:
+                // os quilojoules e o sal. Nenhum dos dois é guardado — são o mesmo número
+                // noutra escala, e guardá-los era ter dois sítios onde pode passar a
+                // discordar.
+                Text(
+                    listOfNotNull(
+                        stringResource(Res.string.food_kj, state.previewKj.toString()),
+                        state.previewSalG?.let { stringResource(Res.string.food_salt, fmtG(it)) },
+                    ).joinToString(" · "),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 Spacer(Modifier.height(Spacing.xs))
                 val m = macroInitials()
                 Text(
