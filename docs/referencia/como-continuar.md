@@ -7,12 +7,48 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.6.0 publicada.** Esquema da base **v28**. Oito versões feitas.
-- O bloco **D · O catálogo** está a meio: 2.4.0, 2.5.0 e 2.6.0 saíram, a **2.5.1 foi fechada
-  sem sair** (a razão está no plano, e não se reabre sem a ler), e a seguir é a **2.7.0 · A
-  ausência tipada**.
+- **2.6.0 é a última publicada.** Esquema da base **v28**. Oito versões feitas.
+- A **2.7.0 está a meio, comitada e por lançar.** A árvore está verde: 1433 testes, detekt
+  limpo, nada por empurrar. O catálogo no repositório já é a **versão 3**, e a 2.6.0 publicada
+  traz a 2 — não se lança nada a partir daqui sem acabar a versão.
+- A **2.5.1 foi fechada sem sair.** A razão está no plano e não se reabre sem a ler.
+
+## O bloco D faz-se em três corridas
+
+Por decisão do dono, a 2026-08-23. Uma corrida é um plano, uma execução e **um lançamento** —
+em vez de uma versão de cada vez. A cerimónia por versão era perto de um terço do trabalho.
+
+| Corrida | O quê | Estado |
+|---|---|---|
+| **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **a meio** |
+| **2 · as ferramentas** | 2.9.0 + 2.10.0 | por abrir |
+| **3 · o conteúdo** | 2.11.0 a 2.15.0 | por abrir |
+
+**O que não se junta é o conteúdo com o código.** As decisões sobre nomes, fusões e porções
+são do dono; tomá-las em lote sem ele as ver é o modo de falhar deste bloco — um alimento com
+o nome trocado não rebenta, não dá erro, e custa uma versão a corrigir.
+
+**O que não se batcha nunca:** a medição no início de cada peça. Cinco versões abertas, cinco
+premissas do plano erradas, e as cinco apareceram a medir — não a ler.
+
+## O que falta na corrida 1
+
+A ausência tipada está feita. Falta **o catálogo que se atualiza sozinho**, e as quatro
+decisões já estão tomadas:
+
+1. **Alojado nas releases do GitHub**, ao lado da versão que o produziu.
+2. **Só desce a pedido, num botão.** A app nunca vai à rede por causa do catálogo sem alguém
+   lhe pedir.
+3. **Não avisa que um alimento mudou de números.** O diário copia a nutrição no momento do
+   registo: os dias passados não mudam.
+4. **Entra no ecrã «O que sai daqui»**, com o que se envia — o endereço IP e a versão
+   instalada.
+
+O passo a passo está no plano, debaixo da 2.8.0. Depois disso: changelog, changelog da app,
+subir a versão para 2.7.0, aparelho, e lançar.
 
 ## As regras
+
 
 [`regras.md`](regras.md) é a fonte única. São 29, em grupos A a F, e cada uma diz quem a
 verifica. As que mais mandam no dia a dia:
