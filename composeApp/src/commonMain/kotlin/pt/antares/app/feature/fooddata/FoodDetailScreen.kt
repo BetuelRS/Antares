@@ -186,6 +186,7 @@ private fun NutritionPanel(state: PortionState) {
     val breakdown = state.breakdown
     val hasMicros = breakdown?.hasMicronutrients == true
     NutritionFactsCard(
+        estados = state.estadosPer100,
         breakdown = breakdown,
         gap = MicroGap.of(food.source, hasMicros),
         expandKey = food.id,

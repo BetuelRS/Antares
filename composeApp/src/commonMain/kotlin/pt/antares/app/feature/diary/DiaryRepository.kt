@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import kotlinx.serialization.json.Json
 import pt.antares.app.core.calc.UsualPortion
 import pt.antares.app.core.database.daos.DayKcal
 import pt.antares.app.core.database.daos.DayTotals
@@ -21,6 +20,10 @@ import pt.antares.app.core.util.MINUTES_PER_HOUR
 import pt.antares.app.core.util.currentMinuteOfDay
 import pt.antares.app.core.util.todayEpochDay
 import kotlin.math.roundToInt
+import pt.antares.app.core.nutrition.Nutrients
+import pt.antares.app.core.nutrition.estadosDeJson
+import pt.antares.app.core.nutrition.microsDeJson
+import pt.antares.app.core.nutrition.microsParaJson
 
 const val DEFAULT_PORTION_G = 100.0
 
@@ -45,7 +48,6 @@ class DiaryRepository(
      */
     private fun horaDe(epochDay: Long): Int? =
         currentMinuteOfDay().takeIf { epochDay == todayEpochDay() }
-    private val json = Json { ignoreUnknownKeys = true }
 
     /**
      * Junta os micronutrientes do alimento com os dois valores de rótulo que ainda vivem em
@@ -54,14 +56,16 @@ class DiaryRepository(
      * só, e é isso que faz a ficha nutricional de um registo antigo continuar completa.
      */
     private fun snapshotMicros(food: FoodEntity): String? {
-        val micros = buildMap<String, Double> {
-            food.microsJson?.let { bruto ->
-                runCatching { putAll(json.decodeFromString<Map<String, Double>>(bruto)) }
-            }
-            food.sugarsG?.let { put("sugars_g", it) }
-            food.satFatG?.let { put("satFat_g", it) }
+        val medidos = buildMap {
+            putAll(microsDeJson(food.microsJson))
+            food.sugarsG?.let { put(Nutrients.SUGARS, it) }
+            food.satFatG?.let { put(Nutrients.SAT_FAT, it) }
         }
-        return if (micros.isEmpty()) null else json.encodeToString(micros)
+
+        // Os estados vão com os números. Um registo de ontem continua a dizer o que dizia
+        // ontem, e o que não se sabia continua a ser o que não se sabia — que é a mesma
+        // regra que faz corrigir um alimento hoje não mexer no que se comeu ontem.
+        return microsParaJson(medidos, estadosDeJson(food.microsJson))
     }
 
     fun observeDay(epochDay: Long): Flow<List<FoodLogEntity>> = foodLogDao.observeDay(epochDay)

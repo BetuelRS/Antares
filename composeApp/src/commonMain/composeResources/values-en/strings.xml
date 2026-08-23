@@ -367,6 +367,9 @@
     <string name="log_open_food">See the food and where these numbers come from</string>
     <string name="log_origin_label">How you logged it</string>
     <string name="nutrition_source_label">Data source</string>
+    <string name="nutrition_states_title">Looked for, not found</string>
+    <string name="nutrition_state_traces">traces</string>
+    <string name="nutrition_state_below">less than %1$s %2$s</string>
     <string name="nutrition_source_curated">Hand-written for Antares · micronutrients from an equivalent CIQUAL food</string>
     <string name="nutrition_source_curated_plain">Hand-written for Antares · values from published tables</string>
     <string name="nutrition_source_tca">INSA · Portuguese Food Composition Table v7.1</string>

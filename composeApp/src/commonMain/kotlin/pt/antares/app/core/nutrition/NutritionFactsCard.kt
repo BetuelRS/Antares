@@ -55,6 +55,15 @@ fun NutritionFactsCard(
     source: StringResource? = null,
 
     sourceLabel: StringResource = Res.string.nutrition_source_label,
+
+    /**
+     * Os nutrientes que a fonte procurou e não conseguiu medir — ver [EstadoDeNutriente].
+     *
+     * Aparecem à parte e **sem barra**: uma barra é uma fracção de uma meta, e estes não têm
+     * número que a preencha. Desenhá-los como um valor pequeno seria dizer que se sabe
+     * quanto há, quando o que se sabe é o contrário.
+     */
+    estados: Map<String, EstadoDeNutriente> = emptyMap(),
 ) {
     val labels = breakdown?.labels.orEmpty()
 
@@ -122,22 +131,12 @@ fun NutritionFactsCard(
                 }
             }
 
-            if (gap != MicroGap.NONE) {
-                if (labels.isNotEmpty()) Spacer(Modifier.height(Spacing.sm))
-                Text(
-                    stringResource(
-                        when (gap) {
-                            MicroGap.PACKAGED_LABEL -> Res.string.nutrition_gap_label
-                            MicroGap.AI_ESTIMATE -> Res.string.nutrition_gap_ai
-                            MicroGap.USER_CREATED -> Res.string.nutrition_gap_custom
-                            MicroGap.RECIPE_INGREDIENTS -> Res.string.nutrition_gap_recipe
-                            else -> Res.string.nutrition_gap_not_measured
-                        },
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            if (estados.isNotEmpty()) {
+                Spacer(Modifier.height(Spacing.sm))
+                ProcuradosENaoEncontrados(estados)
             }
+
+            ExplicacaoDoVazio(gap, comEspacoAntes = labels.isNotEmpty())
 
             source?.let {
                 Spacer(Modifier.height(Spacing.sm))
@@ -149,6 +148,81 @@ fun NutritionFactsCard(
             }
         }
     }
+}
+
+/**
+ * Porque é que este alimento não tem micronutrientes.
+ *
+ * Está à parte do cartão desde a v29, e não por gosto de arrumação: o cartão passou o limite
+ * de complexidade ao ganhar a lista dos procurados-e-não-encontrados, e o que aqui está é um
+ * `when` de cinco ramos que não tem nada a ver com o resto do desenho.
+ */
+@Composable
+private fun ExplicacaoDoVazio(gap: MicroGap, comEspacoAntes: Boolean) {
+    if (gap == MicroGap.NONE) return
+    if (comEspacoAntes) Spacer(Modifier.height(Spacing.sm))
+    Text(
+        stringResource(
+            when (gap) {
+                MicroGap.PACKAGED_LABEL -> Res.string.nutrition_gap_label
+                MicroGap.AI_ESTIMATE -> Res.string.nutrition_gap_ai
+                MicroGap.USER_CREATED -> Res.string.nutrition_gap_custom
+                MicroGap.RECIPE_INGREDIENTS -> Res.string.nutrition_gap_recipe
+                else -> Res.string.nutrition_gap_not_measured
+            },
+        ),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+/**
+ * Os nutrientes que foram procurados e não se acharam, ou que só lá estão em vestígios.
+ *
+ * **Não entram nas somas do dia** — somar um vestígio obriga a escolher um número que
+ * ninguém mediu — e por isso aparecem aqui, fora das secções que têm barras e percentagens.
+ * Sem esta lista, um selénio abaixo do limite de deteção era indistinguível de um selénio
+ * que ninguém analisou: os dois desapareciam do ecrã.
+ */
+@Composable
+private fun ProcuradosENaoEncontrados(estados: Map<String, EstadoDeNutriente>) {
+    Text(
+        stringResource(Res.string.nutrition_states_title),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    for ((chave, estado) in estados.entries.sortedBy { it.key }) {
+        Row(
+            Modifier.fillMaxWidth().padding(vertical = 3.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                stringResource(microLabelRes(chave)),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md),
+            )
+            Text(
+                when (estado) {
+                    is EstadoDeNutriente.Vestigios -> stringResource(Res.string.nutrition_state_traces)
+                    is EstadoDeNutriente.AbaixoDoLimite -> stringResource(
+                        Res.string.nutrition_state_below,
+                        fmtG(estado.limite),
+                        unidadeDaChave(chave),
+                    )
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+/** A unidade está no fim da chave, e é essa a convenção que o vocabulário cobra. */
+private fun unidadeDaChave(chave: String): String = when {
+    chave.endsWith("_ug") -> "µg"
+    chave.endsWith("_mg") -> "mg"
+    else -> "g"
 }
 
 @Composable

@@ -367,6 +367,9 @@
     <string name="log_open_food">Ver o alimento e de onde vêm estes números</string>
     <string name="log_origin_label">Como registaste</string>
     <string name="nutrition_source_label">Origem dos dados</string>
+    <string name="nutrition_states_title">Procurados e não encontrados</string>
+    <string name="nutrition_state_traces">vestígios</string>
+    <string name="nutrition_state_below">menos de %1$s %2$s</string>
     <string name="nutrition_source_curated">Escrito à mão para o Antares · micronutrientes de um alimento equivalente da CIQUAL</string>
     <string name="nutrition_source_curated_plain">Escrito à mão para o Antares · valores de tabelas publicadas</string>
     <string name="nutrition_source_tca">INSA · Tabela da Composição de Alimentos v7.1</string>

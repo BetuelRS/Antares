@@ -22,6 +22,8 @@ import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.feature.stats.NutritionStatsRepository
 import kotlin.math.roundToInt
 import pt.antares.app.core.nutrition.microsDeJson
+import pt.antares.app.core.nutrition.EstadoDeNutriente
+import pt.antares.app.core.nutrition.estadosDeJson
 
 data class PortionState(
     val loading: Boolean = true,
@@ -35,6 +37,10 @@ data class PortionState(
     val saved: Boolean = false,
 
     val microsPer100: Map<String, Double> = emptyMap(),
+
+    // O que a fonte procurou e não conseguiu medir. Fica à parte dos números porque não
+    // entra em conta nenhuma — ver [EstadoDeNutriente].
+    val estadosPer100: Map<String, EstadoDeNutriente> = emptyMap(),
     val reference: EfsaReference? = null,
     val sex: Sex = Sex.MALE,
 
@@ -122,6 +128,7 @@ class FoodDetailViewModel(
             val food = foodRepository.byId(foodId)
 
             val micros = microsDeJson(food?.microsJson)
+            val estados = estadosDeJson(food?.microsJson)
             val reference = statsRepository.loadReference()
             val perfil = profileRepository.observeProfile().first()
             val sex = perfil?.sex ?: Sex.MALE
@@ -141,6 +148,7 @@ class FoodDetailViewModel(
                     quantityText = paraCampo(inicial, unidades, food?.isLiquid == true),
                     usualG = usual,
                     microsPer100 = micros,
+                    estadosPer100 = estados,
                     reference = reference,
                     sex = sex,
                     lifeStage = stage,
