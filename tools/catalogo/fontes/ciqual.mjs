@@ -57,13 +57,26 @@ function decode(s) {
     .replace(/&amp;/g, "&");
 }
 
-function teneur(raw, { tracesAsZero = false } = {}) {
-  if (raw == null) return null;
+/**
+ * O que uma célula da CIQUAL diz, sem a reduzir a um número.
+ *
+ * São quatro coisas diferentes, e até à v28 três delas acabavam iguais. O `-` é «ninguém
+ * analisou», o `traces` é «há, e é pouco de mais para lhe pôr um número», e o `< 0,1` é
+ * «procurámos e não chegámos a 0,1» — que é uma medição, não uma ausência. Nos nutrientes
+ * que a app conhece são **11 286 células «abaixo do limite» e 1 214 vestígios** que se
+ * perdiam todas.
+ */
+function teneur(raw) {
+  if (raw == null) return { tipo: "nada" };
   const s = String(raw).trim();
-  if (!s || s === "-") return null;
-  if (s === "traces" || s.startsWith("<")) return tracesAsZero ? 0 : null;
+  if (!s || s === "-") return { tipo: "nada" };
+  if (s === "traces") return { tipo: "vestigios" };
+  if (s.startsWith("<")) {
+    const limite = parseFloat(s.slice(1).replace(/\s/g, "").replace(",", "."));
+    return Number.isFinite(limite) && limite > 0 ? { tipo: "abaixo", limite } : { tipo: "nada" };
+  }
   const n = parseFloat(s.replace(/\s/g, "").replace(",", "."));
-  return Number.isFinite(n) ? n : null;
+  return Number.isFinite(n) ? { tipo: "numero", valor: n } : { tipo: "nada" };
 }
 
 const round = (v, d = 1) => (v == null ? null : Math.round(v * 10 ** d) / 10 ** d);
@@ -107,12 +120,21 @@ export function lerCiqual(dataDir) {
     const macro = MACRO_BY_CODE[codigo];
     const micro = MICRO_BY_CODE[codigo];
     if (!macro && !micro) continue;
-    const v = teneur(c.teneur, { tracesAsZero: Boolean(macro) });
-    if (v == null) continue;
+    const lido = teneur(c.teneur);
+    if (lido.tipo === "nada") continue;
+
     let rec = porAlimento.get(c.alim_code);
-    if (!rec) { rec = { macros: {}, micros: {} }; porAlimento.set(c.alim_code, rec); }
-    if (macro) rec.macros[macro] = v;
-    if (micro) rec.micros[micro] = v;
+    if (!rec) { rec = { macros: {}, micros: {}, estados: {} }; porAlimento.set(c.alim_code, rec); }
+
+    // Um macro tem de ser um número: entra na equação da energia e no que a app soma. Um
+    // «abaixo do limite» num macro vale zero, como sempre valeu — a diferença não se
+    // aproveitaria, e a alternativa era deitar o alimento fora por falta de macro.
+    if (macro) rec.macros[macro] = lido.tipo === "numero" ? lido.valor : 0;
+
+    if (micro) {
+      if (lido.tipo === "numero") rec.micros[micro] = lido.valor;
+      else rec.estados[micro] = lido.tipo === "vestigios" ? "vestigios" : `<${lido.limite}`;
+    }
   }
 
   const alimentos = [];
@@ -156,6 +178,13 @@ export function lerCiqual(dataDir) {
     for (const [k, v] of Object.entries(rec.micros)) {
       const r = round(v, 3);
       if (r != null && r > 0) micros[k] = r;
+    }
+
+    // O estado só entra onde não há número. Um nutriente medido não precisa de saber que
+    // noutra amostra ficou abaixo do limite, e ter as duas coisas na mesma chave obrigava
+    // quem lê a escolher entre elas.
+    for (const [k, estado] of Object.entries(rec.estados)) {
+      if (micros[k] == null) micros[k] = estado;
     }
 
     alimentos.push({

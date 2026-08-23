@@ -41,7 +41,7 @@ const SAIDA = join(RAIZ, "composeApp", "src", "commonMain", "composeResources", 
  * do que o que está gravado, importa; se não, não lê o ficheiro sequer. Deixá-la para trás
  * numa alteração de conteúdo é distribuir um catálogo que ninguém recebe.
  */
-const VERSAO = 2;
+const VERSAO = 3;
 
 const aceitarDesvios = process.argv.includes("--aceitar-desvios");
 

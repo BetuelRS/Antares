@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import pt.antares.app.core.crash.CrashStore
 import pt.antares.app.core.crash.registarEngolida
@@ -35,9 +36,22 @@ data class AlimentoDoCatalogo(
     val fatG: Double,
     val satFatG: Double? = null,
 
-    // O sódio e a fibra vêm aqui dentro desde a v28, e não em campo próprio: têm meta
-    // diária, e um nutriente com meta é um micronutriente como os outros.
-    val micros: Map<String, Double>? = null,
+    /**
+     * Os micronutrientes tal como o oleoduto os escreveu, **sem os interpretar aqui**.
+     *
+     * O sódio e a fibra vêm aqui dentro desde a v28, e não em campo próprio: têm meta
+     * diária, e um nutriente com meta é um micronutriente como os outros.
+     *
+     * Não é um mapa de números porque desde a v29 um valor pode ser um número ou um estado
+     * — `"<0.1"`, `"vestigios"` — e um mapa de números falharia a leitura do ficheiro
+     * inteiro por causa de uma cadeia. Falharia em silêncio, ainda por cima: o semeador
+     * apanha a exceção, devolve nulo, e a app abre sem catálogo nenhum.
+     *
+     * Guardar o objeto e passá-lo à frente também poupa desmontá-lo e voltar a montá-lo:
+     * o que a base guarda é este mesmo texto. Quem o lê é o [microsDeJson], que devolve só
+     * os números, e o [estadosDeJson], que devolve o resto.
+     */
+    val micros: JsonObject? = null,
     val servingName: String? = null,
     val servingGrams: Double? = null,
     val isLiquid: Boolean = false,
@@ -73,7 +87,7 @@ internal fun linhaDe(
     sugarsG = alimento.sugarsG,
     fatG = alimento.fatG,
     satFatG = alimento.satFatG,
-    microsJson = alimento.micros?.let { Json.encodeToString(it) },
+    microsJson = alimento.micros?.toString(),
     servingName = alimento.servingName,
     servingGrams = alimento.servingGrams,
     isLiquid = alimento.isLiquid,
@@ -199,7 +213,7 @@ class FoodSeeder(
          * [CatalogoTemVersaoTest] não deixa que uma suba sem a outra: se ficasse para
          * trás, o catálogo novo viajava dentro do APK e não entrava em telemóvel nenhum.
          */
-        const val VERSAO_DO_CATALOGO = 2
+        const val VERSAO_DO_CATALOGO = 3
 
         private const val NENHUMA = 0
         private const val KEY_CATALOGO = "catalogo_versao"
