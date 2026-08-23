@@ -18,6 +18,7 @@
  * permite ao [CatalogoDeterministicoTest] verificar que ninguém partiu isso.
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,6 +34,9 @@ const DADOS = join(HERE, "dados");
 const DESVIOS = join(HERE, "desvios.json");
 const CORRECOES = join(HERE, "correcoes.json");
 const SAIDA = join(RAIZ, "composeApp", "src", "commonMain", "composeResources", "files", "catalogo.json");
+// Fora dos recursos de propósito: o manifesto é para a release, e um ficheiro a mais dentro
+// do APK é peso que ninguém lá vai buscar.
+const MANIFESTO = join(RAIZ, "tools", "catalogo", "manifesto.json");
 
 /**
  * A versão do catálogo. **Sobe à mão, e só quando o conteúdo muda.**
@@ -301,7 +305,24 @@ if (repetidos) {
   process.exit(1);
 }
 
-writeFileSync(SAIDA, JSON.stringify({ versao: VERSAO, alimentos }));
+const texto = JSON.stringify({ versao: VERSAO, alimentos });
+writeFileSync(SAIDA, texto);
+
+/**
+ * O manifesto — o que a app pede antes de decidir se vale a pena descarregar cinco
+ * megabytes. Sai daqui e não da mão de ninguém: escrito à mão, o resumo estaria errado à
+ * primeira correção, e um resumo errado faz a app recusar um catálogo que está bom.
+ *
+ * O `latest` é do GitHub: aponta sempre para a release mais recente, e por isso o endereço
+ * não muda de versão para versão. É o mesmo que está no `ApiDoCatalogo`.
+ */
+writeFileSync(MANIFESTO, JSON.stringify({
+  versao: VERSAO,
+  url: "https://github.com/BetuelRS/Antares/releases/latest/download/catalogo.json",
+  sha256: createHash("sha256").update(texto).digest("hex"),
+  alimentos: alimentos.length,
+  nota: `${alimentos.length} alimentos, catálogo v${VERSAO}.`,
+}, null, 2) + "\n");
 
 const porOrigem = {};
 for (const e of vivos) porOrigem[e.origin] = (porOrigem[e.origin] || 0) + 1;
@@ -309,4 +330,5 @@ for (const e of vivos) porOrigem[e.origin] = (porOrigem[e.origin] || 0) + 1;
 console.log(`\ncatálogo v${VERSAO}: ${alimentos.length} alimentos`);
 console.log(`  por origem: ${JSON.stringify(porOrigem)}`);
 console.log(`  desvios declarados: ${foraDeAlcance.length}`);
-console.log(`  ${(JSON.stringify({ versao: VERSAO, alimentos }).length / 1024 / 1024).toFixed(2)} MB → ${SAIDA}`);
+console.log(`  ${(texto.length / 1024 / 1024).toFixed(2)} MB → ${SAIDA}`);
+console.log(`  manifesto → ${MANIFESTO}`);

@@ -4,6 +4,8 @@ import org.koin.dsl.module
 import pt.antares.app.core.ai.AiClient
 import pt.antares.app.core.ai.AiRepository
 import pt.antares.app.core.ai.SupabaseAiClient
+import pt.antares.app.core.catalogo.ActualizadorDoCatalogo
+import pt.antares.app.core.catalogo.ApiDoCatalogo
 import pt.antares.app.core.database.daos.FoodLogDao
 import pt.antares.app.core.database.daos.WeightLogDao
 import pt.antares.app.core.datastore.AppPreferences
@@ -33,6 +35,11 @@ val networkModule = module {
         // só depois de a app ser reaberta.
         OffRepository(get(), get(), get(IoDispatcher)) { preferencias.pesquisaEmLinhaOnce() }
     }
+
+    // O mesmo `User-Agent` da Open Food Facts, pela mesma razão: um pedido sem nome nem
+    // versão é um pedido que ninguém consegue atribuir quando corre mal.
+    single { ApiDoCatalogo(get(), userAgent = "Antares/${AppChangelog.CURRENT}") }
+    single { ActualizadorDoCatalogo(get(), get(), get(), get(IoDispatcher)) }
 
     single { AnonymousSession(get(), get(IoDispatcher)) }
 

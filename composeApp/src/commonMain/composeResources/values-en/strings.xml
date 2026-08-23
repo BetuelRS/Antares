@@ -1282,6 +1282,25 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_backup_title">The backup</string>
     <string name="outgoing_backup_what">Everything you logged, progress photos included, in a file in Documents/Antares. It goes nowhere on the internet — but it is a folder a file manager can open.</string>
     <string name="outgoing_backup_when">Every three days, on its own. It is what makes your data survive a lost phone.</string>
+    <string name="outgoing_catalogo_title">Food catalogue (GitHub)</string>
+    <string name="outgoing_catalogo_what">Your address, unavoidable in any request, and the app version. Not who you are, not what you logged.</string>
+    <string name="outgoing_catalogo_when">Only when you tap «Check» in settings. Never on its own.</string>
     <string name="outgoing_footer">If any line here stops being true, that is a defect. Say so.</string>
+
+    <string name="settings_catalogo">Food catalogue</string>
+    <string name="settings_catalogo_desc">The foods and numbers the app knows. Fixing a food no longer waits for a store release — but it only downloads when you ask.</string>
+    <string name="settings_catalogo_instalada">You have version %1$d.</string>
+    <string name="settings_catalogo_procurar">Check</string>
+    <string name="settings_catalogo_descarregar">Download</string>
+    <string name="settings_catalogo_a_ver">Checking…</string>
+    <string name="settings_catalogo_a_descarregar">Downloading…</string>
+    <string name="settings_catalogo_novidade">Version %1$d is out, with %2$d foods.</string>
+    <string name="settings_catalogo_em_dia">Up to date.</string>
+    <string name="settings_catalogo_instalado">Version %1$d is in, with %2$d foods. It takes effect next time you open the app.</string>
+    <string name="settings_catalogo_sem_resposta">Could not reach it. The catalogue you have was left as it was.</string>
+    <string name="settings_catalogo_resumo_nao_bate">The file did not come through whole. The catalogue you have was left as it was.</string>
+    <string name="settings_catalogo_ilegivel">What came through is not a catalogue. The catalogue you have was left as it was.</string>
+    <string name="settings_catalogo_nao_avanca">What is there is no newer than what you have.</string>
+    <string name="settings_catalogo_nao_se_guardou">Could not save the file. The catalogue you have was left as it was.</string>
 
 </resources>

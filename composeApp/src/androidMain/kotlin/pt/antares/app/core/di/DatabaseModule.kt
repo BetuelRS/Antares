@@ -37,6 +37,15 @@ val databaseModule = module {
 
     single { pt.antares.app.core.privacy.BackupStore(androidContext(), get(IoDispatcher)) }
 
+    // Dentro do armazenamento privado, ao contrário da cópia de segurança: um catálogo é
+    // reconstruível a partir da rede, e nada se perde quando a app é desinstalada.
+    single {
+        pt.antares.app.core.catalogo.ArmazemDoCatalogo(
+            androidContext().filesDir.resolve("catalogo"),
+            get(IoDispatcher),
+        )
+    }
+
     single<pt.antares.app.core.crash.CrashStore> {
         pt.antares.app.core.crash.FileCrashStore(androidContext())
     }

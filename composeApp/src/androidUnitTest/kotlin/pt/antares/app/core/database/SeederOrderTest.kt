@@ -95,12 +95,24 @@ class SeederOrderTest {
         // catálogo. Quando é `try`, o `SeedFalhadoDeixaRastoTest` exige o rasto por cima.
         val desprotegidos = seeders
             .flatMap { f ->
-                val linhas = f.readText().lines()
+                val texto = f.readText()
+                val linhas = texto.lines()
+
+                // A proteção também pode estar uma chamada acima, num ajudante do próprio
+                // semeador — foi para lá que ela foi quando passou a haver duas origens
+                // para o catálogo, a do APK e a que desce da rede. Nesse caso exige-se o
+                // `catch` no mesmo ficheiro: o que não se aceita é a leitura ficar a
+                // descoberto, não a forma como está tapada.
+                val ajudante = Regex("""\bcatch\s*\(""").containsMatchIn(texto)
+
                 linhas.withIndex()
                     .filter { (_, l) -> l.contains("Res.readBytes") }
                     .filterNot { (i, _) ->
-                        linhas.subList(maxOf(0, i - RECUO_LINHAS), i + 1)
-                            .any { it.contains("runCatching") || Regex("""\btry\s*\{""").containsMatchIn(it) }
+                        linhas.subList(maxOf(0, i - RECUO_LINHAS), i + 1).any {
+                            it.contains("runCatching") ||
+                                Regex("""\btry\s*\{""").containsMatchIn(it) ||
+                                (ajudante && it.contains("tentar("))
+                        }
                     }
                     .map { (i, _) -> "${f.name}:${i + 1}" }
             }

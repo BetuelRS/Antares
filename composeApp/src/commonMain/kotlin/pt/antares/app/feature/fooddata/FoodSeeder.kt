@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import pt.antares.app.core.catalogo.ArmazemDoCatalogo
 import pt.antares.app.core.crash.CrashStore
 import pt.antares.app.core.crash.registarEngolida
 import pt.antares.app.core.database.AntaresDb
@@ -115,15 +116,21 @@ class FoodSeeder(
     private val db: AntaresDb,
     private val io: CoroutineDispatcher,
     private val crashes: CrashStore,
+    private val armazem: ArmazemDoCatalogo,
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
     suspend fun seedIfNeeded() = withContext(io) {
         val instalada = db.dbInfoDao().get(KEY_CATALOGO)?.value?.toIntOrNull() ?: NENHUMA
+        val descarregada = db.dbInfoDao().get(KEY_DESCARREGADO)?.value?.toIntOrNull() ?: NENHUMA
 
         // A pergunta faz-se antes de abrir o ficheiro, e não depois: são cinco megabytes,
         // e lê-los a cada arranque só para concluir que não há nada a fazer era o custo
         // que a marca existe para evitar.
+        if (instalada >= maxOf(VERSAO_DO_CATALOGO, descarregada)) return@withContext
+
+        if (descarregada > VERSAO_DO_CATALOGO && semearDoDisco()) return@withContext
+
         if (instalada >= VERSAO_DO_CATALOGO) return@withContext
 
         val catalogo = lerOuRegistar(FICHEIRO) {
@@ -131,6 +138,34 @@ class FoodSeeder(
         } ?: return@withContext
 
         instalar(catalogo)
+    }
+
+    /**
+     * Semeia o catálogo que desceu, se ele lá estiver e abrir.
+     *
+     * **Falhar aqui não pode ser um ciclo.** Um ficheiro que não abre faz esquecer que
+     * existe uma descarga — sem isso, cada abertura tentava de novo, falhava de novo, e a
+     * app ficava presa a uma versão que nunca chegava a entrar. O que já está semeado não
+     * se toca: o catálogo antigo continua exactamente como estava.
+     */
+    private suspend fun semearDoDisco(): Boolean {
+        val catalogo = armazem.ler()?.let { bytes ->
+            tentar(onde = "FoodSeeder: ${armazem.caminho()}") {
+                json.decodeFromString<Catalogo>(bytes.decodeToString())
+            }
+        }
+        if (catalogo == null) {
+            db.dbInfoDao().upsert(DbInfo(KEY_DESCARREGADO, NENHUMA.toString()))
+            return false
+        }
+
+        instalar(catalogo)
+
+        // Só aqui — depois de a app ter aberto uma vez com o novo e o ter semeado — é que o
+        // anterior deixa de fazer falta. É o que torna a troca reversível sem código de
+        // reversão.
+        armazem.esquecerAnterior()
+        return true
     }
 
     private suspend fun instalar(catalogo: Catalogo) {
@@ -194,11 +229,15 @@ class FoodSeeder(
      */
     @OptIn(ExperimentalResourceApi::class)
     private suspend fun <T> lerOuRegistar(file: String, ler: (ByteArray) -> T): T? =
+        tentar(onde = "FoodSeeder: $file") { ler(Res.readBytes(file)) }
+
+    /** Faz o que lhe pedirem e, se rebentar, deixa rasto em vez de o engolir. */
+    private suspend fun <T> tentar(onde: String, bloco: suspend () -> T): T? =
         try {
-            ler(Res.readBytes(file))
+            bloco()
         } catch (e: Throwable) {
             crashes.registarEngolida(
-                onde = "FoodSeeder: $file",
+                onde = onde,
                 erro = e,
                 quando = Clock.System.now().toEpochMilliseconds(),
             )
@@ -217,6 +256,17 @@ class FoodSeeder(
 
         private const val NENHUMA = 0
         private const val KEY_CATALOGO = "catalogo_versao"
+
+        /**
+         * A versão do catálogo que desceu da rede e está no armazém, à espera de ser
+         * semeada. Zero — ou ausente — quer dizer que o único catálogo que a app tem é o
+         * que veio dentro do APK.
+         *
+         * Vive aqui, e não no [ActualizadorDoCatalogo], porque é este ficheiro que decide
+         * qual dos dois catálogos se lê. Quem a escreve é o actualizador; quem a apaga é o
+         * [semearDoDisco], quando o que desceu não abre.
+         */
+        const val KEY_DESCARREGADO = "catalogo_descarregado"
 
         const val KEY_REBUILT_DAY = "catalogue_rebuilt_day"
 

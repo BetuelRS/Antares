@@ -1283,6 +1283,25 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_backup_title">A cópia de segurança</string>
     <string name="outgoing_backup_what">Tudo o que registaste, fotos de progresso incluídas, num ficheiro em Documentos/Antares. Não vai para lado nenhum na Internet — mas é uma pasta que um gestor de ficheiros abre.</string>
     <string name="outgoing_backup_when">De três em três dias, sozinha. É o que faz os teus dados sobreviverem a perder o telemóvel.</string>
+    <string name="outgoing_catalogo_title">Catálogo de alimentos (GitHub)</string>
+    <string name="outgoing_catalogo_what">O endereço, que é inevitável em qualquer pedido, e a versão da app. Não vai quem és nem o que registaste.</string>
+    <string name="outgoing_catalogo_when">Só quando carregas em «Procurar» nas definições. Nunca sozinho.</string>
     <string name="outgoing_footer">Se alguma destas linhas deixar de ser verdade, é um defeito. Diz.</string>
+
+    <string name="settings_catalogo">Catálogo de alimentos</string>
+    <string name="settings_catalogo_desc">Os alimentos e os números que a app conhece. Corrigir um alimento deixa de esperar por uma versão na loja — mas só desce quando pedires.</string>
+    <string name="settings_catalogo_instalada">Tens a versão %1$d.</string>
+    <string name="settings_catalogo_procurar">Procurar</string>
+    <string name="settings_catalogo_descarregar">Descarregar</string>
+    <string name="settings_catalogo_a_ver">A ver se há novidade…</string>
+    <string name="settings_catalogo_a_descarregar">A descarregar…</string>
+    <string name="settings_catalogo_novidade">Há a versão %1$d, com %2$d alimentos.</string>
+    <string name="settings_catalogo_em_dia">Está em dia.</string>
+    <string name="settings_catalogo_instalado">Ficou a versão %1$d, com %2$d alimentos. Entra da próxima vez que abrires a app.</string>
+    <string name="settings_catalogo_sem_resposta">Não deu para chegar lá. O catálogo que tens ficou como estava.</string>
+    <string name="settings_catalogo_resumo_nao_bate">O ficheiro não veio inteiro. O catálogo que tens ficou como estava.</string>
+    <string name="settings_catalogo_ilegivel">O que veio não é um catálogo. O catálogo que tens ficou como estava.</string>
+    <string name="settings_catalogo_nao_avanca">O que está lá não é mais recente do que o que tens.</string>
+    <string name="settings_catalogo_nao_se_guardou">Não deu para guardar o ficheiro. O catálogo que tens ficou como estava.</string>
 
 </resources>

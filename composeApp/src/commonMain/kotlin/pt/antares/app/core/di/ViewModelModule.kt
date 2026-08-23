@@ -57,6 +57,7 @@ val viewModelModule = module {
     viewModel { pt.antares.app.feature.profile.ui.MeasurementHistoryViewModel(get()) }
     viewModel { pt.antares.app.feature.profile.ui.DietBreakViewModel(get()) }
     viewModel { pt.antares.app.feature.settings.SettingsViewModel(get()) }
+    viewModel { pt.antares.app.feature.catalogo.CatalogoViewModel(get()) }
     viewModel { pt.antares.app.feature.admin.AdminViewModel(get()) }
     viewModel { pt.antares.app.feature.admin.DemoViewModel(get()) }
     viewModel { pt.antares.app.feature.crash.CrashViewModel(get(), get(IoDispatcher)) }

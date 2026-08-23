@@ -30,6 +30,7 @@ import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.AntaresScreen
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.SectionHeader
+import pt.antares.app.feature.catalogo.CartaoDoCatalogo
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.mealSlotLabelDefault
 import pt.antares.app.core.locale.AppLanguage
@@ -105,6 +106,8 @@ fun SettingsScreen(
                 )
             }
         }
+
+        CartaoDoCatalogo()
 
         SeccaoDoComportamento(
             adaptativas = adaptive,

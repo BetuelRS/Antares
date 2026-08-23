@@ -8,6 +8,9 @@ import pt.antares.app.generated.resources.outgoing_ai_when
 import pt.antares.app.generated.resources.outgoing_backup_title
 import pt.antares.app.generated.resources.outgoing_backup_what
 import pt.antares.app.generated.resources.outgoing_backup_when
+import pt.antares.app.generated.resources.outgoing_catalogo_title
+import pt.antares.app.generated.resources.outgoing_catalogo_what
+import pt.antares.app.generated.resources.outgoing_catalogo_when
 import pt.antares.app.generated.resources.outgoing_delete_title
 import pt.antares.app.generated.resources.outgoing_delete_what
 import pt.antares.app.generated.resources.outgoing_delete_when
@@ -35,7 +38,7 @@ data class Destino(
 )
 
 /**
- * Os cinco destinos fora do telemóvel. A ordem é a da probabilidade de acontecerem sem
+ * Os seis destinos fora do telemóvel. A ordem é a da probabilidade de acontecerem sem
  * ninguém pedir: a procura é diária, o apagamento é uma vez na vida.
  */
 val DESTINOS_DE_REDE: List<Destino> = listOf(
@@ -63,6 +66,14 @@ val DESTINOS_DE_REDE: List<Destino> = listOf(
         Res.string.outgoing_delete_title,
         Res.string.outgoing_delete_what,
         Res.string.outgoing_delete_when,
+    ),
+
+    // O último da lista porque é o único que **nunca** acontece sem alguém carregar num
+    // botão — nem sequer na primeira abertura.
+    Destino(
+        Res.string.outgoing_catalogo_title,
+        Res.string.outgoing_catalogo_what,
+        Res.string.outgoing_catalogo_when,
     ),
 )
 

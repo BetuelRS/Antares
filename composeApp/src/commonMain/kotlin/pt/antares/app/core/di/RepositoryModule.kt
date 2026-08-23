@@ -68,7 +68,7 @@ val repositoryModule = module {
     single { CycleRepository(get(), get(IoDispatcher)) }
     single { ExerciseRepository(get(), get(IoDispatcher)) }
 
-    single { FoodSeeder(get(), get(IoDispatcher), get()) }
+    single { FoodSeeder(get(), get(IoDispatcher), get(), get()) }
     single { ExerciseSeeder(get(), get(IoDispatcher), get()) }
     single { FastingProtocolSeeder(get(), get(IoDispatcher)) }
     single { FastingRepository(get(), get(), get(), get(IoDispatcher)) }

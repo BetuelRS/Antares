@@ -1,6 +1,8 @@
 package pt.antares.app.core.fooddata
 
 import kotlinx.serialization.json.Json
+import pt.antares.app.core.catalogo.ManifestoDoCatalogo
+import pt.antares.app.core.util.sha256
 import pt.antares.app.feature.fooddata.Catalogo
 import pt.antares.app.feature.fooddata.FoodSeeder
 import java.io.File
@@ -67,6 +69,26 @@ class CatalogoTemVersaoTest {
             it.namePt.isBlank() || it.nameEn.isBlank() || it.kcal < 0
         }
         assertTrue(partidos.isEmpty(), "alimentos sem nome ou com energia negativa: ${partidos.take(5).map { it.id }}")
+    }
+
+    @Test
+    fun `o manifesto descreve o catalogo que esta ao lado dele`() {
+
+        // O manifesto e o catálogo sobem juntos para a mesma release, e a app recusa o
+        // catálogo se o resumo não bater. Um manifesto desactualizado não dá erro nenhum
+        // aqui: dá uma actualização que **nunca** instala, e ninguém descobre porquê sem
+        // ler o código da verificação.
+        val manifesto = json.decodeFromString<ManifestoDoCatalogo>(
+            File("../tools/catalogo/manifesto.json").readText(),
+        )
+
+        assertEquals(FoodSeeder.VERSAO_DO_CATALOGO, manifesto.versao, "versão fora de sítio")
+        assertEquals(catalogo().alimentos.size, manifesto.alimentos, "contagem fora de sítio")
+        assertEquals(
+            sha256(ficheiro.readBytes()),
+            manifesto.sha256,
+            "o resumo do manifesto não é o do catálogo — correr o `construir.mjs` outra vez",
+        )
     }
 
     private companion object {

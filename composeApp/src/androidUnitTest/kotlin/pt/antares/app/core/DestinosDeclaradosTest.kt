@@ -38,6 +38,11 @@ class DestinosDeclaradosTest {
         "tiles.openfreemap.org" to "outgoing_map_title",
         "raw.githubusercontent.com" to "outgoing_images_title",
         "supabase.co" to "outgoing_ai_title",
+
+        // Passou a ser um destino a sério na 2.7.0: é de lá que vem o catálogo que se
+        // atualiza. Até aí, o teste ignorava-o — havia ligações para o GitHub em comentários
+        // e em texto de licenças, e nenhuma delas era um pedido.
+        "github.com" to "outgoing_catalogo_title",
     )
 
     // Endereços que aparecem no código sem nunca serem visitados: espaços de nomes de XML,
@@ -57,7 +62,6 @@ class DestinosDeclaradosTest {
             .findAll(fontes.joinToString("\n") { it.readText() })
             .map { it.groupValues[1] }
             .filterNot { endereco -> naoSaoPedidos.any { endereco.endsWith(it) } }
-            .filterNot { it.endsWith("github.com") && !it.startsWith("raw.") }
             .filterNot { it.endsWith("openfoodfacts.org") && it != "world.openfoodfacts.org" }
             .distinct()
             .toList()
@@ -121,17 +125,17 @@ class DestinosDeclaradosTest {
     }
 
     @Test
-    fun `a lista de rede tem os cinco destinos`() {
+    fun `a lista de rede tem os seis destinos`() {
 
-        // Contados e não estimados: a secção nasceu com cinco, e um desaparecimento
-        // silencioso é exatamente o que este ficheiro existe para impedir.
+        // Contados e não estimados: a secção nasceu com cinco, ganhou o catálogo na 2.7.0, e
+        // um desaparecimento silencioso é exatamente o que este ficheiro existe para impedir.
         val bloco = ecra
             .substringAfter("val DESTINOS_DE_REDE")
             .substringBefore("val DESTINOS_NO_APARELHO")
         assertEquals(
-            5,
+            6,
             Regex("""Destino\(""").findAll(bloco).count(),
-            "a secção dos destinos de rede deixou de ter cinco linhas",
+            "a secção dos destinos de rede deixou de ter seis linhas",
         )
     }
 }
