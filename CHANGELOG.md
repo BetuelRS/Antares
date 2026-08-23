@@ -17,6 +17,37 @@ Nada por lançar.
 
 ---
 
+## [2.7.0] — 2026-08-23
+
+O catálogo deixa de precisar da loja, e passa a dizer o que procurou e não achou. Esquema da
+base: **v28**, sem alterações.
+
+### Adicionado
+
+- **O catálogo de alimentos passa a poder descarregar-se**, nas Definições. Até aqui, corrigir
+  as kcal de um alimento custava uma versão publicada — compilar, assinar, esperar pela
+  revisão —, e era por isso que as correções não se faziam. Só desce quando carregas no botão:
+  a app nunca vai à rede por causa do catálogo sem alguém lhe pedir.
+- **O ficheiro é verificado antes de substituir o que já lá está.** O resumo tem de bater com
+  o que a origem declara, o ficheiro tem de abrir, e a versão tem de ser mais recente do que a
+  instalada. Uma actualização que corra mal deixa o catálogo antigo exactamente como estava, e
+  o ecrã diz qual das três coisas falhou em vez de dizer «erro».
+- **O GitHub entra no ecrã «O que sai daqui»**, com o que se envia: o endereço, inevitável em
+  qualquer pedido, e a versão da app. É o sexto destino da lista, e o único que nunca acontece
+  sem alguém carregar num botão.
+- **Um nutriente que foi procurado e não se encontrou passa a dizê-lo**, em vez de desaparecer
+  do ecrã como se ninguém o tivesse medido. São duas coisas diferentes e agora distinguem-se:
+  «está abaixo do limite que o método deteta» e «há, mas é pouco de mais para lhe pôr um
+  número». São 10 612 e 792 no catálogo.
+
+### Corrigido
+
+- **Um vestígio deixa de poder entrar nas somas do dia.** Somar obrigava a escolher um número
+  — zero, metade do limite, o limite — e qualquer escolha é aritmética sobre o que ninguém
+  mediu. Aparece no alimento, e não na conta.
+
+---
+
 ## [2.6.0] — 2026-08-23
 
 Cada nutriente passa a ter um nome só. Esquema da base: **v28**.

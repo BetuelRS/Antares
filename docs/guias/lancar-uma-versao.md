@@ -107,13 +107,23 @@ release e põe-lhe os ficheiros.
 ```bash
 gh release create v2.3.0 \
   composeApp/build/outputs/apk/release/*.apk \
+  composeApp/src/commonMain/composeResources/files/catalogo.json \
+  tools/catalogo/manifesto.json \
   --title "2.3.0 — o título desta versão" \
   --notes-file notas-desta-versao.md
 ```
 
-Os quatro ficheiros saem já com o nome certo — `Antares-2.3.0-arm64-v8a.apk` e companhia —
-porque o `build.gradle.kts` os renomeia a partir da versão. Não é preciso copiá-los para lado
-nenhum antes de os anexar.
+Os quatro APK saem já com o nome certo — `Antares-2.3.0-arm64-v8a.apk` e companhia — porque o
+`build.gradle.kts` os renomeia a partir da versão. Não é preciso copiá-los para lado nenhum
+antes de os anexar.
+
+**Os dois últimos ficheiros não são opcionais.** A app vai buscar o manifesto a
+`releases/latest/download/manifesto.json`, e o `latest` é o do GitHub: aponta sempre para a
+release mais recente, **mesmo que ela não os traga**. Uma release publicada sem eles não
+mantém os anteriores — apaga o caminho, e o botão «Procurar» passa a dizer que não deu para
+chegar lá até à release seguinte. Os dois sobem juntos e sem lhes mudar o nome: o manifesto
+traz o resumo do catálogo que está ao lado dele, e o `CatalogoTemVersaoTest` já garante que
+são o mesmo par que está no repositório.
 
 O `gh auth login` é interativo e abre o browser — tem de ser corrido por uma pessoa, uma vez
 por máquina.

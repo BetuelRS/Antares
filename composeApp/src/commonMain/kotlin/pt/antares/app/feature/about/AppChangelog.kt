@@ -23,9 +23,36 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.6.0"
+    const val CURRENT = "2.7.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.7.0",
+            title = "O catálogo já não espera pela loja",
+            titleEn = "The catalogue no longer waits for the store",
+            highlights = listOf(
+                "**O catálogo de alimentos passa a poder descarregar-se**, nas Definições. " +
+                    "Corrigir um alimento deixa de esperar por uma versão na loja",
+                "Só desce quando carregas no botão, e o ficheiro é verificado antes de " +
+                    "substituir o que tens. Se correr mal, fica tudo como estava — e o ecrã " +
+                    "diz o que falhou",
+                "**Um nutriente que foi procurado e não se encontrou passa a dizê-lo**, em " +
+                    "vez de desaparecer do ecrã como se ninguém o tivesse medido",
+                "Um vestígio aparece no alimento mas não entra na conta do dia: somá-lo era " +
+                    "inventar um número que ninguém mediu",
+            ),
+            highlightsEn = listOf(
+                "**The food catalogue can now be downloaded**, from Settings. Fixing a food " +
+                    "no longer waits for a store release",
+                "It only downloads when you tap the button, and the file is checked before " +
+                    "it replaces what you have. If it goes wrong, nothing changes — and the " +
+                    "screen says what failed",
+                "**A nutrient that was looked for and not found now says so**, instead of " +
+                    "vanishing from the screen as if nobody had measured it",
+                "A trace shows on the food but does not count towards your day: adding it " +
+                    "meant inventing a number nobody measured",
+            ),
+        ),
         AppVersion(
             name = "2.6.0",
             title = "O sódio e a fibra contam em todo o catálogo",
@@ -301,29 +328,6 @@ object AppChangelog {
                 "Ten new nutrients, which the tables already carried and the app was throwing away",
                 "Histories filter by month, by exercise and by type",
                 "The achievements screen is gone: the Progress milestones say the same without the trim",
-            ),
-        ),
-        AppVersion(
-            name = "1.0.0",
-            title = "A app vive no telemóvel",
-            titleEn = "The app lives on your phone",
-            highlights = listOf(
-                "**Nada do que registas sai deste telemóvel.** Não há conta, não há servidor com uma cópia",
-                "O backup passou a ser um ficheiro teu: **exportas, guardas onde quiseres, e restauras** — e leva as fotos de progresso",
-                "Ao restaurar podes **juntar** ao que já tens (fica o mais recente) ou **substituir** tudo",
-                "O **Backup** tem lugar próprio nas Definições, a um toque — estava escondido no fim de «Detalhes e metas»",
-                "Quando a app fecha sozinha, o motivo fica guardado e podes **partilhá-lo**",
-                "Dois exercícios com o mesmo nome deixaram de rebentar o detalhe do treino",
-                "A app arrancava a ler um megabyte de exercícios **todas as vezes**, mesmo já os tendo",
-            ),
-            highlightsEn = listOf(
-                "**Nothing you log leaves this phone.** There is no account, and no server holding a copy",
-                "Backup is now a file you own: **export it, keep it where you like, restore it** — and it carries your progress photos",
-                "When restoring you can **merge** with what you have (most recent wins) or **replace** everything",
-                "**Backup** now has its own place in Settings, one tap away — it was buried at the bottom of «Details and goals»",
-                "When the app closes on its own, the reason is saved and you can **share it**",
-                "Two exercises with the same name no longer crash the workout detail",
-                "The app was reading a megabyte of exercises on **every single start**, even with them already loaded",
             ),
         ),
     )

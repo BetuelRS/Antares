@@ -8,9 +8,14 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 ## Onde estamos
 
 - **2.6.0 é a última publicada.** Esquema da base **v28**. Oito versões feitas.
-- A **2.7.0 está a meio, comitada e por lançar.** A árvore está verde: 1433 testes, detekt
-  limpo, nada por empurrar. O catálogo no repositório já é a **versão 3**, e a 2.6.0 publicada
-  traz a 2 — não se lança nada a partir daqui sem acabar a versão.
+- A **2.7.0 está escrita e por lançar.** Árvore verde: 1446 testes, detekt limpo. Falta-lhe
+  **uma coisa só: correr no aparelho** — instalação limpa e actualização a partir da 2.6.0 —
+  e depois publicar. Não havia telemóvel nem emulador ligado quando ela ficou pronta.
+- O catálogo no repositório é a **versão 3** e a 2.6.0 publicada traz a 2. A release da 2.7.0
+  tem de levar o `catalogo.json` **e** o `manifesto.json` anexados — ver o passo 9 de
+  [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). Sem eles, o botão de actualizar o
+  catálogo não encontra nada, porque o `latest` do GitHub passa a apontar para uma release
+  que não os tem.
 - A **2.5.1 foi fechada sem sair.** A razão está no plano e não se reabre sem a ler.
 
 ## O bloco D faz-se em três corridas
@@ -20,7 +25,7 @@ em vez de uma versão de cada vez. A cerimónia por versão era perto de um ter�
 
 | Corrida | O quê | Estado |
 |---|---|---|
-| **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **a meio** |
+| **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **escrita, por lançar** |
 | **2 · as ferramentas** | 2.9.0 + 2.10.0 | por abrir |
 | **3 · o conteúdo** | 2.11.0 a 2.15.0 | por abrir |
 
@@ -33,19 +38,17 @@ premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que falta na corrida 1
 
-A ausência tipada está feita. Falta **o catálogo que se atualiza sozinho**, e as quatro
-decisões já estão tomadas:
+Os oito pontos do plano estão feitos. Falta **o aparelho e o lançamento**:
 
-1. **Alojado nas releases do GitHub**, ao lado da versão que o produziu.
-2. **Só desce a pedido, num botão.** A app nunca vai à rede por causa do catálogo sem alguém
-   lhe pedir.
-3. **Não avisa que um alimento mudou de números.** O diário copia a nutrição no momento do
-   registo: os dias passados não mudam.
-4. **Entra no ecrã «O que sai daqui»**, com o que se envia — o endereço IP e a versão
-   instalada.
+1. Instalação limpa do APK de lançamento, e actualização a partir da 2.6.0. Foi numa
+   instalação limpa, e só aí, que apareceram dois dos três defeitos da 2.1.0.
+2. O botão «Procurar» tem de dizer **«está em dia»** — o catálogo do APK é a versão 3, e a
+   release traz a mesma. O actualizador só passa a instalar alguma coisa quando existir uma
+   release com a versão 4. Um «não deu para chegar lá» aqui quer dizer que os ficheiros não
+   foram anexados.
+3. Lançar, com os quatro APK **e** os dois ficheiros do catálogo.
 
-O passo a passo está no plano, debaixo da 2.8.0. Depois disso: changelog, changelog da app,
-subir a versão para 2.7.0, aparelho, e lançar.
+Depois disso, a corrida 2 abre com perguntas, como manda a A2.
 
 ## As regras
 
