@@ -17,12 +17,36 @@ Nada por lançar.
 
 ---
 
-## [2.7.0] — 2026-08-23
+## [2.7.0] — 2026-08-24
 
-O catálogo deixa de precisar da loja, e passa a dizer o que procurou e não achou. Esquema da
-base: **v28**, sem alterações.
+**O bloco do catálogo inteiro numa versão.** O catálogo deixa de precisar da loja, aprende a
+dizer o que não sabe, sabe o que acontece à comida quando se cozinha, e passa a dar porções em
+vez de gramas. Esquema da base: **v30**.
+
+*As versões 2.8.0 a 2.15.0 do plano ficam consumidas aqui, ou por usar: o motor de qualidade e
+a oficina de curadoria não mudam nada na app e por isso não se lançam.*
 
 ### Adicionado
+
+- **A comida crua e a mesma comida cozinhada deixam de ser dois alimentos.** Num alimento que
+  se cozinhe, uma pergunta nova — «e se for cozinhado?» — dá os números de grelhado, cozido,
+  assado, frito, estufado ou salteado, e é isso que fica registado no diário. As contas saem
+  de duas tabelas do departamento de agricultura americano: quanto peso se perde e **quanto de
+  cada vitamina sobrevive**. Cozer espinafres perde vitamina C para a água *e* perde água, e
+  contar só a primeira coisa dá um número mais errado do que não fazer conta nenhuma — que é
+  o que toda a concorrência faz. Onde ninguém mediu o peso perdido, a app pergunta-o: se
+  pesaste depois de cozinhar, esse peso vale mais do que qualquer tabela.
+- **Sete vezes mais alimentos com porção**, de 297 para 2 101 — «uma fatia», «uma chávena»,
+  «uma unidade média» — e 547 deles com mais do que uma maneira de medir. Para o resto do
+  catálogo, registar continua a ser escrever gramas.
+- **Mil e dezassete alimentos deixam de ter nome de laboratório em inglês.** Numa app
+  portuguesa eram 4 958, e traduz-se o vocabulário e não os nomes: «raw» traduz-se uma vez, e
+  não seiscentas e vinte e nove. O que ainda não tem nome inteiro em português fica em inglês,
+  em vez de aparecer meio traduzido.
+- **O dia passa a dizer de quanto é o «cerca de» das suas calorias**, quando isso muda a
+  leitura dele: quando o que falta é menor do que a própria incerteza da contagem — e aí um dia
+  não chega para concluir nada, mas a tendência da semana chega — e quando mais de um terço das
+  calorias veio de estimativas em vez de pesagens.
 
 - **O catálogo de alimentos passa a poder descarregar-se**, nas Definições. Até aqui, corrigir
   as kcal de um alimento custava uma versão publicada — compilar, assinar, esperar pela

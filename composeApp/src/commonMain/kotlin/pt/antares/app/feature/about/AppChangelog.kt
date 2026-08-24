@@ -28,29 +28,37 @@ object AppChangelog {
     val versions: List<AppVersion> = listOf(
         AppVersion(
             name = "2.7.0",
-            title = "O catálogo já não espera pela loja",
-            titleEn = "The catalogue no longer waits for the store",
+            title = "A comida cozinha, mede-se e diz o que não sabe",
+            titleEn = "Food cooks, measures itself, and says what it does not know",
             highlights = listOf(
-                "**O catálogo de alimentos passa a poder descarregar-se**, nas Definições. " +
-                    "Corrigir um alimento deixa de esperar por uma versão na loja",
-                "Só desce quando carregas no botão, e o ficheiro é verificado antes de " +
-                    "substituir o que tens. Se correr mal, fica tudo como estava — e o ecrã " +
-                    "diz o que falhou",
-                "**Um nutriente que foi procurado e não se encontrou passa a dizê-lo**, em " +
-                    "vez de desaparecer do ecrã como se ninguém o tivesse medido",
-                "Um vestígio aparece no alimento mas não entra na conta do dia: somá-lo era " +
-                    "inventar um número que ninguém mediu",
+                "**O cru e o cozinhado deixam de ser dois alimentos.** Escolhes o método e a " +
+                    "app faz as contas: o peso que se perde e as vitaminas que sobrevivem. " +
+                    "Se pesaste depois de cozinhar, esse peso vale mais do que a tabela",
+                "**Sete vezes mais alimentos com porção** — «uma fatia», «uma chávena» — em " +
+                    "vez de escreveres gramas",
+                "**Mil alimentos deixam de ter nome de laboratório em inglês.** O que ainda " +
+                    "não tem nome inteiro em português fica em inglês, e não meio traduzido",
+                "**O catálogo passa a poder descarregar-se**, nas Definições: corrigir um " +
+                    "alimento deixa de esperar por uma versão na loja",
+                "**Um nutriente procurado e não encontrado passa a dizê-lo**, em vez de " +
+                    "desaparecer do ecrã como se ninguém o tivesse medido",
+                "O dia diz-te de quanto é o «cerca de» das calorias, quando isso muda o que " +
+                    "elas querem dizer",
             ),
             highlightsEn = listOf(
-                "**The food catalogue can now be downloaded**, from Settings. Fixing a food " +
-                    "no longer waits for a store release",
-                "It only downloads when you tap the button, and the file is checked before " +
-                    "it replaces what you have. If it goes wrong, nothing changes — and the " +
-                    "screen says what failed",
-                "**A nutrient that was looked for and not found now says so**, instead of " +
-                    "vanishing from the screen as if nobody had measured it",
-                "A trace shows on the food but does not count towards your day: adding it " +
-                    "meant inventing a number nobody measured",
+                "**Raw and cooked are no longer two foods.** Pick the method and the app does " +
+                    "the sums: the weight lost and the vitamins that survive. If you weighed " +
+                    "it after cooking, that weight beats the table",
+                "**Seven times more foods with a serving** — «a slice», «a cup» — instead of " +
+                    "typing grams",
+                "**A thousand foods lose their English lab names.** What has no full " +
+                    "Portuguese name yet stays in English, rather than half translated",
+                "**The catalogue can now be downloaded**, from Settings: fixing a food no " +
+                    "longer waits for a store release",
+                "**A nutrient looked for and not found now says so**, instead of vanishing " +
+                    "from the screen as if nobody had measured it",
+                "Your day tells you how big its «about» is, when that changes what the " +
+                    "numbers mean",
             ),
         ),
         AppVersion(

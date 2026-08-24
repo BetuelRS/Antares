@@ -8,10 +8,11 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 ## Onde estamos
 
 - **2.6.0 é a última publicada.** Esquema da base **v28**. Oito versões feitas.
-- A **2.7.0 está escrita e por lançar.** Árvore verde: 1446 testes, detekt limpo. Falta-lhe
-  **uma coisa só: correr no aparelho** — instalação limpa e actualização a partir da 2.6.0 —
-  e depois publicar. Não havia telemóvel nem emulador ligado quando ela ficou pronta.
-- O catálogo no repositório é a **versão 3** e a 2.6.0 publicada traz a 2. A release da 2.7.0
+- A **2.7.0 está escrita e por lançar**, e leva o bloco D inteiro. Árvore verde: 1472 testes
+  Kotlin, 40 das ferramentas, detekt e lint limpos. Falta-lhe
+  **correr no aparelho** — instalação limpa e actualização a partir da 2.6.0, que salta da v28
+  para a v30 — e depois publicar. Não havia telemóvel nem emulador ligado.
+- O catálogo no repositório é a **versão 4** e a 2.6.0 publicada traz a 2. A release da 2.7.0
   tem de levar o `catalogo.json` **e** o `manifesto.json` anexados — ver o passo 9 de
   [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). Sem eles, o botão de actualizar o
   catálogo não encontra nada, porque o `latest` do GitHub passa a apontar para uma release
@@ -25,16 +26,18 @@ em vez de uma versão de cada vez. A cerimónia por versão era perto de um ter�
 
 | Corrida | O quê | Estado |
 |---|---|---|
-| **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **escrita, por lançar** |
+| **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **feita** |
 | **2 · as ferramentas** | 2.9.0 + 2.10.0 | **feita, e não se lança** |
-| **3 · o conteúdo** | 2.11.0 a 2.15.0 | por abrir |
+| **3 · o conteúdo** | 2.11.0 a 2.15.0 | **feita, absorvida na 2.7.0** |
 
-**A corrida 2 não muda nada na app**, e por isso não sai. O motor de qualidade e a oficina são
-ferramentas do repositório: o passo 1 do guia de lançamento diz que arrumação, testes e
-ferramentas não se lançam, e o CHANGELOG é «o que tem significado para quem usa a Antares».
-Os números 2.9.0 e 2.10.0 ficam por usar — a próxima versão a sair depois da 2.7.0 é a
-**2.11.0**, a primeira de conteúdo. Saltar dois números não custa nada: o `versionCode` deriva
-do nome e continua a crescer.
+**O bloco D sai todo numa versão: a 2.7.0.** As três corridas foram feitas seguidas, e partir
+o que já está escrito em cinco lançamentos era cerimónia sem nada por baixo — a razão de as
+corridas existirem.
+
+Os números **2.8.0 a 2.15.0 ficam consumidos ou por usar**, e a próxima versão a sair depois
+da 2.7.0 é a **2.16.0**. Saltar números não custa nada: o `versionCode` deriva do nome e
+continua a crescer. Da corrida 2 nada se lança — o motor de qualidade e a oficina são
+ferramentas do repositório, e o passo 1 do guia diz que essas não se lançam.
 
 **O que não se junta é o conteúdo com o código.** As decisões sobre nomes, fusões e porções
 são do dono; tomá-las em lote sem ele as ver é o modo de falhar deste bloco — um alimento com
@@ -43,19 +46,34 @@ o nome trocado não rebenta, não dá erro, e custa uma versão a corrigir.
 **O que não se batcha nunca:** a medição no início de cada peça. Cinco versões abertas, cinco
 premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
-## O que falta na corrida 1
+## O que falta no bloco D
 
-Os oito pontos do plano estão feitos. Falta **o aparelho e o lançamento**:
+Está tudo escrito e verde. Falta **o aparelho e o lançamento**:
 
-1. Instalação limpa do APK de lançamento, e actualização a partir da 2.6.0. Foi numa
-   instalação limpa, e só aí, que apareceram dois dos três defeitos da 2.1.0.
-2. O botão «Procurar» tem de dizer **«está em dia»** — o catálogo do APK é a versão 3, e a
-   release traz a mesma. O actualizador só passa a instalar alguma coisa quando existir uma
-   release com a versão 4. Um «não deu para chegar lá» aqui quer dizer que os ficheiros não
-   foram anexados.
-3. Lançar, com os quatro APK **e** os dois ficheiros do catálogo.
+1. Instalação limpa do APK de lançamento, e actualização a partir da 2.6.0 — a migração salta
+   três versões de esquema, da v28 para a v30. Foi numa instalação limpa, e só aí, que
+   apareceram dois dos três defeitos da 2.1.0.
+2. O botão «Procurar» tem de dizer **«está em dia»** — o catálogo do APK é a versão 4, e a
+   release traz a mesma. Um «não deu para chegar lá» aqui quer dizer que os ficheiros não
+   foram anexados à release.
+3. Abrir um alimento que se cozinhe — carne, peixe, legumes — e ver o cartão «e se for
+   cozinhado?». Metade do catálogo não o tem, e é de propósito.
+4. Lançar, com os quatro APK **e** os dois ficheiros do catálogo.
 
-Depois disso, a corrida 2 abre com perguntas, como manda a A2.
+## As decisões que ficaram para o dono
+
+São de conteúdo, e a oficina é onde se tomam (`node tools/oficina/servidor.mjs`):
+
+- **65 colisões de nome**, 23 delas a discordar na energia: a batata assada a 91 kcal numa
+  fonte e 159 noutra, a sangria a 89 contra 120. O separador «duplicados» mostra as duas
+  linhas lado a lado; escolher uma escreve a fusão e deixa lápide para os favoritos seguirem.
+- **3 767 alimentos ainda em inglês.** O separador «segmentos» mostra o que falta traduzir por
+  quantos alimentos cada um desbloqueia — traduzir um segmento arruma todos os que esperam
+  por ele. Medido: 930 termos dão 30% dos nomes, 2 500 dão 65%, 3 500 dão 84%.
+- **252 suspeitas do motor de qualidade**, das quais 16 são duas fontes a discordar sobre o
+  mesmo alimento — o arroz selvagem cru a 344 kcal aqui e 101 na USDA.
+- **12 contradições aceites**: números impossíveis que a construção deixa passar por estarem
+  declarados. Cada uma é um alimento por corrigir.
 
 ## As ferramentas da corrida 2
 
@@ -70,9 +88,9 @@ Duas, e nenhuma delas aparece na app. Estão documentadas em
   `correcoes.json`, e a fila vem ordenada por quantas vezes cada alimento foi registado — o
   histórico sai do telemóvel e **não entra no git**.
 
-O que fica por decidir, e é decisão tua: **o vocabulário dos segmentos** — o que é uma base, o
-que é um estado, e como se escreve cada um em português. A ferramenta separa os segmentos e
-mostra os que ainda estão em inglês; traduzi-los é a corrida 3.
+- **O vocabulário dos nomes** (`tools/vocabulario/`) traduz segmento a segmento, com
+  concordância: o género e o número vêm da base e os qualificadores seguem-na. Um nome só é
+  aplicado quando fica **inteiro** — meio traduzido parece um defeito.
 
 ## As regras
 
