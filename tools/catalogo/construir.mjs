@@ -197,6 +197,11 @@ const liquidos = new Set(correcoes.liquidos);
 // que faz um diário ser abandonado à segunda semana.
 const porcoes = correcoes.porcoes ?? {};
 
+// As porcoes domesticas do FoodData Central, ligadas por identificador exacto. Ver
+// `tools/porcoes/construir.mjs`.
+const PORCOES_USDA = join(RAIZ, "tools", "porcoes", "porcoes.json");
+const porcoesDoUsda = existsSync(PORCOES_USDA) ? JSON.parse(readFileSync(PORCOES_USDA, "utf8")) : {};
+
 const vivos = tudo.filter((e) => !podados.has(e.id));
 let nomesAplicados = 0;
 let porcoesAplicadas = 0;
@@ -205,16 +210,33 @@ for (const e of vivos) {
   if (nome != null && nome !== e.namePt) { e.namePt = nome; nomesAplicados++; }
   e.isLiquid = liquidos.has(e.id);
 
-  const porcao = porcoes[e.id];
-  if (porcao?.nome && porcao.gramas > 0) {
-    e.servingName = porcao.nome;
-    e.servingGrams = porcao.gramas;
+  /**
+   * A porção decidida na oficina ganha à tabela: é uma pessoa a dizer como come aquilo, e a
+   * tabela é o USDA a dizer como se mede.
+   */
+  const daOficina = porcoes[e.id];
+  const daTabela = porcoesDoUsda[e.id];
+
+  if (daOficina?.nome && daOficina.gramas > 0) {
+    e.servingName = daOficina.nome;
+    e.servingGrams = daOficina.gramas;
+    porcoesAplicadas++;
+  } else if (daTabela?.length) {
+    e.servingName = daTabela[0].nome;
+    e.servingGrams = daTabela[0].gramas;
     porcoesAplicadas++;
   }
+
+  // As restantes ficam à mão, para a linha de atalhos as poder oferecer sem escrever
+  // números. A primeira sai da lista: já está no `servingName`.
+  const restantes = (daTabela ?? []).filter(
+    (p) => p.nome !== e.servingName || p.gramas !== e.servingGrams,
+  );
+  if (restantes.length) e.porcoes = restantes;
 }
 console.log(`\npodados por decisão anterior: ${tudo.length - vivos.length}`);
 console.log(`nomes corrigidos aplicados:   ${nomesAplicados}`);
-console.log(`porções escritas na oficina:  ${porcoesAplicadas}`);
+console.log(`porções (oficina + tabela):   ${porcoesAplicadas}`);
 console.log(`marcados como líquido:        ${vivos.filter((e) => e.isLiquid).length}`);
 
 // --------------------------------------------------------------------- o vocabulário
@@ -463,6 +485,10 @@ const alimentos = vivos.map((e) => ({
   familia: e.familia ?? null,
   servingName: e.servingName ?? null,
   servingGrams: e.servingGrams ?? null,
+
+  // As outras maneiras de medir o mesmo alimento — a chávena, a colher, a fatia —, para a
+  // linha de atalhos as oferecer sem ninguém escrever um número.
+  porcoes: e.porcoes ?? null,
   isLiquid: Boolean(e.isLiquid),
   verified: Boolean(e.verified),
 }));

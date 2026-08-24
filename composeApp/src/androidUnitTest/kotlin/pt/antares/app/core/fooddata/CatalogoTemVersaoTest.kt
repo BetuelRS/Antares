@@ -91,7 +91,30 @@ class CatalogoTemVersaoTest {
         )
     }
 
+    @Test
+    fun `as porcoes chegaram, e nenhuma delas e impossivel`() {
+        val alimentos = catalogo().alimentos
+        val comPorcao = alimentos.count { it.servingGrams != null && !it.servingName.isNullOrBlank() }
+
+        // Antes da junção com a tabela do FoodData Central eram 297 — 3,7 % do catálogo, e
+        // para os outros 96 % registar era escrever gramas à mão. Se este número cair, a
+        // junção deixou de encontrar os alimentos e ninguém dá por isso.
+        assertTrue(comPorcao > MINIMO_DE_PORCOES, "só $comPorcao alimentos com porção")
+
+        val impossiveis = alimentos
+            .filter { it.servingGrams != null && (it.servingGrams!! <= 0 || it.servingGrams!! > MAXIMO_G) }
+            .map { "${it.id}=${it.servingGrams}" }
+        assertEquals(emptyList(), impossiveis, "porções que ninguém come de uma vez")
+    }
+
     private companion object {
         const val MINIMO_PLAUSIVEL = 7000
+
+        // Contados a 2026-08-24: 2 101 alimentos com porção, de 8 011.
+        const val MINIMO_DE_PORCOES = 1500
+
+        // Dois quilos. Acima disto não é uma porção — é uma embalagem inteira, e a tabela
+        // publica algumas dessas.
+        const val MAXIMO_G = 2000.0
     }
 }

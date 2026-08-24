@@ -688,3 +688,43 @@ swiss;suíço;qualificador;;
 danish;dinamarquês;qualificador;;
 european;europeu;qualificador;;
 viennese;vienense;qualificador;;
+
+# ============================================================== porções domésticas
+#
+# Os rótulos com que a tabela do FoodData Central descreve uma porção. A chávena
+# americana são 240 ml e a portuguesa ronda os 200: escreve-se o volume ao lado, porque o
+# peso em gramas é exacto e o rótulo é só o que se lê.
+
+cup;chávena (240 ml);nome;f;s
+cup (8 fl oz);chávena (240 ml);nome;f;s
+cup (4 fl oz);meia chávena;nome;f;s
+cup (1 nlea serving);chávena (240 ml);nome;f;s
+nlea serving;dose de rótulo;nome;f;s
+tbsp;colher de sopa;nome;f;s
+tablespoon;colher de sopa;nome;f;s
+tsp;colher de chá;nome;f;s
+teaspoon;colher de chá;nome;f;s
+scoop;bola;nome;f;s
+jar;frasco;nome;m;s
+can;lata;nome;f;s
+package;embalagem;nome;f;s
+packet;saqueta;nome;f;s
+container;recipiente;nome;m;s
+item;unidade;nome;f;s
+unit;unidade;nome;f;s
+patty;hambúrguer;nome;m;s
+drumstick;perna de frango;nome;f;s
+head;cabeça;nome;f;s
+ear;espiga;nome;f;s
+leaf;folha;nome;f;s
+halves;metades;nome;f;p
+cubes;cubos;nome;m;p
+large;unidade grande;nome;f;s
+medium;unidade média;nome;f;s
+small;unidade pequena;nome;f;s
+chopped;picado;qualificador;;
+diced;aos cubos;expressao;;
+chopped or diced;picado ou aos cubos;expressao;;
+shredded;ralado;qualificador;;
+crushed;esmagado;qualificador;;
+cup slices;chávena de fatias;nome;f;s

@@ -237,6 +237,17 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
             val quanto = paraCampo(grams, state.unitSystem, food.isLiquid)
             AssistChip(onClick = { onPick(grams) }, label = { Text("$nome ($quanto $unit)") })
         }
+
+        // As outras maneiras de medir o mesmo alimento: a chávena, a colher, a fatia. São
+        // três perguntas diferentes que a mesma pessoa faz em dias diferentes, e sem elas
+        // registar um queijo é ir pesá-lo.
+        for (porcao in state.porcoesExtra) {
+            val quanto = paraCampo(porcao.gramas, state.unitSystem, food.isLiquid)
+            AssistChip(
+                onClick = { onPick(porcao.gramas) },
+                label = { Text("${porcao.nome} ($quanto $unit)") },
+            )
+        }
         AssistChip(
             onClick = { onPick(COLHER_DE_SOPA_G) },
             label = { Text(stringResource(Res.string.food_tbsp)) },

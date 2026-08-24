@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import pt.antares.app.core.confecao.LeitorDeConfecao
 import pt.antares.app.core.confecao.LinhaDeConfecao
 import pt.antares.app.core.confecao.MetodoDeConfecao
@@ -69,6 +70,18 @@ data class PortionState(
 ) {
     val metodosPossiveis: List<MetodoDeConfecao>
         get() = tabelaDeConfecao.metodosDe(food?.familia)
+
+    /**
+     * As porções que a linha de atalhos mostra a seguir à principal.
+     *
+     * Lidas aqui e não guardadas no estado: uma leitura que falha devolve uma lista vazia, e
+     * uma lista vazia é o que a app fazia antes de as porções existirem. Um alimento não
+     * deixa de abrir por causa de um JSON estragado numa linha.
+     */
+    val porcoesExtra: List<PorcaoDoCatalogo>
+        get() = food?.porcoesJson
+            ?.let { runCatching { Json.decodeFromString<List<PorcaoDoCatalogo>>(it) }.getOrNull() }
+            .orEmpty()
 
     private val linhaEscolhida: LinhaDeConfecao?
         get() = metodo?.let { tabelaDeConfecao.linha(food?.familia, it) }

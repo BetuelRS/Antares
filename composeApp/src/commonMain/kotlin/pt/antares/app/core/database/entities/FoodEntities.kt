@@ -69,6 +69,19 @@ data class FoodEntity(
      */
     val familia: String? = null,
 
+    /**
+     * As outras maneiras de medir o mesmo alimento, em JSON: `[{"nome":"Fatia","gramas":30}]`.
+     *
+     * A principal continua no [servingName] e no [servingGrams] — é a que a linha de atalhos
+     * mostra sempre. Estas são as que sobram, e existem porque uma chávena, uma colher e uma
+     * fatia do mesmo queijo são três perguntas diferentes que a mesma pessoa faz em dias
+     * diferentes.
+     *
+     * Em JSON e não em tabela própria pela mesma razão dos micronutrientes: são poucas, quase
+     * sempre ausentes, e nenhuma pergunta da app parte delas — parte-se sempre do alimento.
+     */
+    val porcoesJson: String? = null,
+
     val updatedAt: Long,
     val deleted: Boolean = false,
 )

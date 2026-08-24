@@ -56,11 +56,18 @@ data class AlimentoDoCatalogo(
 
     /** A família de confeção, ou nulo quando o alimento não se cozinha. Ver [FoodEntity]. */
     val familia: String? = null,
+
+    /** As outras maneiras de medir este alimento. A principal vai no `servingName`. */
+    val porcoes: List<PorcaoDoCatalogo>? = null,
     val servingName: String? = null,
     val servingGrams: Double? = null,
     val isLiquid: Boolean = false,
     val verified: Boolean = false,
 )
+
+/** Uma maneira de medir um alimento: o rótulo e quanto pesa. */
+@Serializable
+data class PorcaoDoCatalogo(val nome: String, val gramas: Double)
 
 /** O catálogo inteiro, com a versão à cabeça — é ela que decide se se lê o resto. */
 @Serializable
@@ -93,6 +100,7 @@ internal fun linhaDe(
     satFatG = alimento.satFatG,
     microsJson = alimento.micros?.toString(),
     familia = alimento.familia,
+    porcoesJson = alimento.porcoes?.let { Json.encodeToString(it) },
     servingName = alimento.servingName,
     servingGrams = alimento.servingGrams,
     isLiquid = alimento.isLiquid,
