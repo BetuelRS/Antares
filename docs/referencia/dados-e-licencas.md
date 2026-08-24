@@ -19,9 +19,9 @@ não mede, e a portuguesa manda em tudo o que é comida portuguesa.
 
 | Fonte | O que dá | Licença | O que obriga |
 |---|---|---|---|
-| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) (França) | **a base do catálogo** — 3401 alimentos europeus | [Licence Ouverte / Etalab 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/) | citar a fonte e a data da versão |
-| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2937 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) | atribuição pedida, não exigida |
-| [INSA — Tabela de Composição de Alimentos](https://portfir.insa.min-saude.pt/pt/) | 1376 alimentos portugueses, com nomes portugueses reais | **com direitos de autor** | a fonte tem de aparecer **visivelmente onde os dados são mostrados** |
+| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) (França) | **a base do catálogo** — 3355 alimentos europeus | [Licence Ouverte / Etalab 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/) | citar a fonte e a data da versão |
+| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2948 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) | atribuição pedida, não exigida |
+| [INSA — Tabela de Composição de Alimentos](https://portfir.insa.min-saude.pt/pt/) | 1372 alimentos portugueses, com nomes portugueses reais | **com direitos de autor** | a fonte tem de aparecer **visivelmente onde os dados são mostrados** |
 | [EFSA](https://www.efsa.europa.eu/) | valores de referência dietéticos, para o painel de micronutrientes | dados públicos da autoridade europeia | citar a fonte |
 | [free-exercise-db](https://github.com/yuhonas/free-exercise-db) | catálogo e imagens de exercícios | Unlicense (domínio público) | nada |
 | Inter, Space Grotesk | tipos de letra | SIL Open Font License | manter o aviso de licença |
@@ -69,7 +69,7 @@ corriam no telemóvel a cada arranque. Desde a 2.4.0 é um só, construído fora
 
 **O identificador diz a origem**, e é por ele que se conta: 3401 `ciqual-`, 2937 `usda-`,
 1376 `tca-`, 284 `ptx` — os portugueses curados — e 13 `pt-`, os extras escritos à mão.
-São 8011 alimentos.
+São 7964 alimentos.
 
 ## O vocabulário dos nutrientes
 

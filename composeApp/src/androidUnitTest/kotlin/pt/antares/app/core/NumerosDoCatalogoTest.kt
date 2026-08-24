@@ -40,7 +40,16 @@ class NumerosDoCatalogoTest {
 
     @Test
     fun `os numeros de alimentos citados batem com a semente`() {
-        val catalogo = File(semente, "catalogo.json").readText()
+        /**
+         * Só a parte dos alimentos, e não o ficheiro todo.
+         *
+         * Desde que há fusões, o catálogo termina numa lista de **lápides** — o alimento que
+         * saiu e o sucessor para onde quem o tinha deve seguir. Cada uma delas tem um `id`
+         * com o mesmo formato, e contá-las dava sessenta e cinco alimentos que já não
+         * existem. O número nos documentos ficava alto sem nada a acusá-lo, que é
+         * exactamente o que este teste existe para impedir.
+         */
+        val catalogo = File(semente, "catalogo.json").readText().substringBefore("\"lapides\"")
         val contagens = origens.associateWith { origem -> origem.padrao.findAll(catalogo).count() }
 
         // Um catálogo vazio faria o teste passar por vacuidade: zero alimentos batem com

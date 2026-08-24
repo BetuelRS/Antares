@@ -14,13 +14,25 @@
  * alcoólico ≥ 12,5 % vol» são o mesmo vinho escrito por duas mãos.
  */
 
-/** Sem acentos, sem maiúsculas, sem pontuação, sem espaços a dobrar. */
+/**
+ * Sem acentos, sem maiúsculas, sem espaços a dobrar — mas **com os sinais de comparação**.
+ *
+ * O `<` e o `≥` não são pontuação: são a única coisa que distingue «Vinho maduro tinto, teor
+ * alcoólico ≥12,5% vol.» de «… <12,5% vol.», que são dois vinhos com vinte e quatro
+ * quilocalorias de diferença. Deitá-los fora fazia a ferramenta propor a fusão de dois
+ * alimentos diferentes, com a maior das confianças — e uma fusão errada apaga um alimento e
+ * manda quem o tinha nos favoritos para outro.
+ *
+ * O mesmo vale para os números: «leite 0,5% gordura» e «leite 3,5% gordura» distinguem-se
+ * por um algarismo, e é por isso que eles ficam.
+ */
 export function normalizar(nome) {
   return String(nome ?? "")
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9 ]/g, " ")
+    .replace(/[≥≤]/g, (s) => (s === "≥" ? ">=" : "<="))
+    .replace(/[^a-z0-9<>= ]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }

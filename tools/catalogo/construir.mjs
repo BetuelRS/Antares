@@ -23,12 +23,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { lerCiqual } from "./fontes/ciqual.mjs";
-import { lerUsda, chaveDeNome, isLabDescriptor, energiaConcorda } from "./fontes/usda.mjs";
+import { lerUsda, chaveDeNome, chaveDeIdentidade, isLabDescriptor, energiaConcorda } from "./fontes/usda.mjs";
 import { lerTca } from "./fontes/tca.mjs";
 import { lerCurados, lerMicrosCurados } from "./fontes/curados.mjs";
 import { lerVocabulario, conferirComAEfsa } from "./vocabulario.mjs";
 import { verificar, LIMITES } from "./qualidade.mjs";
 import { colisoes, aplicarFusoes } from "./colisoes.mjs";
+import { porDeAcordoConsigo } from "./coerencia.mjs";
 import { familiaDeUsda } from "../confecao/familias.mjs";
 import { lerCsv } from "../confecao/tabelas.mjs";
 import { lerVocabulario as lerVocabularioDeNomes, traduzirNome } from "../vocabulario/traduzir.mjs";
@@ -148,7 +149,9 @@ console.log(`recuperados pela USDA: ${recuperadosPelaUsda}`);
 
 // ------------------------------------------------------------------- a cauda do USDA
 
-const chavesDaCiqual = new Set(ciqual.alimentos.map((e) => chaveDeNome(e.nameEn)));
+// A chave de identidade e nao a de nome: esta guarda o modo de preparacao, e sem ela o
+// arroz selvagem cozido era descartado por existir o cru. Ver [chaveDeIdentidade].
+const chavesDaCiqual = new Set(ciqual.alimentos.map((e) => chaveDeIdentidade(e.nameEn)));
 const nomesCurados = new Set(
   curados.alimentos.map((e) => String(e.namePt ?? "").trim().toLowerCase()),
 );
@@ -164,7 +167,7 @@ for (const u of usda.registos) {
   } else {
     if (usadosDoUsda.has(u.id)) continue;
     if (isLabDescriptor(u.nameEn)) continue;
-    if (chavesDaCiqual.has(chaveDeNome(u.nameEn))) continue;
+    if (chavesDaCiqual.has(chaveDeIdentidade(u.nameEn))) continue;
   }
   cauda.push({
     ...u,
@@ -387,6 +390,19 @@ for (const e of vivos) {
 }
 console.log(`famílias de confeção:          ${comFamilia} de ${vivos.length}`);
 
+// ------------------------------------------------------------------------ a coerência
+
+/**
+ * Cada alimento posto de acordo consigo próprio, **antes** de o motor de qualidade o julgar.
+ *
+ * A ordem importa: se corresse depois, o motor acusava contradições que a coerência já sabia
+ * resolver, e a lista de doze aceites nunca encolhia. A correr antes, o que sobra é o que
+ * nenhuma regra sabe arrumar — e é isso que uma contradição declarada deve ser.
+ */
+const arrumados = porDeAcordoConsigo(vivos);
+console.log(`\ncoerência: ${arrumados.acucares} açúcares acima dos hidratos, ` +
+  `${arrumados.gorduras} somas de gordura acima do total, ${arrumados.agua} águas acima de 100 g`);
+
 // ------------------------------------------------------------------------ as colisões
 
 /**
@@ -476,6 +492,16 @@ if (novasContradicoes.length && !aceitarQualidade) {
 writeFileSync(QUALIDADE, JSON.stringify({
   limites: LIMITES,
   contagens: { contradicoes: contradicoes.length, suspeitas: suspeitas.length },
+
+  /**
+   * O que a coerência arrumou antes de o motor olhar.
+   *
+   * Sem este número, uma verificação a zero não se distingue de uma verificação apagada — e
+   * as três das contradições passaram todas a zero **porque a coerência as corrige**, não
+   * porque o catálogo tenha melhorado sozinho. É aqui que o teste-guarda vai buscar a prova
+   * de que elas continuam a fazer alguma coisa.
+   */
+  corrigidas: arrumados,
   contradicoes,
   suspeitas,
 }, null, 2) + "\n");

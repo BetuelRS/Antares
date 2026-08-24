@@ -17,10 +17,26 @@ import { normalizar, colisoes, aplicarFusoes } from "./colisoes.mjs";
 const alimento = (id, namePt, kcal = 100, origin = "TESTE") => ({ id, namePt, kcal, origin });
 
 test("o mesmo nome escrito por duas mãos é o mesmo nome", () => {
+
+  // Maiúsculas, acentos, vírgulas e espaços a dobrar não distinguem alimentos.
   assert.equal(
-    normalizar("Vinho maduro tinto, teor alcoólico ≥12,5% vol."),
-    normalizar("vinho  maduro TINTO teor alcoolico 12 5  vol"),
+    normalizar("Presunto, curado ao ar"),
+    normalizar("presunto  CURADO ao ár,"),
   );
+});
+
+test("os sinais de comparação não são pontuação, e ficam", () => {
+
+  // «≥12,5% vol.» e «<12,5% vol.» são dois vinhos com vinte e quatro quilocalorias de
+  // diferença, e o sinal é a única coisa que os separa. Enquanto ele se perdia, a
+  // ferramenta propunha fundir os dois com a maior das confianças — e uma fusão errada
+  // apaga um alimento e manda quem o tinha nos favoritos para outro.
+  const forte = normalizar("Vinho maduro tinto, teor alcoólico ≥12,5% vol.");
+  const fraco = normalizar("Vinho maduro tinto, teor alcoólico <12,5% vol.");
+
+  assert.notEqual(forte, fraco);
+  assert.match(forte, />=/);
+  assert.match(fraco, /</);
 });
 
 test("duas linhas com o mesmo nome são uma colisão", () => {

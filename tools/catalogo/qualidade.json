@@ -8,119 +8,15 @@
     "escalaMinimoNoGrupo": 8
   },
   "contagens": {
-    "contradicoes": 12,
-    "suspeitas": 252
+    "contradicoes": 0,
+    "suspeitas": 245
   },
-  "contradicoes": [
-    {
-      "id": "ciqual-12815",
-      "nome": "Cheese, dry, from goat's milk",
-      "origem": "CIQUAL",
-      "tipo": "acucares",
-      "gravidade": "contradicao",
-      "campo": "sugarsG",
-      "mensagem": "acucares 5.3 g e hidratos 0 g"
-    },
-    {
-      "id": "tca-1900000005",
-      "nome": "Pombo cru",
-      "origem": "TCA",
-      "tipo": "massa",
-      "gravidade": "contradicao",
-      "campo": "water_g",
-      "mensagem": "agua e macros somam 103.1 g em 100 g"
-    },
-    {
-      "id": "tca-1920000004",
-      "nome": "Iogurte sem lactose líquido, magro, aromatizado, com polpa de fruta, açucarado",
-      "origem": "TCA",
-      "tipo": "massa",
-      "gravidade": "contradicao",
-      "campo": "water_g",
-      "mensagem": "agua e macros somam 103.5 g em 100 g"
-    },
-    {
-      "id": "tca-220005",
-      "nome": "Queijo flamengo light (-50% gordura)",
-      "origem": "TCA",
-      "tipo": "gorduras",
-      "gravidade": "contradicao",
-      "campo": "fatG",
-      "mensagem": "saturada, mono e poli somam 14.2 g e a gordura total e 13.3 g"
-    },
-    {
-      "id": "tca-220011",
-      "nome": "Requeijão de mistura (vaca, ovelha e cabra)",
-      "origem": "TCA",
-      "tipo": "massa",
-      "gravidade": "contradicao",
-      "campo": "water_g",
-      "mensagem": "agua e macros somam 103.3 g em 100 g"
-    },
-    {
-      "id": "tca-220013",
-      "nome": "Requeijão de ovelha",
-      "origem": "TCA",
-      "tipo": "massa",
-      "gravidade": "contradicao",
-      "campo": "water_g",
-      "mensagem": "agua e macros somam 105 g em 100 g"
-    },
-    {
-      "id": "tca-230005",
-      "nome": "Leite magro sem lactose, enriquecido com proteína, aromatizado, UHT",
-      "origem": "TCA",
-      "tipo": "massa",
-      "gravidade": "contradicao",
-      "campo": "water_g",
-      "mensagem": "agua e macros somam 103.7 g em 100 g"
-    },
-    {
-      "id": "tca-354",
-      "nome": "Paio de lombo entremeado",
-      "origem": "TCA",
-      "tipo": "gorduras",
-      "gravidade": "contradicao",
-      "campo": "fatG",
-      "mensagem": "saturada, mono e poli somam 34 g e a gordura total e 30 g"
-    },
-    {
-      "id": "tca-475",
-      "nome": "Bolo de chocolate",
-      "origem": "TCA",
-      "tipo": "gorduras",
-      "gravidade": "contradicao",
-      "campo": "fatG",
-      "mensagem": "saturada, mono e poli somam 27.1 g e a gordura total e 26.4 g"
-    },
-    {
-      "id": "tca-543",
-      "nome": "Bebida vegetal à base de soja com açúcar, com cálcio, sal e aromas (alternativa ao leite)",
-      "origem": "TCA",
-      "tipo": "massa",
-      "gravidade": "contradicao",
-      "campo": "water_g",
-      "mensagem": "agua e macros somam 105.6 g em 100 g"
-    },
-    {
-      "id": "tca-763",
-      "nome": "Bebida refrigerante, cola",
-      "origem": "TCA",
-      "tipo": "massa",
-      "gravidade": "contradicao",
-      "campo": "water_g",
-      "mensagem": "agua e macros somam 103.3 g em 100 g"
-    },
-    {
-      "id": "usda-171627",
-      "nome": "Ham, chopped, not canned",
-      "origem": "USDA",
-      "tipo": "acucares",
-      "gravidade": "contradicao",
-      "campo": "sugarsG",
-      "mensagem": "acucares 5 g e hidratos 0 g"
-    }
-  ],
+  "corrigidas": {
+    "acucares": 2,
+    "gorduras": 3,
+    "agua": 7
+  },
+  "contradicoes": [],
   "suspeitas": [
     {
       "id": "ciqual-10079",
@@ -129,7 +25,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "156 kcal contra 98.5 kcal tipicas do subgrupo 0407"
+      "mensagem": "156 kcal contra 99 kcal tipicas do subgrupo 0407"
     },
     {
       "id": "ciqual-10084",
@@ -138,7 +34,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "173 kcal contra 98.5 kcal tipicas do subgrupo 0407"
+      "mensagem": "173 kcal contra 99 kcal tipicas do subgrupo 0407"
     },
     {
       "id": "ciqual-1014",
@@ -228,7 +124,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "239 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "239 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13004",
@@ -246,7 +142,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "287 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "287 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13013",
@@ -255,7 +151,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "261 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "261 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13042",
@@ -264,7 +160,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "229 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "229 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13046",
@@ -273,7 +169,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "322 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "322 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13051",
@@ -282,7 +178,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "389 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "389 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13080",
@@ -291,7 +187,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "246 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "246 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13089",
@@ -300,16 +196,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "365 kcal contra 59 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13111",
-      "nome": "Apple, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "247 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "365 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13118",
@@ -318,7 +205,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "329 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "329 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13136",
@@ -336,7 +223,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "332 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "332 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13183",
@@ -345,7 +232,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "300 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "300 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13406",
@@ -354,7 +241,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "447 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "447 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13529",
@@ -363,7 +250,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "147 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "147 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13623",
@@ -372,7 +259,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "200 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "200 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-13996",
@@ -381,7 +268,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "267 kcal contra 59 kcal tipicas do subgrupo 0204"
+      "mensagem": "267 kcal contra 58.5 kcal tipicas do subgrupo 0204"
     },
     {
       "id": "ciqual-15006",
@@ -462,7 +349,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "341 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "341 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18005",
@@ -471,7 +358,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "291 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "291 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18017",
@@ -480,7 +367,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "252 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "252 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18069",
@@ -489,7 +376,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "352 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "352 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18076",
@@ -498,7 +385,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "232 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "232 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18100",
@@ -507,7 +394,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "387 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "387 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18101",
@@ -516,7 +403,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "379 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "379 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18102",
@@ -525,7 +412,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "402 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "402 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18150",
@@ -534,7 +421,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "332 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "332 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18152",
@@ -543,7 +430,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "323 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "323 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18160",
@@ -552,7 +439,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "416 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "416 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18163",
@@ -561,7 +448,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "384 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "384 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18167",
@@ -570,7 +457,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "376 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "376 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-18168",
@@ -579,7 +466,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "386 kcal contra 42 kcal tipicas do subgrupo 0602"
+      "mensagem": "386 kcal contra 41 kcal tipicas do subgrupo 0602"
     },
     {
       "id": "ciqual-19021",
@@ -588,7 +475,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "508 kcal contra 57 kcal tipicas do subgrupo 0501"
+      "mensagem": "508 kcal contra 62 kcal tipicas do subgrupo 0501"
     },
     {
       "id": "ciqual-19027",
@@ -597,7 +484,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "327 kcal contra 57 kcal tipicas do subgrupo 0501"
+      "mensagem": "327 kcal contra 62 kcal tipicas do subgrupo 0501"
     },
     {
       "id": "ciqual-19044",
@@ -606,7 +493,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "459 kcal contra 57 kcal tipicas do subgrupo 0501"
+      "mensagem": "459 kcal contra 62 kcal tipicas do subgrupo 0501"
     },
     {
       "id": "ciqual-19054",
@@ -615,7 +502,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "361 kcal contra 57 kcal tipicas do subgrupo 0501"
+      "mensagem": "361 kcal contra 62 kcal tipicas do subgrupo 0501"
     },
     {
       "id": "ciqual-20007",
@@ -1020,7 +907,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "333 kcal contra 141 kcal tipicas do subgrupo 0402"
+      "mensagem": "333 kcal contra 142 kcal tipicas do subgrupo 0402"
     },
     {
       "id": "ciqual-21508",
@@ -1122,15 +1009,6 @@
       "mensagem": "433 kcal contra 199 kcal tipicas do subgrupo 0409"
     },
     {
-      "id": "ciqual-27016",
-      "nome": "Eel, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "240 kcal contra 97 kcal tipicas do subgrupo 0406"
-    },
-    {
       "id": "ciqual-28002",
       "nome": "Pork, belly, raw",
       "origem": "CIQUAL",
@@ -1155,7 +1033,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "744 kcal contra 141 kcal tipicas do subgrupo 0402"
+      "mensagem": "744 kcal contra 142 kcal tipicas do subgrupo 0402"
     },
     {
       "id": "ciqual-28471",
@@ -1164,16 +1042,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "475 kcal contra 141 kcal tipicas do subgrupo 0402"
-    },
-    {
-      "id": "ciqual-28479",
-      "nome": "Pork, belly, flank removed, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "323 kcal contra 141 kcal tipicas do subgrupo 0402"
+      "mensagem": "475 kcal contra 142 kcal tipicas do subgrupo 0402"
     },
     {
       "id": "ciqual-3000",
@@ -1317,7 +1186,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "337 kcal contra 141 kcal tipicas do subgrupo 0402"
+      "mensagem": "337 kcal contra 142 kcal tipicas do subgrupo 0402"
     },
     {
       "id": "ciqual-36501",
@@ -1326,7 +1195,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "366 kcal contra 141 kcal tipicas do subgrupo 0402"
+      "mensagem": "366 kcal contra 142 kcal tipicas do subgrupo 0402"
     },
     {
       "id": "ciqual-39210",
@@ -1362,7 +1231,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "532 kcal contra 135 kcal tipicas do subgrupo 0202"
+      "mensagem": "532 kcal contra 136 kcal tipicas do subgrupo 0202"
     },
     {
       "id": "ciqual-4011",
@@ -1380,7 +1249,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "551 kcal contra 135 kcal tipicas do subgrupo 0202"
+      "mensagem": "551 kcal contra 136 kcal tipicas do subgrupo 0202"
     },
     {
       "id": "ciqual-4038",
@@ -1389,7 +1258,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "481 kcal contra 135 kcal tipicas do subgrupo 0202"
+      "mensagem": "481 kcal contra 136 kcal tipicas do subgrupo 0202"
     },
     {
       "id": "ciqual-4050",
@@ -1398,7 +1267,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "503 kcal contra 135 kcal tipicas do subgrupo 0202"
+      "mensagem": "503 kcal contra 136 kcal tipicas do subgrupo 0202"
     },
     {
       "id": "ciqual-53100",
@@ -1482,42 +1351,6 @@
       "mensagem": "energia declarada 82 kcal, 71.2 kcal acima do que os macros dao"
     },
     {
-      "id": "ptx3_gin",
-      "nome": "Gin",
-      "origem": "PT",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 263 kcal, 263 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ptx3_sangria",
-      "nome": "Sangria",
-      "origem": "PT",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 120 kcal, 66.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ptx3_vodka",
-      "nome": "Vodka",
-      "origem": "PT",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 231 kcal, 231 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ptx3_whisky",
-      "nome": "Whisky",
-      "origem": "PT",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 250 kcal, 250 kcal acima do que os macros dao"
-    },
-    {
       "id": "ptx_cerveja",
       "nome": "Beer",
       "origem": "PT",
@@ -1525,15 +1358,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 43 kcal, 26.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ptx_vinho_tinto",
-      "nome": "Red wine",
-      "origem": "PT",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 85 kcal, 74.2 kcal acima do que os macros dao"
     },
     {
       "id": "usda-167567",
@@ -1687,6 +1511,15 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 110 kcal, 62.7 kcal acima do que os macros dao"
+    },
+    {
+      "id": "usda-168873",
+      "nome": "Oat bran, cooked",
+      "origem": "USDA",
+      "tipo": "atwater",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "energia declarada 40 kcal, -26.5 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169058",

@@ -34,10 +34,15 @@ class MotorDeQualidadeTest {
         val campo: String? = null,
     )
 
+    /** Quantas incoerências a coerência arrumou antes de o motor olhar. */
+    @Serializable
+    private data class Corrigidas(val acucares: Int, val gorduras: Int, val agua: Int)
+
     @Serializable
     private data class Qualidade(
         val contradicoes: List<Achado>,
         val suspeitas: List<Achado>,
+        val corrigidas: Corrigidas,
     )
 
     private val json = Json { ignoreUnknownKeys = true }
@@ -67,6 +72,30 @@ class MotorDeQualidadeTest {
                     "Achados por tipo: $porTipo",
             )
         }
+    }
+
+    @Test
+    fun `as tres verificacoes de contradicao nao emudeceram - foram atendidas`() {
+
+        /*
+         * As contradições estão a zero, e isso é bom — **mas só se alguém as tiver
+         * corrigido.** A coerência arruma-as no oleoduto antes de o motor olhar, e a partir
+         * daí «zero contradições» deixa de distinguir um catálogo são de uma verificação
+         * apagada. É este número que volta a fazer essa distinção.
+         *
+         * Se um dia a fonte deixar de ter estes casos, este teste falha e a resposta é
+         * escrever isso — não é baixar o mínimo até ele passar.
+         */
+        val c = qualidade.corrigidas
+
+        assertTrue(c.acucares > 0, "a regra do açúcar dentro dos hidratos deixou de tocar em nada")
+        assertTrue(c.gorduras > 0, "a regra das gorduras dentro da gordura deixou de tocar em nada")
+        assertTrue(c.agua > 0, "a regra da água dentro dos 100 g deixou de tocar em nada")
+
+        // E não pode passar a mexer no catálogo inteiro: com as folgas do motor são doze
+        // alimentos; com folga zero eram duzentos e nove, todos por um décimo de grama.
+        val total = c.acucares + c.gorduras + c.agua
+        assertTrue(total < MAXIMO_CORRIGIDO, "$total correções — a coerência passou a escalar por arredondamento")
     }
 
     @Test
@@ -119,11 +148,18 @@ class MotorDeQualidadeTest {
     }
 
     private companion object {
-        val TIPOS = listOf("atwater", "massa", "gorduras", "acucares", "escala", "discordancia")
+        // As tres de contradicao — massa, gorduras, acucares — sairam desta lista quando a
+        // coerencia passou a corrigi-las no oleoduto. O que as guarda agora e o teste das
+        // correcoes, mais abaixo.
+        val TIPOS = listOf("atwater", "escala", "discordancia")
 
         // Contados a 2026-08-23: 12 contradições e 252 suspeitas, em 8 011 alimentos.
         // 106 atwater · 130 escala · 16 discordância · 7 massa · 3 gorduras · 2 açúcares.
         const val MINIMO_DE_ACHADOS = 150
         const val MAXIMO_DE_CONTRADICOES = 12
+
+        // Doze com as folgas do motor. Duzentas e nove com folga zero, e nenhuma delas
+        // valia o diff que produzia.
+        const val MAXIMO_CORRIGIDO = 40
     }
 }
