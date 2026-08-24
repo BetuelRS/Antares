@@ -30,6 +30,7 @@ import { lerVocabulario, conferirComAEfsa } from "./vocabulario.mjs";
 import { verificar, LIMITES } from "./qualidade.mjs";
 import { colisoes, aplicarFusoes } from "./colisoes.mjs";
 import { porDeAcordoConsigo } from "./coerencia.mjs";
+import { completar } from "./fontes/usda-completo.mjs";
 import { familiaDeUsda } from "../confecao/familias.mjs";
 import { lerCsv } from "../confecao/tabelas.mjs";
 import { lerVocabulario as lerVocabularioDeNomes, traduzirNome } from "../vocabulario/traduzir.mjs";
@@ -96,10 +97,16 @@ for (const e of ciqual.alimentos) {
   const par = usda.porChave.get(chave) ?? usda.porChaveCurta.get(curta);
   if (!par) continue;
   if (!energiaConcorda(par.kcal, e.kcal)) {
-    // Só a correspondência pelo nome inteiro. A chave curta de duas palavras casa coisas
-    // diferentes — «chicken breast» com «chicken breast, breaded» — e uma discordância de
-    // energia entre dois alimentos que não são o mesmo não é achado nenhum.
-    if (usda.porChave.get(chave) && par.kcal != null && e.kcal != null) {
+    /*
+     * Só quando são **o mesmo alimento**, e não apenas o mesmo ingrediente.
+     *
+     * A chave de nome deita fora a preparação para poder casar tabelas, e por isso punha o
+     * arroz selvagem cru a 344 kcal a «discordar» do cozido a 101. Não discordam: são coisas
+     * diferentes, e a diferença é a água. Eram oito dos dezasseis achados — metade da fila
+     * a apontar para um problema que não existe é a fila inteira a perder credibilidade.
+     */
+    const mesmoAlimento = chaveDeIdentidade(e.nameEn) === chaveDeIdentidade(par.nameEn);
+    if (mesmoAlimento && par.kcal != null && e.kcal != null) {
       discordancias.push({ alimento: e, outraFonte: "USDA", outraEnergia: par.kcal });
     }
     continue;
@@ -389,6 +396,20 @@ for (const e of vivos) {
   if (e.familia) comFamilia++;
 }
 console.log(`famílias de confeção:          ${comFamilia} de ${vivos.length}`);
+
+// ---------------------------------------------------------- completar a USDA
+
+/**
+ * O que a extração antiga da USDA não trouxe: a água, o fósforo, o colesterol, o álcool.
+ *
+ * Corre **antes** da coerência e do motor de qualidade de propósito. Sem água, o balanço de
+ * massa não podia sequer correr num terço do catálogo; sem álcool nem polióis, as bebidas e
+ * os doces sem açúcar falhavam a conta de Atwater por lhes faltar a parcela que produz a
+ * energia que declaram. Verificar antes de completar era acusar o alimento do que a leitura
+ * tinha deixado de fora.
+ */
+const completados = completar(vivos, join(HERE, "..", "confecao", "data", "food_nutrient.csv"));
+console.log(`\nUSDA completada: ${completados.valores} valores em ${completados.alimentos} alimentos`);
 
 // ------------------------------------------------------------------------ a coerência
 

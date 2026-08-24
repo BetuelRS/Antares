@@ -9,32 +9,32 @@
   },
   "contagens": {
     "contradicoes": 0,
-    "suspeitas": 245
+    "suspeitas": 128
   },
   "corrigidas": {
     "acucares": 2,
-    "gorduras": 3,
+    "gorduras": 5,
     "agua": 7
   },
   "contradicoes": [],
   "suspeitas": [
     {
-      "id": "ciqual-10079",
-      "nome": "Octopus, common, cooked",
+      "id": "ciqual-1006",
+      "nome": "Wine, sweet",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "156 kcal contra 99 kcal tipicas do subgrupo 0407"
+      "mensagem": "148 kcal contra 76 kcal tipicas do subgrupo 060301"
     },
     {
-      "id": "ciqual-10084",
-      "nome": "Squid, fried or pan-fried, with fat",
+      "id": "ciqual-10083",
+      "nome": "Mussels, filled (fat, parsley and garlic…), prepacked, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "173 kcal contra 99 kcal tipicas do subgrupo 0407"
+      "mensagem": "283 kcal contra 114 kcal tipicas do subgrupo 010304"
     },
     {
       "id": "ciqual-1014",
@@ -43,70 +43,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "660 kcal contra 73.5 kcal tipicas do subgrupo 0603"
-    },
-    {
-      "id": "ciqual-11044",
-      "nome": "Salt, with celery",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "49 kcal aqui e 18 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-11048",
-      "nome": "Nutmeg",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "506 kcal contra 334.5 kcal tipicas do subgrupo 1005"
-    },
-    {
-      "id": "ciqual-11054",
-      "nome": "Mayonnaise (70% fat min.), prepacked",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "692 kcal contra 153 kcal tipicas do subgrupo 1001"
-    },
-    {
-      "id": "ciqual-11061",
-      "nome": "Poppy, seed",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "534 kcal contra 334.5 kcal tipicas do subgrupo 1005"
-    },
-    {
-      "id": "ciqual-11074",
-      "nome": "Ginger, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "33 kcal contra 334.5 kcal tipicas do subgrupo 1005"
-    },
-    {
-      "id": "ciqual-11084",
-      "nome": "Seaweed, agar, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "28 kcal contra 213 kcal tipicas do subgrupo 1007"
-    },
-    {
-      "id": "ciqual-11086",
-      "nome": "Spirulina (spirulina sp.), dried or dehydrated",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "374 kcal contra 213 kcal tipicas do subgrupo 1007"
+      "mensagem": "660 kcal contra 225 kcal tipicas do subgrupo 060303"
     },
     {
       "id": "ciqual-11090",
@@ -118,13 +55,58 @@
       "mensagem": "4 kcal aqui e 21 kcal na USDA, para o mesmo nome"
     },
     {
-      "id": "ciqual-13001",
-      "nome": "Apricot, pitted, dried",
+      "id": "ciqual-11102",
+      "nome": "Béarnaise sauce, prepacked",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "239 kcal contra 58.5 kcal tipicas do subgrupo 0204"
+      "mensagem": "455 kcal contra 105 kcal tipicas do subgrupo 100102"
+    },
+    {
+      "id": "ciqual-11179",
+      "nome": "Pesto sauce, prepacked",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "370 kcal contra 105 kcal tipicas do subgrupo 100102"
+    },
+    {
+      "id": "ciqual-12067",
+      "nome": "Feta-type cheese, 100% from cow's milk, in oil and spices, drained",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "550 kcal contra 259 kcal tipicas do subgrupo 050305"
+    },
+    {
+      "id": "ciqual-12528",
+      "nome": "Bresse blue cheese, reduced fat, from cow's milk",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "223 kcal contra 350 kcal tipicas do subgrupo 050302"
+    },
+    {
+      "id": "ciqual-12721",
+      "nome": "Firm cheese in wax casing, reduced fat, from cow's milk",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "208 kcal contra 366 kcal tipicas do subgrupo 050303"
+    },
+    {
+      "id": "ciqual-12815",
+      "nome": "Cheese, dry, from goat's milk",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "440 kcal contra 300 kcal tipicas do subgrupo 050301"
     },
     {
       "id": "ciqual-13004",
@@ -133,52 +115,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "203 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-13011",
-      "nome": "Date, flesh and skin, pitted, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "287 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13013",
-      "nome": "Fig, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "261 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13042",
-      "nome": "Prune, pitted",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "229 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13046",
-      "nome": "Raisin",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "322 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13051",
-      "nome": "Tropical fruit mix, sweetened, for snack, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "389 kcal contra 58.5 kcal tipicas do subgrupo 0204"
+      "mensagem": "203 kcal contra 27 kcal tipicas do subgrupo 020101"
     },
     {
       "id": "ciqual-13080",
@@ -187,52 +124,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "246 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13089",
-      "nome": "Banana, flesh without skin, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "365 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13118",
-      "nome": "Peach, flesh and skin, pitted, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "329 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13136",
-      "nome": "Raspberry, frozen, raw",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "37 kcal aqui e 52 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-13178",
-      "nome": "Cranberry, dried, with sugar(s)",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "332 kcal contra 58.5 kcal tipicas do subgrupo 0204"
-    },
-    {
-      "id": "ciqual-13183",
-      "nome": "Goji berry, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "300 kcal contra 58.5 kcal tipicas do subgrupo 0204"
+      "mensagem": "246 kcal contra 51 kcal tipicas do subgrupo 020401"
     },
     {
       "id": "ciqual-13406",
@@ -241,7 +133,16 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "447 kcal contra 58.5 kcal tipicas do subgrupo 0204"
+      "mensagem": "447 kcal contra 46 kcal tipicas do subgrupo 020405"
+    },
+    {
+      "id": "ciqual-13523",
+      "nome": "Desert date, flesh and skin, pitted, raw",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "132 kcal contra 51 kcal tipicas do subgrupo 020401"
     },
     {
       "id": "ciqual-13529",
@@ -250,277 +151,61 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "147 kcal contra 58.5 kcal tipicas do subgrupo 0204"
+      "mensagem": "147 kcal contra 51 kcal tipicas do subgrupo 020401"
     },
     {
-      "id": "ciqual-13623",
-      "nome": "Apricot, pitted, dried, rehydrated to 35-45% water",
+      "id": "ciqual-18059",
+      "nome": "Concentrate beverage (to be diluted), no added sugars and with sweeteners, \"syrup 0%\" type",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "200 kcal contra 58.5 kcal tipicas do subgrupo 0204"
+      "mensagem": "20 kcal contra 346.5 kcal tipicas do subgrupo 060207"
     },
     {
-      "id": "ciqual-13996",
-      "nome": "Fruit, dried (average)",
+      "id": "ciqual-18104",
+      "nome": "Instant cocoa or chocolate beverage, with sugar(s), ready-to-drink (reconstituted with standard semi-skimmed milk)",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "267 kcal contra 58.5 kcal tipicas do subgrupo 0204"
+      "mensagem": "66 kcal contra 6 kcal tipicas do subgrupo 060206"
     },
     {
-      "id": "ciqual-15006",
-      "nome": "Coconut, pulp, fresh",
+      "id": "ciqual-18106",
+      "nome": "Instant cocoa or chocolate beverage, with sugar(s), fortified with vitamins, ready-to-drink (reconstituted with semi-skimmed milk)",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "369 kcal contra 623 kcal tipicas do subgrupo 0205"
+      "mensagem": "71 kcal contra 6 kcal tipicas do subgrupo 060206"
     },
     {
-      "id": "ciqual-15013",
-      "nome": "Chestnut cream, prepacked",
+      "id": "ciqual-18153",
+      "nome": "Mix of chicory and coffee, instant, no added sugars, ready-to-drink (reconstituted with standard semi-skimmed milk)",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "278 kcal contra 242 kcal tipicas do subgrupo 0704"
+      "mensagem": "54 kcal contra 6 kcal tipicas do subgrupo 060206"
     },
     {
-      "id": "ciqual-15014",
-      "nome": "Coconut, immature kernel, fresh",
+      "id": "ciqual-18161",
+      "nome": "Instant chicory, no added sugars, ready-to-drink (reconstituted with standard semi-skimmed milk)",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "360 kcal contra 623 kcal tipicas do subgrupo 0205"
+      "mensagem": "94 kcal contra 6 kcal tipicas do subgrupo 060206"
     },
     {
-      "id": "ciqual-15015",
-      "nome": "Chestnut puree, canned",
+      "id": "ciqual-18220",
+      "nome": "Lemon speciality to be diluted, for beverages or culinary use, no added sugars",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "102 kcal contra 623 kcal tipicas do subgrupo 0205"
-    },
-    {
-      "id": "ciqual-15020",
-      "nome": "Chestnut, boiled/cooked in water",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "123 kcal contra 623 kcal tipicas do subgrupo 0205"
-    },
-    {
-      "id": "ciqual-15021",
-      "nome": "Chestnut, grilled",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "211 kcal contra 623 kcal tipicas do subgrupo 0205"
-    },
-    {
-      "id": "ciqual-15024",
-      "nome": "Chestnut, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "189 kcal contra 623 kcal tipicas do subgrupo 0205"
-    },
-    {
-      "id": "ciqual-15039",
-      "nome": "Chestnut, canned",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "145 kcal contra 623 kcal tipicas do subgrupo 0205"
-    },
-    {
-      "id": "ciqual-18003",
-      "nome": "Coffee, ground",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "341 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18005",
-      "nome": "Coffee, powder, instant",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "291 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18017",
-      "nome": "Syrup, to be diluted, with sugar(s)",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "252 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18069",
-      "nome": "Decaffeinated coffee, powder, instant",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "352 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18076",
-      "nome": "Tea leaf",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "232 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18100",
-      "nome": "Cocoa powder, no added sugars, powder, instant",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "387 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18101",
-      "nome": "Cocoa or chocolate powder, for beverages, with sugar(s)",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "379 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18102",
-      "nome": "Malted cocoa or chocolate powder for beverage, with sugar(s), fortified with vitamins and minerals",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "402 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18150",
-      "nome": "Mix of chicory and coffee, powder, instant",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "332 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18152",
-      "nome": "Chicory, powder, instant",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "323 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18160",
-      "nome": "Coffee with milk or cappuccino, powder, instant",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "416 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18163",
-      "nome": "Coffee with milk or cappuccino with chocolate, powder, instant",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "384 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18167",
-      "nome": "Cocoa or chocolate powder, for beverages, with sugar(s), fortified with vitamins and minerals",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "376 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-18168",
-      "nome": "Cocoa or chocolate powder, for beverages, with sugar(s), fortified with vitamins",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "386 kcal contra 41 kcal tipicas do subgrupo 0602"
-    },
-    {
-      "id": "ciqual-19021",
-      "nome": "Milk powder, whole",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "508 kcal contra 62 kcal tipicas do subgrupo 0501"
-    },
-    {
-      "id": "ciqual-19027",
-      "nome": "Condensed milk, with sugar(s), whole",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "327 kcal contra 62 kcal tipicas do subgrupo 0501"
-    },
-    {
-      "id": "ciqual-19044",
-      "nome": "Milk powder, semi-skimmed",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "459 kcal contra 62 kcal tipicas do subgrupo 0501"
-    },
-    {
-      "id": "ciqual-19054",
-      "nome": "Milk powder, skimmed",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "361 kcal contra 62 kcal tipicas do subgrupo 0501"
-    },
-    {
-      "id": "ciqual-20007",
-      "nome": "Carrot, canned, drained",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "22 kcal aqui e 41 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-20018",
-      "nome": "Palm heart, canned, drained",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "42 kcal aqui e 115 kcal na USDA, para o mesmo nome"
+      "mensagem": "18 kcal contra 346.5 kcal tipicas do subgrupo 060207"
     },
     {
       "id": "ciqual-20036",
@@ -529,7 +214,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "93 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "93 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
       "id": "ciqual-20049",
@@ -538,7 +223,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "106 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "106 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
       "id": "ciqual-20055",
@@ -556,7 +241,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "105 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "105 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
       "id": "ciqual-20068",
@@ -565,16 +250,25 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "99 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "99 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
-      "id": "ciqual-20092",
-      "nome": "Carrot, dehydrated",
+      "id": "ciqual-20072",
+      "nome": "Garden peas, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "317 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "81 kcal contra 27 kcal tipicas do subgrupo 020101"
+    },
+    {
+      "id": "ciqual-20084",
+      "nome": "Garden peas, frozen, raw",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "78 kcal contra 27 kcal tipicas do subgrupo 020101"
     },
     {
       "id": "ciqual-20108",
@@ -583,52 +277,25 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "97 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "97 kcal contra 27 kcal tipicas do subgrupo 020101"
     },
     {
-      "id": "ciqual-20180",
-      "nome": "Onion, dried",
+      "id": "ciqual-2018",
+      "nome": "Prune juice",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "355 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "77 kcal contra 47 kcal tipicas do subgrupo 060201"
     },
     {
-      "id": "ciqual-20188",
-      "nome": "Bamboo shoots, canned, drained",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "19 kcal aqui e 27 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-20189",
-      "nome": "Tomato, dried",
+      "id": "ciqual-20197",
+      "nome": "Salsify, black, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "257 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20211",
-      "nome": "Shiitake mushroom, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "316 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20212",
-      "nome": "Shiitake mushroom, cooked",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "61 kcal aqui e 34 kcal na USDA, para o mesmo nome"
+      "mensagem": "83 kcal contra 27 kcal tipicas do subgrupo 020101"
     },
     {
       "id": "ciqual-20233",
@@ -637,16 +304,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "105 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20256",
-      "nome": "Tomato, dried, in oil",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "171 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "105 kcal contra 27 kcal tipicas do subgrupo 020101"
     },
     {
       "id": "ciqual-20268",
@@ -655,7 +313,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "100 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "100 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
       "id": "ciqual-20284",
@@ -664,16 +322,25 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "86 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "86 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
       "id": "ciqual-2030",
       "nome": "Lime juice, fresh",
       "origem": "CIQUAL",
-      "tipo": "discordancia",
+      "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "10 kcal aqui e 25 kcal na USDA, para o mesmo nome"
+      "mensagem": "10 kcal contra 47 kcal tipicas do subgrupo 060201"
+    },
+    {
+      "id": "ciqual-2032",
+      "nome": "Tomato juice, pure juice, 6 g salt/L",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "20 kcal contra 47 kcal tipicas do subgrupo 060201"
     },
     {
       "id": "ciqual-20325",
@@ -682,43 +349,16 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "91 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "91 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
-      "id": "ciqual-20359",
-      "nome": "Lentil, dried (average)",
+      "id": "ciqual-20326",
+      "nome": "Garden peas, boiled/cooked in water",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "327 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20501",
-      "nome": "Haricot bean, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "307 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20515",
-      "nome": "Split pea, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "347 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20516",
-      "nome": "Chick pea, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "350 kcal contra 124 kcal tipicas do subgrupo 0203"
+      "mensagem": "81 kcal contra 29 kcal tipicas do subgrupo 020102"
     },
     {
       "id": "ciqual-20521",
@@ -727,187 +367,16 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "123 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "123 kcal contra 27 kcal tipicas do subgrupo 020101"
     },
     {
-      "id": "ciqual-20525",
-      "nome": "Red kidney bean, dried",
+      "id": "ciqual-2053",
+      "nome": "Tomato juice, pure juice (average)",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "314 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20530",
-      "nome": "Beans, mung, mature, seeds, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "343 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20534",
-      "nome": "Lupin, seed, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "356 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20535",
-      "nome": "Lentil, pink or red, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "328 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20539",
-      "nome": "Flageolet bean, green, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "315 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20585",
-      "nome": "Lentil, green, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "327 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20586",
-      "nome": "Lentil, blond, dried",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "339 kcal contra 124 kcal tipicas do subgrupo 0203"
-    },
-    {
-      "id": "ciqual-20813",
-      "nome": "Breadfruit, flesh without skin, steamed, sampled in the island of La Martinique",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "90 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20823",
-      "nome": "Yam cousse-couche, pulp, steamed, sampled in the island of La Martinique",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "89 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20824",
-      "nome": "Yam yellow, pulp, steamed, sampled in the island of La Martinique",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "127 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20825",
-      "nome": "Yam St Martin, pulp, steamed, sampled in the island of La Martinique",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "93 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20832",
-      "nome": "Sweet potatoes, pulp, steamed, sampled in the island of La Martinique",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "126 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20833",
-      "nome": "Pigeon pea, whole, steamed, sampled in the island of La Martinique",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "116 kcal contra 29 kcal tipicas do subgrupo 0201"
-    },
-    {
-      "id": "ciqual-20903",
-      "nome": "Soy protein",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "402 kcal contra 151 kcal tipicas do subgrupo 1009"
-    },
-    {
-      "id": "ciqual-20906",
-      "nome": "Tofu, silky, prepacked",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "54 kcal contra 151 kcal tipicas do subgrupo 1009"
-    },
-    {
-      "id": "ciqual-20915",
-      "nome": "Soya flour, wholegrain",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "457 kcal contra 350 kcal tipicas do subgrupo 0304"
-    },
-    {
-      "id": "ciqual-20982",
-      "nome": "Seaweed, Spirulina (spirulina sp.), fresh, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "36 kcal contra 213 kcal tipicas do subgrupo 1007"
-    },
-    {
-      "id": "ciqual-20983",
-      "nome": "Seaweed, Sea fennel, fresh, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "39 kcal contra 213 kcal tipicas do subgrupo 1007"
-    },
-    {
-      "id": "ciqual-20997",
-      "nome": "Chlorella, dried or dehydrated",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "420 kcal contra 213 kcal tipicas do subgrupo 1007"
-    },
-    {
-      "id": "ciqual-21500",
-      "nome": "Lamb, cutlet, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "333 kcal contra 142 kcal tipicas do subgrupo 0402"
+      "mensagem": "22 kcal contra 47 kcal tipicas do subgrupo 060201"
     },
     {
       "id": "ciqual-21508",
@@ -916,7 +385,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "365 kcal contra 171.5 kcal tipicas do subgrupo 0401"
+      "mensagem": "365 kcal contra 179.5 kcal tipicas do subgrupo 040105"
     },
     {
       "id": "ciqual-22003",
@@ -925,106 +394,25 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "667 kcal contra 166.5 kcal tipicas do subgrupo 0410"
+      "mensagem": "667 kcal contra 225.5 kcal tipicas do subgrupo 041003"
     },
     {
-      "id": "ciqual-22004",
-      "nome": "Egg white, powder",
+      "id": "ciqual-26264",
+      "nome": "Gnocchi, from potato, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "356 kcal contra 166.5 kcal tipicas do subgrupo 0410"
+      "mensagem": "176 kcal contra 350.5 kcal tipicas do subgrupo 030102"
     },
     {
-      "id": "ciqual-22009",
-      "nome": "Egg yolk, cooked",
+      "id": "ciqual-26265",
+      "nome": "Gnocchi, from semolina, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "340 kcal contra 166.5 kcal tipicas do subgrupo 0410"
-    },
-    {
-      "id": "ciqual-22013",
-      "nome": "Egg, powder",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "587 kcal contra 166.5 kcal tipicas do subgrupo 0410"
-    },
-    {
-      "id": "ciqual-25437",
-      "nome": "Small cheese chou-pastry puff",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "399 kcal contra 142 kcal tipicas do subgrupo 0103"
-    },
-    {
-      "id": "ciqual-25590",
-      "nome": "Falafel, prepacked",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "211 kcal aqui e 333 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-25948",
-      "nome": "Broth or stock, vegetables, dehydrated and reconstituted",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "5 kcal contra 36 kcal tipicas do subgrupo 0102"
-    },
-    {
-      "id": "ciqual-25976",
-      "nome": "Soup, Asian-style with chicken and noodles, prepacked, to be reheated",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "68 kcal contra 36 kcal tipicas do subgrupo 0102"
-    },
-    {
-      "id": "ciqual-26141",
-      "nome": "Cod liver, raw",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "623 kcal contra 97 kcal tipicas do subgrupo 0406"
-    },
-    {
-      "id": "ciqual-26142",
-      "nome": "Cod liver, canned, drained",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "433 kcal contra 199 kcal tipicas do subgrupo 0409"
-    },
-    {
-      "id": "ciqual-28002",
-      "nome": "Pork, belly, raw",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "253 kcal aqui e 518 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-28401",
-      "nome": "Pork, spare-ribs, braised",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "332 kcal contra 171.5 kcal tipicas do subgrupo 0401"
+      "mensagem": "200 kcal contra 350.5 kcal tipicas do subgrupo 030102"
     },
     {
       "id": "ciqual-28470",
@@ -1033,7 +421,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "744 kcal contra 142 kcal tipicas do subgrupo 0402"
+      "mensagem": "744 kcal contra 178 kcal tipicas do subgrupo 040202"
     },
     {
       "id": "ciqual-28471",
@@ -1042,79 +430,25 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "475 kcal contra 142 kcal tipicas do subgrupo 0402"
+      "mensagem": "475 kcal contra 178 kcal tipicas do subgrupo 040202"
     },
     {
-      "id": "ciqual-3000",
-      "nome": "Baby milk, infant formula, powder",
+      "id": "ciqual-28905",
+      "nome": "Braised ham on the bone",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "496 kcal contra 81 kcal tipicas do subgrupo 1101"
+      "mensagem": "198 kcal contra 121 kcal tipicas do subgrupo 040301"
     },
     {
-      "id": "ciqual-3002",
-      "nome": "Baby milk, follow-on formula, powder",
+      "id": "ciqual-28917",
+      "nome": "Round of ham, cooked",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "484 kcal contra 81 kcal tipicas do subgrupo 1101"
-    },
-    {
-      "id": "ciqual-30887",
-      "nome": "Other jam, reduced sugar",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "162 kcal contra 242 kcal tipicas do subgrupo 0704"
-    },
-    {
-      "id": "ciqual-30889",
-      "nome": "Marmalade or jam, orange, reduced sugar",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "164 kcal contra 242 kcal tipicas do subgrupo 0704"
-    },
-    {
-      "id": "ciqual-30995",
-      "nome": "Jam, strawberry, reduced sugar",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "166 kcal contra 242 kcal tipicas do subgrupo 0704"
-    },
-    {
-      "id": "ciqual-30996",
-      "nome": "Jam, apricot, reduced sugar",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "167 kcal contra 242 kcal tipicas do subgrupo 0704"
-    },
-    {
-      "id": "ciqual-30997",
-      "nome": "Jam, raspberry, reduced sugar",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "167 kcal contra 242 kcal tipicas do subgrupo 0704"
-    },
-    {
-      "id": "ciqual-31040",
-      "nome": "Dulce de leche or confiture de lait",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "340 kcal contra 242 kcal tipicas do subgrupo 0704"
+      "mensagem": "182 kcal contra 121 kcal tipicas do subgrupo 040301"
     },
     {
       "id": "ciqual-31054",
@@ -1124,15 +458,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 206 kcal, -101.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ciqual-31082",
-      "nome": "Fruit preparation, sweetened, less sugar than classic, but not as reduced as in reduced sugar jams",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "195 kcal contra 242 kcal tipicas do subgrupo 0704"
     },
     {
       "id": "ciqual-31121",
@@ -1162,22 +487,13 @@
       "mensagem": "energia declarada 235 kcal, -153 kcal acima do que os macros dao"
     },
     {
-      "id": "ciqual-31129",
-      "nome": "Fruit preparation, sweetened, 35% fruits minimum, with sugars and other ingredient(s)",
+      "id": "ciqual-36204",
+      "nome": "Duck, meat and skin, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "204 kcal contra 242 kcal tipicas do subgrupo 0704"
-    },
-    {
-      "id": "ciqual-36200",
-      "nome": "Duck, meat and skin, roasted/baked",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "331 kcal contra 171.5 kcal tipicas do subgrupo 0401"
+      "mensagem": "273 kcal contra 128.5 kcal tipicas do subgrupo 040207"
     },
     {
       "id": "ciqual-36206",
@@ -1186,7 +502,7 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "337 kcal contra 142 kcal tipicas do subgrupo 0402"
+      "mensagem": "337 kcal contra 128.5 kcal tipicas do subgrupo 040207"
     },
     {
       "id": "ciqual-36501",
@@ -1195,25 +511,43 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "366 kcal contra 142 kcal tipicas do subgrupo 0402"
+      "mensagem": "366 kcal contra 128.5 kcal tipicas do subgrupo 040207"
     },
     {
-      "id": "ciqual-39210",
-      "nome": "Chocolate mousse, traditional, refrigerated",
+      "id": "ciqual-38501",
+      "nome": "Crouton with cheese, prepacked",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "319 kcal contra 93 kcal tipicas do subgrupo 0502"
+      "mensagem": "535 kcal contra 402 kcal tipicas do subgrupo 030202"
     },
     {
-      "id": "ciqual-39234",
-      "nome": "Chocolate cake, with creamy chocolate heart, refrigerated",
+      "id": "ciqual-39213",
+      "nome": "Caramelized custard cream (crème brûlée), refrigerated",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "373 kcal contra 93 kcal tipicas do subgrupo 0502"
+      "mensagem": "269 kcal contra 133 kcal tipicas do subgrupo 050203"
+    },
+    {
+      "id": "ciqual-39248",
+      "nome": "Chocolate mousse, plant-based, refrigerated",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "262 kcal contra 86 kcal tipicas do subgrupo 050205"
+    },
+    {
+      "id": "ciqual-39249",
+      "nome": "Fruit mousse, with cottage cheese, 0% fat, with sugar(s) and sweetener(s), fortified with calcium, refrigerated",
+      "origem": "CIQUAL",
+      "tipo": "escala",
+      "gravidade": "suspeita",
+      "campo": "kcal",
+      "mensagem": "52 kcal contra 133 kcal tipicas do subgrupo 050203"
     },
     {
       "id": "ciqual-39253",
@@ -1222,52 +556,16 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "360 kcal contra 93 kcal tipicas do subgrupo 0502"
+      "mensagem": "360 kcal contra 133 kcal tipicas do subgrupo 050203"
     },
     {
-      "id": "ciqual-4004",
-      "nome": "Potato, crisps, plain or flavoured, standard",
+      "id": "ciqual-40205",
+      "nome": "Tongue, pork, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "532 kcal contra 136 kcal tipicas do subgrupo 0202"
-    },
-    {
-      "id": "ciqual-4011",
-      "nome": "Potato, canned, drained",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "57 kcal aqui e 81 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-4037",
-      "nome": "Potato crisps, plain or flavoured, old style",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "551 kcal contra 136 kcal tipicas do subgrupo 0202"
-    },
-    {
-      "id": "ciqual-4038",
-      "nome": "Potato crisps and similar, plain or flavoured, reduced fat",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "481 kcal contra 136 kcal tipicas do subgrupo 0202"
-    },
-    {
-      "id": "ciqual-4050",
-      "nome": "Potato, crisps, plain or flavoured, no added salt",
-      "origem": "CIQUAL",
-      "tipo": "escala",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "503 kcal contra 136 kcal tipicas do subgrupo 0202"
+      "mensagem": "222 kcal contra 122 kcal tipicas do subgrupo 040208"
     },
     {
       "id": "ciqual-53100",
@@ -1276,70 +574,43 @@
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "132 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "132 kcal contra 27 kcal tipicas do subgrupo 020101"
     },
     {
-      "id": "ciqual-54500",
-      "nome": "Breadfruit, raw",
+      "id": "ciqual-7114",
+      "nome": "Bread, unleavened, prepacked",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "95 kcal contra 29 kcal tipicas do subgrupo 0201"
+      "mensagem": "372 kcal contra 265.5 kcal tipicas do subgrupo 030201"
     },
     {
-      "id": "ciqual-58103",
-      "nome": "Okra, cooked",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "22 kcal aqui e 33 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-8290",
-      "nome": "Taramasalata, with smoked salmon, prepacked",
+      "id": "ciqual-8010",
+      "nome": "Rillettes from Tours",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "501 kcal contra 199 kcal tipicas do subgrupo 0409"
+      "mensagem": "522 kcal contra 402 kcal tipicas do subgrupo 040306"
     },
     {
-      "id": "ciqual-8293",
-      "nome": "Taramasalata, with cod eggs, prepacked",
+      "id": "ciqual-8328",
+      "nome": "Foie gras, duck, raw",
       "origem": "CIQUAL",
       "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "518 kcal contra 199 kcal tipicas do subgrupo 0409"
+      "mensagem": "600 kcal contra 274.5 kcal tipicas do subgrupo 040308"
     },
     {
-      "id": "ciqual-9001",
-      "nome": "Spelt, raw",
+      "id": "ciqual-9815",
+      "nome": "Pasta, fresh, with egg, raw",
       "origem": "CIQUAL",
-      "tipo": "discordancia",
+      "tipo": "escala",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "344 kcal aqui e 127 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-9108",
-      "nome": "Rice, wild, raw",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "344 kcal aqui e 101 kcal na USDA, para o mesmo nome"
-    },
-    {
-      "id": "ciqual-9340",
-      "nome": "Quinoa, raw",
-      "origem": "CIQUAL",
-      "tipo": "discordancia",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "358 kcal aqui e 120 kcal na USDA, para o mesmo nome"
+      "mensagem": "283 kcal contra 350.5 kcal tipicas do subgrupo 030102"
     },
     {
       "id": "ptx2_vinho_branco",
@@ -1376,15 +647,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 182 kcal, -49.3 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-167723",
-      "nome": "Alcoholic beverage, rice (sake)",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 134 kcal, 112 kcal acima do que os macros dao"
     },
     {
       "id": "usda-167749",
@@ -1468,51 +730,6 @@
       "mensagem": "energia declarada 284 kcal, -51.5 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-168746",
-      "nome": "Alcoholic beverage, beer, regular, all",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 43 kcal, 26.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-168749",
-      "nome": "Alcoholic beverage, beer, light",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 29 kcal, 21.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-168750",
-      "nome": "Alcoholic beverage, pina colada, canned",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 237 kcal, 55.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-168752",
-      "nome": "Alcoholic beverage, pina colada, prepared-from-recipe",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 174 kcal, 63.9 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-168753",
-      "nome": "Alcoholic beverage, tequila sunrise, canned",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 110 kcal, 62.7 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-168873",
       "nome": "Oat bran, cooked",
       "origem": "USDA",
@@ -1529,24 +746,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 132 kcal, -85.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169070",
-      "nome": "Alcoholic beverage, wine, cooking",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 50 kcal, 22.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169071",
-      "nome": "Alcoholic beverage, wine, light",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 49 kcal, 43.8 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169241",
@@ -1583,42 +782,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 281 kcal, -46 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169572",
-      "nome": "Alcoholic beverage, beer, light, BUD LIGHT",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 29 kcal, 22.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169573",
-      "nome": "Alcoholic beverage, daiquiri, canned",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 125 kcal, 62.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169574",
-      "nome": "Alcoholic beverage, daiquiri, prepared-from-recipe",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 186 kcal, 156.9 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169575",
-      "nome": "Alcoholic beverage, beer, light, low carb",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 27 kcal, 23.4 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169593",
@@ -1927,42 +1090,6 @@
       "mensagem": "energia declarada 763 kcal, -137 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-171906",
-      "nome": "Alcoholic beverages, beer, higher alcohol",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 58 kcal, 53.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171907",
-      "nome": "Beverages, Malt liquor beverage",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 40 kcal, 38.4 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171908",
-      "nome": "Alcoholic beverages, wine, rose",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 83 kcal, 66.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-172235",
-      "nome": "Vanilla extract, imitation, alcohol",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 237 kcal, 227 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-172239",
       "nome": "Spearmint, dried",
       "origem": "USDA",
@@ -1999,78 +1126,6 @@
       "mensagem": "energia declarada 333 kcal, -65.9 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-173164",
-      "nome": "Alcoholic beverage, whiskey sour, prepared with water, whiskey and powder mix",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 164 kcal, 100 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173168",
-      "nome": "Alcoholic beverage, creme de menthe, 72 proof",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 371 kcal, 201.9 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173176",
-      "nome": "Alcoholic beverage, wine, dessert, sweet",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 160 kcal, 104.4 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173185",
-      "nome": "Alcoholic beverage, wine, table, all",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 83 kcal, 71.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173190",
-      "nome": "Alcoholic beverage, wine, table, red",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 85 kcal, 74.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173471",
-      "nome": "Vanilla extract",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 288 kcal, 235.9 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173662",
-      "nome": "Alcoholic beverage, whiskey sour",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 149 kcal, 96.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173665",
-      "nome": "Alcoholic beverage, liqueur, coffee, 63 proof",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 308 kcal, 176.1 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-173755",
       "nome": "Carob flour",
       "origem": "USDA",
@@ -2087,33 +1142,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 158 kcal, -88.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174141",
-      "nome": "Alcoholic beverage, malt beer, hard lemonade",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 68 kcal, 27.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174145",
-      "nome": "Alcoholic beverage, beer, light, higher alcohol",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 46 kcal, 41.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174146",
-      "nome": "Beverages, AMBER, hard cider",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 56 kcal, 32.4 kcal acima do que os macros dao"
     },
     {
       "id": "usda-174635",
@@ -2134,60 +1162,6 @@
       "mensagem": "energia declarada 346 kcal, -85.6 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-174810",
-      "nome": "Alcoholic beverage, whiskey sour, canned",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 119 kcal, 65.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174812",
-      "nome": "Alcoholic beverage, whiskey sour, prepared from item 14028",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 153 kcal, 100.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174817",
-      "nome": "Alcoholic beverage, distilled, rum, 80 proof",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 231 kcal, 231 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174818",
-      "nome": "Alcoholic beverage, distilled, vodka, 80 proof",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 231 kcal, 231 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174819",
-      "nome": "Alcoholic beverage, distilled, whiskey, 86 proof",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 250 kcal, 249.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174837",
-      "nome": "Alcoholic beverage, wine, table, white",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 82 kcal, 71.2 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-175043",
       "nome": "Leavening agents, yeast, baker's, active dry",
       "origem": "USDA",
@@ -2195,33 +1169,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 325 kcal, -69.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-175097",
-      "nome": "Alcoholic beverage, liqueur, coffee, 53 proof",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 336 kcal, 145.7 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-175098",
-      "nome": "Alcoholic beverage, liqueur, coffee with cream, 34 proof",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 327 kcal, 90.9 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-175112",
-      "nome": "Alcoholic beverage, wine, dessert, dry",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 152 kcal, 104.4 kcal acima do que os macros dao"
     }
   ]
 }

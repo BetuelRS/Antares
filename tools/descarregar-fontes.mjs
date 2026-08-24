@@ -58,6 +58,11 @@ const PACOTE = {
   extrair: [
     { nome: "food.csv", destino: join(HERE, "confecao", "data") },
     { nome: "food_category.csv", destino: join(HERE, "confecao", "data") },
+
+    // Os 36 MB da tabela de nutrientes. E de la que saem a agua, o fosforo, o
+    // colesterol e o alcool que a extracao antiga da USDA nao trouxe.
+    { nome: "food_nutrient.csv", destino: join(HERE, "confecao", "data") },
+    { nome: "nutrient.csv", destino: join(HERE, "confecao", "data") },
     { nome: "food_portion.csv", destino: join(HERE, "porcoes", "data") },
     { nome: "measure_unit.csv", destino: join(HERE, "porcoes", "data") },
   ],
@@ -84,7 +89,7 @@ await baixar(PACOTE.url, zip, "FoodData Central, SR Legacy (pacote)");
 for (const { nome, destino } of PACOTE.extrair) {
   mkdirSync(destino, { recursive: true });
 
-  // O `unzip` do sistema, e não uma biblioteca: são quatro ficheiros de um pacote de seis
+  // O `unzip` do sistema, e não uma biblioteca: são seis ficheiros de um pacote de seis
   // megabytes, e uma dependência nova para isto era pagar caro por pouco.
   execFileSync("unzip", ["-o", "-j", zip, `${PACOTE.pasta}/${nome}`, "-d", destino], {
     stdio: "ignore",

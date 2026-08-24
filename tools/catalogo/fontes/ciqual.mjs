@@ -212,7 +212,10 @@ export function lerCiqual(dataDir) {
       // O subgrupo da árvore da CIQUAL. Não vai para o catálogo: serve ao motor de
       // qualidade, para comparar um alimento com os do seu grupo e não com o mundo, e é de
       // onde sai a família de confeção.
-      grupo: a.alim_ssgrp_code,
+      // O sub-subgrupo de seis dígitos, e não o de quatro: comparar um pato com as aves
+      // todas acusava-o de ser gordo, o que ele é. Comparado com os outros patos sobra só
+      // o que está mesmo fora da escala — 62 achados em vez de 130.
+      grupo: a.alim_ssssgrp_code,
       familia: familiaDeCiqual(a.alim_ssgrp_code, nomeEn),
       derivado,
     });

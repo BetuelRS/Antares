@@ -104,7 +104,7 @@ class MotorDeQualidadeTest {
 
         assertTrue(
             total >= MINIMO_DE_ACHADOS,
-            "só $total achados na fila — eram 264 no dia em que isto foi escrito",
+            "só $total achados na fila — eram 128 no dia em que isto foi escrito",
         )
     }
 
@@ -153,9 +153,26 @@ class MotorDeQualidadeTest {
         // correcoes, mais abaixo.
         val TIPOS = listOf("atwater", "escala", "discordancia")
 
-        // Contados a 2026-08-23: 12 contradições e 252 suspeitas, em 8 011 alimentos.
-        // 106 atwater · 130 escala · 16 discordância · 7 massa · 3 gorduras · 2 açúcares.
-        const val MINIMO_DE_ACHADOS = 150
+        /*
+         * Contados a 2026-08-24: **zero contradições e 128 suspeitas**, em 7 964 alimentos —
+         * 66 Atwater, 60 fora de escala, 2 discordâncias.
+         *
+         * Eram 264 na véspera, e a fila encolheu por três razões escritas, nenhuma delas «o
+         * motor calou-se»:
+         *
+         * - as 12 contradições passaram a ser corrigidas no oleoduto, e o teste das correções
+         *   aqui ao lado é que as guarda;
+         * - a discordância entre fontes deixou de comparar arroz cru com arroz cozido, e caiu
+         *   de 16 para 2;
+         * - a comparação de escala passou a ser dentro do sub-subgrupo da CIQUAL, e um pato
+         *   deixou de ser acusado de ser gordo por comparação com as aves todas: 130 → 60;
+         * - a leitura completa da USDA trouxe o álcool e os polióis, e as bebidas e os doces
+         *   sem açúcar deixaram de falhar a conta de Atwater: 102 → 66.
+         *
+         * Se este número voltar a cair, a resposta é a mesma: escrever porquê. **Baixar o
+         * mínimo até passar é o que este teste existe para tornar difícil.**
+         */
+        const val MINIMO_DE_ACHADOS = 90
         const val MAXIMO_DE_CONTRADICOES = 12
 
         // Doze com as folgas do motor. Duzentas e nove com folga zero, e nenhuma delas
