@@ -94,11 +94,19 @@ const arredondar = (v, casas = 1) => Math.round(v * 10 ** casas) / 10 ** casas;
 /**
  * A energia contra os macros que a produzem.
  *
- * **Duas contas, e fica a que estiver mais perto.** As fontes não concordam sobre o que
- * «hidratos» quer dizer: a CIQUAL publica os hidratos *disponíveis*, e a fibra conta à parte a
- * 2 kcal; a USDA publica hidratos *por diferença*, que já têm a fibra lá dentro e não a podem
- * voltar a somar. Aplicar uma só fórmula ao catálogo inteiro acusava milhares de alimentos de
- * uma discordância que é nossa e não deles.
+ * **Todas as contas possíveis, e fica a que estiver mais perto.** As fontes não concordam
+ * sobre o que «hidratos» quer dizer: a CIQUAL publica os *disponíveis*, com a fibra e os
+ * polióis à parte; a USDA e a TCA publicam-nos *por diferença*, e aí a fibra e os polióis já
+ * estão lá dentro — contados a 4 kcal quando valem 2 e 2,4. Aplicar uma fórmula só ao
+ * catálogo inteiro acusava milhares de alimentos de uma discordância que é nossa.
+ *
+ * São quatro parcelas opcionais e dezasseis combinações, e cada uma delas é uma leitura
+ * legítima do que a fonte publicou. Escolher a mais próxima não é benevolência: é recusar
+ * acusar um alimento de um erro que está na nossa aritmética.
+ *
+ * O que **sobra** depois disto são as fontes que usam factores específicos por alimento em
+ * vez dos gerais — o cacau, os frutos secos, as leguminosas — e essas continuam na fila,
+ * porque é a fila que existe para as julgar.
  */
 export function atwater(a) {
   const kcal = numero(a.kcal);
@@ -121,9 +129,35 @@ export function atwater(a) {
    * Todas as combinações, e fica a que estiver mais perto do que a fonte declara. Não é
    * benevolência: é não acusar um alimento de uma discordância que é da nossa fórmula.
    */
+  const fibra = numero(a.fiberG) ?? 0;
+  const polioes = numero(a.micros?.polyols_g) ?? 0;
+
   const opcionais = [
-    KCAL_FIBRA * (numero(a.fiberG) ?? 0),
-    KCAL_POLIOIS * (numero(a.micros?.polyols_g) ?? 0),
+    // A fibra **fora** dos hidratos, como a CIQUAL os publica: soma-se a 2 kcal.
+    KCAL_FIBRA * fibra,
+
+    /**
+     * A fibra **dentro** dos hidratos, como a USDA e a TCA os publicam por diferença.
+     *
+     * Aqui não se soma: **desconta-se**. Os hidratos por diferença já a contêm, e a base
+     * contou-a a 4 kcal quando ela vale 2 — o excesso é exactamente duas quilocalorias por
+     * grama. Sem esta parcela, os alimentos muito fibrosos apareciam todos a declarar menos
+     * energia do que os macros dão: o pó de baobabe com 44,5 g de fibra ficava a 89 kcal de
+     * distância, que é 44,5 vezes dois. Eram **63 dos 65 achados**.
+     */
+    -KCAL_FIBRA * fibra,
+
+    // Os polióis fora dos hidratos, ao factor do regulamento.
+    KCAL_POLIOIS * polioes,
+
+    /**
+     * Os polióis **dentro** dos hidratos, que é o caso dos rebuçados sem açúcar.
+     *
+     * A mesma conta da fibra: a base contou-os a 4 kcal e eles valem 2,4, portanto
+     * descontam-se 1,6 por grama. Um rebuçado sem açúcar com 95,6 g de polióis ficava a
+     * 153 kcal de distância, que é 95,6 vezes 1,6 ao cêntimo.
+     */
+    -(KCAL_HIDRATOS - KCAL_POLIOIS) * polioes,
   ];
   const candidatos = [base];
   for (const extra of opcionais) {

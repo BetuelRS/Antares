@@ -9,7 +9,7 @@
   },
   "contagens": {
     "contradicoes": 0,
-    "suspeitas": 127
+    "suspeitas": 90
   },
   "corrigidas": {
     "acucares": 2,
@@ -451,42 +451,6 @@
       "mensagem": "182 kcal contra 121 kcal tipicas do subgrupo 040301"
     },
     {
-      "id": "ciqual-31054",
-      "nome": "Chewing gum, sugar-free",
-      "origem": "CIQUAL",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 206 kcal, -101.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ciqual-31121",
-      "nome": "Chewing gum, sugar level unknown (average)",
-      "origem": "CIQUAL",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 263 kcal, -61 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ciqual-31125",
-      "nome": "Breath mint, sugar-free",
-      "origem": "CIQUAL",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 241 kcal, -150.9 kcal acima do que os macros dao"
-    },
-    {
-      "id": "ciqual-31128",
-      "nome": "Hard candy and lollipop, sugar-free",
-      "origem": "CIQUAL",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 235 kcal, -153 kcal acima do que os macros dao"
-    },
-    {
       "id": "ciqual-36204",
       "nome": "Duck, meat and skin, raw",
       "origem": "CIQUAL",
@@ -637,7 +601,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 472 kcal, -150.5 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 472 kcal, -114.3 kcal acima do que os macros dao"
     },
     {
       "id": "usda-167606",
@@ -646,25 +610,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 182 kcal, -49.3 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-167749",
-      "nome": "Lemon peel, raw",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 47 kcal, -25.7 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-167806",
-      "nome": "Baobab powder",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 250 kcal, -88.1 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 182 kcal, -37.9 kcal acima do que os macros dao"
     },
     {
       "id": "usda-168418",
@@ -685,42 +631,6 @@
       "mensagem": "energia declarada 106 kcal, -23.8 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-168567",
-      "nome": "Tomatoes, sun-dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 258 kcal, -48.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-168570",
-      "nome": "Peppers, hot chile, sun-dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 324 kcal, -50.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-168574",
-      "nome": "Beans, fava, in pod, raw",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 88 kcal, -20.3 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-168579",
-      "nome": "Peppers, pasilla, dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 345 kcal, -52.1 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-168581",
       "nome": "Fungi, Cloud ears, dried",
       "origem": "USDA",
@@ -736,7 +646,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 40 kcal, -26.5 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 40 kcal, -21.3 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169058",
@@ -745,16 +655,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 132 kcal, -85.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169241",
-      "nome": "Kanpyo, (dried gourd strips)",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 258 kcal, -41.8 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 132 kcal, -80.5 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169284",
@@ -763,25 +664,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 122 kcal, -29.1 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169373",
-      "nome": "Peppers, sweet, red, freeze-dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 314 kcal, -59.4 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-169396",
-      "nome": "Peppers, ancho, dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 281 kcal, -46 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 122 kcal, -26.9 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169593",
@@ -790,7 +673,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 228 kcal, -205.3 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 228 kcal, -131.3 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169594",
@@ -799,7 +682,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 220 kcal, -203.5 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 220 kcal, -143.9 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169597",
@@ -808,7 +691,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 198 kcal, -185.6 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 198 kcal, -185.4 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169713",
@@ -817,7 +700,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 316 kcal, -124.5 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 316 kcal, -82.5 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169722",
@@ -826,7 +709,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 216 kcal, -143.1 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 216 kcal, -57.5 kcal acima do que os macros dao"
     },
     {
       "id": "usda-169882",
@@ -835,25 +718,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 268 kcal, -114.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170075",
-      "nome": "Chives, freeze-dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 311 kcal, -62.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170267",
-      "nome": "Frozen novelties, Sugar Free, CREAMSICLE Pops",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 49 kcal, -25.3 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 268 kcal, -110 kcal acima do que os macros dao"
     },
     {
       "id": "usda-170422",
@@ -865,49 +730,13 @@
       "mensagem": "energia declarada 124 kcal, -25.9 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-170447",
-      "nome": "Potatoes, au gratin, dry mix, unprepared",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 314 kcal, -52.1 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170461",
-      "nome": "Tomato powder",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 302 kcal, -52 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170485",
-      "nome": "Leeks, (bulb and lower-leaf portion), freeze-dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 321 kcal, -57.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170486",
-      "nome": "Parsley, freeze-dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 271 kcal, -70.6 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-170495",
       "nome": "Seaweed, spirulina, dried",
       "origem": "USDA",
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 290 kcal, -104.9 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 290 kcal, -97.7 kcal acima do que os macros dao"
     },
     {
       "id": "usda-170679",
@@ -919,76 +748,13 @@
       "mensagem": "energia declarada 0 kcal, -400 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-170917",
-      "nome": "Spices, bay leaf",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 313 kcal, -93 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170919",
-      "nome": "Spices, cardamom",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 311 kcal, -66.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170920",
-      "nome": "Spices, celery seed",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 392 kcal, -73.7 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170921",
-      "nome": "Spices, coriander leaf, dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 279 kcal, -60.2 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-170925",
       "nome": "Spices, dill seed",
       "origem": "USDA",
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 305 kcal, -110.3 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170934",
-      "nome": "Spices, saffron",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 310 kcal, -50.3 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170935",
-      "nome": "Spices, sage, ground",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 315 kcal, -85.4 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170936",
-      "nome": "Spices, savory, ground",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 272 kcal, -82.7 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 305 kcal, -68.1 kcal acima do que os macros dao"
     },
     {
       "id": "usda-170937",
@@ -997,16 +763,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 295 kcal, -61.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-170938",
-      "nome": "Spices, thyme, dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 276 kcal, -82.6 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 295 kcal, -47 kcal acima do que os macros dao"
     },
     {
       "id": "usda-171315",
@@ -1015,34 +772,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 263 kcal, -128.1 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171316",
-      "nome": "Spices, anise seed",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 337 kcal, -76.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171319",
-      "nome": "Spices, chili powder",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 282 kcal, -99.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171320",
-      "nome": "Spices, cinnamon, ground",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 247 kcal, -102.2 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 263 kcal, -84.9 kcal acima do que os macros dao"
     },
     {
       "id": "usda-171321",
@@ -1051,34 +781,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 274 kcal, -129 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171329",
-      "nome": "Spices, paprika",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 282 kcal, -106.5 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171331",
-      "nome": "Spices, poultry seasoning",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 307 kcal, -61.3 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-171332",
-      "nome": "Spices, pumpkin pie spice",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 342 kcal, -71.8 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 274 kcal, -61.2 kcal acima do que os macros dao"
     },
     {
       "id": "usda-171426",
@@ -1090,22 +793,13 @@
       "mensagem": "energia declarada 763 kcal, -137 kcal acima do que os macros dao"
     },
     {
-      "id": "usda-172239",
-      "nome": "Spearmint, dried",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 285 kcal, -56.6 kcal acima do que os macros dao"
-    },
-    {
       "id": "usda-172803",
       "nome": "Leavening agents, baking powder, double-acting, sodium aluminum sulfate",
       "origem": "USDA",
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 53 kcal, -57.8 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 53 kcal, -57.4 kcal acima do que os macros dao"
     },
     {
       "id": "usda-172804",
@@ -1114,16 +808,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 51 kcal, -45.8 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173018",
-      "nome": "Cereals ready-to-eat, BARBARA'S PUFFINS, original",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 333 kcal, -65.9 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 51 kcal, -45.4 kcal acima do que os macros dao"
     },
     {
       "id": "usda-173858",
@@ -1132,7 +817,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 158 kcal, -88.8 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 158 kcal, -88.2 kcal acima do que os macros dao"
     },
     {
       "id": "usda-174635",
@@ -1141,25 +826,7 @@
       "tipo": "atwater",
       "gravidade": "suspeita",
       "campo": "kcal",
-      "mensagem": "energia declarada 200 kcal, -155.2 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-174639",
-      "nome": "Cereals ready-to-eat, UNCLE SAM CEREAL",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 346 kcal, -85.6 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-175043",
-      "nome": "Leavening agents, yeast, baker's, active dry",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 325 kcal, -69.8 kcal acima do que os macros dao"
+      "mensagem": "energia declarada 200 kcal, -72.6 kcal acima do que os macros dao"
     }
   ]
 }
