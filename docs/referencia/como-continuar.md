@@ -26,8 +26,15 @@ em vez de uma versão de cada vez. A cerimónia por versão era perto de um ter�
 | Corrida | O quê | Estado |
 |---|---|---|
 | **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **escrita, por lançar** |
-| **2 · as ferramentas** | 2.9.0 + 2.10.0 | por abrir |
+| **2 · as ferramentas** | 2.9.0 + 2.10.0 | **feita, e não se lança** |
 | **3 · o conteúdo** | 2.11.0 a 2.15.0 | por abrir |
+
+**A corrida 2 não muda nada na app**, e por isso não sai. O motor de qualidade e a oficina são
+ferramentas do repositório: o passo 1 do guia de lançamento diz que arrumação, testes e
+ferramentas não se lançam, e o CHANGELOG é «o que tem significado para quem usa a Antares».
+Os números 2.9.0 e 2.10.0 ficam por usar — a próxima versão a sair depois da 2.7.0 é a
+**2.11.0**, a primeira de conteúdo. Saltar dois números não custa nada: o `versionCode` deriva
+do nome e continua a crescer.
 
 **O que não se junta é o conteúdo com o código.** As decisões sobre nomes, fusões e porções
 são do dono; tomá-las em lote sem ele as ver é o modo de falhar deste bloco — um alimento com
@@ -49,6 +56,23 @@ Os oito pontos do plano estão feitos. Falta **o aparelho e o lançamento**:
 3. Lançar, com os quatro APK **e** os dois ficheiros do catálogo.
 
 Depois disso, a corrida 2 abre com perguntas, como manda a A2.
+
+## As ferramentas da corrida 2
+
+Duas, e nenhuma delas aparece na app. Estão documentadas em
+[`tools/README.md`](../../tools/README.md); em resumo:
+
+- **O motor de qualidade** corre dentro do `construir.mjs`. Cinco verificações, todas a
+  comparar o alimento consigo mesmo. Uma **contradição** — um número impossível — chumba a
+  construção a menos que esteja declarada em `qualidade.json`. Uma **suspeita** não chumba
+  nada e vai para a fila. Hoje: 12 contradições e 252 suspeitas em 8 011 alimentos.
+- **A oficina** é uma página local (`node tools/oficina/servidor.mjs`). Escreve em
+  `correcoes.json`, e a fila vem ordenada por quantas vezes cada alimento foi registado — o
+  histórico sai do telemóvel e **não entra no git**.
+
+O que fica por decidir, e é decisão tua: **o vocabulário dos segmentos** — o que é uma base, o
+que é um estado, e como se escreve cada um em português. A ferramenta separa os segmentos e
+mostra os que ainda estão em inglês; traduzi-los é a corrida 3.
 
 ## As regras
 
