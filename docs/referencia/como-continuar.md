@@ -60,20 +60,44 @@ Está tudo escrito e verde. Falta **o aparelho e o lançamento**:
    cozinhado?». Metade do catálogo não o tem, e é de propósito.
 4. Lançar, com os quatro APK **e** os dois ficheiros do catálogo.
 
-## As decisões que ficaram para o dono
+## O estado do catálogo
 
-São de conteúdo, e a oficina é onde se tomam (`node tools/oficina/servidor.mjs`):
+**7 932 alimentos.** As decisões de conteúdo do bloco D foram tomadas e estão escritas com a
+razão de cada uma em [`arbitragem.mjs`](../../tools/catalogo/arbitragem.mjs).
 
-- **65 colisões de nome**, 23 delas a discordar na energia: a batata assada a 91 kcal numa
-  fonte e 159 noutra, a sangria a 89 contra 120. O separador «duplicados» mostra as duas
-  linhas lado a lado; escolher uma escreve a fusão e deixa lápide para os favoritos seguirem.
-- **3 767 alimentos ainda em inglês.** O separador «segmentos» mostra o que falta traduzir por
-  quantos alimentos cada um desbloqueia — traduzir um segmento arruma todos os que esperam
-  por ele. Medido: 930 termos dão 30% dos nomes, 2 500 dão 65%, 3 500 dão 84%.
-- **252 suspeitas do motor de qualidade**, das quais 16 são duas fontes a discordar sobre o
-  mesmo alimento — o arroz selvagem cru a 344 kcal aqui e 101 na USDA.
-- **12 contradições aceites**: números impossíveis que a construção deixa passar por estarem
-  declarados. Cada uma é um alimento por corrigir.
+| | |
+|---|---|
+| colisões de nome | **zero** — 97 fusões e 24 nomes desambiguados |
+| contradições | **zero** — as três regras da coerência corrigem-nas no oleoduto |
+| suspeitas na fila | **90** — 28 de Atwater, 60 fora de escala, 2 discordâncias |
+| nomes em português | **2 131**, de 1 362 segmentos de vocabulário |
+| ainda em inglês | **2 909** |
+| com porção | 2 090 |
+| com família de confeção | 4 153 |
+| com água declarada | 7 019 |
+
+**A regra de arbitragem, em três degraus.** Uma medição ganha a uma estimativa escrita à mão.
+Duas medições que concordam resolvem-se a favor da portuguesa — a TCA mediu produto daqui.
+Duas que discordam desempatam-se por uma terceira, e a USDA está cá e é independente das
+outras duas.
+
+**Nem toda a colisão é um duplicado.** Vinte e quatro eram dois alimentos diferentes com o
+mesmo nome: a batata assada da CIQUAL tem 0,1 g de gordura e a da TCA tem 4,8. Aí fundir era
+apagar comida, e o que se corrige é o nome.
+
+## O que falta, e é trabalho de meses
+
+- **2 909 alimentos ainda em inglês.** O separador «segmentos» da oficina mostra o que falta
+  por quantos alimentos cada um desbloqueia — traduzir um segmento arruma todos os que
+  esperam por ele. Medido: 1 362 segmentos dão 42 % dos nomes; para 65 % são precisos cerca
+  de 2 500, e para 84 % cerca de 3 500.
+- **90 suspeitas.** O que resta do Atwater são as fontes que usam factores específicos por
+  alimento — o cacau, os frutos secos, as leguminosas — e isso é legítimo. O que resta de
+  «fora de escala» são outliers verdadeiros: o álcool puro é mesmo o mais calórico do grupo
+  das bebidas.
+- **Cada lote de vocabulário traz outra leva de duplicados à superfície**, e isso não é a
+  tradução a criar problemas: é o inventário a ficar legível. Foram seis voltas de arbitragem
+  até aqui, e a seguinte virá com o lote seguinte.
 
 ## As ferramentas da corrida 2
 

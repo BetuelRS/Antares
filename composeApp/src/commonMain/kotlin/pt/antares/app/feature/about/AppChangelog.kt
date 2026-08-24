@@ -36,8 +36,9 @@ object AppChangelog {
                     "Se pesaste depois de cozinhar, esse peso vale mais do que a tabela",
                 "**Sete vezes mais alimentos com porção** — «uma fatia», «uma chávena» — em " +
                     "vez de escreveres gramas",
-                "**Mil alimentos deixam de ter nome de laboratório em inglês.** O que ainda " +
-                    "não tem nome inteiro em português fica em inglês, e não meio traduzido",
+                "**Dois mil alimentos deixam de ter nome de laboratório em inglês**, e 97 " +
+                    "que estavam repetidos passam a estar uma vez só. O que ainda não tem " +
+                    "nome inteiro em português fica em inglês, e não meio traduzido",
                 "**O catálogo passa a poder descarregar-se**, nas Definições: corrigir um " +
                     "alimento deixa de esperar por uma versão na loja",
                 "**Um nutriente procurado e não encontrado passa a dizê-lo**, em vez de " +
@@ -51,8 +52,9 @@ object AppChangelog {
                     "it after cooking, that weight beats the table",
                 "**Seven times more foods with a serving** — «a slice», «a cup» — instead of " +
                     "typing grams",
-                "**A thousand foods lose their English lab names.** What has no full " +
-                    "Portuguese name yet stays in English, rather than half translated",
+                "**Two thousand foods lose their English lab names**, and 97 that were " +
+                    "duplicated are now there once. What has no full Portuguese name yet " +
+                    "stays in English, rather than half translated",
                 "**The catalogue can now be downloaded**, from Settings: fixing a food no " +
                     "longer waits for a store release",
                 "**A nutrient looked for and not found now says so**, instead of vanishing " +

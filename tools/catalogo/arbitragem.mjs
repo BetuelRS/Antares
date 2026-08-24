@@ -176,6 +176,12 @@ const FUNDIR = [
   ["ciqual-10008", "tca-1900000115", "caracol cru: 78 contra 85"],
   ["ciqual-11050", "tca-1201", "estragão seco: 342 contra 363"],
   ["ciqual-11038", "tca-1228", "tomilho seco: 285 contra 321"],
+
+  // --- a sexta volta: os queijos, que a repetição no nome escondia -----------------------
+  ["ciqual-7180", "tca-1214", "pão pita: 249 contra 218"],
+  ["usda-171241", "tca-50800020", "queijo gouda: 356 contra 380"],
+  ["usda-171242", "tca-50800022", "queijo gruyère: 413 contra 415"],
+  ["usda-171250", "tca-52", "queijo roquefort: 369 contra 372"],
 ];
 
 /**

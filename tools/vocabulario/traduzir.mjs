@@ -69,9 +69,22 @@ export function flexionar(palavra, genero, numero) {
   const ultima = partes.length === 1 ? partes[0] : partes[0];
   const resto = partes.length === 1 ? "" : ` ${partes.slice(1).join(" ")}`;
 
-  const comGenero = genero === "f" && ultima.endsWith("o")
-    ? `${ultima.slice(0, -1)}a`
-    : ultima;
+  /**
+   * Duas terminações marcam género, e não uma.
+   *
+   * A regular é o `-o` → `-a`. A outra é o `-ês` dos gentílicos — «japonês» faz «japonesa»,
+   * e o acento cai —, e sem ela saía «Massa, japonês» onde a massa é feminina. O plural
+   * também não é o mesmo: «japoneses», e não «japonês» inalterado por acabar em `s`.
+   */
+  const comGenero = ultima.endsWith("ês")
+    ? (genero === "f" ? `${ultima.slice(0, -2)}esa` : ultima)
+    : genero === "f" && ultima.endsWith("o")
+      ? `${ultima.slice(0, -1)}a`
+      : ultima;
+
+  if (ultima.endsWith("ês") && numero === "p") {
+    return `${ultima.slice(0, -2)}es${genero === "f" ? "as" : "es"}${resto}`;
+  }
 
   return pluralizar(comGenero, numero) + resto;
 }
@@ -320,8 +333,29 @@ export function traduzirNome(nomeEn, vocabulario) {
     return flexionar(entrada.portugues, genero, numero);
   });
 
-  const nome = maiusculaInicial(traduzidos.join(", "));
+  const nome = maiusculaInicial(semRepetir(traduzidos).join(", "));
   return { nome, completo: porTraduzir.length === 0, porTraduzir };
+}
+
+/**
+ * Tira o que um segmento repete do anterior.
+ *
+ * «Cheese, colby» dá «Queijo» e «queijo colby», porque o dicionário tem de saber o que é um
+ * «colby» quando ele aparece sozinho. Juntos ficava «Queijo, queijo colby», que se lê como
+ * um defeito — e é.
+ *
+ * A regra é estreita de propósito: só se corta quando o segmento **começa** pelo anterior
+ * inteiro. «Sopa, sopa de peixe» corta; «Pão, pão-de-ló» não, porque «pão-de-ló» não começa
+ * pela palavra «pão» seguida de espaço.
+ */
+function semRepetir(segmentos) {
+  const saida = [];
+  for (const s of segmentos) {
+    const anterior = saida[saida.length - 1];
+    const prefixo = anterior && `${anterior.toLowerCase()} `;
+    saida.push(prefixo && s.toLowerCase().startsWith(prefixo) ? s.slice(prefixo.length) : s);
+  }
+  return saida;
 }
 
 function maiusculaInicial(texto) {

@@ -39,10 +39,18 @@ a oficina de curadoria não mudam nada na app e por isso não se lançam.*
 - **Sete vezes mais alimentos com porção**, de 297 para 2 101 — «uma fatia», «uma chávena»,
   «uma unidade média» — e 547 deles com mais do que uma maneira de medir. Para o resto do
   catálogo, registar continua a ser escrever gramas.
-- **Mil e dezassete alimentos deixam de ter nome de laboratório em inglês.** Numa app
-  portuguesa eram 4 958, e traduz-se o vocabulário e não os nomes: «raw» traduz-se uma vez, e
-  não seiscentas e vinte e nove. O que ainda não tem nome inteiro em português fica em inglês,
-  em vez de aparecer meio traduzido.
+- **Dois mil cento e trinta e um alimentos deixam de ter nome de laboratório em inglês.** Numa
+  app portuguesa eram 4 958, e traduz-se o vocabulário e não os nomes: «raw» traduz-se uma vez,
+  e não seiscentas e vinte e nove. O que ainda não tem nome inteiro em português fica em
+  inglês, em vez de aparecer meio traduzido — que era o que estava a acontecer a 5 765 deles,
+  com nomes como «Wild arroz, cozinhado» e «Pie, Dutch Maçã, Comercial».
+- **Noventa e sete alimentos repetidos deixam de estar no catálogo duas vezes.** O agrião, o
+  espadarte, o alecrim e o tomilho estavam lá em francês e em português, e a app dava duas
+  respostas à mesma pergunta conforme a linha que se tocasse. Quem os tiver nos favoritos ou
+  numa receita não perde nada: cada um deixa uma marca a apontar para o que fica.
+- **Vinte e três mil valores de nutrientes novos**, em 2 954 alimentos americanos: a água, o
+  fósforo, o colesterol, as gorduras mono e poli-insaturadas, o álcool. Estavam na fonte e a
+  leitura antiga não os tinha trazido.
 - **O dia passa a dizer de quanto é o «cerca de» das suas calorias**, quando isso muda a
   leitura dele: quando o que falta é menor do que a própria incerteza da contagem — e aí um dia
   não chega para concluir nada, mas a tendência da semana chega — e quando mais de um terço das

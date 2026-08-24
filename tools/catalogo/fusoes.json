@@ -93,7 +93,11 @@
     "ciqual-11036": "tca-1190",
     "ciqual-10008": "tca-1900000115",
     "ciqual-11050": "tca-1201",
-    "ciqual-11038": "tca-1228"
+    "ciqual-11038": "tca-1228",
+    "ciqual-7180": "tca-1214",
+    "usda-171241": "tca-50800020",
+    "usda-171242": "tca-50800022",
+    "usda-171250": "tca-52"
   },
   "porque": {
     "ptx3_queijo_azul": "os números do escrito à mão são cópia dos da USDA",
@@ -188,6 +192,10 @@
     "ciqual-11036": "alecrim seco: 328 contra 377",
     "ciqual-10008": "caracol cru: 78 contra 85",
     "ciqual-11050": "estragão seco: 342 contra 363",
-    "ciqual-11038": "tomilho seco: 285 contra 321"
+    "ciqual-11038": "tomilho seco: 285 contra 321",
+    "ciqual-7180": "pão pita: 249 contra 218",
+    "usda-171241": "queijo gouda: 356 contra 380",
+    "usda-171242": "queijo gruyère: 413 contra 415",
+    "usda-171250": "queijo roquefort: 369 contra 372"
   }
 }

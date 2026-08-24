@@ -77,8 +77,8 @@ Quem quiser contribuir: [CONTRIBUTING.md](CONTRIBUTING.md). Vulnerabilidades:
 
 | Fonte | O que dá | Licença |
 |---|---|---|
-| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) | a base do catálogo — 3330 alimentos europeus | Licence Ouverte / Etalab 2.0 |
-| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2947 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) |
+| [CIQUAL 2025 · ANSES](https://ciqual.anses.fr/) | a base do catálogo — 3329 alimentos europeus | Licence Ouverte / Etalab 2.0 |
+| [USDA FoodData Central (SR Legacy)](https://fdc.nal.usda.gov/) | 2944 alimentos, e os micronutrientes que a CIQUAL não mede | domínio público (CC0) |
 | [INSA — Tabela de Composição de Alimentos](https://portfir.insa.min-saude.pt/pt/) | 1372 alimentos portugueses | com direitos de autor; **uso sujeito a referenciação visível**, que a app faz no ecrã de atribuições e em cada alimento |
 | [EFSA](https://www.efsa.europa.eu/) | valores de referência dos micronutrientes | dados públicos |
 | [free-exercise-db](https://github.com/yuhonas/free-exercise-db) | catálogo e imagens de exercícios | Unlicense (domínio público) |
