@@ -188,15 +188,29 @@ const correcoes = JSON.parse(readFileSync(CORRECOES, "utf8"));
 const podados = new Set(correcoes.podados);
 const liquidos = new Set(correcoes.liquidos);
 
+// As porções escritas na oficina. Nenhuma das quatro fontes publica «uma fatia» nem «um
+// copo», e é essa a unidade por que as pessoas comem — pesar a comida antes de a comer é o
+// que faz um diário ser abandonado à segunda semana.
+const porcoes = correcoes.porcoes ?? {};
+
 const vivos = tudo.filter((e) => !podados.has(e.id));
 let nomesAplicados = 0;
+let porcoesAplicadas = 0;
 for (const e of vivos) {
   const nome = correcoes.nomes[e.id];
   if (nome != null && nome !== e.namePt) { e.namePt = nome; nomesAplicados++; }
   e.isLiquid = liquidos.has(e.id);
+
+  const porcao = porcoes[e.id];
+  if (porcao?.nome && porcao.gramas > 0) {
+    e.servingName = porcao.nome;
+    e.servingGrams = porcao.gramas;
+    porcoesAplicadas++;
+  }
 }
 console.log(`\npodados por decisão anterior: ${tudo.length - vivos.length}`);
 console.log(`nomes corrigidos aplicados:   ${nomesAplicados}`);
+console.log(`porções escritas na oficina:  ${porcoesAplicadas}`);
 console.log(`marcados como líquido:        ${vivos.filter((e) => e.isLiquid).length}`);
 
 // --------------------------------------------------------------------- o vocabulário

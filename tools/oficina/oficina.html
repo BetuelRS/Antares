@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oficina de curadoria</title>
+<style>
+  :root {
+    --fundo: #12100e; --papel: #1c1a17; --risco: #2e2a25;
+    --texto: #ece7df; --fraco: #9c948a; --marca: #d98a3d; --grave: #d9553d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--fundo); color: var(--texto);
+    font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+    display: grid; grid-template-columns: 320px 1fr; height: 100vh;
+  }
+  aside { border-right: 1px solid var(--risco); overflow-y: auto; }
+  main { overflow-y: auto; padding: 24px 32px; max-width: 760px; }
+
+  .topo { padding: 14px 16px; border-bottom: 1px solid var(--risco); position: sticky; top: 0; background: var(--fundo); }
+  .topo input { width: 100%; padding: 8px 10px; background: var(--papel); color: var(--texto); border: 1px solid var(--risco); border-radius: 6px; }
+  .topo label { display: block; margin-top: 8px; color: var(--fraco); font-size: 13px; }
+
+  .linha { padding: 10px 16px; border-bottom: 1px solid var(--risco); cursor: pointer; }
+  .linha:hover, .linha.activa { background: var(--papel); }
+  .linha b { font-weight: 600; }
+  .linha small { color: var(--fraco); display: block; }
+  .selo { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--risco); color: var(--fraco); margin-right: 4px; }
+  .selo.grave { color: var(--grave); border-color: var(--grave); }
+
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--fraco); margin: 28px 0 10px; font-weight: 600; }
+  .en { color: var(--fraco); margin: 0 0 18px; }
+
+  .numeros { display: flex; flex-wrap: wrap; gap: 18px; padding: 14px 16px; background: var(--papel); border-radius: 10px; }
+  .numeros div { min-width: 72px; }
+  .numeros span { display: block; color: var(--fraco); font-size: 12px; }
+  .numeros b { font-variant-numeric: tabular-nums; font-size: 17px; }
+
+  .achado { padding: 10px 14px; border-left: 3px solid var(--marca); background: var(--papel); border-radius: 0 8px 8px 0; margin-bottom: 8px; }
+  .achado.grave { border-left-color: var(--grave); }
+  .achado b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--fraco); }
+
+  .segmento { display: inline-block; padding: 3px 9px; margin: 0 6px 6px 0; border: 1px dashed var(--risco); border-radius: 6px; color: var(--fraco); font-size: 13px; }
+  .segmento.falta { border-style: solid; border-color: var(--marca); color: var(--marca); }
+
+  label.campo { display: block; margin-bottom: 12px; }
+  label.campo span { display: block; color: var(--fraco); font-size: 12px; margin-bottom: 4px; }
+  input[type=text], input[type=number] { padding: 8px 10px; background: var(--papel); color: var(--texto); border: 1px solid var(--risco); border-radius: 6px; width: 100%; }
+  .par { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+  .interruptores { display: flex; gap: 18px; margin: 14px 0; color: var(--fraco); }
+  button { padding: 9px 18px; border-radius: 8px; border: 0; background: var(--marca); color: #17130e; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .4; cursor: default; }
+  .recado { margin-left: 12px; color: var(--fraco); font-size: 13px; }
+  .vazio { color: var(--fraco); padding: 40px 0; }
+</style>
+</head>
+<body>
+<aside>
+  <div class="topo">
+    <input id="procura" type="search" placeholder="procurar por nome ou identificador">
+    <label><input id="soAchados" type="checkbox"> só os que têm achados</label>
+    <label id="contagem"></label>
+  </div>
+  <div id="lista"></div>
+</aside>
+
+<main id="painel"><p class="vazio">Escolhe um alimento à esquerda.</p></main>
+
+<script type="module">
+const $ = (s) => document.querySelector(s);
+let fila = [];
+let actual = null;
+
+async function carregarFila() {
+  const so = $("#soAchados").checked ? "?achados=1" : "";
+  const r = await fetch("/api/fila" + so).then((x) => x.json());
+  fila = r.lista;
+  $("#contagem").textContent = `${r.lista.length} de ${r.total} alimentos`;
+  desenharLista();
+}
+
+function desenharLista() {
+  const termo = $("#procura").value.trim().toLowerCase();
+  const visiveis = termo
+    ? fila.filter((f) => `${f.namePt} ${f.nameEn} ${f.id}`.toLowerCase().includes(termo))
+    : fila;
+
+  $("#lista").innerHTML = visiveis.map((f) => `
+    <div class="linha${f.id === actual ? " activa" : ""}" data-id="${f.id}">
+      <b>${escapar(f.namePt)}</b>
+      <small>${f.registos ? f.registos + "&times; registado &middot; " : ""}${f.kcal} kcal &middot; ${escapar(f.id)}</small>
+      ${f.achados.map((a) => `<span class="selo${a.gravidade === "contradicao" ? " grave" : ""}">${a.tipo}</span>`).join("")}
+    </div>`).join("");
+
+  for (const el of document.querySelectorAll(".linha")) {
+    el.onclick = () => abrir(el.dataset.id);
+  }
+}
+
+async function abrir(id) {
+  actual = id;
+  desenharLista();
+  const c = await fetch("/api/alimento?id=" + encodeURIComponent(id)).then((x) => x.json());
+  desenharCartao(c);
+}
+
+function desenharCartao(c) {
+  const a = c.alimento;
+  const m = a.micros ?? {};
+
+  $("#painel").innerHTML = `
+    <h1>${escapar(c.decidido.nome ?? a.namePt)}</h1>
+    <p class="en">${escapar(a.nameEn)} &middot; ${escapar(a.id)}${c.registos ? ` &middot; registado ${c.registos}&times;` : ""}</p>
+
+    <div class="numeros">
+      ${numero("kcal", a.kcal)} ${numero("proteína", a.proteinG, "g")}
+      ${numero("hidratos", a.carbsG, "g")} ${numero("açúcares", a.sugarsG, "g")}
+      ${numero("gordura", a.fatG, "g")} ${numero("saturada", a.satFatG, "g")}
+      ${numero("fibra", m.fiber_g, "g")} ${numero("sódio", m.sodium_mg, "mg")}
+      ${numero("água", m.water_g, "g")}
+    </div>
+
+    ${c.achados.length ? `<h2>o que o motor apanhou</h2>${c.achados.map((x) => `
+      <div class="achado${x.gravidade === "contradicao" ? " grave" : ""}">
+        <b>${x.tipo}${x.gravidade === "contradicao" ? " &middot; impossível" : ""}</b>
+        ${escapar(x.mensagem)}
+      </div>`).join("")}` : ""}
+
+    <h2>o nome, segmento a segmento</h2>
+    <div>${c.segmentosEn.map((s) => {
+      const falta = c.porTraduzir.some((p) => p.toLowerCase() === s.toLowerCase());
+      return `<span class="segmento${falta ? " falta" : ""}">${escapar(s)}</span>`;
+    }).join("")}</div>
+
+    <h2>o que decides</h2>
+    <label class="campo"><span>nome em português</span>
+      <input id="nome" type="text" value="${escapar(c.decidido.nome ?? a.namePt)}"></label>
+
+    <div class="par">
+      <label class="campo"><span>porção, como se come</span>
+        <input id="porcaoNome" type="text" placeholder="uma fatia" value="${escapar(c.decidido.porcao?.nome ?? a.servingName ?? "")}"></label>
+      <label class="campo"><span>gramas</span>
+        <input id="porcaoGramas" type="number" min="1" value="${c.decidido.porcao?.gramas ?? a.servingGrams ?? ""}"></label>
+    </div>
+
+    <div class="interruptores">
+      <label><input id="liquido" type="checkbox" ${c.decidido.liquido ? "checked" : ""}> líquido</label>
+      <label><input id="verificado" type="checkbox" ${c.decidido.verificado ? "checked" : ""}> verificado</label>
+      <label><input id="podado" type="checkbox" ${c.decidido.podado ? "checked" : ""}> tirar do catálogo</label>
+    </div>
+
+    <button id="guardar">Guardar</button><span class="recado" id="recado"></span>`;
+
+  $("#guardar").onclick = () => guardar(c);
+}
+
+async function guardar(c) {
+  const id = c.alimento.id;
+  const decisoes = [
+    { id, tipo: "nome", valor: $("#nome").value },
+    { id, tipo: "porcao", nome: $("#porcaoNome").value, gramas: $("#porcaoGramas").value },
+    { id, tipo: "liquido", valor: $("#liquido").checked },
+    { id, tipo: "verificado", valor: $("#verificado").checked },
+    { id, tipo: "podar", valor: $("#podado").checked },
+  ];
+
+  // Uma de cada vez, e por ordem: o servidor lê o ficheiro, aplica uma decisão e volta a
+  // escrever. Mandá-las juntas obrigava-o a fundir cinco escritas, que é onde se perdem
+  // ficheiros de dois mil e setecentos nomes.
+  $("#guardar").disabled = true;
+  for (const d of decisoes) {
+    const r = await fetch("/api/decisao", { method: "POST", body: JSON.stringify(d) });
+    if (!r.ok) {
+      $("#recado").textContent = (await r.json()).erro;
+      $("#guardar").disabled = false;
+      return;
+    }
+  }
+  $("#guardar").disabled = false;
+  $("#recado").textContent = "guardado em correcoes.json — corre o construir.mjs para o ver no catálogo";
+}
+
+const numero = (rotulo, valor, unidade = "") =>
+  valor == null || typeof valor !== "number"
+    ? ""
+    : `<div><span>${rotulo}</span><b>${valor}${unidade}</b></div>`;
+
+const escapar = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+$("#procura").oninput = desenharLista;
+$("#soAchados").onchange = carregarFila;
+carregarFila();
+</script>
+</body>
+</html>

@@ -60,3 +60,8 @@ arquivos/
 
 # A base tirada do telemóvel para extrair as correções do catálogo. É grande e é derivada.
 extracao/
+
+# O histórico de registos, tirado do telemóvel para dar ordem à fila da oficina.
+# São só contagens, mas uma contagem por alimento diz o que a pessoa come — e este
+# repositório é público.
+tools/oficina/historico.json

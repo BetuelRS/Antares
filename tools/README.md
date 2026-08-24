@@ -80,6 +80,46 @@ Provam que ele **não** acusa o que não devia. O contrário — que ele continu
 `MotorDeQualidadeTest`, do lado do Kotlin, porque um verificador partido não dá erro: fica
 calado, e isso lê-se como o catálogo ter melhorado.
 
+### A oficina de curadoria
+
+```bash
+node tools/oficina/servidor.mjs      # → http://127.0.0.1:4173
+```
+
+Uma página local, um alimento de cada vez: os números, o que o motor de qualidade apanhou já
+em palavras, o nome partido nos segmentos por que as fontes o escrevem, e os campos que se
+decidem — nome, porção, líquido, verificado, tirar do catálogo. O botão escreve em
+`tools/catalogo/correcoes.json`, que é por onde o oleoduto já aplicava o que os dezoito passos
+do semeador tinham decidido.
+
+**A ordem da fila é o que a torna útil.** Por quantas vezes o alimento foi registado: um que
+se come todas as semanas vale mil que ninguém procura, e a curadoria só acontece se as
+primeiras horas caírem no pão e não em cogumelos shiitake enlatados. O histórico sai do
+telemóvel:
+
+```bash
+adb shell am force-stop com.antares.app
+adb exec-out run-as com.antares.app cat databases/antares.db > extracao/antares.db
+node tools/oficina/historico.mjs
+```
+
+Não é obrigatório — sem ele a fila cai para o número de achados. E **não entra no git**: são
+só contagens, mas uma contagem por alimento diz o que a pessoa come, e o repositório é
+público.
+
+Duas decisões que valem a pena saber:
+
+- **O servidor só escuta em `127.0.0.1`.** Escreve num ficheiro do repositório, e não há
+  versão disto que deva estar ao alcance da rede local.
+- **A função que decide é pura, e tem testes.** O `correcoes.json` tem 2 707 nomes juntados ao
+  longo de meses, e uma escrita mal feita apaga-os sem dar erro — só se descobre na construção
+  seguinte, quando o catálogo volta a ter nomes de laboratório em inglês. O servidor recusa
+  ainda uma escrita que perca mais do que um nome.
+
+O vocabulário dos segmentos — o que é uma base, o que é um estado, como se escreve cada um em
+português — **é decisão do dono**. A ferramenta separa os segmentos e mostra quais é que ainda
+estão em inglês; não os traduz.
+
 ### As correções, e porque estão num ficheiro
 
 Cinco dos dezoito passos arrumaram nomes americanos ao longo de meses. Reconstruir das fontes
