@@ -40,6 +40,46 @@ construção falhar. Para o aceitar, corre-se com `--aceitar-desvios`, que reesc
 as duas sejam a mesma. Sem isso, o catálogo novo viaja dentro do APK e não entra em telemóvel
 nenhum.
 
+### O motor de qualidade
+
+Cinco verificações, todas a comparar o alimento **consigo mesmo**. Não vão à fonte confirmar
+nada — um alimento que se contradiz está errado independentemente do que a fonte diga.
+
+| Verificação | O que pergunta |
+|---|---|
+| **Atwater** | a energia bate com os macros que a produzem? |
+| **massa** | água e macros cabem em cem gramas? |
+| **somas** | saturada, mono e poli cabem na gordura total? o açúcar cabe nos hidratos? |
+| **escala** | está fora de escala no seu subgrupo? *(só o que vem da CIQUAL — é a única fonte com árvore de grupos)* |
+| **discordância** | duas fontes dizem energias diferentes para o mesmo nome? |
+
+**Duas gravidades, e a diferença não é de grau.** Uma `contradicao` é um número impossível, e
+**chumba a construção** a menos que já esteja declarada em `qualidade.json` — como os desvios.
+Uma `suspeita` é um número improvável, não chumba nada, e vai para a fila da oficina. A razão
+é que a suspeita mede uma discordância entre métodos de medição: chumbar por isso era não
+poder publicar até a ANSES corrigir a tabela dela.
+
+Três armadilhas já pagas, e todas na mesma família — **somar duas vezes o que já lá está**:
+
+- A **fibra** está fora dos hidratos na CIQUAL, que os publica disponíveis, e dentro deles na
+  USDA e na TCA, que os publicam por diferença. Os **polióis** seguem a mesma regra: somá-los
+  sempre levou os achados de 106 para 113. O Atwater faz as contas todas e fica pela mais
+  próxima.
+- O **álcool** está dentro da água sempre que a humidade foi medida por secagem. Pôs três
+  vinhos da TCA a somarem mais de cem gramas.
+- Um **estado de texto** — `"vestigios"`, `"<0.03"` — numa conta dá `NaN`, e `NaN > 100` é
+  falso. O verificador passava a não acusar nada, sem dar erro. Catorze óleos e pães.
+
+Os testes estão em `qualidade.test.mjs` e correm com o resto:
+
+```bash
+node --test "tools/**/*.test.mjs"
+```
+
+Provam que ele **não** acusa o que não devia. O contrário — que ele continua a falar — é do
+`MotorDeQualidadeTest`, do lado do Kotlin, porque um verificador partido não dá erro: fica
+calado, e isso lê-se como o catálogo ter melhorado.
+
 ### As correções, e porque estão num ficheiro
 
 Cinco dos dezoito passos arrumaram nomes americanos ao longo de meses. Reconstruir das fontes

@@ -1,5 +1,5 @@
 /**
- * Corre a verificação toda e diz o que interessa em cinco linhas.
+ * Corre a verificação toda e diz o que interessa em seis linhas.
  *
  *     node tools/verificar.mjs
  *     node tools/verificar.mjs --rapido    (salta o lint, que é o mais lento)
@@ -11,7 +11,8 @@
  *
  * Lê os XML que o Gradle escreve e conta: quantos testes correram, quantos foram saltados, e
  * quantos falharam — com os nomes dos que falharam, que é a única coisa que se quer ver.
- * Corre também as funções do servidor e as duas buscas de segredos que o gancho de envio faz.
+ * Corre também os testes das ferramentas — o oleoduto do catálogo, que ninguém compila —, as
+ * funções do servidor, e as duas buscas de segredos que o gancho de envio faz.
  */
 import { spawnSync } from "node:child_process";
 import { readFileSync, readdirSync, existsSync, statSync, rmSync } from "node:fs";
@@ -142,6 +143,29 @@ if (detekt.length) {
   for (const d of detekt.slice(0, 5)) linhas.push(`    ${d.replace(raiz, "").slice(0, 140)}`);
 } else {
   linhas.push(`detekt${rapido ? "" : " e lint"}: limpos`);
+}
+
+// ------------------------------------------------------------------ as ferramentas
+
+/**
+ * O oleoduto do catálogo não é compilado por ninguém e não aparece nos testes do Gradle. O
+ * motor de qualidade decide o que se publica e o que vai para a fila de revisão, e um
+ * verificador partido **não dá erro**: passa a não encontrar nada, que se lê como estar tudo
+ * bem. É por isso que estes testes contam para o veredicto.
+ */
+// Sem consola pelo meio: o caminho do próprio node tem espaços — `C:\Program Files\…` — e o
+// `cmd.exe` corta-o no primeiro. É a mesma armadilha que já tinha apanhado o `gradlew`, e
+// dava-se a ler como «os testes não correram».
+const ferramentas = correr(process.execPath, ["--test", "tools/**/*.test.mjs"], { shell: false });
+const saidaFerramentas = (ferramentas.stdout || "") + (ferramentas.stderr || "");
+const passaramFerramentas = saidaFerramentas.match(/pass (\d+)/);
+const falharamFerramentas = saidaFerramentas.match(/fail (\d+)/);
+if (passaramFerramentas && falharamFerramentas) {
+  if (Number(falharamFerramentas[1])) vermelho = true;
+  linhas.push(`testes das ferramentas: ${passaramFerramentas[1]}, ${falharamFerramentas[1]} a falhar`);
+} else {
+  vermelho = true;
+  linhas.push("testes das ferramentas: não se percebeu a saída");
 }
 
 // ------------------------------------------------------------------ as funções do servidor

@@ -117,9 +117,9 @@ Os quatro APK saem já com o nome certo — `Antares-2.3.0-arm64-v8a.apk` e comp
 `build.gradle.kts` os renomeia a partir da versão. Não é preciso copiá-los para lado nenhum
 antes de os anexar.
 
-**Os dois últimos ficheiros não são opcionais.** A app vai buscar o manifesto a
-`releases/latest/download/manifesto.json`, e o `latest` é o do GitHub: aponta sempre para a
-release mais recente, **mesmo que ela não os traga**. Uma release publicada sem eles não
+**Os dois últimos ficheiros não são opcionais.** A app pede o manifesto pelo endereço de
+descarga da release mais recente — o `latest` do GitHub —, e esse aponta sempre para a última
+publicada, **mesmo que ela não os traga**. Uma release sem eles não
 mantém os anteriores — apaga o caminho, e o botão «Procurar» passa a dizer que não deu para
 chegar lá até à release seguinte. Os dois sobem juntos e sem lhes mudar o nome: o manifesto
 traz o resumo do catálogo que está ao lado dele, e o `CatalogoTemVersaoTest` já garante que

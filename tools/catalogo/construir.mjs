@@ -27,12 +27,14 @@ import { lerUsda, chaveDeNome, isLabDescriptor, energiaConcorda } from "./fontes
 import { lerTca } from "./fontes/tca.mjs";
 import { lerCurados, lerMicrosCurados } from "./fontes/curados.mjs";
 import { lerVocabulario, conferirComAEfsa } from "./vocabulario.mjs";
+import { verificar, LIMITES } from "./qualidade.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(HERE, "..", "..");
 const DADOS = join(HERE, "dados");
 const DESVIOS = join(HERE, "desvios.json");
 const CORRECOES = join(HERE, "correcoes.json");
+const QUALIDADE = join(HERE, "qualidade.json");
 const SAIDA = join(RAIZ, "composeApp", "src", "commonMain", "composeResources", "files", "catalogo.json");
 // Fora dos recursos de propósito: o manifesto é para a release, e um ficheiro a mais dentro
 // do APK é peso que ninguém lá vai buscar.
@@ -48,6 +50,7 @@ const MANIFESTO = join(RAIZ, "tools", "catalogo", "manifesto.json");
 const VERSAO = 3;
 
 const aceitarDesvios = process.argv.includes("--aceitar-desvios");
+const aceitarQualidade = process.argv.includes("--aceitar-qualidade");
 
 // ---------------------------------------------------------------- as fontes
 
@@ -69,11 +72,30 @@ const usadosDoUsda = new Set();
 let enriquecidos = 0;
 let microsPreenchidos = 0;
 
+/**
+ * Os pares que se encontraram pelo nome e discordaram na energia.
+ *
+ * São o combustível da verificação de discordância entre fontes, e ficam de fora do
+ * enriquecimento pela mesma razão: **duas tabelas publicadas a dizerem coisas diferentes
+ * sobre o mesmo alimento é o achado**, não um problema a resolver escolhendo uma delas.
+ * Nada disto entra no catálogo — só na fila da oficina.
+ */
+const discordancias = [];
+
 for (const e of ciqual.alimentos) {
   const chave = chaveDeNome(e.nameEn);
   const curta = chave.split(" ").slice(0, 2).join(" ");
   const par = usda.porChave.get(chave) ?? usda.porChaveCurta.get(curta);
-  if (!par || !energiaConcorda(par.kcal, e.kcal)) continue;
+  if (!par) continue;
+  if (!energiaConcorda(par.kcal, e.kcal)) {
+    // Só a correspondência pelo nome inteiro. A chave curta de duas palavras casa coisas
+    // diferentes — «chicken breast» com «chicken breast, breaded» — e uma discordância de
+    // energia entre dois alimentos que não são o mesmo não é achado nenhum.
+    if (usda.porChave.get(chave) && par.kcal != null && e.kcal != null) {
+      discordancias.push({ alimento: e, outraFonte: "USDA", outraEnergia: par.kcal });
+    }
+    continue;
+  }
   usadosDoUsda.add(par.id);
 
   let tocado = false;
@@ -240,6 +262,50 @@ if (aceitarDesvios) {
   if (novos.length > 20) console.error(`  … e mais ${novos.length - 20}`);
   console.error("\nOu se corrige a leitura da fonte, ou se corre com --aceitar-desvios e se lê o diff.");
   process.exit(1);
+}
+
+// ---------------------------------------------------------------------- a qualidade
+
+/**
+ * As perguntas que cada alimento tem de conseguir responder sobre si próprio.
+ *
+ * Corre sobre o `vivos`, e não sobre o que vai ser escrito: aqui os alimentos ainda trazem o
+ * subgrupo e a origem, que o catálogo não leva e de que as verificações precisam.
+ *
+ * **As contradições chumbam; as suspeitas enchem a fila da oficina.** Um número impossível é
+ * uma mentira que se publica; um número improvável é uma discordância entre métodos de
+ * medição, e chumbar por isso era não poder publicar até a fonte se corrigir.
+ */
+const achados = verificar(vivos, discordancias);
+const contradicoes = achados.filter((a) => a.gravidade === "contradicao");
+const suspeitas = achados.filter((a) => a.gravidade === "suspeita");
+
+const aceitesAntigas = existsSync(QUALIDADE)
+  ? JSON.parse(readFileSync(QUALIDADE, "utf8")).contradicoes ?? []
+  : [];
+const jaAceite = new Set(aceitesAntigas.map((a) => `${a.id}:${a.tipo}`));
+const novasContradicoes = contradicoes.filter((a) => !jaAceite.has(`${a.id}:${a.tipo}`));
+
+if (novasContradicoes.length && !aceitarQualidade) {
+  console.error(`\n${novasContradicoes.length} contradições novas — números impossíveis:\n`);
+  for (const a of novasContradicoes.slice(0, 20)) {
+    console.error(`  ${a.id}  ${a.tipo}: ${a.mensagem}  (${a.nome})`);
+  }
+  if (novasContradicoes.length > 20) console.error(`  … e mais ${novasContradicoes.length - 20}`);
+  console.error("\nOu se corrige em correcoes.json, ou se corre com --aceitar-qualidade e se lê o diff.");
+  process.exit(1);
+}
+
+writeFileSync(QUALIDADE, JSON.stringify({
+  limites: LIMITES,
+  contagens: { contradicoes: contradicoes.length, suspeitas: suspeitas.length },
+  contradicoes,
+  suspeitas,
+}, null, 2) + "\n");
+
+console.log(`\nqualidade: ${contradicoes.length} contradições, ${suspeitas.length} suspeitas → ${QUALIDADE}`);
+for (const tipo of [...new Set(achados.map((a) => a.tipo))].sort()) {
+  console.log(`  ${tipo}: ${achados.filter((a) => a.tipo === tipo).length}`);
 }
 
 // ------------------------------------------------------------------------- escrever

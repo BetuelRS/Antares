@@ -207,6 +207,9 @@ export function lerCiqual(dataDir) {
       servingGrams: null,
       verified: true,
       origin: "CIQUAL",
+      // O subgrupo da árvore da CIQUAL. Não vai para o catálogo: serve só ao motor de
+      // qualidade, para comparar um alimento com os do seu grupo e não com o mundo.
+      grupo: a.alim_ssgrp_code,
       derivado,
     });
   }

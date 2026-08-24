@@ -77,9 +77,10 @@ um ecrã se ter chamado `OQueSaiDaquiScreen`. Português nos nomes é aceite; fr
 node tools/verificar.mjs
 ```
 
-Uma chamada: testes Kotlin com os nomes dos que falham, detekt, lint, funções do servidor e as
-duas buscas de segredos. Cinco linhas e um veredicto. Apaga os relatórios antigos antes de
-correr — sem isso, uma execução que nem arranca deixa a anterior a passar por verdade.
+Uma chamada: testes Kotlin com os nomes dos que falham, detekt, lint, os testes das
+ferramentas, as funções do servidor e as duas buscas de segredos. Seis linhas e um veredicto.
+Apaga os relatórios antigos antes de correr — sem isso, uma execução que nem arranca deixa a
+anterior a passar por verdade.
 
 ## O catálogo
 
@@ -89,9 +90,18 @@ Construído fora da app:
 node tools/catalogo/construir.mjs
 ```
 
-Determinístico, e **chumba se perder um alimento** que a fonte declare e não esteja em
-`desvios.json`. A versão sobe à mão em **dois** sítios — no `construir.mjs` e no `FoodSeeder`
-— e há um teste-guarda a exigir que sejam a mesma. Ver [`tools/README.md`](../../tools/README.md).
+Determinístico, e **chumba** em duas situações: se perder um alimento que a fonte declare e
+não esteja em `desvios.json`, e se aparecer uma **contradição** nova — um número impossível —
+que não esteja em `qualidade.json`. Nos dois casos há uma opção para aceitar e ler o `git
+diff` (`--aceitar-desvios`, `--aceitar-qualidade`).
+
+O que **não** chumba são as suspeitas: energia que não bate com os macros, alimento fora de
+escala no seu grupo, duas fontes a discordarem. Essas vão para a fila da oficina. A razão de
+não chumbarem é que medem uma discordância entre métodos de medição, e chumbar por isso era
+não poder publicar até a ANSES corrigir a tabela dela.
+
+A versão sobe à mão em **dois** sítios — no `construir.mjs` e no `FoodSeeder` — e há um
+teste-guarda a exigir que sejam a mesma. Ver [`tools/README.md`](../../tools/README.md).
 
 ## Armadilhas já pagas
 
