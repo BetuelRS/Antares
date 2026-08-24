@@ -1288,6 +1288,24 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_catalogo_when">Só quando carregas em «Procurar» nas definições. Nunca sozinho.</string>
     <string name="outgoing_footer">Se alguma destas linhas deixar de ser verdade, é um defeito. Diz.</string>
 
+    <string name="confecao_titulo">E se for cozinhado?</string>
+    <string name="confecao_explicacao">Os números acima são do alimento como a fonte o mediu. Cozinhar tira água e tira vitaminas, e as duas coisas contam.</string>
+    <string name="confecao_cru">Como está</string>
+    <string name="confecao_rendimento">100 g cruas dão %1$s g.</string>
+    <string name="confecao_pesa">Pesaste depois de cozinhar? Esse peso vale mais do que a tabela.</string>
+    <string name="confecao_peso_cozinhado">Peso depois de cozinhar (g)</string>
+    <string name="confecao_falta_peso">Ninguém mediu quanto peso isto perde. Pesa depois de cozinhar e a conta faz-se.</string>
+    <string name="confecao_de_outra_carne">Peso medido noutras carnes — os assados andam todos perto.</string>
+    <string name="confecao_com_molho">Conta com o molho comido, que é onde ficam os minerais.</string>
+    <string name="confecao_sem_molho">Conta sem o que escorre, que é o que acontece na grelha.</string>
+    <string name="confecao_metodo_estufado">Estufado</string>
+    <string name="confecao_metodo_grelhado">Grelhado</string>
+    <string name="confecao_metodo_frito">Frito</string>
+    <string name="confecao_metodo_salteado">Salteado</string>
+    <string name="confecao_metodo_assado">Assado</string>
+    <string name="confecao_metodo_cozido">Cozido</string>
+    <string name="confecao_metodo_reaquecido">Reaquecido</string>
+
     <string name="settings_catalogo">Catálogo de alimentos</string>
     <string name="settings_catalogo_desc">Os alimentos e os números que a app conhece. Corrigir um alimento deixa de esperar por uma versão na loja — mas só desce quando pedires.</string>
     <string name="settings_catalogo_instalada">Tens a versão %1$d.</string>

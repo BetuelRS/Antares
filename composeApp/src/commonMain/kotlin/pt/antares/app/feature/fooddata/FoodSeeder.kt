@@ -53,6 +53,9 @@ data class AlimentoDoCatalogo(
      * os números, e o [estadosDeJson], que devolve o resto.
      */
     val micros: JsonObject? = null,
+
+    /** A família de confeção, ou nulo quando o alimento não se cozinha. Ver [FoodEntity]. */
+    val familia: String? = null,
     val servingName: String? = null,
     val servingGrams: Double? = null,
     val isLiquid: Boolean = false,
@@ -89,6 +92,7 @@ internal fun linhaDe(
     fatG = alimento.fatG,
     satFatG = alimento.satFatG,
     microsJson = alimento.micros?.toString(),
+    familia = alimento.familia,
     servingName = alimento.servingName,
     servingGrams = alimento.servingGrams,
     isLiquid = alimento.isLiquid,
@@ -252,7 +256,7 @@ class FoodSeeder(
          * [CatalogoTemVersaoTest] não deixa que uma suba sem a outra: se ficasse para
          * trás, o catálogo novo viajava dentro do APK e não entrava em telemóvel nenhum.
          */
-        const val VERSAO_DO_CATALOGO = 3
+        const val VERSAO_DO_CATALOGO = 4
 
         private const val NENHUMA = 0
         private const val KEY_CATALOGO = "catalogo_versao"

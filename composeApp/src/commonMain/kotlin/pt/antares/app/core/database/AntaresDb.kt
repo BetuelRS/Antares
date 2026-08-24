@@ -135,7 +135,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 28,
+    version = 29,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -167,6 +167,10 @@ interface DbInfoDao {
         // funcionar exatamente como antes, em gramas.
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26, spec = AntaresDb.DropEnergyUnit::class),
+
+        // A v29 acrescenta `foods.familia`, anulavel: quem atualiza nao perde nada e os
+        // alimentos so ganham familia quando o catalogo v4 entrar, na abertura seguinte.
+        AutoMigration(from = 28, to = 29),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)

@@ -168,6 +168,12 @@ fun FoodDetailScreen(
                 )
             }
 
+            CartaoDaConfecao(
+                state = state,
+                onMetodo = viewModel::escolherMetodo,
+                onPesoCozinhado = viewModel::setGramasCozinhadas,
+            )
+
             NutritionPanel(state)
 
             PrimaryButton(

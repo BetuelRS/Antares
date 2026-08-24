@@ -18,6 +18,8 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
+import { familiaDeCiqual } from "../../confecao/familias.mjs";
+
 const MACRO_BY_CODE = {
   328: "kcal", 25000: "proteinG", 31000: "carbsG", 32000: "sugarsG",
   40000: "fatG", 40302: "satFatG", 34100: "fiberG", 10110: "sodiumMg",
@@ -207,9 +209,11 @@ export function lerCiqual(dataDir) {
       servingGrams: null,
       verified: true,
       origin: "CIQUAL",
-      // O subgrupo da árvore da CIQUAL. Não vai para o catálogo: serve só ao motor de
-      // qualidade, para comparar um alimento com os do seu grupo e não com o mundo.
+      // O subgrupo da árvore da CIQUAL. Não vai para o catálogo: serve ao motor de
+      // qualidade, para comparar um alimento com os do seu grupo e não com o mundo, e é de
+      // onde sai a família de confeção.
       grupo: a.alim_ssgrp_code,
+      familia: familiaDeCiqual(a.alim_ssgrp_code, nomeEn),
       derivado,
     });
   }

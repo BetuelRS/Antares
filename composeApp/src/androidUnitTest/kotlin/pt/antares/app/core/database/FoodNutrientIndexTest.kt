@@ -15,6 +15,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.Duration
 import kotlin.time.measureTime
 
 /**
@@ -164,19 +165,41 @@ class FoodNutrientIndexTest {
         varrerJson()
         db.foodNutrientDao().richIn(FERRO, 0.0, 1e9, NutrientDensity.LIST_LIMIT)
 
-        val comLike = measureTime { repeat(REPETICOES) { varrerJson() } }
-        val comIndice = measureTime {
-            repeat(REPETICOES) {
-                db.foodNutrientDao().richIn(FERRO, 0.0, 1e9, NutrientDensity.LIST_LIMIT)
+        /**
+         * A melhor de três, e não uma medição só.
+         *
+         * Uma comparação de relógio numa máquina partilhada mede o que mais está a correr
+         * tanto quanto mede o código: este teste ficou vermelho uma vez com 101 ms contra
+         * 70 ms — a ordem certa, margem a menos — enquanto o Gradle compilava ao lado. **Um
+         * teste que fica vermelho por acaso ensina a ignorar o vermelho**, que é pior do
+         * que não ter teste nenhum.
+         *
+         * A melhor de três é como se compara sob ruído: o ruído só acrescenta tempo, nunca
+         * o tira, e portanto o mínimo é a medição mais limpa que se conseguiu.
+         */
+        suspend fun melhorDeTres(bloco: suspend () -> Unit): Duration {
+            var melhor: Duration? = null
+            repeat(MEDICOES) {
+                val agora = measureTime { repeat(REPETICOES) { bloco() } }
+                if (melhor == null || agora < melhor!!) melhor = agora
             }
+            return melhor!!
+        }
+
+        val comLike = melhorDeTres { varrerJson() }
+        val comIndice = melhorDeTres {
+            db.foodNutrientDao().richIn(FERRO, 0.0, 1e9, NutrientDensity.LIST_LIMIT)
         }
 
         println("rico em: LIKE=$comLike | indice=$comIndice | $CATALOGO_REAL alimentos")
-        // O número exato depende da máquina; o que não pode acontecer é a nova ser pior.
+
+        // A margem é exigida e não apenas a ordem: com um índice a fazer o seu trabalho, a
+        // diferença é de vezes e não de por cento. Exigir só «mais rápido» deixava passar um
+        // índice desaparecido nos dias em que a máquina estivesse a favor.
         assertTrue(
-            comIndice < comLike,
-            "a junção indexada ($comIndice) não bateu o varrimento do JSON ($comLike) — " +
-                "se isto falhar, o índice em `key` desapareceu",
+            comIndice * MARGEM < comLike,
+            "a junção indexada ($comIndice) não bateu o varrimento do JSON ($comLike) por " +
+                "uma margem de ${MARGEM}× — se isto falhar, o índice em `key` desapareceu",
         )
     }
 
@@ -200,5 +223,12 @@ class FoodNutrientIndexTest {
         // A ordem de grandeza do catálogo que a app traz.
         const val CATALOGO_REAL = 6_000
         const val REPETICOES = 5
+
+        // Ver a «melhor de três» acima: o ruído da máquina só acrescenta tempo.
+        const val MEDICOES = 3
+
+        // O índice tem de ganhar por vezes e não por por cento. Medido a 101 contra 70 ms
+        // num dia mau e a 102 contra 24 ms num dia normal.
+        const val MARGEM = 1.5
     }
 }

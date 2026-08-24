@@ -28,6 +28,8 @@ import { lerTca } from "./fontes/tca.mjs";
 import { lerCurados, lerMicrosCurados } from "./fontes/curados.mjs";
 import { lerVocabulario, conferirComAEfsa } from "./vocabulario.mjs";
 import { verificar, LIMITES } from "./qualidade.mjs";
+import { familiaDeUsda } from "../confecao/familias.mjs";
+import { lerCsv } from "../confecao/tabelas.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(HERE, "..", "..");
@@ -47,7 +49,7 @@ const MANIFESTO = join(RAIZ, "tools", "catalogo", "manifesto.json");
  * do que o que está gravado, importa; se não, não lê o ficheiro sequer. Deixá-la para trás
  * numa alteração de conteúdo é distribuir um catálogo que ninguém recebe.
  */
-const VERSAO = 3;
+const VERSAO = 4;
 
 const aceitarDesvios = process.argv.includes("--aceitar-desvios");
 const aceitarQualidade = process.argv.includes("--aceitar-qualidade");
@@ -278,6 +280,31 @@ if (aceitarDesvios) {
   process.exit(1);
 }
 
+// ------------------------------------------------------------------------- as famílias
+
+/**
+ * A que família de confeção pertence cada alimento — o que decide o que lhe acontece quando
+ * se cozinha. A CIQUAL e a TCA já a trazem da sua própria árvore de grupos; a USDA vem daqui,
+ * porque a categoria de cada alimento está numa tabela à parte.
+ *
+ * **O alimento que não tem família não ganha uma por parecença.** Um pão já foi ao forno, um
+ * gelado não vai, e um prato composto é comida feita: a resposta certa para esses é nenhuma
+ * família, e a app não lhes oferece confeção.
+ */
+const categoriasUsda = new Map();
+for (const l of lerCsv(readFileSync(join(HERE, "..", "confecao", "data", "food.csv"), "utf8")).slice(1)) {
+  if (l.length >= 4) categoriasUsda.set(`usda-${l[0]}`, l[3]);
+}
+
+let comFamilia = 0;
+for (const e of vivos) {
+  if (e.familia == null && e.id.startsWith("usda-")) {
+    e.familia = familiaDeUsda(categoriasUsda.get(e.id));
+  }
+  if (e.familia) comFamilia++;
+}
+console.log(`famílias de confeção:          ${comFamilia} de ${vivos.length}`);
+
 // ---------------------------------------------------------------------- a qualidade
 
 /**
@@ -373,6 +400,10 @@ const alimentos = vivos.map((e) => ({
   // micronutrientes a sério, e viver nos dois sítios era a app poder mostrar dois números
   // para o mesmo alimento — já acontecia em 29 deles, porque a coluna arredondava.
   micros: microsCom(e),
+
+  // A família de confeção. Nula quer dizer «não se cozinha isto» e não «não sabemos»: é o
+  // que faz a app não oferecer «e se for cozido?» a um gelado.
+  familia: e.familia ?? null,
   servingName: e.servingName ?? null,
   servingGrams: e.servingGrams ?? null,
   isLiquid: Boolean(e.isLiquid),

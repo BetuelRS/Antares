@@ -1287,6 +1287,24 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_catalogo_when">Only when you tap «Check» in settings. Never on its own.</string>
     <string name="outgoing_footer">If any line here stops being true, that is a defect. Say so.</string>
 
+    <string name="confecao_titulo">What if it is cooked?</string>
+    <string name="confecao_explicacao">The numbers above are the food as the source measured it. Cooking takes out water and takes out vitamins, and both count.</string>
+    <string name="confecao_cru">As it is</string>
+    <string name="confecao_rendimento">100 g raw gives %1$s g.</string>
+    <string name="confecao_pesa">Did you weigh it after cooking? That weight beats the table.</string>
+    <string name="confecao_peso_cozinhado">Weight after cooking (g)</string>
+    <string name="confecao_falta_peso">Nobody measured how much weight this loses. Weigh it after cooking and the sum works out.</string>
+    <string name="confecao_de_outra_carne">Weight measured on other meats — roasts all land close together.</string>
+    <string name="confecao_com_molho">Counts the juices as eaten, which is where the minerals end up.</string>
+    <string name="confecao_sem_molho">Counts without what drips away, which is what happens on a grill.</string>
+    <string name="confecao_metodo_estufado">Braised</string>
+    <string name="confecao_metodo_grelhado">Grilled</string>
+    <string name="confecao_metodo_frito">Fried</string>
+    <string name="confecao_metodo_salteado">Sautéed</string>
+    <string name="confecao_metodo_assado">Roasted</string>
+    <string name="confecao_metodo_cozido">Boiled</string>
+    <string name="confecao_metodo_reaquecido">Reheated</string>
+
     <string name="settings_catalogo">Food catalogue</string>
     <string name="settings_catalogo_desc">The foods and numbers the app knows. Fixing a food no longer waits for a store release — but it only downloads when you ask.</string>
     <string name="settings_catalogo_instalada">You have version %1$d.</string>

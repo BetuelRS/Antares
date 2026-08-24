@@ -6,10 +6,13 @@
  * daqui a um ano não distingue uma coluna recusada de uma coluna esquecida.
  */
 import { readSheet } from "../../tca-importer/xlsx.mjs";
+import { familiaDeTca } from "../../confecao/familias.mjs";
 
 const VERSAO_TCA = "7.1";
 
-const COLUNAS = { code: 0, name: 1, kcal: 5, fat: 7, protein: 19, carbs: 13 };
+// O `nivel1` e a classificacao FoodEx2 que o INSA publica em coluna propria. Nao vai para o
+// catalogo como texto: e o que diz a que familia de confecao o alimento pertence.
+const COLUNAS = { code: 0, name: 1, nivel1: 2, kcal: 5, fat: 7, protein: 19, carbs: 13 };
 
 const MICROS = {
   8: "satFat_g", 9: "fatMono_g", 10: "fatPoly_g", 12: "fatTrans_g",
@@ -111,6 +114,7 @@ export function lerTca(caminho) {
       servingGrams: null,
       verified: true,
       origin: "TCA",
+      familia: familiaDeTca(r[COLUNAS.nivel1], r[COLUNAS.name]),
       derivado: null,
     });
   }

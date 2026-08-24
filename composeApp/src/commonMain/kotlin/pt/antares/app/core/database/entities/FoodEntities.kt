@@ -55,6 +55,20 @@ data class FoodEntity(
     @ColumnInfo(defaultValue = "0") val isLiquid: Boolean = false,
 
     val verified: Boolean = false,
+
+    /**
+     * A família de confeção — `legumes`, `vaca`, `peixe` — ou nulo.
+     *
+     * É por ela que se sabe o que acontece a este alimento quando se cozinha: o USDA publica
+     * a retenção de nutrientes e o rendimento de peso **por grupo de alimento**, e não por
+     * alimento, porque o que sobrevive a ferver é uma propriedade do que se está a ferver.
+     *
+     * **Nulo quer dizer «não se cozinha isto», e não «não sabemos».** Um pão já foi ao forno,
+     * um gelado não vai, um prato composto é comida feita. É o que faz a app não oferecer
+     * «e se for cozido?» a metade do catálogo sem ter de explicar porquê.
+     */
+    val familia: String? = null,
+
     val updatedAt: Long,
     val deleted: Boolean = false,
 )

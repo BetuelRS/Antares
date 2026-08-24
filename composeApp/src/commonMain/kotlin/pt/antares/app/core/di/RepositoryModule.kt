@@ -69,6 +69,9 @@ val repositoryModule = module {
     single { ExerciseRepository(get(), get(IoDispatcher)) }
 
     single { FoodSeeder(get(), get(IoDispatcher), get(), get()) }
+
+    // A tabela de confeção viaja dentro do APK e não muda em execução: lê-se uma vez.
+    single { pt.antares.app.core.confecao.LeitorDeConfecao(get(IoDispatcher)) }
     single { ExerciseSeeder(get(), get(IoDispatcher), get()) }
     single { FastingProtocolSeeder(get(), get(IoDispatcher)) }
     single { FastingRepository(get(), get(), get(), get(IoDispatcher)) }
