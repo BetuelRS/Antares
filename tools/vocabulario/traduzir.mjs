@@ -76,8 +76,29 @@ export function flexionar(palavra, genero, numero) {
   return pluralizar(comGenero, numero) + resto;
 }
 
+/**
+ * Os plurais em `-ão` que não fazem `-ões`.
+ *
+ * A regra dominante é `-ão` → `-ões` — feijões, limões, camarões, corações —, e as excepções
+ * são poucas e conhecidas. Sem elas saía «pões» e «cães» ficava por fazer; com a regra
+ * sozinha saía «coraçãos», que foi o que se viu em «hearts of palm».
+ */
+const PLURAIS_IRREGULARES = {
+  pão: "pães",
+  cão: "cães",
+  mão: "mãos",
+  alemão: "alemães",
+  grão: "grãos",
+  irmão: "irmãos",
+};
+
 function pluralizar(palavra, numero) {
   if (numero !== "p") return palavra;
+
+  const irregular = PLURAIS_IRREGULARES[palavra.toLowerCase()];
+  if (irregular) return irregular;
+
+  if (palavra.endsWith("ão")) return `${palavra.slice(0, -2)}ões`;
   if (/[aeiouãõ]$/.test(palavra)) return `${palavra}s`;
   if (palavra.endsWith("l")) return `${palavra.slice(0, -1)}is`;
   if (palavra.endsWith("m")) return `${palavra.slice(0, -1)}ns`;
@@ -113,10 +134,69 @@ const PREPOSICOES = {
  * Aplica-se **só** quando as duas palavras estão no dicionário e o tipo de cada uma é
  * conhecido. Adivinhar uma delas era exactamente o que este ficheiro existe para não fazer.
  */
+/**
+ * Os segmentos que são fórmulas e não nomes.
+ *
+ * As tabelas escrevem o teor de gordura e de fruta sempre da mesma maneira, com o número a
+ * mudar: «20% fat», «2-3% fat», «fruit content >= 10% and < 50%». São dezenas de segmentos
+ * distintos e uma frase só, e escrevê-los um a um seria copiar a mesma tradução vinte vezes à
+ * espera de que ninguém se enganasse numa.
+ */
+const FORMULAS = [
+  [/^(\d+(?:[.,]\d+)?)\s*%\s*fat(?:\s+minimum)?$/i, (m) => `${m[1]}% de gordura`],
+  [/^(\d+)\s*-\s*(\d+)\s*%\s*fat$/i, (m) => `${m[1]} a ${m[2]}% de gordura`],
+  [/^fat\s*%\s*unknown$/i, () => "teor de gordura desconhecido"],
+  [/^spreadable fat\s*(<=|>=|<|>)\s*(\d+)\s*%\s*fat$/i,
+    (m) => `creme para barrar com ${sinal(m[1])} ${m[2]}% de gordura`],
+  [/^fruit content\s*(<=|>=|<|>)\s*(\d+)\s*%$/i,
+    (m) => `teor de fruta ${sinal(m[1])} ${m[2]}%`],
+  [/^fruit content\s*(<=|>=|<|>)\s*(\d+)\s*%\s*and\s*(<=|>=|<|>)\s*(\d+)\s*%$/i,
+    (m) => `teor de fruta ${sinal(m[1])} ${m[2]}% e ${sinal(m[3])} ${m[4]}%`],
+  [/^from\s+(\d+)(?:\s*-\s*(\d+))?\s*months$/i,
+    (m) => (m[2] ? `a partir dos ${m[1]} a ${m[2]} meses` : `a partir dos ${m[1]} meses`)],
+];
+
+/**
+ * O «cream of» das tabelas é sempre a sopa, e a sopa é **creme** e não natas.
+ *
+ * O dicionário traduz `cream` por «natas», que é o produto lácteo e está certo em «with
+ * cream». Aqui está errado: «cream of mushroom» é creme de cogumelos, e «natas de cogumelo»
+ * não é comida nenhuma.
+ */
+const CREME_DE = /^cream\s+of\s+(.+)$/i;
+
+const sinal = (s) => ({ "<=": "até", ">=": "a partir de", "<": "abaixo de", ">": "acima de" }[s] ?? s);
+
 export function compor(segmento, vocabulario, profundidade = 0) {
   // Duas voltas chegam: «with sauce» e «in tomato sauce». Mais do que isso é o sinal de que
   // o segmento precisa de ser escrito à mão, não composto.
   if (profundidade > 2) return null;
+
+  const cru = segmento.trim();
+  for (const [padrao, escrever] of FORMULAS) {
+    const m = cru.match(padrao);
+    if (m) return escrever(m);
+  }
+
+  /**
+   * «Cream of mushroom» → «creme de cogumelo».
+   *
+   * O `of` inglês é o `de` português e a ordem é a mesma — ao contrário do composto sem
+   * preposição, que se inverte. Trata-se aqui e não na lista das preposições porque este
+   * vem no meio do segmento e não à cabeça.
+   */
+  const creme = cru.match(CREME_DE);
+  if (creme) {
+    const doQue = traduzirSegmento(creme[1], vocabulario, profundidade + 1);
+    if (doQue) return `creme de ${doQue}`;
+  }
+
+  const comDe = cru.match(/^(.+?)\s+of\s+(.+)$/i);
+  if (comDe) {
+    const esquerda = traduzirSegmento(comDe[1], vocabulario, profundidade + 1);
+    const direita = traduzirSegmento(comDe[2], vocabulario, profundidade + 1);
+    if (esquerda && direita) return `${esquerda} de ${direita}`;
+  }
 
   const palavras = segmento.trim().split(/\s+/);
 
@@ -169,6 +249,12 @@ export function compor(segmento, vocabulario, profundidade = 0) {
   }
 
   return null;
+}
+
+/** Um segmento, pelo dicionário ou pelas regras. Nulo quando nenhum dos dois o conhece. */
+function traduzirSegmento(segmento, vocabulario, profundidade) {
+  return vocabulario.get(segmento.trim().toLowerCase())?.portugues
+    ?? compor(segmento, vocabulario, profundidade);
 }
 
 /** O singular de um plural inglês, ou nulo se a palavra já é singular. */

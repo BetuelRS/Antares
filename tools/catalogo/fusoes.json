@@ -65,7 +65,20 @@
     "ciqual-28812": "tca-357",
     "ciqual-26055": "tca-891",
     "usda-169745": "ciqual-9001",
-    "usda-168874": "ciqual-9340"
+    "usda-168874": "ciqual-9340",
+    "ciqual-26082": "tca-834",
+    "ciqual-26130": "tca-848",
+    "ciqual-30789": "tca-352",
+    "ciqual-20045": "tca-614",
+    "ciqual-26052": "tca-870",
+    "ciqual-11014": "tca-6",
+    "ciqual-11024": "tca-1226",
+    "ciqual-11005": "tca-1193",
+    "ciqual-20346": "tca-558",
+    "ciqual-13013": "tca-652",
+    "ciqual-10001": "tca-914",
+    "ciqual-24520": "tca-485",
+    "ciqual-26018": "tca-893"
   },
   "porque": {
     "ptx3_queijo_azul": "os números do escrito à mão são cópia dos da USDA",
@@ -132,6 +145,19 @@
     "ciqual-28812": "presunto: 230 contra 215, e a TCA já tinha ganho o outro",
     "ciqual-26055": "solha crua: 89 contra 90",
     "usda-169745": "espelta crua: 338 contra 344",
-    "usda-168874": "quinoa crua: 368 contra 358"
+    "usda-168874": "quinoa crua: 368 contra 358",
+    "ciqual-26082": "espadarte cru: 134 contra 97",
+    "ciqual-26130": "maruca crua: 81 contra 70",
+    "ciqual-30789": "mortadela: 310 contra 379",
+    "ciqual-20045": "rabanete cru: 11 contra 15",
+    "ciqual-26052": "raia crua: 92 contra 58",
+    "ciqual-11014": "salsa fresca: 43 contra 20",
+    "ciqual-11024": "salsa seca: 291 contra 244",
+    "ciqual-11005": "caril em pó: 301 contra 342",
+    "ciqual-20346": "couve-galega crua: 35 contra 32",
+    "ciqual-13013": "figo seco: 261 contra 276",
+    "ciqual-10001": "lula crua: 77 contra 71",
+    "ciqual-24520": "merengue: 396 contra 353",
+    "ciqual-26018": "tamboril cru: 67 contra 73"
   }
 }

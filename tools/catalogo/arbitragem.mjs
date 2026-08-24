@@ -136,6 +136,27 @@ const FUNDIR = [
   // mede em produto do mesmo lado do Atlântico.
   ["usda-169745", "ciqual-9001", "espelta crua: 338 contra 344"],
   ["usda-168874", "ciqual-9340", "quinoa crua: 368 contra 358"],
+
+  /*
+   * --- a terceira volta: mais vocabulário, mais duplicados à vista -----------------------
+   *
+   * Todas do mesmo feitio — a CIQUAL e a TCA a terem o mesmo alimento, e o nome francês a
+   * deixar de o esconder. **Cada lote de tradução traz outra leva**, e não é sinal de que a
+   * tradução esteja a criar problemas: é o inventário a ficar legível.
+   */
+  ["ciqual-26082", "tca-834", "espadarte cru: 134 contra 97"],
+  ["ciqual-26130", "tca-848", "maruca crua: 81 contra 70"],
+  ["ciqual-30789", "tca-352", "mortadela: 310 contra 379"],
+  ["ciqual-20045", "tca-614", "rabanete cru: 11 contra 15"],
+  ["ciqual-26052", "tca-870", "raia crua: 92 contra 58"],
+  ["ciqual-11014", "tca-6", "salsa fresca: 43 contra 20"],
+  ["ciqual-11024", "tca-1226", "salsa seca: 291 contra 244"],
+  ["ciqual-11005", "tca-1193", "caril em pó: 301 contra 342"],
+  ["ciqual-20346", "tca-558", "couve-galega crua: 35 contra 32"],
+  ["ciqual-13013", "tca-652", "figo seco: 261 contra 276"],
+  ["ciqual-10001", "tca-914", "lula crua: 77 contra 71"],
+  ["ciqual-24520", "tca-485", "merengue: 396 contra 353"],
+  ["ciqual-26018", "tca-893", "tamboril cru: 67 contra 73"],
 ];
 
 /**
