@@ -13,7 +13,7 @@
  * para o servidor, não tem autenticação nenhuma porque não precisa de ter.
  */
 import { createServer } from "node:http";
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -26,6 +26,8 @@ const CATALOGO = join(RAIZ, "composeApp", "src", "commonMain", "composeResources
 const QUALIDADE = join(RAIZ, "tools", "catalogo", "qualidade.json");
 const CORRECOES = join(RAIZ, "tools", "catalogo", "correcoes.json");
 const HISTORICO = join(HERE, "historico.json");
+const POR_TRADUZIR = join(RAIZ, "tools", "vocabulario", "por-traduzir.json");
+const SEGMENTOS = join(RAIZ, "tools", "vocabulario", "segmentos.csv");
 const PAGINA = join(HERE, "oficina.html");
 
 const PORTA = 4173;
@@ -79,6 +81,26 @@ function cartao(id) {
   };
 }
 
+const TIPOS = ["nome", "qualificador", "expressao"];
+
+/**
+ * Três alimentos que esperam por este segmento. Sem eles, quem traduz está a decidir às
+ * cegas: «club» quer dizer coisas diferentes num sanduíche e numa bebida, e a única maneira
+ * de saber qual é olhar para os nomes onde aparece.
+ */
+function exemplosDe(segmento) {
+  const alvo = segmento.toLowerCase();
+  const encontrados = [];
+  for (const a of catalogo.alimentos) {
+    if (!a.nameEn.toLowerCase().split(",").some((s) => s.trim() === alvo)) continue;
+    encontrados.push(a.nameEn);
+    if (encontrados.length === EXEMPLOS) break;
+  }
+  return encontrados;
+}
+
+const EXEMPLOS = 3;
+
 function responder(res, corpo, tipo = "application/json; charset=utf-8") {
   res.writeHead(200, { "Content-Type": tipo });
   res.end(typeof corpo === "string" ? corpo : JSON.stringify(corpo));
@@ -104,6 +126,46 @@ const servidor = createServer((req, res) => {
       return res.end(JSON.stringify({ erro: "não há alimento com esse identificador" }));
     }
     return responder(res, c);
+  }
+
+  /**
+   * A fila dos segmentos por traduzir, por quantos alimentos cada um desbloqueia.
+   *
+   * **É aqui que está a alavanca.** Traduzir um alimento arruma um alimento; traduzir o
+   * segmento que lhe falta arruma todos os que esperam pelo mesmo. A cauda dos nomes é
+   * longa — quatro mil segmentos distintos —, e percorrê-la por ordem alfabética era gastar
+   * as primeiras horas nos que ninguém procura.
+   */
+  if (url.pathname === "/api/segmentos") {
+    const j = ler(POR_TRADUZIR, { segmentos: {} });
+    const lista = Object.entries(j.segmentos)
+      .slice(0, LIMITE_DA_FILA)
+      .map(([segmento, alimentos]) => ({ segmento, alimentos, exemplos: exemplosDe(segmento) }));
+    return responder(res, { ...j, lista });
+  }
+
+  if (url.pathname === "/api/segmento" && req.method === "POST") {
+    let corpo = "";
+    req.on("data", (p) => { corpo += p; });
+    req.on("end", () => {
+      try {
+        const { ingles, portugues, tipo = "expressao", genero = "", numero = "s" } = JSON.parse(corpo);
+        if (!ingles || !portugues) throw new Error("faltam o inglês ou o português");
+        if (!TIPOS.includes(tipo)) throw new Error(`tipo desconhecido: ${tipo}`);
+
+        // Acrescenta-se no fim e não se reescreve o ficheiro: as seiscentas linhas que lá
+        // estão são trabalho de horas, e um `writeFileSync` mal feito apaga-as todas.
+        appendFileSync(
+          SEGMENTOS,
+          `${ingles.trim().toLowerCase()};${portugues.trim()};${tipo};${genero};${numero}\n`,
+        );
+        responder(res, { guardado: true });
+      } catch (e) {
+        res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ erro: String(e.message ?? e) }));
+      }
+    });
+    return undefined;
   }
 
   if (url.pathname === "/api/decisao" && req.method === "POST") {

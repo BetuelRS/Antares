@@ -30,6 +30,7 @@ import { lerVocabulario, conferirComAEfsa } from "./vocabulario.mjs";
 import { verificar, LIMITES } from "./qualidade.mjs";
 import { familiaDeUsda } from "../confecao/familias.mjs";
 import { lerCsv } from "../confecao/tabelas.mjs";
+import { lerVocabulario as lerVocabularioDeNomes, traduzirNome } from "../vocabulario/traduzir.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(HERE, "..", "..");
@@ -37,6 +38,7 @@ const DADOS = join(HERE, "dados");
 const DESVIOS = join(HERE, "desvios.json");
 const CORRECOES = join(HERE, "correcoes.json");
 const QUALIDADE = join(HERE, "qualidade.json");
+const POR_TRADUZIR = join(RAIZ, "tools", "vocabulario", "por-traduzir.json");
 const SAIDA = join(RAIZ, "composeApp", "src", "commonMain", "composeResources", "files", "catalogo.json");
 // Fora dos recursos de propósito: o manifesto é para a release, e um ficheiro a mais dentro
 // do APK é peso que ninguém lá vai buscar.
@@ -279,6 +281,61 @@ if (aceitarDesvios) {
   console.error("\nOu se corrige a leitura da fonte, ou se corre com --aceitar-desvios e se lê o diff.");
   process.exit(1);
 }
+
+// ------------------------------------------------------------------------ os nomes
+
+/**
+ * Traduz os nomes de laboratório, segmento a segmento, e **só quando o nome fica inteiro**.
+ *
+ * Meio traduzido — «Arroz, wild, cru» — é pior do que em inglês: parece um defeito, e quem o
+ * lê não sabe se o alimento é o que diz ser. O que fica por traduzir fica em inglês, é
+ * contado aqui, e vai para a fila da oficina.
+ *
+ * Corre **depois** das correções à mão: um nome escrito por uma pessoa ganha sempre ao
+ * vocabulário, e não há caso em que valha a pena o contrário.
+ */
+const vocabularioDeNomes = lerVocabularioDeNomes();
+let traduzidos = 0;
+const segmentosEmFalta = {};
+
+/**
+ * Só as fontes que publicam em inglês. A TCA e os curados escrevem em português, e nesses o
+ * `namePt` ser igual ao `nameEn` não quer dizer «por traduzir» — quer dizer que não há nada
+ * para traduzir. Sem esta linha, o oleoduto pedia a tradução de «porco» e de «vaca».
+ */
+const EM_INGLES = /^(ciqual|usda)-/;
+
+for (const e of vivos) {
+  if (e.namePt !== e.nameEn || !EM_INGLES.test(e.id)) continue;
+  const r = traduzirNome(e.nameEn, vocabularioDeNomes);
+  if (r.completo && r.nome) {
+    e.namePt = r.nome;
+    traduzidos++;
+  } else {
+    for (const s of r.porTraduzir) {
+      const k = s.toLowerCase();
+      segmentosEmFalta[k] = (segmentosEmFalta[k] ?? 0) + 1;
+    }
+  }
+}
+
+const porTraduzir = vivos.filter((e) => e.namePt === e.nameEn && EM_INGLES.test(e.id)).length;
+writeFileSync(POR_TRADUZIR, JSON.stringify({
+  vocabulario: vocabularioDeNomes.size,
+  traduzidosAgora: traduzidos,
+  alimentosPorTraduzir: porTraduzir,
+
+  // Por quantos alimentos cada segmento desbloqueia, que é a ordem por que vale a pena
+  // traduzi-los: um segmento em vinte e quatro nomes vale vinte e quatro por um.
+  segmentos: Object.fromEntries(
+    Object.entries(segmentosEmFalta).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)),
+  ),
+}, null, 2) + "\n");
+
+console.log(`\nvocabulário de nomes: ${vocabularioDeNomes.size} segmentos`);
+console.log(`  nomes traduzidos por inteiro: ${traduzidos}`);
+console.log(`  ainda em inglês:              ${porTraduzir}`);
+console.log(`  segmentos por traduzir:       ${Object.keys(segmentosEmFalta).length} → ${POR_TRADUZIR}`);
 
 // ------------------------------------------------------------------------- as famílias
 

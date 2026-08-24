@@ -1,0 +1,690 @@
+# O vocabulário dos nomes de alimentos: inglês -> português, segmento a segmento.
+#
+# Formato: ingles;portugues;tipo;genero;numero
+#   tipo   nome | qualificador | expressao
+#   genero m | f            (só nas bases; é delas que vem a concordância)
+#   numero s | p            (idem)
+#
+# Os qualificadores guardam-se no masculino singular e flexionam-se sozinhos — ver
+# `traduzir.mjs`. Um que fuja à regra escreve-se com as duas formas: `mau/má`.
+#
+# O que não está aqui não se inventa: o alimento fica em inglês, marcado, e vai para a fila
+# da oficina. Meio traduzido é pior do que não traduzido.
+
+# ---------------------------------------------------------------- estados e preparações
+raw;cru/crua;qualificador;;
+raw (average);cru (média)/crua (média);qualificador;;
+uncooked;cru/crua;qualificador;;
+cooked;cozinhado;qualificador;;
+cooked (average);cozinhado (média);qualificador;;
+boiled;cozido;qualificador;;
+boiled/cooked in water;cozido em água;qualificador;;
+braised or boiled;estufado ou cozido;qualificador;;
+braised;estufado;qualificador;;
+stewed;guisado;qualificador;;
+steamed;cozido a vapor;qualificador;;
+poached;escalfado;qualificador;;
+roasted;assado;qualificador;;
+roasted/baked;assado no forno;qualificador;;
+baked;assado no forno;qualificador;;
+grilled;grelhado;qualificador;;
+grilled/pan-fried;grelhado ou salteado;qualificador;;
+grilled/pan-fried without added fat;grelhado sem gordura;qualificador;;
+broiled;grelhado;qualificador;;
+fried;frito;qualificador;;
+pre-fried;pré-frito;qualificador;;
+deep-fried;frito em óleo;qualificador;;
+sautéed/pan-fried;salteado;qualificador;;
+pan-fried;salteado;qualificador;;
+dry heat;calor seco;expressao;;
+moist heat;calor húmido;expressao;;
+toasted;torrado;qualificador;;
+dry roasted;torrado a seco;qualificador;;
+oil-roasted;torrado em óleo;qualificador;;
+smoked;fumado;qualificador;;
+cured;curado;qualificador;;
+fermented;fermentado;qualificador;;
+sprouted;germinado;qualificador;;
+dried;seco;qualificador;;
+dried or dehydrated;seco ou desidratado;qualificador;;
+dehydrated;desidratado;qualificador;;
+dehydrated and reconstituted;desidratado e reconstituído;qualificador;;
+dry;seco;qualificador;;
+frozen;congelado;qualificador;;
+canned;em conserva;expressao;;
+canned or bottled;em lata ou garrafa;expressao;;
+canned in brine;em conserva de salmoura;expressao;;
+canned in light syrup;em calda leve;expressao;;
+in oil;em óleo;expressao;;
+in tomato sauce;em molho de tomate;expressao;;
+semi-preserved;semiconservado;qualificador;;
+pasteurized;pasteurizado;qualificador;;
+pasteurized process;processado e pasteurizado;expressao;;
+uht;UHT;expressao;;
+sterilized;esterilizado;qualificador;;
+refrigerated;refrigerado;qualificador;;
+room temperature;à temperatura ambiente;expressao;;
+prepared;preparado;qualificador;;
+pre-cooked;pré-cozinhado;qualificador;;
+ready-to-eat;pronto a comer;expressao;;
+ready-to-serve;pronto a servir;expressao;;
+ready-to-drink;pronto a beber;expressao;;
+ready-to-heat;pronto a aquecer;expressao;;
+to be reheated;para aquecer;expressao;;
+to cook;para cozinhar;expressao;;
+reheated;reaquecido;qualificador;;
+prepared from recipe;feito de raiz;expressao;;
+prepared-from-recipe;feito de raiz;expressao;;
+home-prepared;feito em casa;expressao;;
+homemade;caseiro;qualificador;;
+home-made;caseiro;qualificador;;
+commercially prepared;de fabrico industrial;expressao;;
+industrial;industrial;qualificador;;
+prepacked;pré-embalado;qualificador;;
+prepacked (average);pré-embalado (média);qualificador;;
+from bakery;de padaria;expressao;;
+from fast food;de restauração rápida;expressao;;
+takeaway;para levar;expressao;;
+prepared with water;preparado com água;expressao;;
+prepared with equal volume water;preparado com igual volume de água;expressao;;
+prepared with equal volume milk;preparado com igual volume de leite;expressao;;
+prepared with whole milk;preparado com leite gordo;expressao;;
+from concentrate;de concentrado;expressao;;
+frozen concentrate;concentrado congelado;expressao;;
+condensed;condensado;qualificador;;
+brewed;infusionado;qualificador;;
+filtered;filtrado;qualificador;;
+instant;instantâneo;qualificador;;
+dry mix;mistura seca;expressao;;
+powder;em pó;expressao;;
+puree;puré;expressao;;
+ground;moído;qualificador;;
+minced;picado;qualificador;;
+in slices;às fatias;expressao;;
+sliced;às fatias;expressao;;
+peeled;descascado;qualificador;;
+pitted;sem caroço;expressao;;
+without seeds;sem grainhas;expressao;;
+with seeds;com grainhas;expressao;;
+drained;escorrido;qualificador;;
+solids and liquids;com o líquido;expressao;;
+breaded;panado;qualificador;;
+filled;recheado;qualificador;;
+seasoned;temperado;qualificador;;
+flavoured;aromatizado;qualificador;;
+sweetened;adoçado;qualificador;;
+unsweetened;sem açúcar;expressao;;
+salted;salgado;qualificador;;
+half-salted;meio-salgado;qualificador;;
+unsalted;sem sal;expressao;;
+with salt;com sal;expressao;;
+with salt added;com sal adicionado;expressao;;
+without salt;sem sal;expressao;;
+without salt added;sem sal adicionado;expressao;;
+no added salt;sem sal adicionado;expressao;;
+low sodium;baixo teor de sódio;expressao;;
+low salt;pouco sal;expressao;;
+with sugar(s);com açúcar;expressao;;
+with sugar(s) and with sweetener(s);com açúcar e adoçante;expressao;;
+with sweetener(s);com adoçante;expressao;;
+no added sugars;sem açúcares adicionados;expressao;;
+no added sugars and with sweetener(s);sem açúcares adicionados e com adoçante;expressao;;
+reduced sugar;teor reduzido de açúcar;expressao;;
+without added fat;sem gordura adicionada;expressao;;
+reduced fat;teor reduzido de gordura;expressao;;
+low fat;magro;qualificador;;
+lowfat;magro;qualificador;;
+fat-free;sem gordura;expressao;;
+0% fat;0% de gordura;expressao;;
+low calorie;baixo valor calórico;expressao;;
+lean;magro;qualificador;;
+whole;inteiro;qualificador;;
+plain;natural;qualificador;;
+regular;normal;qualificador;;
+light;light;expressao;;
+fresh;fresco;qualificador;;
+mature;maduro;qualificador;;
+wild;selvagem;qualificador;;
+farmed;de aquacultura;expressao;;
+enriched;enriquecido;qualificador;;
+unenriched;não enriquecido;expressao;;
+fortified with vitamins;enriquecido com vitaminas;expressao;;
+fortified with vitamins and minerals;enriquecido com vitaminas e minerais;expressao;;
+fortified with vitamin d;enriquecido com vitamina D;expressao;;
+fortified with calcium;enriquecido com cálcio;expressao;;
+not fortified;não enriquecido;expressao;;
+gluten-free;sem glúten;expressao;;
+gluten free;sem glúten;expressao;;
+wholemeal;integral;qualificador;;
+wholegrain;integral;qualificador;;
+whole grain;integral;qualificador;;
+whole wheat;de trigo integral;expressao;;
+wholewheat;integral;qualificador;;
+multigrain;multicereais;expressao;;
+partially skimmed;meio-gordo;qualificador;;
+semi-skimmed;meio-gordo;qualificador;;
+skimmed;magro;qualificador;;
+spreadable;para barrar;expressao;;
+liquid;líquido;qualificador;;
+fluid;líquido;qualificador;;
+carbonated;com gás;expressao;;
+still;sem gás;expressao;;
+bottled;engarrafado;qualificador;;
+imitation;imitação;expressao;;
+
+# ------------------------------------------------------------------------------- carnes
+beef;carne de vaca;nome;f;s
+pork;carne de porco;nome;f;s
+pork and beef;carne de porco e vaca;nome;f;s
+pure pork;só de porco;expressao;;
+veal;vitela;nome;f;s
+calf;vitela;nome;f;s
+lamb;borrego;nome;m;s
+mutton;carneiro;nome;m;s
+goat;cabra;nome;f;s
+rabbit;coelho;nome;m;s
+horse;cavalo;nome;m;s
+ostrich;avestruz;nome;f;s
+game meat;carne de caça;nome;f;s
+meat;carne;nome;f;s
+meat and skin;carne e pele;nome;f;s
+poultry;aves;nome;f;p
+chicken;frango;nome;m;s
+turkey;peru;nome;m;s
+duck;pato;nome;m;s
+goose;ganso;nome;m;s
+quail;codorniz;nome;f;s
+breast;peito;nome;m;s
+leg;perna;nome;f;s
+thigh;coxa;nome;f;s
+wing;asa;nome;f;s
+shoulder;pá;nome;f;s
+neck;pescoço;nome;m;s
+chop;costeleta;nome;f;s
+sirloin steak;bife do lombo;nome;m;s
+topside;alcatra;nome;f;s
+rib;costela;nome;f;s
+liver;fígado;nome;m;s
+kidney;rim;nome;m;s
+heart;coração;nome;m;s
+brain;miolos;nome;m;p
+tongue;língua;nome;f;s
+minced steak;carne picada;nome;f;s
+meat balls;almôndegas;nome;f;p
+ham;fiambre;nome;m;s
+cooked ham;fiambre;nome;m;s
+cured ham;presunto;nome;m;s
+bacon;bacon;nome;m;s
+sausage;salsicha;nome;f;s
+dry sausage;chouriço;nome;m;s
+salami;salame;nome;m;s
+frankfurter;salsicha de Frankfurt;nome;f;s
+merguez sausage;merguez;nome;f;s
+rillettes;rillettes;nome;f;p
+flesh and skin;carne e pele;nome;f;s
+flesh without skin;carne sem pele;nome;f;s
+without skin;sem pele;expressao;;
+rind less defatted;sem courato e sem gordura;expressao;;
+
+# -------------------------------------------------------------------------------- peixe
+fish;peixe;nome;m;s
+salmon;salmão;nome;m;s
+tuna;atum;nome;m;s
+cod;bacalhau;nome;m;s
+anchovy;anchova;nome;f;s
+atlantic herring;arenque;nome;m;s
+european pilchard or sardine;sardinha;nome;f;s
+mackerel;cavala;nome;f;s
+common sole;linguado;nome;m;s
+shrimp or prawn;camarão;nome;m;s
+fillet;filete;nome;m;s
+fillets;filetes;nome;m;p
+flesh;carne;nome;f;s
+
+# --------------------------------------------------------------------- leite e derivados
+milk;leite;nome-de;m;s
+from cow's milk;de leite de vaca;expressao;;
+from goat's milk;de leite de cabra;expressao;;
+from ewe's milk;de leite de ovelha;expressao;;
+ewe's milk;leite de ovelha;nome;m;s
+fermented milk;leite fermentado;nome;m;s
+fermented milk drink;bebida de leite fermentado;nome;f;s
+yogurt;iogurte;nome;m;s
+yogurt or fermented milk;iogurte ou leite fermentado;nome;m;s
+yogurt type with bifidus;iogurte com bífidus;nome;m;s
+cheese;queijo;nome;m;s
+processed cheese;queijo fundido;nome;m;s
+fresh cream cheese;queijo creme fresco;nome;m;s
+uncured soft cheese;queijo fresco;nome;m;s
+mimolette cheese;queijo mimolette;nome;m;s
+quark;quark;nome;m;s
+quark or dairy specialty;quark ou especialidade láctea;nome;m;s
+petit-suisse type;tipo petit-suisse;expressao;;
+cream;natas;nome-de;f;p
+with cream;com natas;expressao;;
+butter;manteiga;nome;f;s
+pure butter;manteiga pura;nome;f;s
+egg;ovo;nome;m;s
+ice cream;gelado;nome;m;s
+ice creams;gelados;nome;m;p
+custard dessert;pudim;nome;m;s
+soy dessert;sobremesa de soja;nome;f;s
+
+# ----------------------------------------------------------------- pão, massa e cereais
+bread;pão;nome;m;s
+french bread;pão de trigo;nome;m;s
+baguette;baguete;nome;f;s
+sandwich loaf;pão de forma;nome;m;s
+wholemeal bread;pão integral;nome;m;s
+brioche;brioche;nome;m;s
+rolls;papo-secos;nome;m;p
+rusk;tosta;nome;f;s
+crispbread;tosta estaladiça;nome;f;s
+pasta;massa;nome;f;s
+fresh pasta;massa fresca;nome;f;s
+noodles;massa;nome;f;s
+spaghetti;esparguete;nome;m;s
+rice;arroz;nome;m;s
+wheat;trigo;nome;m;s
+wheat flour;farinha de trigo;nome;f;s
+rye flour;farinha de centeio;nome;f;s
+oat;aveia;nome;f;s
+corn;milho;nome;m;s
+breakfast cereals;cereais de pequeno-almoço;nome;m;p
+cereals ready-to-eat;cereais prontos a comer;nome;m;p
+popcorn;pipocas;nome;f;p
+tortilla chips;tortilhas;nome;f;p
+pancake;panqueca;nome;f;s
+crepe or buckwheat pancake;crepe;nome;m;s
+puff pastry;massa folhada;nome;f;s
+short crust pastry;massa quebrada;nome;f;s
+shortbread dough;massa areada;nome;f;s
+pizza;pizza;nome;f;s
+sandwich;sanduíche;nome;f;s
+pie;tarte;nome;f;s
+cake;bolo;nome;m;s
+soft cake;bolo fofo;nome;m;s
+muffins;queques;nome;m;p
+doughnuts;donuts;nome;m;p
+cookie;bolacha;nome;f;s
+cookies;bolachas;nome;f;p
+biscuit;bolacha;nome;f;s
+biscuit (cookie);bolacha;nome;f;s
+wafer biscuit;bolacha de wafer;nome;f;s
+crackers;bolachas de água e sal;nome;f;p
+chocolate chip;com pepitas de chocolate;expressao;;
+with creme filling;com recheio de creme;expressao;;
+
+# --------------------------------------------------------------------- fruta e legumes
+fruit;fruta;nome;f;s
+fruits;frutos;nome;m;p
+with fruits;com fruta;expressao;;
+with fruits or flavoured;com fruta ou aromatizado;expressao;;
+on a fruit layer;sobre camada de fruta;expressao;;
+stewed fruits;compota de fruta;nome;f;s
+fruit cocktail or salad;salada de fruta;nome;f;s
+apple;maçã;nome;f;s
+pear;pera;nome;f;s
+peach;pêssego;nome;m;s
+apricot;alperce;nome;m;s
+cherry;cereja;nome;f;s
+strawberry;morango;nome;m;s
+raspberry;framboesa;nome;f;s
+blueberry;mirtilo;nome;m;s
+grape;uva;nome;f;s
+raisin;passa;nome;f;s
+orange;laranja;nome;f;s
+lemon;limão;nome;m;s
+pineapple;ananás;nome;m;s
+banana;banana;nome;f;s
+melon;melão;nome;m;s
+olive;azeitona;nome;f;s
+coconut;coco;nome;m;s
+chayote;chuchu;nome;m;s
+vegetables;produtos hortícolas;nome;m;p
+vegetable;produto hortícola;nome;m;s
+raw vegetables and mayonnaise;legumes crus com maionese;expressao;;
+potato;batata;nome;f;s
+potatoes;batatas;nome;f;p
+potato chips;batatas fritas;nome;f;p
+tomato;tomate;nome;m;s
+onion;cebola;nome;f;s
+carrot;cenoura;nome;f;s
+spinach;espinafres;nome;m;p
+broccoli;brócolos;nome;m;p
+asparagus;espargos;nome;m;p
+artichoke;alcachofra;nome;f;s
+cucumber;pepino;nome;m;s
+courgette or zucchini;courgette;nome;f;s
+pumpkin;abóbora;nome;f;s
+squash;abóbora;nome;f;s
+fennel;funcho;nome;m;s
+salsify;cerefólio;nome;m;s
+sweet pepper;pimento;nome;m;s
+peppers;pimentos;nome;m;p
+mushroom;cogumelo;nome;m;s
+mushrooms;cogumelos;nome;m;p
+button mushroom or cultivated mushroom;cogumelo branco;nome;m;s
+seaweed;alga;nome;f;s
+beans;feijões;nome;m;p
+french bean;feijão-verde;nome;m;s
+flageolet bean;feijão-frade;nome;m;s
+broad bean;fava;nome;f;s
+garden peas;ervilhas;nome;f;p
+lentil;lentilha;nome;f;s
+soybean;soja;nome;f;s
+tofu;tofu;nome;m;s
+mature seeds;grão maduro;expressao;;
+
+# ------------------------------------------------------------ frutos secos e sementes
+nuts;frutos secos;nome;m;p
+almond;amêndoa;nome;f;s
+almonds;amêndoas;nome;f;p
+peanut;amendoim;nome;m;s
+peanuts;amendoins;nome;m;p
+peanut butter;manteiga de amendoim;nome;f;s
+sunflower;girassol;nome;m;s
+seed;semente;nome;f;s
+seeds;sementes;nome;f;p
+
+# --------------------------------------------------------------------------- bebidas
+water;água;nome;f;s
+beverages;bebidas;nome;f;p
+alcoholic beverage;bebida alcoólica;nome;f;s
+beer;cerveja;nome;f;s
+wine;vinho;nome;m;s
+cider;sidra;nome;f;s
+cocktail;cocktail;nome;m;s
+coffee;café;nome;m;s
+soy drink;bebida de soja;nome;f;s
+baby milk;leite para lactentes;nome;m;s
+pure juice;sumo puro;nome;m;s
+orange juice;sumo de laranja;nome;m;s
+pineapple juice;sumo de ananás;nome;m;s
+grape juice;sumo de uva;nome;m;s
+multifruit juice;sumo multifrutos;nome;m;s
+multifruit nectar;néctar multifrutos;nome;m;s
+lemonade;limonada;nome;f;s
+still soft drink;refrigerante sem gás;nome;m;s
+still soft drink with tea extract;refrigerante de chá;nome;m;s
+carbonated beverage or fruit soft drink;refrigerante;nome;m;s
+energy drink;bebida energética;nome;f;s
+cola;cola;nome;f;s
+syrup;xarope;nome-de;m;s
+syrups;xaropes;nome;m;p
+lightly mineralized;pouco mineralizada;expressao;;
+very lightly mineralized;muito pouco mineralizada;expressao;;
+averagely mineralized;medianamente mineralizada;expressao;;
+strongly mineralized;muito mineralizada;expressao;;
+
+# ------------------------------------------------------------ molhos, gorduras e doces
+sauce;molho;nome-de;m;s
+with sauce;com molho;expressao;;
+tomato sauce;molho de tomate;nome;m;s
+gravy;molho de assado;nome;m;s
+broth or stock;caldo;nome;m;s
+soup;sopa;nome-de;f;s
+mayonnaise;maionese;nome;f;s
+salad dressing;molho para salada;nome;m;s
+salad or cooking;para salada ou para cozinhar;expressao;;
+vinegar;vinagre;nome;m;s
+oil;óleo;nome-de;m;s
+olive oil;azeite;nome;m;s
+margarine-like;tipo margarina;expressao;;
+shortening;gordura de pastelaria;nome;f;s
+spreadable fat > 41% fat and <= 62% fat;creme para barrar com 41% a 62% de gordura;expressao;;
+salt;sal;nome;m;s
+spices;especiarias;nome;f;p
+sugar;açúcar;nome;m;s
+jam;doce;nome;m;s
+chocolate;chocolate;nome;m;s
+milk chocolate;chocolate de leite;nome;m;s
+dark chocolate;chocolate negro;nome;m;s
+with chocolate;com chocolate;expressao;;
+with chocolate covering;com cobertura de chocolate;expressao;;
+chocolate-coated;coberto de chocolate;qualificador;;
+candies;rebuçados;nome;m;p
+bar;barra;nome;f;s
+stick;palito;nome;m;s
+snacks;snacks;nome;m;p
+salty snacks;snacks salgados;nome;m;p
+frozen novelties;gelados de pau;nome;m;p
+frozen entree;prato congelado;nome;m;s
+baby meal;refeição para bebé;nome;f;s
+from 4/6 months;a partir dos 4 a 6 meses;expressao;;
+
+# ------------------------------------------------------------------------------- cores
+white;branco;qualificador;;
+red;tinto;qualificador;;
+green;verde;qualificador;;
+yellow;amarelo;qualificador;;
+black;preto;qualificador;;
+dark;escuro;qualificador;;
+sweet;doce;qualificador;;
+hard;duro;qualificador;;
+vanilla;baunilha;expressao;;
+cinnamon;canela;expressao;;
+japanese;japonês;qualificador;;
+mexican;mexicano;qualificador;;
+american;americano;qualificador;;
+all types;todos os tipos;expressao;;
+superior quality;qualidade superior;expressao;;
+standard;padrão;expressao;;
+
+# ============================================================ segundo lote (2026-08-24)
+#
+# Palavras soltas, escolhidas por quantos segmentos compostos desbloqueiam. A regra de
+# composição em `traduzir.mjs` transforma cada par destes em dezenas de segmentos: «broth»
+# mais «chicken» dá «caldo de frango» sem ninguém o escrever.
+
+# --------------------------------------------------------------------------- estruturas
+juice;sumo;nome-de;m;s
+nectar;néctar;nome-de;m;s
+drink;bebida;nome-de;f;s
+beverage;bebida;nome-de;f;s
+soda;refrigerante;nome;m;s
+punch;ponche;nome;m;s
+tea;chá;nome-de;m;s
+cocoa;cacau;nome-de;m;s
+extract;extrato;nome-de;m;s
+concentrate;concentrado;nome-de;m;s
+broth;caldo;nome-de;m;s
+stock;caldo;nome-de;m;s
+stew;guisado;nome;m;s
+soups;sopas;nome;f;p
+salad;salada;nome-de;f;s
+dressing;molho;nome-de;m;s
+spread;pasta para barrar;nome-de;f;s
+dip;molho de mergulhar;nome;m;s
+topping;cobertura;nome-de;f;s
+coating;cobertura;nome-de;f;s
+filling;recheio;nome-de;m;s
+crust;base;nome;f;s
+dough;massa;nome-de;f;s
+pastry;massa;nome-de;f;s
+batter;polme;nome;m;s
+flour;farinha;nome-de;f;s
+bran;farelo;nome-de;m;s
+meal;farinha grossa;nome-de;f;s
+starch;amido;nome-de;m;s
+grain;grão;nome;m;s
+kernel;grão;nome;m;s
+cereal;cereal;nome;m;s
+cereals;cereais;nome;m;p
+flakes;flocos;nome;m;p
+mix;mistura;nome-de;f;s
+substitute;substituto;nome-de;m;s
+protein;proteína;nome-de;f;s
+sweetener;adoçante;nome;m;s
+sweeteners;adoçantes;nome;m;p
+sugars;açúcares;nome;m;p
+honey;mel;nome;m;s
+jelly;geleia;nome-de;f;s
+compote;compota;nome-de;f;s
+mousse;mousse;nome-de;f;s
+pudding;pudim;nome-de;m;s
+custard;creme;nome-de;m;s
+dessert;sobremesa;nome-de;f;s
+desserts;sobremesas;nome;f;p
+candy;rebuçado;nome;m;s
+caramel;caramelo;nome;m;s
+pralin;praliné;nome;m;s
+wafers;wafers;nome;m;p
+cracker;bolacha de água e sal;nome;f;s
+toast;tosta;nome;f;s
+loaf;pão de forma;nome;m;s
+roll;papo-seco;nome;m;s
+croissant;croissant;nome;m;s
+sponge;pão de ló;nome;m;s
+cakes;bolos;nome;m;p
+pie;tarte;nome;f;s
+gratin;gratinado;nome;m;s
+omelette;omelete;nome;f;s
+quenelle;quenelle;nome;f;s
+croquette;croquete;nome;m;s
+nuggets;nuggets;nome;m;p
+skewer;espetada;nome;f;s
+hamburger;hambúrguer;nome;m;s
+sticks;palitos;nome;m;p
+chips;batatas fritas;nome;f;p
+snack;snack;nome;m;s
+food;alimento;nome;m;s
+entree;prato principal;nome;m;s
+pieces;pedaços;nome;m;p
+piece;pedaço;nome;m;s
+slice;fatia;nome;f;s
+slices;fatias;nome;f;p
+half;metade;nome;f;s
+portion;porção;nome;f;s
+serving;dose;nome;f;s
+
+# ----------------------------------------------------------------------------- géneros
+bean;feijão;nome;m;s
+pea;ervilha;nome;f;s
+soy;soja;nome;f;s
+sesame;sésamo;nome;m;s
+nut;fruto seco;nome;m;s
+hazelnut;avelã;nome;f;s
+cashew;caju;nome;m;s
+chestnut;castanha;nome;f;s
+walnut;noz;nome;f;s
+pistachio;pistácio;nome;m;s
+palm;palma;nome;f;s
+cottonseed;semente de algodão;nome;f;s
+barley;cevada;nome;f;s
+rye;centeio;nome;m;s
+buckwheat;trigo-sarraceno;nome;m;s
+couscous;cuscuz;nome;m;s
+vermicelli;aletria;nome;f;s
+noodle;massa;nome;f;s
+granola;granola;nome;f;s
+muesli;muesli;nome;m;s
+malt;malte;nome;m;s
+yeast;levedura;nome;f;s
+gluten;glúten;nome;m;s
+
+# ---------------------------------------------------------------- legumes, fruta, carne
+cabbage;couve;nome;f;s
+lettuce;alface;nome;f;s
+leek;alho-francês;nome;m;s
+celery;aipo;nome;m;s
+garlic;alho;nome;m;s
+chicory;chicória;nome;f;s
+chili;malagueta;nome;f;s
+pepper;pimenta;nome;f;s
+mustard;mostarda;nome;f;s
+mint;hortelã;nome;f;s
+taro;taro;nome;m;s
+yam;inhame;nome;m;s
+plum;ameixa;nome;f;s
+cranberry;arando;nome;m;s
+grapefruit;toranja;nome;f;s
+mango;manga;nome;f;s
+raisins;passas;nome;f;p
+pulp;polpa;nome;f;s
+stalk;caule;nome;m;s
+steak;bife;nome;m;s
+loin;lombo;nome;m;s
+roast;assado;nome;m;s
+escalope;escalope;nome;m;s
+lardoons;toucinho aos cubos;nome;m;s
+bratwurst;salsicha alemã;nome;f;s
+foie gras;foie gras;nome;m;s
+trout;truta;nome;f;s
+seabream;dourada;nome;f;s
+bass;robalo;nome;m;s
+oyster;ostra;nome;f;s
+lobster;lavagante;nome;m;s
+shrimp;camarão;nome;m;s
+cheddar;queijo cheddar;nome;m;s
+mozzarella;mozzarella;nome;f;s
+cottage;requeijão;nome;m;s
+margarine;margarina;nome;f;s
+alcohol;álcool;nome;m;s
+whiskey;whisky;nome;m;s
+calcium;cálcio;nome;m;s
+sodium;sódio;nome;m;s
+multivitamin;multivitamínico;nome;m;s
+baby;bebé;nome;m;s
+table;mesa;nome;f;s
+sea;mar;nome;m;s
+spring;nascente;nome;f;s
+mineral;mineral;qualificador;;
+variety;variedade;nome;f;s
+style;estilo;nome;m;s
+type;tipo;nome;m;s
+flavor;sabor;nome;m;s
+flavour;sabor;nome;m;s
+average;média;nome;f;s
+
+# ------------------------------------------------------------------------ qualificadores
+mashed;em puré;expressao;;
+grated;ralado;qualificador;;
+marinated;marinado;qualificador;;
+pickled;em vinagre;expressao;;
+puffed;insuflado;qualificador;;
+extruded;extrudido;qualificador;;
+hydrogenated;hidrogenado;qualificador;;
+partially;parcialmente;expressao;;
+defatted;sem gordura;expressao;;
+nonfat;sem gordura;expressao;;
+reduced calorie;valor calórico reduzido;expressao;;
+reduced;reduzido;qualificador;;
+rich;rico;qualificador;;
+rich in fibre;rico em fibra;expressao;;
+sour;azedo;qualificador;;
+thick;espesso;qualificador;;
+thin;fino;qualificador;;
+firm;firme;qualificador;;
+soft;mole;qualificador;;
+soft-ripened;de pasta mole;expressao;;
+cold;frio;qualificador;;
+hot;quente;qualificador;;
+round;redondo;qualificador;;
+brown;castanho;qualificador;;
+blue;azul;qualificador;;
+pink;rosa;expressao;;
+salty;salgado;qualificador;;
+vegetarian;vegetariano;qualificador;;
+plant-based;de origem vegetal;expressao;;
+based;à base;expressao;;
+made;feito;qualificador;;
+free;sem;expressao;;
+sugar free;sem açúcar;expressao;;
+high;alto;qualificador;;
+low;baixo;qualificador;;
+added;adicionado;qualificador;;
+mixed;misturado;qualificador;;
+special;especial;qualificador;;
+original;original;qualificador;;
+common;comum;qualificador;;
+unknown;desconhecido;qualificador;;
+fully;totalmente;expressao;;
+french;francês;qualificador;;
+english;inglês;qualificador;;
+italian;italiano;qualificador;;
+chinese;chinês;qualificador;;
+swiss;suíço;qualificador;;
+danish;dinamarquês;qualificador;;
+european;europeu;qualificador;;
+viennese;vienense;qualificador;;

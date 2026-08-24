@@ -54,13 +54,23 @@
   button:disabled { opacity: .4; cursor: default; }
   .recado { margin-left: 12px; color: var(--fraco); font-size: 13px; }
   .vazio { color: var(--fraco); padding: 40px 0; }
+
+  .abas { display: flex; gap: 6px; margin-bottom: 10px; }
+  .aba { flex: 1; background: transparent; color: var(--fraco); border: 1px solid var(--risco); font-weight: 500; }
+  .aba.activa { background: var(--papel); color: var(--texto); border-color: var(--marca); }
+  .exemplo { color: var(--fraco); font-size: 12px; font-style: italic; }
+  .tipos { display: flex; gap: 14px; margin: 10px 0; color: var(--fraco); font-size: 13px; }
 </style>
 </head>
 <body>
 <aside>
   <div class="topo">
+    <div class="abas">
+      <button id="abaAlimentos" class="aba activa">alimentos</button>
+      <button id="abaSegmentos" class="aba">segmentos</button>
+    </div>
     <input id="procura" type="search" placeholder="procurar por nome ou identificador">
-    <label><input id="soAchados" type="checkbox"> só os que têm achados</label>
+    <label id="filtroAchados"><input id="soAchados" type="checkbox"> só os que têm achados</label>
     <label id="contagem"></label>
   </div>
   <div id="lista"></div>
@@ -190,7 +200,102 @@ const numero = (rotulo, valor, unidade = "") =>
 const escapar = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-$("#procura").oninput = desenharLista;
+// ------------------------------------------------------------------- os segmentos
+//
+// A alavanca da tradução: um segmento arruma todos os alimentos que esperam por ele, e a
+// fila vem por essa ordem. Percorrê-la por ordem alfabética era gastar as primeiras horas
+// nos segmentos que ninguém procura.
+
+let segmentos = [];
+
+async function carregarSegmentos() {
+  const r = await fetch("/api/segmentos").then((x) => x.json());
+  segmentos = r.lista;
+  $("#contagem").textContent =
+    `${r.vocabulario} no dicionário · ${r.alimentosPorTraduzir} alimentos por traduzir`;
+  desenharSegmentos();
+}
+
+function desenharSegmentos() {
+  const termo = $("#procura").value.trim().toLowerCase();
+  const visiveis = termo ? segmentos.filter((s) => s.segmento.includes(termo)) : segmentos;
+
+  $("#lista").innerHTML = visiveis.map((s) => `
+    <div class="linha" data-seg="${escapar(s.segmento)}">
+      <b>${escapar(s.segmento)}</b>
+      <small>desbloqueia ${s.alimentos} alimento${s.alimentos === 1 ? "" : "s"}</small>
+    </div>`).join("");
+
+  for (const el of document.querySelectorAll(".linha")) {
+    el.onclick = () => abrirSegmento(el.dataset.seg);
+  }
+}
+
+function abrirSegmento(chave) {
+  const s = segmentos.find((x) => x.segmento === chave);
+  if (!s) return;
+
+  $("#painel").innerHTML = `
+    <h1>${escapar(s.segmento)}</h1>
+    <p class="en">${s.alimentos} alimento${s.alimentos === 1 ? "" : "s"} esperam por este segmento</p>
+
+    <h2>onde aparece</h2>
+    ${s.exemplos.map((e) => `<p class="exemplo">${escapar(e)}</p>`).join("")}
+
+    <h2>como se diz em português</h2>
+    <label class="campo"><span>tradução</span><input id="pt" type="text" autofocus></label>
+    <div class="tipos">
+      <label><input type="radio" name="tipo" value="nome"> nome (é a base do alimento)</label>
+      <label><input type="radio" name="tipo" value="qualificador"> qualificador (concorda com a base)</label>
+      <label><input type="radio" name="tipo" value="expressao" checked> expressão (não flete)</label>
+    </div>
+    <div class="tipos" id="concordancia" style="display:none">
+      <label><input type="radio" name="genero" value="m" checked> masculino</label>
+      <label><input type="radio" name="genero" value="f"> feminino</label>
+      <label><input type="radio" name="numero" value="s" checked> singular</label>
+      <label><input type="radio" name="numero" value="p"> plural</label>
+    </div>
+
+    <button id="guardarSeg">Guardar</button><span class="recado" id="recado"></span>`;
+
+  const mostrarConcordancia = () => {
+    const tipo = document.querySelector('input[name=tipo]:checked').value;
+    $("#concordancia").style.display = tipo === "nome" ? "flex" : "none";
+  };
+  for (const el of document.querySelectorAll('input[name=tipo]')) el.onchange = mostrarConcordancia;
+
+  $("#guardarSeg").onclick = async () => {
+    const corpo = {
+      ingles: s.segmento,
+      portugues: $("#pt").value,
+      tipo: document.querySelector('input[name=tipo]:checked').value,
+      genero: document.querySelector('input[name=genero]:checked')?.value ?? "",
+      numero: document.querySelector('input[name=numero]:checked')?.value ?? "s",
+    };
+    const r = await fetch("/api/segmento", { method: "POST", body: JSON.stringify(corpo) });
+    $("#recado").textContent = r.ok
+      ? "guardado — corre o construir.mjs para ver quantos alimentos isto desbloqueou"
+      : (await r.json()).erro;
+  };
+}
+
+// ----------------------------------------------------------------------- as abas
+
+let aba = "alimentos";
+
+function trocarAba(qual) {
+  aba = qual;
+  $("#abaAlimentos").classList.toggle("activa", qual === "alimentos");
+  $("#abaSegmentos").classList.toggle("activa", qual === "segmentos");
+  $("#filtroAchados").style.display = qual === "alimentos" ? "block" : "none";
+  $("#painel").innerHTML = '<p class="vazio">Escolhe um à esquerda.</p>';
+  $("#procura").value = "";
+  if (qual === "alimentos") carregarFila(); else carregarSegmentos();
+}
+
+$("#abaAlimentos").onclick = () => trocarAba("alimentos");
+$("#abaSegmentos").onclick = () => trocarAba("segmentos");
+$("#procura").oninput = () => (aba === "alimentos" ? desenharLista() : desenharSegmentos());
 $("#soAchados").onchange = carregarFila;
 carregarFila();
 </script>

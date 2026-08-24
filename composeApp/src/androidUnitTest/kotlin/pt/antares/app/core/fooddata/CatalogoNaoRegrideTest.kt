@@ -48,6 +48,21 @@ class CatalogoNaoRegrideTest {
             .mapNotNull { (id, nome) ->
                 val alimento = porId[id] ?: return@mapNotNull null
                 val esperado = nome.jsonPrimitive.content
+
+                /**
+                 * Uma «correção» igual ao nome da fonte não é decisão de ninguém.
+                 *
+                 * O `correcoes.json` foi extraído de um telemóvel onde os dezoito passos
+                 * tinham corrido: guarda o nome que lá estava, e para 1 380 alimentos esse
+                 * nome era o inglês da tabela, por nunca ter sido tocado. Exigir que ele
+                 * sobreviva é exigir que o catálogo **fique** em inglês — e foi isso que
+                 * este teste passou a fazer quando o vocabulário começou a traduzir.
+                 *
+                 * O que ele existe para apanhar continua a valer: um nome que **alguém
+                 * escreveu** não pode voltar ao da origem.
+                 */
+                if (esperado == alimento.nameEn) return@mapNotNull null
+
                 if (alimento.namePt == esperado) null else "$id: esperado «$esperado», veio «${alimento.namePt}»"
             }
 
