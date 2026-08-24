@@ -28,6 +28,7 @@ import { lerTca } from "./fontes/tca.mjs";
 import { lerCurados, lerMicrosCurados } from "./fontes/curados.mjs";
 import { lerVocabulario, conferirComAEfsa } from "./vocabulario.mjs";
 import { verificar, LIMITES } from "./qualidade.mjs";
+import { colisoes, aplicarFusoes } from "./colisoes.mjs";
 import { familiaDeUsda } from "../confecao/familias.mjs";
 import { lerCsv } from "../confecao/tabelas.mjs";
 import { lerVocabulario as lerVocabularioDeNomes, traduzirNome } from "../vocabulario/traduzir.mjs";
@@ -38,6 +39,8 @@ const DADOS = join(HERE, "dados");
 const DESVIOS = join(HERE, "desvios.json");
 const CORRECOES = join(HERE, "correcoes.json");
 const QUALIDADE = join(HERE, "qualidade.json");
+const COLISOES = join(HERE, "colisoes.json");
+const FUSOES = join(HERE, "fusoes.json");
 const POR_TRADUZIR = join(RAIZ, "tools", "vocabulario", "por-traduzir.json");
 const SAIDA = join(RAIZ, "composeApp", "src", "commonMain", "composeResources", "files", "catalogo.json");
 // Fora dos recursos de propósito: o manifesto é para a release, e um ficheiro a mais dentro
@@ -384,6 +387,60 @@ for (const e of vivos) {
 }
 console.log(`famílias de confeção:          ${comFamilia} de ${vivos.length}`);
 
+// ------------------------------------------------------------------------ as colisões
+
+/**
+ * Dois alimentos com o mesmo nome, e o que se decidiu sobre eles.
+ *
+ * A deduplicação era um passo que correu uma vez, em 2025; passa a ser uma regra da
+ * construção. **Detectar é do oleoduto, decidir é de quem come:** qual dos dois fica é uma
+ * decisão sobre comida, e vive em `fusoes.json`.
+ */
+const fusoes = existsSync(FUSOES) ? JSON.parse(readFileSync(FUSOES, "utf8")).fusoes ?? {} : {};
+const fundido = aplicarFusoes(vivos, fusoes);
+
+// A cópia antes de esvaziar não é zelo: sem fusões nenhumas, o [aplicarFusoes] devolve a
+// **mesma** lista que recebeu, e `vivos.length = 0` apagava-a antes de a voltar a encher. O
+// catálogo saiu com zero alimentos, e a construção não deu erro nenhum.
+const restantes = [...fundido.vivos];
+vivos.length = 0;
+vivos.push(...restantes);
+
+/**
+ * O catálogo não pode encolher de repente, e a construção não pode escrever nada até isso
+ * estar verificado.
+ *
+ * **Aconteceu:** uma aliasing de lista deixou o `vivos` vazio, e a construção seguiu em
+ * frente a escrever um catálogo de zero alimentos, um manifesto do vazio e um
+ * `qualidade.json` sem contradição nenhuma — que na execução seguinte fez as doze de sempre
+ * passarem por novas e chumbarem a construção. Nenhum dos passos deu erro.
+ *
+ * O número é folgado de propósito: o que se quer apanhar é um desastre, não uma variação.
+ */
+const MINIMO_PLAUSIVEL = 7000;
+if (vivos.length < MINIMO_PLAUSIVEL) {
+  console.error(`\nSó ${vivos.length} alimentos vivos — o catálogo tinha 8 011.`);
+  console.error("Alguma coisa se partiu antes de aqui chegar. Não se escreve nada.");
+  process.exit(1);
+}
+
+const encontradas = colisoes(vivos);
+const discordantes = encontradas.filter((c) => c.discordam);
+
+writeFileSync(COLISOES, JSON.stringify({
+  contagens: {
+    colisoes: encontradas.length,
+    discordantes: discordantes.length,
+    alimentos: encontradas.reduce((s, c) => s + c.alimentos.length, 0),
+    fundidos: fundido.fundidos,
+  },
+  colisoes: encontradas,
+}, null, 2) + "\n");
+
+console.log(`\ncolisões de nome: ${encontradas.length} (${discordantes.length} discordam na energia)`);
+if (fundido.fundidos) console.log(`  fundidos por decisão: ${fundido.fundidos}`);
+console.log(`  → ${COLISOES}`);
+
 // ---------------------------------------------------------------------- a qualidade
 
 /**
@@ -499,7 +556,7 @@ if (repetidos) {
   process.exit(1);
 }
 
-const texto = JSON.stringify({ versao: VERSAO, alimentos });
+const texto = JSON.stringify({ versao: VERSAO, alimentos, lapides: fundido.lapides });
 writeFileSync(SAIDA, texto);
 
 /**

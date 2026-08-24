@@ -77,6 +77,18 @@ interface FoodMarkDao {
     )
     suspend fun marcarUso(foodId: String, agora: Long, gramas: Double? = null)
 
+    /**
+     * Manda a marca seguir o alimento que foi fundido noutro.
+     *
+     * O `OR REPLACE` é preciso porque a pessoa pode ter marca nos dois — o favorito no
+     * antigo e um uso recente no novo. Fica a do sucessor, que é a que aponta para o
+     * alimento que continua a existir; a outra vai-se embora com ele.
+     *
+     * **Sem isto, fundir dois alimentos tirava um favorito a alguém sem aviso.**
+     */
+    @Query("UPDATE OR REPLACE food_marca SET foodId = :sucessor WHERE foodId = :antigo")
+    suspend fun seguir(antigo: String, sucessor: String)
+
     @Query("SELECT * FROM food_marca WHERE deleted = 0")
     suspend fun exportRows(): List<FoodMarkEntity>
 
@@ -188,6 +200,20 @@ interface FoodDao {
 
     @Query("DELETE FROM foods_fts WHERE foodId IN (:ids)")
     suspend fun deleteFtsIn(ids: List<String>)
+
+    /**
+     * Manda os ingredientes de receita seguirem o alimento fundido.
+     *
+     * Uma receita é a coisa que mais tempo custa a escrever nesta app, e um ingrediente que
+     * desaparece dela não se recupera: a receita fica com menos comida do que tem, e a conta
+     * do dia passa a estar errada por omissão — que é o erro mais difícil de notar.
+     */
+    @Query("UPDATE recipe_ingredient SET foodId = :sucessor WHERE foodId = :antigo")
+    suspend fun seguirEmReceitas(antigo: String, sucessor: String)
+
+    /** O mesmo para as refeições guardadas. */
+    @Query("UPDATE meal_template_item SET foodId = :sucessor WHERE foodId = :antigo")
+    suspend fun seguirEmRefeicoes(antigo: String, sucessor: String)
 
     // A junção é para dentro (`JOIN`, não `LEFT JOIN`): recente é quem tem marca de uso, e
     // um alimento sem marca nenhuma não pode aparecer aqui.

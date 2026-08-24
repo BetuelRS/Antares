@@ -1,0 +1,1180 @@
+{
+  "contagens": {
+    "colisoes": 65,
+    "discordantes": 23,
+    "alimentos": 130,
+    "fundidos": 0
+  },
+  "colisoes": [
+    {
+      "nome": "abobora crua",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20044",
+          "namePt": "Abóbora, crua",
+          "kcal": 20,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-579",
+          "namePt": "Abóbora crua",
+          "kcal": 11,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "alho cru",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-11000",
+          "namePt": "Alho, cru",
+          "kcal": 109,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-8",
+          "namePt": "Alho cru",
+          "kcal": 72,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "alho frances cru",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20039",
+          "namePt": "Alho-francês, cru",
+          "kcal": 30,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-581",
+          "namePt": "Alho-francês cru",
+          "kcal": 26,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "batata assada no forno",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-4026",
+          "namePt": "Batata, assada no forno",
+          "kcal": 91,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-587",
+          "namePt": "Batata assada no forno",
+          "kcal": 159,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "batata doce crua",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-4101",
+          "namePt": "Batata doce, crua",
+          "kcal": 81,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-593",
+          "namePt": "Batata doce crua",
+          "kcal": 123,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "camarao cru",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-10021",
+          "namePt": "Camarão, cru",
+          "kcal": 99,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-969",
+          "namePt": "Camarão cru",
+          "kcal": 77,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "cebola crua",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20034",
+          "namePt": "Cebola, crua",
+          "kcal": 39,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-597",
+          "namePt": "Cebola crua",
+          "kcal": 20,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "cenoura crua",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20009",
+          "namePt": "Cenoura, crua",
+          "kcal": 30,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-600",
+          "namePt": "Cenoura crua",
+          "kcal": 25,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "cerveja branca",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-5009",
+          "namePt": "Cerveja, branca",
+          "kcal": 61,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-726",
+          "namePt": "Cerveja branca",
+          "kcal": 30,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "chicoria crua",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20026",
+          "namePt": "Chicória, crua",
+          "kcal": 17,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-602",
+          "namePt": "Chicória crua",
+          "kcal": 14,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "couve branca crua",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20116",
+          "namePt": "Couve branca, crua",
+          "kcal": 35,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-552",
+          "namePt": "Couve-branca crua",
+          "kcal": 28,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "espinafres crus",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20059",
+          "namePt": "Espinafres, crus",
+          "kcal": 33,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-608",
+          "namePt": "Espinafres crus",
+          "kcal": 27,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "linguado frito",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-26062",
+          "namePt": "Linguado, frito",
+          "kcal": 72,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-847",
+          "namePt": "Linguado frito",
+          "kcal": 164,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "mostarda",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-11013",
+          "namePt": "Mostarda",
+          "kcal": 151,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "ptx2_mostarda",
+          "namePt": "Mostarda",
+          "kcal": 66,
+          "origem": "PT"
+        }
+      ]
+    },
+    {
+      "nome": "nectar de pera",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-2054",
+          "namePt": "Néctar de pera",
+          "kcal": 63,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-752",
+          "namePt": "Néctar de pera",
+          "kcal": 48,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "pessegos desidratado sulfurado cru",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "usda-169932",
+          "namePt": "Pêssegos, desidratado, sulfurado, cru",
+          "kcal": 325,
+          "origem": "USDA"
+        },
+        {
+          "id": "usda-169934",
+          "namePt": "Pêssegos, desidratado, sulfurado, cru",
+          "kcal": 239,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "salmao fumado",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-26037",
+          "namePt": "Salmão, fumado",
+          "kcal": 184,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "ptx2_salmao_fumado",
+          "namePt": "Salmão fumado",
+          "kcal": 117,
+          "origem": "PT"
+        }
+      ]
+    },
+    {
+      "nome": "sangria",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-1017",
+          "namePt": "Sangria",
+          "kcal": 89,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "ptx3_sangria",
+          "namePt": "Sangria",
+          "kcal": 120,
+          "origem": "PT"
+        }
+      ]
+    },
+    {
+      "nome": "tomate seco",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-20189",
+          "namePt": "Tomate, seco",
+          "kcal": 257,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-230001",
+          "namePt": "Tomate seco",
+          "kcal": 296,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "vinho maduro branco teor alcoolico 12 5 vol",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "tca-250014",
+          "namePt": "Vinho maduro branco, teor alcoólico ≥12,5% vol.",
+          "kcal": 98,
+          "origem": "TCA"
+        },
+        {
+          "id": "tca-712",
+          "namePt": "Vinho maduro branco, teor alcoólico <12,5% vol.",
+          "kcal": 74,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "vinho maduro tinto teor alcoolico 12 5 vol",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "tca-250015",
+          "namePt": "Vinho maduro tinto, teor alcoólico ≥12,5% vol.",
+          "kcal": 96,
+          "origem": "TCA"
+        },
+        {
+          "id": "tca-714",
+          "namePt": "Vinho maduro tinto, teor alcoólico <12,5% vol.",
+          "kcal": 72,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "vinho rose teor alcoolico 12 5 vol",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "tca-250016",
+          "namePt": "Vinho rosé, teor alcoólico ≥12,5% vol.",
+          "kcal": 103,
+          "origem": "TCA"
+        },
+        {
+          "id": "tca-715",
+          "namePt": "Vinho rosé, teor alcoólico <12,5% vol.",
+          "kcal": 71,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "vitela costeleta crua",
+      "discordam": true,
+      "alimentos": [
+        {
+          "id": "ciqual-6510",
+          "namePt": "Vitela, costeleta, crua",
+          "kcal": 189,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-223",
+          "namePt": "Vitela, costeleta crua",
+          "kcal": 121,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "acucar branco",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-31016",
+          "namePt": "Açúcar, branco",
+          "kcal": 399,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-503",
+          "namePt": "Açúcar branco",
+          "kcal": 397,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "aipo cru",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "tca-959",
+          "namePt": "Aipo cru",
+          "kcal": 15,
+          "origem": "TCA"
+        },
+        {
+          "id": "usda-169988",
+          "namePt": "Aipo, cru",
+          "kcal": 14,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "arroz integral cru",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-9102",
+          "namePt": "Arroz, integral, cru",
+          "kcal": 350,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-401",
+          "namePt": "Arroz integral cru",
+          "kcal": 351,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "bread protein",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "usda-172809",
+          "namePt": "Bread, protein",
+          "kcal": 270,
+          "origem": "USDA"
+        },
+        {
+          "id": "usda-174917",
+          "namePt": "Bread, protein",
+          "kcal": 245,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "brocolos crus",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-20057",
+          "namePt": "Brócolos, crus",
+          "kcal": 32,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-550",
+          "namePt": "Brócolos crus",
+          "kcal": 32,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "camarao cozido",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-10007",
+          "namePt": "Camarão, cozido",
+          "kcal": 91,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-971",
+          "namePt": "Camarão cozido",
+          "kcal": 99,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "cavala crua",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-26051",
+          "namePt": "Cavala, crua",
+          "kcal": 198,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-820",
+          "namePt": "Cavala crua",
+          "kcal": 202,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "farelo de trigo",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-9621",
+          "namePt": "Farelo de trigo",
+          "kcal": 270,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-1900000075",
+          "namePt": "Farelo de trigo",
+          "kcal": 293,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "farinha de cevada",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-9550",
+          "namePt": "Farinha de cevada",
+          "kcal": 337,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-1900000070",
+          "namePt": "Farinha de cevada",
+          "kcal": 330,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "farinha de milho integral amarelo",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "usda-169697",
+          "namePt": "Farinha de milho, integral, amarelo",
+          "kcal": 362,
+          "origem": "USDA"
+        },
+        {
+          "id": "usda-170290",
+          "namePt": "Farinha de milho, integral, amarelo",
+          "kcal": 361,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "farinha de milho integral branco",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "usda-169748",
+          "namePt": "Farinha de milho, integral, branco",
+          "kcal": 361,
+          "origem": "USDA"
+        },
+        {
+          "id": "usda-169750",
+          "namePt": "Farinha de milho, integral, branco",
+          "kcal": 362,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "frango peito sem pele cru",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-36017",
+          "namePt": "Frango, peito, sem pele, cru",
+          "kcal": 110,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-11",
+          "namePt": "Frango, peito sem pele, cru",
+          "kcal": 108,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "gin",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-1002",
+          "namePt": "Gin",
+          "kcal": 265,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "ptx3_gin",
+          "namePt": "Gin",
+          "kcal": 263,
+          "origem": "PT"
+        }
+      ]
+    },
+    {
+      "nome": "hortela fresca",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-11027",
+          "namePt": "Hortelã, fresca",
+          "kcal": 58,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-1900000031",
+          "namePt": "Hortelã fresca",
+          "kcal": 51,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "inhame cru",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-53672",
+          "namePt": "Inhame, cru",
+          "kcal": 111,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-1900000059",
+          "namePt": "Inhame cru",
+          "kcal": 114,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "leite magro uht",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-19050",
+          "namePt": "Leite, magro, UHT",
+          "kcal": 34,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-27",
+          "namePt": "Leite magro, UHT",
+          "kcal": 35,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "leite meio gordo uht",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-19041",
+          "namePt": "Leite, meio-gordo, UHT",
+          "kcal": 48,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-25",
+          "namePt": "Leite meio gordo, UHT",
+          "kcal": 47,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "linguado cru",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-26058",
+          "namePt": "Linguado, cru",
+          "kcal": 77,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-845",
+          "namePt": "Linguado cru",
+          "kcal": 82,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "maca seca",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-13111",
+          "namePt": "Maçã, seca",
+          "kcal": 247,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-665",
+          "namePt": "Maçã seca",
+          "kcal": 257,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "manteiga sem sal",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "tca-386",
+          "namePt": "Manteiga sem sal",
+          "kcal": 750,
+          "origem": "TCA"
+        },
+        {
+          "id": "usda-173430",
+          "namePt": "Manteiga, sem sal",
+          "kcal": 717,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "mel",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-31008",
+          "namePt": "Mel",
+          "kcal": 331,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-504",
+          "namePt": "Mel",
+          "kcal": 314,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "melaco",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "tca-1900000068",
+          "namePt": "Melaço",
+          "kcal": 269,
+          "origem": "TCA"
+        },
+        {
+          "id": "usda-168820",
+          "namePt": "Melaço",
+          "kcal": 290,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "nectar de alperce",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-2043",
+          "namePt": "Néctar de alperce",
+          "kcal": 59,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-748",
+          "namePt": "Néctar de alperce",
+          "kcal": 56,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "nectar de ananas",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-2374",
+          "namePt": "Néctar de ananás",
+          "kcal": 52,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-749",
+          "namePt": "Néctar de ananás",
+          "kcal": 46,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "nectar de laranja",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-2375",
+          "namePt": "Néctar de laranja",
+          "kcal": 42,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-750",
+          "namePt": "Néctar de laranja",
+          "kcal": 43,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "nectar de maca",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-2076",
+          "namePt": "Néctar de maçã",
+          "kcal": 45,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-751",
+          "namePt": "Néctar de maçã",
+          "kcal": 48,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "nectar de pessego",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-2371",
+          "namePt": "Néctar de pêssego",
+          "kcal": 50,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-753",
+          "namePt": "Néctar de pêssego",
+          "kcal": 51,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "oleo de amendoim",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-17040",
+          "namePt": "Óleo de amendoim",
+          "kcal": 899,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-388",
+          "namePt": "Óleo de amendoim",
+          "kcal": 887,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "oleo de girassol",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-17440",
+          "namePt": "Óleo de girassol",
+          "kcal": 900,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-390",
+          "namePt": "Óleo de girassol",
+          "kcal": 896,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "oleo de soja",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-17420",
+          "namePt": "Óleo de soja",
+          "kcal": 900,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-393",
+          "namePt": "Óleo de soja",
+          "kcal": 887,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "ostra crua",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-10011",
+          "namePt": "Ostra, crua",
+          "kcal": 67,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-911",
+          "namePt": "Ostra, crua",
+          "kcal": 65,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "pancakes whole wheat dry mix incomplete",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "usda-171853",
+          "namePt": "Pancakes, whole wheat, dry mix, incomplete",
+          "kcal": 350,
+          "origem": "USDA"
+        },
+        {
+          "id": "usda-172776",
+          "namePt": "Pancakes, whole-wheat, dry mix, incomplete",
+          "kcal": 344,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "presunto",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-28800",
+          "namePt": "Presunto",
+          "kcal": 239,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-357",
+          "namePt": "Presunto",
+          "kcal": 215,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "queijo azul",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ptx3_queijo_azul",
+          "namePt": "Queijo azul",
+          "kcal": 353,
+          "origem": "PT"
+        },
+        {
+          "id": "usda-172175",
+          "namePt": "Queijo, azul",
+          "kcal": 353,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "queijo parmesao ralado",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "usda-171247",
+          "namePt": "Queijo, parmesão, ralado",
+          "kcal": 420,
+          "origem": "USDA"
+        },
+        {
+          "id": "usda-173431",
+          "namePt": "Queijo, parmesão, ralado",
+          "kcal": 415,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "salame",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-30350",
+          "namePt": "Salame",
+          "kcal": 457,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-359",
+          "namePt": "Salame",
+          "kcal": 422,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "soja grao seco cru",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "tca-539",
+          "namePt": "Soja, grão seco, cru",
+          "kcal": 407,
+          "origem": "TCA"
+        },
+        {
+          "id": "usda-174270",
+          "namePt": "Soja, grão seco, cru",
+          "kcal": 446,
+          "origem": "USDA"
+        }
+      ]
+    },
+    {
+      "nome": "vinagre",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-11018",
+          "namePt": "Vinagre",
+          "kcal": 23,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-314",
+          "namePt": "Vinagre",
+          "kcal": 22,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "vinho tinto",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-5214",
+          "namePt": "Vinho, tinto",
+          "kcal": 76,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "ptx_vinho_tinto",
+          "namePt": "Vinho tinto",
+          "kcal": 85,
+          "origem": "PT"
+        }
+      ]
+    },
+    {
+      "nome": "vitela pa crua",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-6560",
+          "namePt": "Vitela, pá, crua",
+          "kcal": 124,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "tca-2120000006",
+          "namePt": "Vitela, pá crua",
+          "kcal": 138,
+          "origem": "TCA"
+        }
+      ]
+    },
+    {
+      "nome": "vodka",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-1008",
+          "namePt": "Vodka",
+          "kcal": 250,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "ptx3_vodka",
+          "namePt": "Vodka",
+          "kcal": 231,
+          "origem": "PT"
+        }
+      ]
+    },
+    {
+      "nome": "whisky",
+      "discordam": false,
+      "alimentos": [
+        {
+          "id": "ciqual-1005",
+          "namePt": "Whisky",
+          "kcal": 252,
+          "origem": "CIQUAL"
+        },
+        {
+          "id": "ptx3_whisky",
+          "namePt": "Whisky",
+          "kcal": 250,
+          "origem": "PT"
+        }
+      ]
+    }
+  ]
+}

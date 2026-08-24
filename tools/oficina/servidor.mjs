@@ -28,6 +28,8 @@ const CORRECOES = join(RAIZ, "tools", "catalogo", "correcoes.json");
 const HISTORICO = join(HERE, "historico.json");
 const POR_TRADUZIR = join(RAIZ, "tools", "vocabulario", "por-traduzir.json");
 const SEGMENTOS = join(RAIZ, "tools", "vocabulario", "segmentos.csv");
+const COLISOES = join(RAIZ, "tools", "catalogo", "colisoes.json");
+const FUSOES = join(RAIZ, "tools", "catalogo", "fusoes.json");
 const PAGINA = join(HERE, "oficina.html");
 
 const PORTA = 4173;
@@ -160,6 +162,52 @@ const servidor = createServer((req, res) => {
           `${ingles.trim().toLowerCase()};${portugues.trim()};${tipo};${genero};${numero}\n`,
         );
         responder(res, { guardado: true });
+      } catch (e) {
+        res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ erro: String(e.message ?? e) }));
+      }
+    });
+    return undefined;
+  }
+
+  /**
+   * As colisões de nome, com as que discordam na energia à frente.
+   *
+   * Duas linhas com os mesmos números são uma duplicação inofensiva: escolha-se qualquer uma
+   * e o dia fica igual. A sangria a 89 kcal numa e a 120 na outra é outra coisa — é a app a
+   * dar duas respostas à mesma pergunta conforme a linha que a pessoa tocar.
+   */
+  if (url.pathname === "/api/colisoes") {
+    const j = ler(COLISOES, { colisoes: [] });
+    const decididas = ler(FUSOES, { fusoes: {} }).fusoes ?? {};
+    return responder(res, {
+      ...j,
+      colisoes: j.colisoes.map((c) => ({
+        ...c,
+        decidido: c.alimentos.find((a) => decididas[a.id])?.id ?? null,
+      })),
+    });
+  }
+
+  if (url.pathname === "/api/fusao" && req.method === "POST") {
+    let corpo = "";
+    req.on("data", (p) => { corpo += p; });
+    req.on("end", () => {
+      try {
+        const { perdedor, vencedor } = JSON.parse(corpo);
+        if (!perdedor || !vencedor) throw new Error("falta o perdedor ou o vencedor");
+        if (perdedor === vencedor) throw new Error("um alimento não se funde consigo próprio");
+
+        const ficheiro = ler(FUSOES, { fusoes: {} });
+        const fusoes = { ...(ficheiro.fusoes ?? {}) };
+
+        // Uma cadeia de fusões — A vai para B e B vai para C — deixava quem seguisse a
+        // primeira lápide num alimento que também já não existe.
+        if (fusoes[vencedor]) throw new Error(`o vencedor já foi fundido em ${fusoes[vencedor]}`);
+
+        fusoes[perdedor] = vencedor;
+        writeFileSync(FUSOES, JSON.stringify({ ...ficheiro, fusoes }, null, 2) + "\n");
+        responder(res, { guardado: true, total: Object.keys(fusoes).length });
       } catch (e) {
         res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
         res.end(JSON.stringify({ erro: String(e.message ?? e) }));

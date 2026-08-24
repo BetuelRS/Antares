@@ -69,9 +69,24 @@ data class AlimentoDoCatalogo(
 @Serializable
 data class PorcaoDoCatalogo(val nome: String, val gramas: Double)
 
+/**
+ * Um alimento que foi fundido noutro, e para onde vai quem o tinha.
+ *
+ * **A lápide não é arrumação.** O diário guarda cópia da nutrição no momento do registo, e
+ * por isso os dias passados nunca mudam — mas o favorito guarda só o identificador, e um
+ * ingrediente de receita também. Sem a lápide, fundir dois alimentos tirava um favorito a
+ * alguém, ou um ingrediente a uma receita, sem aviso nenhum.
+ */
+@Serializable
+data class LapideDoCatalogo(val id: String, val sucessor: String)
+
 /** O catálogo inteiro, com a versão à cabeça — é ela que decide se se lê o resto. */
 @Serializable
-data class Catalogo(val versao: Int, val alimentos: List<AlimentoDoCatalogo>)
+data class Catalogo(
+    val versao: Int,
+    val alimentos: List<AlimentoDoCatalogo>,
+    val lapides: List<LapideDoCatalogo> = emptyList(),
+)
 
 /**
  * Monta a linha que vai ser gravada, tal como o oleoduto a escreveu.
@@ -189,6 +204,10 @@ class FoodSeeder(
         // alimentos, e uma escrita única rebentava.
         alimentos.chunked(LOTE_DE_ESCRITA).forEach { db.foodDao().insertAll(it) }
 
+        // As lápides **antes** da poda: é o que faz um favorito seguir para o sucessor em vez
+        // de segurar o alimento fundido só porque alguém lhe tinha tocado.
+        seguirLapides(catalogo.lapides)
+
         db.foodDao().podarCatalogoAnterior(agora)
         db.foodDao().pruneOrphanFts()
 
@@ -212,6 +231,25 @@ class FoodSeeder(
         // A marca fica em último: uma instalação interrompida a meio recomeça na abertura
         // seguinte em vez de dar o catálogo por semeado.
         db.dbInfoDao().upsert(DbInfo(KEY_CATALOGO, catalogo.versao.toString()))
+    }
+
+    /**
+     * Manda o que era da pessoa seguir o alimento que foi fundido noutro.
+     *
+     * O diário não precisa: guarda cópia da nutrição no momento do registo, e um dia passado
+     * continua a dizer o que dizia. **O que precisa é o que guarda só o identificador** — o
+     * favorito, a última porção, o ingrediente de uma receita, a linha de uma refeição
+     * guardada. Sem isto, fundir dois alimentos tirava um favorito ou um ingrediente a
+     * alguém, sem aviso nenhum e sem forma de o recuperar.
+     *
+     * Uma lápide para um alimento que a pessoa não tinha não faz nada, e é o caso comum.
+     */
+    private suspend fun seguirLapides(lapides: List<LapideDoCatalogo>) {
+        for (lapide in lapides) {
+            db.foodMarkDao().seguir(lapide.id, lapide.sucessor)
+            db.foodDao().seguirEmReceitas(lapide.id, lapide.sucessor)
+            db.foodDao().seguirEmRefeicoes(lapide.id, lapide.sucessor)
+        }
     }
 
     /**
