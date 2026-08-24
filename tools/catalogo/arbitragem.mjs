@@ -157,6 +157,25 @@ const FUNDIR = [
   ["ciqual-10001", "tca-914", "lula crua: 77 contra 71"],
   ["ciqual-24520", "tca-485", "merengue: 396 contra 353"],
   ["ciqual-26018", "tca-893", "tamboril cru: 67 contra 73"],
+
+  // --- a quarta volta -------------------------------------------------------------------
+  ["ciqual-10017", "tca-907", "amêijoa crua: 81 contra 65"],
+  ["usda-173755", "tca-409", "farinha de alfarroba: 222 contra 368"],
+  ["ciqual-11033", "tca-1900000030", "manjericão fresco: 35 contra 48"],
+  ["ciqual-11032", "tca-1206", "manjericão seco: 244 contra 244, os mesmos números"],
+  ["ptx2_ketchup", "usda-168556", "ketchup: o escrito à mão contra o medido"],
+  ["ptx3_xarope_de_acer", "ciqual-31034", "xarope de ácer: idem"],
+
+  // --- a quinta volta: as ervas e as especiarias, que a TCA também tem -------------------
+  ["ciqual-10019", "tca-1900000100", "búzio cru: 131 contra 82"],
+  ["ciqual-11052", "tca-1198", "cravinho: 335 contra 431"],
+  ["ciqual-11070", "tca-1227", "tomilho fresco: 107 contra 52"],
+  ["ciqual-11039", "tca-1188", "açafrão: 352 contra 353"],
+  ["ciqual-11068", "tca-1189", "alecrim fresco: 121 contra 115"],
+  ["ciqual-11036", "tca-1190", "alecrim seco: 328 contra 377"],
+  ["ciqual-10008", "tca-1900000115", "caracol cru: 78 contra 85"],
+  ["ciqual-11050", "tca-1201", "estragão seco: 342 contra 363"],
+  ["ciqual-11038", "tca-1228", "tomilho seco: 285 contra 321"],
 ];
 
 /**

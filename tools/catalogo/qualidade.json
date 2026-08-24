@@ -9,7 +9,7 @@
   },
   "contagens": {
     "contradicoes": 0,
-    "suspeitas": 128
+    "suspeitas": 127
   },
   "corrigidas": {
     "acucares": 2,
@@ -1124,15 +1124,6 @@
       "gravidade": "suspeita",
       "campo": "kcal",
       "mensagem": "energia declarada 333 kcal, -65.9 kcal acima do que os macros dao"
-    },
-    {
-      "id": "usda-173755",
-      "nome": "Carob flour",
-      "origem": "USDA",
-      "tipo": "atwater",
-      "gravidade": "suspeita",
-      "campo": "kcal",
-      "mensagem": "energia declarada 222 kcal, -158.3 kcal acima do que os macros dao"
     },
     {
       "id": "usda-173858",

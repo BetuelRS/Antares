@@ -78,7 +78,22 @@
     "ciqual-13013": "tca-652",
     "ciqual-10001": "tca-914",
     "ciqual-24520": "tca-485",
-    "ciqual-26018": "tca-893"
+    "ciqual-26018": "tca-893",
+    "ciqual-10017": "tca-907",
+    "usda-173755": "tca-409",
+    "ciqual-11033": "tca-1900000030",
+    "ciqual-11032": "tca-1206",
+    "ptx2_ketchup": "usda-168556",
+    "ptx3_xarope_de_acer": "ciqual-31034",
+    "ciqual-10019": "tca-1900000100",
+    "ciqual-11052": "tca-1198",
+    "ciqual-11070": "tca-1227",
+    "ciqual-11039": "tca-1188",
+    "ciqual-11068": "tca-1189",
+    "ciqual-11036": "tca-1190",
+    "ciqual-10008": "tca-1900000115",
+    "ciqual-11050": "tca-1201",
+    "ciqual-11038": "tca-1228"
   },
   "porque": {
     "ptx3_queijo_azul": "os números do escrito à mão são cópia dos da USDA",
@@ -158,6 +173,21 @@
     "ciqual-13013": "figo seco: 261 contra 276",
     "ciqual-10001": "lula crua: 77 contra 71",
     "ciqual-24520": "merengue: 396 contra 353",
-    "ciqual-26018": "tamboril cru: 67 contra 73"
+    "ciqual-26018": "tamboril cru: 67 contra 73",
+    "ciqual-10017": "amêijoa crua: 81 contra 65",
+    "usda-173755": "farinha de alfarroba: 222 contra 368",
+    "ciqual-11033": "manjericão fresco: 35 contra 48",
+    "ciqual-11032": "manjericão seco: 244 contra 244, os mesmos números",
+    "ptx2_ketchup": "ketchup: o escrito à mão contra o medido",
+    "ptx3_xarope_de_acer": "xarope de ácer: idem",
+    "ciqual-10019": "búzio cru: 131 contra 82",
+    "ciqual-11052": "cravinho: 335 contra 431",
+    "ciqual-11070": "tomilho fresco: 107 contra 52",
+    "ciqual-11039": "açafrão: 352 contra 353",
+    "ciqual-11068": "alecrim fresco: 121 contra 115",
+    "ciqual-11036": "alecrim seco: 328 contra 377",
+    "ciqual-10008": "caracol cru: 78 contra 85",
+    "ciqual-11050": "estragão seco: 342 contra 363",
+    "ciqual-11038": "tomilho seco: 285 contra 321"
   }
 }
