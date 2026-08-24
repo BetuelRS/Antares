@@ -1288,6 +1288,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_catalogo_when">Só quando carregas em «Procurar» nas definições. Nunca sozinho.</string>
     <string name="outgoing_footer">Se alguma destas linhas deixar de ser verdade, é um defeito. Diz.</string>
 
+    <string name="diary_dentro_do_erro">O que falta hoje é menor do que o «cerca de» desta contagem (±%1$s kcal). Um dia não chega para saber — a tendência da semana chega.</string>
+    <string name="diary_muito_adivinhado">%1$s% das calorias de hoje vieram de estimativas, não de pesagens.</string>
+
     <string name="confecao_titulo">E se for cozinhado?</string>
     <string name="confecao_explicacao">Os números acima são do alimento como a fonte o mediu. Cozinhar tira água e tira vitaminas, e as duas coisas contam.</string>
     <string name="confecao_cru">Como está</string>

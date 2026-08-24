@@ -26,6 +26,8 @@ import pt.antares.app.feature.exercise.ExerciseRepository
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.nutrition.EfsaReference
+import pt.antares.app.core.nutrition.FoodProvenance
+import pt.antares.app.core.nutrition.IncertezaDaComida
 import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.core.calc.EatingWindow
 import pt.antares.app.core.calc.Janela
@@ -58,6 +60,24 @@ data class DiaryState(
      * a linha em vez de mostrar uma janela inventada.
      */
     val janela: Janela? get() = EatingWindow.doDia(logsBySlot.values.flatten().map { it.eatenAtMin })
+
+    /**
+     * O «cerca de» das calorias do dia, pela origem de cada registo.
+     *
+     * A app já dizia de quanto era o «cerca de» do metabolismo basal e continuava a tratar a
+     * comida como exacta — quando é ela a maior fonte de erro do sistema. Ver
+     * [IncertezaDaComida].
+     */
+    val incerteza: IncertezaDaComida.Dia
+        get() = IncertezaDaComida.doDia(
+            logsBySlot.values.flatten().map { log ->
+                IncertezaDaComida.Parcela(
+                    foodId = log.foodId ?: log.id,
+                    origem = FoodProvenance.doRegisto(log.origin, log.foodId),
+                    kcal = log.kcalSnapshot.toDouble(),
+                )
+            },
+        )
 }
 
 /**

@@ -1287,6 +1287,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_catalogo_when">Only when you tap «Check» in settings. Never on its own.</string>
     <string name="outgoing_footer">If any line here stops being true, that is a defect. Say so.</string>
 
+    <string name="diary_dentro_do_erro">What is left today is smaller than the «about» of this count (±%1$s kcal). One day is not enough to tell — the week trend is.</string>
+    <string name="diary_muito_adivinhado">%1$s% of today’s calories came from estimates, not from weighing.</string>
+
     <string name="confecao_titulo">What if it is cooked?</string>
     <string name="confecao_explicacao">The numbers above are the food as the source measured it. Cooking takes out water and takes out vitamins, and both count.</string>
     <string name="confecao_cru">As it is</string>

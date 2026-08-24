@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.semantics.Role
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.database.entities.ExerciseLogEntity
@@ -54,6 +55,7 @@ import pt.antares.app.core.util.dayShort
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 import pt.antares.app.core.util.formatMinuteOfDay
+import kotlin.math.roundToInt
 
 /**
  * As linhas do diário: o cabeçalho de cada refeição, um registo, um exercício, e a
@@ -403,6 +405,59 @@ internal fun DayHeader(
 }
 
 /**
+ * O que a app não sabe sobre o dia, dito só quando muda a leitura dele.
+ *
+ * **A margem não aparece sempre**, e é uma decisão. Um «±7 %» todos os dias vira decoração e
+ * ensina-se a ignorar em duas semanas; a informação está em saber **quando** ela é grande o
+ * bastante para o que está no ecrã deixar de querer dizer o que parece.
+ *
+ * Duas frases, e cada uma só quando é verdade:
+ *
+ * - o que falta ou sobra é **menor do que a incerteza da própria contagem** — e aí um dia não
+ *   chega para concluir nada. A tendência da semana chega: os erros independentes de sete
+ *   dias crescem com a raiz de sete e a comida cresce com sete.
+ * - **uma boa parte do dia foi adivinhada** — fotografias, texto, alimentos escritos à mão.
+ *   Um intervalo sozinho não distingue um dia mal medido de um dia bem medido de comida que
+ *   varia muito.
+ */
+@Composable
+private fun OQueNaoSeSabe(state: DiaryState, restante: Int) {
+    val incerteza = state.incerteza
+    if (incerteza.kcal <= 0) return
+
+    val fraco = MaterialTheme.colorScheme.onSurfaceVariant
+    val maisOuMenos = incerteza.maisOuMenos.roundToInt()
+
+    if (incerteza.menorDoQueOErro(restante.toDouble())) {
+        Text(
+            stringResource(Res.string.diary_dentro_do_erro, maisOuMenos.toString()),
+            style = MaterialTheme.typography.bodySmall,
+            color = fraco,
+            textAlign = TextAlign.Center,
+        )
+    }
+
+    if (incerteza.fraccaoAdivinhada >= MUITO_ADIVINHADO) {
+        Text(
+            stringResource(
+                Res.string.diary_muito_adivinhado,
+                (incerteza.fraccaoAdivinhada * CEM).roundToInt().toString(),
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = fraco,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+/**
+ * A partir de um terço do dia vindo de estimativas, a frase vale a pena. Abaixo disso é o
+ * normal de quem usa a app e dizê-lo todos os dias era ruído.
+ */
+private const val MUITO_ADIVINHADO = 0.34
+private const val CEM = 100.0
+
+/**
  * O resumo do dia: o anel das calorias, as três barras de macros, e a janela alimentar.
  *
  * As barras mantêm a cor do macro em qualquer valor — a cor aqui é categoria e não estado, e
@@ -436,6 +491,7 @@ internal fun DaySummaryCard(state: DiaryState) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            OQueNaoSeSabe(state, budget.remaining)
             if (state.exerciseKcal > 0) {
                 Text(
                     "+${state.exerciseKcal} ${stringResource(Res.string.common_kcal)} · " +
