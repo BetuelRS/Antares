@@ -65,3 +65,8 @@ extracao/
 # São só contagens, mas uma contagem por alimento diz o que a pessoa come — e este
 # repositório é público.
 tools/oficina/historico.json
+
+# As tabelas do USDA. Como a CIQUAL e a TCA: sao fonte, nao derivado, e
+# descarregam-se com `node tools/descarregar-fontes.mjs`.
+tools/confecao/data/
+tools/porcoes/data/

@@ -40,6 +40,40 @@ construção falhar. Para o aceitar, corre-se com `--aceitar-desvios`, que reesc
 as duas sejam a mesma. Sem isso, o catálogo novo viaja dentro do APK e não entra em telemóvel
 nenhum.
 
+### As fontes, e porque não estão no git
+
+```bash
+node tools/descarregar-fontes.mjs
+```
+
+O repositório guarda o que se **deriva** das fontes, não uma cópia delas. A CIQUAL e a TCA
+descarregam-se à mão dos respectivos portais; as tabelas do USDA têm endereço directo e o
+comando acima vai buscá-las — a retenção de nutrientes, os rendimentos de confeção, e três
+ficheiros do SR Legacy (categorias, porções e unidades).
+
+Depois disso, `node tools/confecao/construir.mjs` e `node tools/catalogo/construir.mjs`
+reproduzem o catálogo byte a byte.
+
+### A confeção
+
+Duas tabelas do USDA, ambas de domínio público, respondem à pergunta «e se for cozinhado?»:
+**quanto peso sobra** e **quanto de cada nutriente sobrevive**. A conta é a do próprio USDA:
+
+    nutriente por 100 g cozinhado = por 100 g cru × retenção ÷ rendimento
+
+**A divisão pelo rendimento é a parte que se esquece.** Cozer espinafres perde vitamina C para
+a água *e* perde água; contar só a primeira coisa dá um número mais errado do que não fazer
+conta nenhuma, porque o que sobra fica mais concentrado.
+
+A retenção cobre 270 preparações em 13 grupos; o rendimento só carne e aves. **Um método sem
+rendimento medido não recebe um rendimento inventado** — a app pede o peso depois de
+cozinhar, e essa medição ganha à tabela.
+
+A família de confeção de cada alimento vem de quem a publica, e não de parecença de nome: a
+árvore de subgrupos da CIQUAL, a categoria da USDA, a classificação FoodEx2 da TCA. A única
+leitura de nome são as carnes da CIQUAL, que caem todas em «cozinhadas» e «cruas» sem dizerem
+de que animal são. **Família nula quer dizer «não se cozinha isto»** — um pão já foi ao forno.
+
 ### O motor de qualidade
 
 Cinco verificações, todas a comparar o alimento **consigo mesmo**. Não vão à fonte confirmar
