@@ -7,30 +7,31 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.6.0 é a última publicada.** Esquema da base **v28**. Oito versões feitas.
-- A **2.7.0 está escrita e por lançar**, e leva o bloco D inteiro. Árvore verde: 1474 testes
-  Kotlin, 41 das ferramentas, detekt e lint limpos. **Já correu**, no emulador: instalação
-  limpa e actualização a partir da 2.6.0, que salta da v28 para a v30. Falta-lhe **publicar**.
-- O catálogo no repositório é a **versão 4** e a 2.6.0 publicada traz a 2. A release da 2.7.0
-  tem de levar o `catalogo.json` **e** o `manifesto.json` anexados — ver o passo 9 de
-  [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). Sem eles, o botão de actualizar o
-  catálogo não encontra nada, porque o `latest` do GitHub passa a apontar para uma release
-  que não os tem.
+- **2.7.0 é a última publicada**, a 2026-08-25, e leva o bloco D inteiro. Esquema da base
+  **v30**, catálogo **v4**. Nove versões feitas. Árvore verde: 1474 testes Kotlin, 41 das
+  ferramentas, detekt e lint limpos, e o CI verde em quatro minutos e meio — que é uma
+  execução, e não cache.
+- A release levou os quatro APK **e** o `catalogo.json` e o `manifesto.json`, e o botão
+  «Procurar» no aparelho passou a dizer **«está em dia»**. Antes dela dizia «não deu para
+  chegar lá», porque o `latest` do GitHub apontava para a 2.6.0, que não os trazia — ver o
+  passo 9 de [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). **A release seguinte tem
+  de os levar outra vez**: uma que não os traga não mantém os anteriores, apaga o caminho.
+- **A próxima versão a sair é a 2.16.0**, e abre o bloco E — com perguntas, como manda a A2.
 - A **2.5.1 foi fechada sem sair.** A razão está no plano e não se reabre sem a ler.
 
-## O bloco D faz-se em três corridas
+## O bloco D fez-se em três corridas
 
 Por decisão do dono, a 2026-08-23. Uma corrida é um plano, uma execução e **um lançamento** —
 em vez de uma versão de cada vez. A cerimónia por versão era perto de um terço do trabalho.
 
 | Corrida | O quê | Estado |
 |---|---|---|
-| **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **feita** |
+| **1 · o encanamento** | 2.7.0, com a 2.8.0 absorvida | **feita e lançada** |
 | **2 · as ferramentas** | 2.9.0 + 2.10.0 | **feita, e não se lança** |
-| **3 · o conteúdo** | 2.11.0 a 2.15.0 | **feita, absorvida na 2.7.0** |
+| **3 · o conteúdo** | 2.11.0 a 2.15.0 | **feita, saiu na 2.7.0** |
 
-**O bloco D sai todo numa versão: a 2.7.0.** As três corridas foram feitas seguidas, e partir
-o que já está escrito em cinco lançamentos era cerimónia sem nada por baixo — a razão de as
+**O bloco D saiu todo numa versão: a 2.7.0.** As três corridas foram feitas seguidas, e partir
+o que já estava escrito em cinco lançamentos era cerimónia sem nada por baixo — a razão de as
 corridas existirem.
 
 Os números **2.8.0 a 2.15.0 ficam consumidos ou por usar**, e a próxima versão a sair depois
@@ -45,11 +46,9 @@ o nome trocado não rebenta, não dá erro, e custa uma versão a corrigir.
 **O que não se batcha nunca:** a medição no início de cada peça. Cinco versões abertas, cinco
 premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
-## O que falta no bloco D
+## O que a corrida no aparelho mostrou
 
-Está tudo escrito, verde, e **já correu no emulador** (Android 16, x86_64). Falta **lançar**.
-
-O que a corrida no aparelho mostrou:
+Emulador Android 16, x86_64, antes de lançar:
 
 1. **A actualização a partir da 2.6.0 passa.** A migração salta três versões de esquema, da
    v28 para a v30, e o dia registado na 2.6.0 — 1 050 kcal em dois registos — aparece igual
@@ -58,10 +57,10 @@ O que a corrida no aparelho mostrou:
 3. **O cartão «e se for cozinhado?» aparece** onde tem de aparecer: em «Frango, carne, cru»,
    109 kcal passam a 139 no grelhado, com «100 g cru dão 79 g» e o campo para quem pesou
    depois de cozinhar. Metade do catálogo não o tem, e é de propósito.
-4. **O botão «Procurar» diz «não deu para chegar lá»** — e está certo: a release mais recente
-   é a 2.6.0, que **não** traz o `manifesto.json`, e o `latest` do GitHub aponta para ela. O
-   endereço responde 404, confirmado à mão. É exactamente o sintoma que o passo 9 do guia
-   descreve, e o que o desfaz é a release da 2.7.0 levar os dois ficheiros.
+4. **O botão «Procurar» dizia «não deu para chegar lá»** — e estava certo: a release mais
+   recente era então a 2.6.0, que **não** trazia o `manifesto.json`, e o endereço respondia
+   404, confirmado à mão. Depois de publicar a 2.7.0 com os dois ficheiros, o mesmo botão
+   passou a dizer **«está em dia»**. É o sintoma do passo 9 do guia, visto dos dois lados.
 
 E mostrou dois defeitos, corrigidos aqui: o ecrã de boas-vindas e o de atribuições prometiam
 **1376** alimentos do INSA quando o catálogo tem **1372** — quatro foram fundidos noutra
