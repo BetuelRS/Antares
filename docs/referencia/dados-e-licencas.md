@@ -67,8 +67,8 @@ Estão em `composeApp/src/commonMain/composeResources/files/`:
 Até à 2.3.0 eram cinco ficheiros de alimentos, semeados por ordem, mais treze correções que
 corriam no telemóvel a cada arranque. Desde a 2.4.0 é um só, construído fora da app.
 
-**O identificador diz a origem**, e é por ele que se conta: 3401 `ciqual-`, 2937 `usda-`,
-1376 `tca-`, 284 `ptx` — os portugueses curados — e 13 `pt-`, os extras escritos à mão.
+**O identificador diz a origem**, e é por ele que se conta: 3329 `ciqual-`, 2944 `usda-`,
+1372 `tca-`, 274 `ptx` — os portugueses curados — e 13 `pt-`, os extras escritos à mão.
 São 7932 alimentos.
 
 ## O vocabulário dos nutrientes

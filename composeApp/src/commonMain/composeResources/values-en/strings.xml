@@ -183,7 +183,7 @@
     <string name="onb_welcome_lead">Three things no other nutrition app does:</string>
     <string name="onb_welcome_maths_title">The arithmetic, in the open</string>
     <string name="onb_welcome_maths_body">Every target is shown line by line, with the formula and the source. You can check it by hand and disagree with it.</string>
-    <string name="onb_welcome_food_title">1376 foods measured in Portugal</string>
+    <string name="onb_welcome_food_title">1372 foods measured in Portugal</string>
     <string name="onb_welcome_food_body">From the INSA food composition table, with micronutrients. Not translations of an American table.</string>
     <string name="onb_welcome_offline_title">Nothing leaves your phone</string>
     <string name="onb_welcome_offline_body">Nothing to create, nowhere to sign in. What you write stays on the phone, and leaves only if you export it yourself.</string>
@@ -528,7 +528,7 @@
     <string name="attrib_intro">Antares uses open data from these sources:</string>
     <string name="attrib_coverage">The catalogue holds %1$d foods, %2$d% of them with measured vitamins and minerals. Where they are missing, the app says why instead of inventing them.</string>
     <string name="attrib_tca_title">INSA · Portuguese Food Composition Table</string>
-    <string name="attrib_tca_desc">The authority for Portuguese foods: 1376 foods measured in Portugal, with real Portuguese names. Used with permission from the Instituto Nacional de Saúde Doutor Ricardo Jorge, subject to citation.
+    <string name="attrib_tca_desc">The authority for Portuguese foods: 1372 foods measured in Portugal, with real Portuguese names. Used with permission from the Instituto Nacional de Saúde Doutor Ricardo Jorge, subject to citation.
 
 Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Composição de Alimentos, v 7.1 [online database]. Lisbon, 2026 [consulted on 29-07-2026]. Available at: https://portfir.insa.min-saude.pt/pt/</string>
     <string name="attrib_ciqual_title">CIQUAL 2025 · ANSES (France)</string>

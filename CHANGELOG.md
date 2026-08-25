@@ -36,8 +36,8 @@ a oficina de curadoria não mudam nada na app e por isso não se lançam.*
   contar só a primeira coisa dá um número mais errado do que não fazer conta nenhuma — que é
   o que toda a concorrência faz. Onde ninguém mediu o peso perdido, a app pergunta-o: se
   pesaste depois de cozinhar, esse peso vale mais do que qualquer tabela.
-- **Sete vezes mais alimentos com porção**, de 297 para 2 101 — «uma fatia», «uma chávena»,
-  «uma unidade média» — e 547 deles com mais do que uma maneira de medir. Para o resto do
+- **Sete vezes mais alimentos com porção**, de 297 para 2 090 — «uma fatia», «uma chávena»,
+  «uma unidade média» — e 543 deles com mais do que uma maneira de medir. Para o resto do
   catálogo, registar continua a ser escrever gramas.
 - **Dois mil cento e trinta e um alimentos deixam de ter nome de laboratório em inglês.** Numa
   app portuguesa eram 4 958, e traduz-se o vocabulário e não os nomes: «raw» traduz-se uma vez,
@@ -77,6 +77,10 @@ a oficina de curadoria não mudam nada na app e por isso não se lançam.*
 - **Um vestígio deixa de poder entrar nas somas do dia.** Somar obrigava a escolher um número
   — zero, metade do limite, o limite — e qualquer escolha é aritmética sobre o que ninguém
   mediu. Aparece no alimento, e não na conta.
+- **O ecrã de boas-vindas prometia 1376 alimentos medidos em Portugal**, e o das atribuições
+  dizia o mesmo. São 1372: quatro dos do INSA estavam repetidos e foram fundidos na medição
+  que ganhou a arbitragem. A tabela do INSA continua a ter 1376 — o que mudou é quantos deles
+  o catálogo carrega com identificador próprio.
 
 ---
 

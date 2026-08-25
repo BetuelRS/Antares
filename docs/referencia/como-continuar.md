@@ -8,10 +8,9 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 ## Onde estamos
 
 - **2.6.0 é a última publicada.** Esquema da base **v28**. Oito versões feitas.
-- A **2.7.0 está escrita e por lançar**, e leva o bloco D inteiro. Árvore verde: 1472 testes
-  Kotlin, 40 das ferramentas, detekt e lint limpos. Falta-lhe
-  **correr no aparelho** — instalação limpa e actualização a partir da 2.6.0, que salta da v28
-  para a v30 — e depois publicar. Não havia telemóvel nem emulador ligado.
+- A **2.7.0 está escrita e por lançar**, e leva o bloco D inteiro. Árvore verde: 1474 testes
+  Kotlin, 41 das ferramentas, detekt e lint limpos. **Já correu**, no emulador: instalação
+  limpa e actualização a partir da 2.6.0, que salta da v28 para a v30. Falta-lhe **publicar**.
 - O catálogo no repositório é a **versão 4** e a 2.6.0 publicada traz a 2. A release da 2.7.0
   tem de levar o `catalogo.json` **e** o `manifesto.json` anexados — ver o passo 9 de
   [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). Sem eles, o botão de actualizar o
@@ -48,17 +47,29 @@ premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que falta no bloco D
 
-Está tudo escrito e verde. Falta **o aparelho e o lançamento**:
+Está tudo escrito, verde, e **já correu no emulador** (Android 16, x86_64). Falta **lançar**.
 
-1. Instalação limpa do APK de lançamento, e actualização a partir da 2.6.0 — a migração salta
-   três versões de esquema, da v28 para a v30. Foi numa instalação limpa, e só aí, que
-   apareceram dois dos três defeitos da 2.1.0.
-2. O botão «Procurar» tem de dizer **«está em dia»** — o catálogo do APK é a versão 4, e a
-   release traz a mesma. Um «não deu para chegar lá» aqui quer dizer que os ficheiros não
-   foram anexados à release.
-3. Abrir um alimento que se cozinhe — carne, peixe, legumes — e ver o cartão «e se for
-   cozinhado?». Metade do catálogo não o tem, e é de propósito.
-4. Lançar, com os quatro APK **e** os dois ficheiros do catálogo.
+O que a corrida no aparelho mostrou:
+
+1. **A actualização a partir da 2.6.0 passa.** A migração salta três versões de esquema, da
+   v28 para a v30, e o dia registado na 2.6.0 — 1 050 kcal em dois registos — aparece igual
+   depois de instalar por cima. Nada de re-onboarding, nada no `logcat`.
+2. **A instalação limpa passa**, com o catálogo v4 semeado do APK.
+3. **O cartão «e se for cozinhado?» aparece** onde tem de aparecer: em «Frango, carne, cru»,
+   109 kcal passam a 139 no grelhado, com «100 g cru dão 79 g» e o campo para quem pesou
+   depois de cozinhar. Metade do catálogo não o tem, e é de propósito.
+4. **O botão «Procurar» diz «não deu para chegar lá»** — e está certo: a release mais recente
+   é a 2.6.0, que **não** traz o `manifesto.json`, e o `latest` do GitHub aponta para ela. O
+   endereço responde 404, confirmado à mão. É exactamente o sintoma que o passo 9 do guia
+   descreve, e o que o desfaz é a release da 2.7.0 levar os dois ficheiros.
+
+E mostrou dois defeitos, corrigidos aqui: o ecrã de boas-vindas e o de atribuições prometiam
+**1376** alimentos do INSA quando o catálogo tem **1372** — quatro foram fundidos noutra
+medição —, e a linha das origens em [`dados-e-licencas.md`](dados-e-licencas.md) ainda contava
+3401/2937/1376/284. O `NumerosDoCatalogoTest` não via nenhum dos dois: só olhava para linhas
+que dizem CIQUAL, USDA ou INSA por extenso, e não para as que contam pelo identificador nem
+para os textos da app. Agora vê, e o Gradle já não dá a tarefa por actualizada quando **só**
+o documento muda.
 
 ## O estado do catálogo
 

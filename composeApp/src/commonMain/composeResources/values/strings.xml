@@ -183,7 +183,7 @@
     <string name="onb_welcome_lead">Três coisas que mais nenhuma app de nutrição faz:</string>
     <string name="onb_welcome_maths_title">A conta à vista</string>
     <string name="onb_welcome_maths_body">Cada meta mostra-se linha a linha, com a fórmula e a fonte. Podes conferi-la à mão e discordar dela.</string>
-    <string name="onb_welcome_food_title">1376 alimentos medidos em Portugal</string>
+    <string name="onb_welcome_food_title">1372 alimentos medidos em Portugal</string>
     <string name="onb_welcome_food_body">Da Tabela de Composição de Alimentos do INSA, com micronutrientes. Não são traduções de uma tabela americana.</string>
     <string name="onb_welcome_offline_title">Nada sai do telemóvel</string>
     <string name="onb_welcome_offline_body">Não crias nada nem entras em lado nenhum. O que escreves fica no telemóvel, e sai de lá só se fores tu a exportá-lo.</string>
@@ -529,7 +529,7 @@
     <string name="attrib_intro">O Antares usa dados abertos destas fontes:</string>
     <string name="attrib_coverage">O catálogo tem %1$d alimentos, %2$d% deles com vitaminas e minerais medidos. Onde faltam, a app diz porquê em vez de os inventar.</string>
     <string name="attrib_tca_title">INSA · Tabela da Composição de Alimentos (Portugal)</string>
-    <string name="attrib_tca_desc">A autoridade para alimentos portugueses: 1376 alimentos medidos em Portugal, com nomes portugueses reais. Usada com autorização do Instituto Nacional de Saúde Doutor Ricardo Jorge, sujeita a referenciação.
+    <string name="attrib_tca_desc">A autoridade para alimentos portugueses: 1372 alimentos medidos em Portugal, com nomes portugueses reais. Usada com autorização do Instituto Nacional de Saúde Doutor Ricardo Jorge, sujeita a referenciação.
 
 Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Composição de Alimentos, v 7.1 [base de dados online]. Lisboa, 2026 [consultada em 29-07-2026]. Disponível em: https://portfir.insa.min-saude.pt/pt/</string>
     <string name="attrib_ciqual_title">CIQUAL 2025 · ANSES (França)</string>

@@ -217,6 +217,17 @@ android {
 tasks.withType<Test>().configureEach {
     systemProperty("runSupabaseIt", System.getProperty("runSupabaseIt") ?: "false")
     testLogging { showStandardStreams = true }
+
+    // Há testes que lêem documentos fora do módulo — o `NumerosDoCatalogoTest` reconta neles
+    // os números do catálogo, e o `DocumentationHonestyTest` confere a versão. Sem os
+    // declarar aqui, o Gradle dá a tarefa por actualizada quando **só** o documento mudou, e
+    // a verificação passa sem ter corrido. Não se usa `--rerun-tasks` para forçar isto: no
+    // Windows reempacotar recursos choca com ficheiros abertos por outro processo.
+    inputs.files(
+        rootProject.file("README.md"),
+        rootProject.file("CHANGELOG.md"),
+        rootProject.file("docs/referencia/dados-e-licencas.md"),
+    ).withPropertyName("documentosQueOsTestesLeem").withPathSensitivity(PathSensitivity.RELATIVE)
 }
 
 compose.resources {
