@@ -347,6 +347,7 @@
     <string name="food_favorite">Favorito</string>
     <string name="food_kj">%1$s kJ</string>
     <string name="food_salt">%1$s g de sal</string>
+    <string name="food_minha_porcao">a tua %1$s</string>
     <string name="food_serving">Porção</string>
     <string name="food_estimated_hint">Valores aproximados por 100 g — podes editar para os corrigir.</string>
     <string name="food_tbsp">Colher (15 g)</string>

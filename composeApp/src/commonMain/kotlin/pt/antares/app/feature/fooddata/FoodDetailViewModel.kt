@@ -57,6 +57,14 @@ data class PortionState(
 
     val usualG: Double? = null,
 
+    /**
+     * Quanto pesa uma unidade tua deste alimento, quando ela não é a da tabela.
+     *
+     * Nulo é o caso normal: só se aprende o que se repete, e a maior parte dos alimentos
+     * regista-se uma vez.
+     */
+    val unidadeAprendidaG: Double? = null,
+
     /** Só muda o que se escreve e o que se lê. O que se grava está sempre em gramas. */
     val unitSystem: UnitSystem = UnitSystem.METRIC,
 
@@ -236,6 +244,7 @@ class FoodDetailViewModel(
 
             val marca = food?.let { foodRepository.marcaDe(it.id) }
             val usual = food?.let { diaryRepository.usualPortionOf(it.id) }
+            val minhaUnidade = food?.let { diaryRepository.unidadeAprendidaDe(it) }
             val unidades = perfil?.unitSystem ?: UnitSystem.METRIC
             val inicial = (usual ?: marca?.lastAmountG ?: food?.servingGrams) ?: PORCAO_DE_RECURSO_G
             _state.update {
@@ -247,6 +256,7 @@ class FoodDetailViewModel(
                     unitSystem = unidades,
                     quantityText = paraCampo(inicial, unidades, food?.isLiquid == true, food?.densidade),
                     usualG = usual,
+                    unidadeAprendidaG = minhaUnidade,
                     microsPer100 = micros,
                     estadosPer100 = estados,
                     reference = reference,

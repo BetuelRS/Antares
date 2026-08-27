@@ -225,6 +225,16 @@ class DiaryRepository(
     }
 
     /**
+     * Quanto pesa **uma unidade tua** deste alimento, quando ela não é a da tabela.
+     *
+     * A tabela diz que uma fatia tem 30 g; a tua faca corta 45. A porção da tabela é uma
+     * mediana medida noutro sítio, e a tua é uma medição do que tu comes.
+     */
+    suspend fun unidadeAprendidaDe(food: FoodEntity): Double? = withContext(io) {
+        UsualPortion.unidadeDe(foodLogDao.recentAmounts(food.id), food.servingGrams)
+    }
+
+    /**
      * A quantidade que o campo já traz preenchida, do mais pessoal para o mais genérico: o
      * hábito da pessoa, a última vez que a usou, a dose do rótulo, e por fim 100 g.
      */

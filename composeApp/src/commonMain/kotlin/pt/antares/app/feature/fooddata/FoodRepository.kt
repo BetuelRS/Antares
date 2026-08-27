@@ -133,7 +133,7 @@ class FoodRepository(
     suspend fun cacheOnline(food: FoodEntity) = withContext(io) {
         guardarComIndice(
             food,
-            TextNormalize.normalize("${food.namePt} ${food.nameEn} ${food.brand.orEmpty()}"),
+            textoDePesquisa(food.namePt, food.nameEn, food.brand),
         )
     }
 
@@ -210,7 +210,7 @@ class FoodRepository(
             verified = true,
             updatedAt = now(),
         )
-        guardarComIndice(food, TextNormalize.normalize("${food.namePt} ${food.nameEn}"))
+        guardarComIndice(food, textoDePesquisa(food.namePt, food.nameEn, null))
         food
     }
 }

@@ -236,6 +236,21 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
             val nome = food.servingName ?: stringResource(Res.string.food_serving)
             val quanto = paraCampo(grams, state.unitSystem, food.isLiquid, food.densidade)
             AssistChip(onClick = { onPick(grams) }, label = { Text("$nome ($quanto $unit)") })
+
+            // A unidade que a app aprendeu de quem regista, quando ela não é a da tabela.
+            // Fica ao lado e não no lugar: a da tabela continua a ser a resposta a «quanto
+            // pesa uma fatia», e esta é a resposta a «quanto pesa a minha».
+            state.unidadeAprendidaG?.let { minha ->
+                val meu = paraCampo(minha, state.unitSystem, food.isLiquid, food.densidade)
+                AssistChip(
+                    onClick = { onPick(minha) },
+                    label = {
+                        Text(
+                            "${stringResource(Res.string.food_minha_porcao, nome.lowercase())} ($meu $unit)",
+                        )
+                    },
+                )
+            }
         }
 
         // As outras maneiras de medir o mesmo alimento: a chávena, a colher, a fatia. São

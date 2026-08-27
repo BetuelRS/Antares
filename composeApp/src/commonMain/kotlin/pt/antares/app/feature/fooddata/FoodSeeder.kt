@@ -216,7 +216,7 @@ class FoodSeeder(
         val linhasDePesquisa = alimentos.map { f ->
             FoodFtsEntity(
                 foodId = f.id,
-                searchText = TextNormalize.normalize("${f.namePt} ${f.nameEn} ${f.brand.orEmpty()}"),
+                searchText = textoDePesquisa(f.namePt, f.nameEn, f.brand),
             )
         }
         // Apagar antes de reinserir: o FTS4 não tem chave primária, e reimportar sem isto

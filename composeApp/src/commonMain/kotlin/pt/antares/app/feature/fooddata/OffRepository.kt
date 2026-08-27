@@ -127,7 +127,7 @@ class OffRepository(
     private suspend fun cache(food: FoodEntity) {
         foodDao.upsertWithFts(
             food,
-            TextNormalize.normalize("${food.namePt} ${food.nameEn} ${food.brand.orEmpty()}"),
+            textoDePesquisa(food.namePt, food.nameEn, food.brand),
         )
     }
 }
