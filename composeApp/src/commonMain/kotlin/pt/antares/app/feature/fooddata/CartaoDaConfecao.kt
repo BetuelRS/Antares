@@ -12,7 +12,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -23,34 +22,12 @@ import pt.antares.app.generated.resources.confecao_cru
 import pt.antares.app.generated.resources.confecao_de_outra_carne
 import pt.antares.app.generated.resources.confecao_explicacao
 import pt.antares.app.generated.resources.confecao_falta_peso
-import pt.antares.app.generated.resources.confecao_metodo_assado
-import pt.antares.app.generated.resources.confecao_metodo_cozido
-import pt.antares.app.generated.resources.confecao_metodo_estufado
-import pt.antares.app.generated.resources.confecao_metodo_frito
-import pt.antares.app.generated.resources.confecao_metodo_grelhado
-import pt.antares.app.generated.resources.confecao_metodo_reaquecido
-import pt.antares.app.generated.resources.confecao_metodo_salteado
 import pt.antares.app.generated.resources.confecao_peso_cozinhado
 import pt.antares.app.generated.resources.confecao_pesa
 import pt.antares.app.generated.resources.confecao_rendimento
 import pt.antares.app.generated.resources.confecao_sem_molho
 import pt.antares.app.generated.resources.confecao_titulo
 import kotlin.math.roundToInt
-
-/**
- * Os métodos de confeção traduzidos. O oleoduto escreve os nomes em português dentro da
- * tabela, mas quem lê o ecrã pode tê-lo em inglês — e um nome de método não é conteúdo do
- * catálogo, é palavra da interface.
- */
-private val NOMES: Map<String, StringResource> = mapOf(
-    "estufado" to Res.string.confecao_metodo_estufado,
-    "grelhado" to Res.string.confecao_metodo_grelhado,
-    "frito" to Res.string.confecao_metodo_frito,
-    "salteado" to Res.string.confecao_metodo_salteado,
-    "assado" to Res.string.confecao_metodo_assado,
-    "cozido" to Res.string.confecao_metodo_cozido,
-    "reaquecido" to Res.string.confecao_metodo_reaquecido,
-)
 
 private const val PERCENTAGEM = 100.0
 
@@ -99,7 +76,7 @@ fun CartaoDaConfecao(
                     FilterChip(
                         selected = state.metodo == m.id,
                         onClick = { onMetodo(m.id) },
-                        label = { Text(NOMES[m.id]?.let { stringResource(it) } ?: m.nome) },
+                        label = { Text(nomeDoMetodo(m.id, m.nome)) },
                     )
                 }
             }

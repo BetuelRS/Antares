@@ -12,9 +12,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.antares.app.core.calc.RecipeNutrition
+import pt.antares.app.core.confecao.MetodoDeConfecao
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
+import kotlin.math.roundToInt
 
 data class RecipeEditState(
     val recipeId: String? = null,
@@ -24,6 +26,23 @@ data class RecipeEditState(
     val rows: List<IngredientRow> = emptyList(),
     val nutrition: RecipeNutrition = RecipeNutrition(0, 0.0, 0.0, 0.0, 0.0),
     val saved: Boolean = false,
+
+    /** O método com que o prato foi cozinhado, ou nulo na receita que não vai ao lume. */
+    val metodo: String? = null,
+
+    /**
+     * Os métodos que **alguma** família presente conhece. Vazio esconde a pergunta — uma
+     * salada não tem nada a perguntar.
+     */
+    val metodos: List<MetodoDeConfecao> = emptyList(),
+
+    /**
+     * O peso final que as tabelas prevêem, para quem ainda não pôs a panela na balança.
+     *
+     * Nunca se grava sozinho: é uma sugestão ao lado do campo vazio, e o peso que a pessoa
+     * mede ganha sempre a uma mediana de pratos que não são este.
+     */
+    val pesoSugerido: Double? = null,
 ) {
     val yieldGrams: Double? get() = yieldText.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
 
@@ -51,6 +70,7 @@ class RecipeEditViewModel(
     private val name = MutableStateFlow("")
     private val yieldText = MutableStateFlow("")
     private val servingsText = MutableStateFlow("")
+    private val metodo = MutableStateFlow<String?>(null)
     private val saved = MutableStateFlow(false)
 
     private val rows = recipeId.flatMapLatest { id ->
@@ -59,18 +79,53 @@ class RecipeEditViewModel(
 
     private val campos = combine(name, yieldText, servingsText) { nm, yt, st -> Triple(nm, yt, st) }
 
-    val state: StateFlow<RecipeEditState> = combine(recipeId, campos, rows, saved) { id, (nm, yt, st), rws, sv ->
-        val yieldG = yt.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
-        RecipeEditState(
-            recipeId = id,
-            name = nm,
-            yieldText = yt,
-            servingsText = st,
-            rows = rws,
-            nutrition = repository.nutritionFrom(rws, yieldG),
-            saved = sv,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RecipeEditState())
+    /**
+     * Os métodos e o peso sugerido saem do repositório, e por isso vêm num fluxo à parte
+     * que só se recalcula quando os ingredientes ou o método mudam — e não a cada letra
+     * escrita no nome.
+     */
+    private val confecao = combine(recipeId, rows, metodo) { id, _, mt -> id to mt }
+        .flatMapLatest { (id, mt) ->
+            flowOf(
+                if (id == null) {
+                    emptyList<MetodoDeConfecao>() to null
+                } else {
+                    repository.metodosPara(id) to repository.pesoFinalSugerido(id, mt)
+                },
+            )
+        }
+
+    val state: StateFlow<RecipeEditState> =
+        combine(recipeId, campos, rows, saved, metodo) { id, campos, rws, sv, mt ->
+            Quinteto(id, campos, rws, sv, mt)
+        }.combine(confecao) { q, (metodos, sugerido) ->
+            val (nm, yt, st) = q.campos
+            val yieldG = yt.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
+            RecipeEditState(
+                recipeId = q.id,
+                name = nm,
+                yieldText = yt,
+                servingsText = st,
+                rows = q.rows,
+                nutrition = repository.nutritionFrom(q.rows, yieldG, q.metodo),
+                saved = q.saved,
+                metodo = q.metodo,
+                metodos = metodos,
+                // A sugestão só aparece com o campo vazio: com um peso escrito, propor
+                // outro era discutir com quem tem a balança à frente.
+                pesoSugerido = sugerido.takeIf { yieldG == null },
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RecipeEditState())
+
+    // O `combine` de cinco fluxos não tem sobrecarga com destruturação, e um `Triple` de
+    // `Triple`s lia-se pior do que isto.
+    private data class Quinteto(
+        val id: String?,
+        val campos: Triple<String, String, String>,
+        val rows: List<IngredientRow>,
+        val saved: Boolean,
+        val metodo: String?,
+    )
 
     fun start(existingId: String?) {
         if (existingId != null && recipeId.value == null) {
@@ -80,6 +135,7 @@ class RecipeEditViewModel(
                     name.value = r.name
                     yieldText.value = r.yieldGrams?.let { formatGrams(it) } ?: ""
                     servingsText.value = r.servings?.toString() ?: ""
+                    metodo.value = r.metodo
                 }
             }
         }
@@ -89,6 +145,19 @@ class RecipeEditViewModel(
     fun setYield(value: String) { yieldText.value = value.filter { it.isDigit() || it == '.' || it == ',' }.take(6) }
 
     fun setServings(value: String) { servingsText.value = value.filter(Char::isDigit).take(2) }
+
+    /** Tocar no método já escolhido tira-o: é como se desmarca sem um botão só para isso. */
+    fun escolherMetodo(id: String) {
+        metodo.value = if (metodo.value == id) null else id
+        val recipe = recipeId.value ?: return
+        viewModelScope.launch { repository.updateMetodo(recipe, metodo.value) }
+    }
+
+    /** Aceitar o peso que as tabelas prevêem, escrevendo-o no campo como se fosse à mão. */
+    fun aceitarPesoSugerido() {
+        val sugerido = state.value.pesoSugerido ?: return
+        yieldText.value = formatGrams(sugerido.roundToInt().toDouble())
+    }
 
     fun ensureRecipeThen(navigate: (String) -> Unit) {
         viewModelScope.launch {
@@ -134,6 +203,9 @@ class RecipeEditViewModel(
             val id = recipeId.value
                 ?: repository.createRecipe(name.value, yieldG, doses).also { recipeId.value = it }
             repository.updateRecipe(id, name.value, yieldG, doses)
+            // O método já foi gravado quando se escolheu, mas uma receita criada agora não
+            // existia nesse momento — e sem isto perdia-o ao gravar.
+            repository.updateMetodo(id, metodo.value)
             saved.value = true
         }
     }

@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import pt.antares.app.core.confecao.LeitorDeConfecao
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.RecipeEntity
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
@@ -35,6 +36,7 @@ class RecipeLogTest : ViewModelHarness() {
         db.recipeIngredientDao(),
         db.foodDao(),
         diaryRepository(),
+        LeitorDeConfecao(dispatcher),
         dispatcher,
     )
 

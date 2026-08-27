@@ -13,4 +13,8 @@
         <item quantity="one">%1$d unlogged day this week — the count is incomplete.</item>
         <item quantity="other">%1$d unlogged days this week — the count is incomplete.</item>
     </plurals>
+    <plurals name="search_outros_estados">
+        <item quantity="one">+ %1$d state</item>
+        <item quantity="other">+ %1$d states</item>
+    </plurals>
 </resources>

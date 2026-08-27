@@ -16,6 +16,10 @@ data class RecipeEntity(
     // Quantas doses a receita dá. Nulo é o que havia antes: regista-se em gramas, e quem
     // fez uma lasanha tinha de saber quantos gramas comeu dela.
     val servings: Int? = null,
+    // Como se cozinhou o prato — o `id` de um método da tabela de confeção. Nulo é o que
+    // havia antes, e continua a ser o que fica em receitas que não vão ao lume: nenhuma
+    // retenção se aplica, e a receita é a soma dos ingredientes como sempre foi.
+    val metodo: String? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
 )

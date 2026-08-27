@@ -14,4 +14,8 @@
         <item quantity="one">Falta %1$d dia por registar esta semana — a conta está incompleta.</item>
         <item quantity="other">Faltam %1$d dias por registar esta semana — a conta está incompleta.</item>
     </plurals>
+    <plurals name="search_outros_estados">
+        <item quantity="one">+ %1$d estado</item>
+        <item quantity="other">+ %1$d estados</item>
+    </plurals>
 </resources>

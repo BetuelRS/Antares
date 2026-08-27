@@ -468,6 +468,12 @@
     <string name="recipe_servings_grams">%1$d g no total.</string>
     <string name="recipe_log_by_grams">Registar em gramas</string>
     <string name="recipe_log_by_servings">Registar por dose</string>
+    <string name="recipe_metodo">Como se cozinhou?</string>
+    <string name="recipe_metodo_hint">Opcional — com isto, as vitaminas que o lume destrói deixam de contar como se sobrevivessem.</string>
+    <string name="recipe_metodo_nenhum">Não vai ao lume</string>
+    <string name="recipe_peso_sugerido">As tabelas prevêem %1$d g. Se pesaste, o teu peso ganha.</string>
+    <string name="recipe_peso_sugerido_usar">Usar %1$d g</string>
+    <string name="recipe_retencao_nota">Contado com o que o lume destrói: os minerais quase todos ficam, e as vitaminas do grupo B e a C perdem-se em parte.</string>
     <string name="recipe_add_ingredient">Adicionar ingrediente</string>
     <string name="recipe_delete">Apagar receita</string>
     <string name="recipe_delete_title">Apagar esta receita?</string>

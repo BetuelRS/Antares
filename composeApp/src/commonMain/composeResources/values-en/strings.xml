@@ -468,6 +468,12 @@
     <string name="recipe_servings_grams">%1$d g in total.</string>
     <string name="recipe_log_by_grams">Log in grams</string>
     <string name="recipe_log_by_servings">Log by serving</string>
+    <string name="recipe_metodo">How was it cooked?</string>
+    <string name="recipe_metodo_hint">Optional — with this, the vitamins heat destroys stop counting as if they had survived.</string>
+    <string name="recipe_metodo_nenhum">Not cooked</string>
+    <string name="recipe_peso_sugerido">The tables predict %1$d g. If you weighed it, your weight wins.</string>
+    <string name="recipe_peso_sugerido_usar">Use %1$d g</string>
+    <string name="recipe_retencao_nota">Counted with what heat destroys: most minerals stay, and the B vitamins and vitamin C are partly lost.</string>
     <string name="recipe_add_ingredient">Add ingredient</string>
     <string name="recipe_delete">Delete recipe</string>
     <string name="recipe_delete_title">Delete this recipe?</string>

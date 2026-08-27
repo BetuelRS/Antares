@@ -14,6 +14,17 @@ data class IngredientNutrition(
     val fiberPer100: Double? = null,
     val sodiumMgPer100: Double? = null,
     val microsPer100: Map<String, Double> = emptyMap(),
+
+    /**
+     * Quanto de cada micronutriente **deste ingrediente** sobrevive ao lume, por chave do
+     * vocabulário. Vazio quer dizer que nada se perde — que é o que a app assumia em todas
+     * as receitas até aqui.
+     *
+     * Os factores são por ingrediente e não por receita porque a retenção é uma propriedade
+     * da família do alimento: cozer espinafres e cozer arroz no mesmo tacho não destrói a
+     * mesma fracção de vitamina C, e a tabela do USDA publica-os separados.
+     */
+    val retencoes: Map<String, Double> = emptyMap(),
 )
 
 /**
@@ -52,38 +63,24 @@ object RecipeCalc {
     /**
      * Soma os ingredientes e reduz a valores por 100 g. `yieldGrams` é o peso final: a
      * água que evapora concentra tudo, e sem esse valor a receita fica pelo peso cru.
+     *
+     * **A concentração sozinha mente para cima.** Uma receita que perde 200 g de água em
+     * 1 000 g concentra tudo 1,25 vezes — e é assim que os macros se comportam, porque a
+     * proteína não desaparece ao lume. A vitamina C desaparece: cozer destrói metade dela.
+     * Contar só a concentração dava uma sopa de espinafres com 25 % mais vitamina C do que
+     * a que estava crua no tacho, que é o contrário do que acontece.
+     *
+     * Por isso cada ingrediente traz as suas [IngredientNutrition.retencoes], e são elas que
+     * entram na soma — a concentração continua a ser da receita inteira, através da base.
      */
     fun compute(ingredients: List<IngredientNutrition>, yieldGrams: Double?): RecipeNutrition {
-        var kcal = 0.0
-        var protein = 0.0
-        var carbs = 0.0
-        var fat = 0.0
-        var rawGrams = 0.0
+        val macros = somarMacros(ingredients)
+        val rawGrams = macros.gramas
 
         val totals = HashMap<String, Double>()
         val covered = HashMap<String, Double>()
+        somarMicros(ingredients, totals, covered)
 
-        // `covered` acompanha `totals` para saber sobre que peso da receita cada nutriente
-        // foi de facto declarado. Um ingrediente sem o campo não entra em nenhum dos dois.
-        fun add(key: String, per100: Double?, grams: Double) {
-            if (per100 == null) return
-            totals[key] = (totals[key] ?: 0.0) + per100 * grams / 100.0
-            covered[key] = (covered[key] ?: 0.0) + grams
-        }
-
-        for (i in ingredients) {
-            val factor = i.grams / 100.0
-            kcal += i.kcalPer100 * factor
-            protein += i.proteinPer100 * factor
-            carbs += i.carbsPer100 * factor
-            fat += i.fatPer100 * factor
-            rawGrams += i.grams
-            add(KEY_SUGARS, i.sugarsPer100, i.grams)
-            add(KEY_SATFAT, i.satFatPer100, i.grams)
-            add(KEY_FIBER, i.fiberPer100, i.grams)
-            add(KEY_SODIUM, i.sodiumMgPer100, i.grams)
-            for ((k, v) in i.microsPer100) add(k, v, i.grams)
-        }
         val basis = yieldGrams?.takeIf { it > 0 } ?: rawGrams
 
         fun resolve(key: String): Double? {
@@ -91,7 +88,7 @@ object RecipeCalc {
             // A cobertura mede-se sobre o peso cru, que é o que os ingredientes somam. O
             // peso final só entra na divisão, para não penalizar receitas que perdem água.
             if ((covered[key] ?: 0.0) / rawGrams < MIN_COVERAGE) return null
-            return (totals[key] ?: return null) / basis * 100
+            return (totals[key] ?: return null) / basis * GRAMAS_DE_REFERENCIA
         }
 
         val micros = buildMap {
@@ -103,10 +100,10 @@ object RecipeCalc {
             }
         }
         return RecipeNutrition(
-            totalKcal = kcal.roundToInt(),
-            totalProteinG = protein,
-            totalCarbsG = carbs,
-            totalFatG = fat,
+            totalKcal = macros.kcal.roundToInt(),
+            totalProteinG = macros.proteina,
+            totalCarbsG = macros.hidratos,
+            totalFatG = macros.gordura,
             basisGrams = basis,
             sugarsPer100 = resolve(KEY_SUGARS),
             satFatPer100 = resolve(KEY_SATFAT),
@@ -115,6 +112,73 @@ object RecipeCalc {
             microsPer100 = micros,
         )
     }
+
+    /** A soma dos macros e do peso cru. Sem retenção: os macros só se concentram. */
+    private data class Macros(
+        val kcal: Double,
+        val proteina: Double,
+        val hidratos: Double,
+        val gordura: Double,
+        val gramas: Double,
+    )
+
+    private fun somarMacros(ingredients: List<IngredientNutrition>): Macros {
+        var kcal = 0.0
+        var proteina = 0.0
+        var hidratos = 0.0
+        var gordura = 0.0
+        var gramas = 0.0
+
+        for (i in ingredients) {
+            val factor = i.grams / GRAMAS_DE_REFERENCIA
+            kcal += i.kcalPer100 * factor
+            proteina += i.proteinPer100 * factor
+            hidratos += i.carbsPer100 * factor
+            gordura += i.fatPer100 * factor
+            gramas += i.grams
+        }
+        return Macros(kcal, proteina, hidratos, gordura, gramas)
+    }
+
+    /**
+     * Soma os micronutrientes, já com a retenção de cada ingrediente aplicada.
+     *
+     * O [covered] acompanha o [totals] para saber sobre que peso da receita cada nutriente
+     * foi de facto declarado — um ingrediente sem o campo não entra em nenhum dos dois.
+     *
+     * A retenção é 1 para quem não tem factor publicado, e é essa a diferença entre «não se
+     * perde» e «não se sabe». A gordura saturada não tem factor nenhum na tabela do USDA, e
+     * por isso passa sempre inteira.
+     */
+    private fun somarMicros(
+        ingredients: List<IngredientNutrition>,
+        totals: HashMap<String, Double>,
+        covered: HashMap<String, Double>,
+    ) {
+        fun add(key: String, per100: Double?, grams: Double, retencao: Double) {
+            if (per100 == null) return
+            totals[key] = (totals[key] ?: 0.0) + per100 * retencao * grams / GRAMAS_DE_REFERENCIA
+            covered[key] = (covered[key] ?: 0.0) + grams
+        }
+
+        for (i in ingredients) {
+            fun retencaoDe(chave: String) = i.retencoes[chave] ?: 1.0
+
+            add(KEY_SUGARS, i.sugarsPer100, i.grams, retencaoDe(SUGARS_KEY))
+            add(KEY_SATFAT, i.satFatPer100, i.grams, 1.0)
+            add(KEY_FIBER, i.fiberPer100, i.grams, retencaoDe(FIBER_KEY))
+            add(KEY_SODIUM, i.sodiumMgPer100, i.grams, retencaoDe(SODIUM_KEY))
+            for ((k, v) in i.microsPer100) add(k, v, i.grams, retencaoDe(k))
+        }
+    }
+
+    private const val GRAMAS_DE_REFERENCIA = 100.0
+
+    // As chaves reais dos quatro que têm campo próprio no resultado. São elas que se
+    // procuram na tabela de retenção — a interna, com prefixo duplo, não existe lá.
+    private const val SUGARS_KEY = "sugars_g"
+    private const val FIBER_KEY = "fiber_g"
+    private const val SODIUM_KEY = "sodium_mg"
 
     // Prefixo duplo para não colidirem com nenhum código de micronutriente real, já que
     // partilham o mesmo mapa durante a soma.

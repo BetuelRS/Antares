@@ -17,10 +17,20 @@ import pt.antares.app.generated.resources.Res
  * mais que a app oferece: se o ficheiro faltar, o que tem de acontecer é a app funcionar como
  * funcionava antes de ela existir, sem um ecrã de alimento a rebentar por causa disso.
  */
-class LeitorDeConfecao(private val io: CoroutineDispatcher) {
+class LeitorDeConfecao(
+    private val io: CoroutineDispatcher,
+    /**
+     * Uma tabela já em memória, para os testes.
+     *
+     * O `Res.readBytes` não abre na máquina virtual dos testes, e sem esta porta um teste da
+     * retenção nas receitas só podia afirmar que **nada** se perde — que é precisamente o
+     * defeito que a retenção veio corrigir.
+     */
+    precarregada: TabelaDeConfecao? = null,
+) {
 
     private val json = Json { ignoreUnknownKeys = true }
-    private var lida: TabelaDeConfecao? = null
+    private var lida: TabelaDeConfecao? = precarregada
 
     @OptIn(ExperimentalResourceApi::class)
     suspend fun tabela(): TabelaDeConfecao = lida ?: withContext(io) {

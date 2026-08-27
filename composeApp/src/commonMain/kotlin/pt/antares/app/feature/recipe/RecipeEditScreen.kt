@@ -13,10 +13,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +40,7 @@ import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.portionUnitLabel
 import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.feature.fooddata.nomeDoMetodo
 import pt.antares.app.feature.fooddata.paraCampo
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -100,6 +105,29 @@ fun RecipeEditScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                 )
+
+                // A previsão das tabelas, e um botão que a escreve no campo. Nunca se
+                // escreve sozinha: um peso final é uma medição do prato de quem cozinhou.
+                state.pesoSugerido?.let { sugerido ->
+                    val gramas = sugerido.roundToInt()
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(Res.string.recipe_peso_sugerido, gramas),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f),
+                        )
+                        TextButton(onClick = viewModel::aceitarPesoSugerido) {
+                            Text(stringResource(Res.string.recipe_peso_sugerido_usar, gramas))
+                        }
+                    }
+                }
+            }
+
+            // A pergunta só aparece quando alguma família presente conhece métodos: uma
+            // salada não tem nada a perguntar, e um campo que não faz nada é ruído.
+            if (state.metodos.isNotEmpty()) {
+                item { EscolhaDoMetodo(state, viewModel::escolherMetodo) }
             }
 
             item {
@@ -226,6 +254,49 @@ fun RecipeEditScreen(
                 viewModel.delete()
             },
             onDismiss = { confirmarApagar = false },
+        )
+    }
+}
+
+/**
+ * «Como se cozinhou?»
+ *
+ * A mesma pergunta que um alimento faz, feita ao prato inteiro. A diferença é o que se faz
+ * com a resposta: no alimento ela muda o peso **e** os nutrientes, e aqui muda só os
+ * nutrientes — o peso da receita é o que a pessoa escreveu ou a soma dos ingredientes, e não
+ * se mexe nele por baixo de quem o escreveu.
+ *
+ * Cada ingrediente perde o que a tabela da **família dele** diz. Um cozido de carne com
+ * legumes não perde a mesma vitamina C nos dois, e é por isso que a retenção não é um número
+ * da receita.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun EscolhaDoMetodo(state: RecipeEditState, onEscolher: (String) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+        Text(
+            stringResource(Res.string.recipe_metodo),
+            style = MaterialTheme.typography.titleSmall,
+        )
+
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            for (m in state.metodos) {
+                FilterChip(
+                    selected = state.metodo == m.id,
+                    onClick = { onEscolher(m.id) },
+                    label = { Text(nomeDoMetodo(m.id, m.nome)) },
+                )
+            }
+        }
+
+        // Com método escolhido, diz-se o que mudou nas contas; sem ele, o que a pergunta
+        // serve. As duas frases ocupam a mesma linha para o cartão não saltar de altura.
+        Text(
+            stringResource(
+                if (state.metodo == null) Res.string.recipe_metodo_hint else Res.string.recipe_retencao_nota,
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

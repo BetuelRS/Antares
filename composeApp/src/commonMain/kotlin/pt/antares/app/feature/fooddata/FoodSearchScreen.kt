@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -33,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,6 +56,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.database.entities.FoodEntity
@@ -314,6 +318,7 @@ fun FoodSearchScreen(
                         onToggle = viewModel::toggleSelect,
                         onLocal = { onFoodSelected(it.id) },
                         onOnline = viewModel::selectOnline,
+                        onEstados = viewModel::alternarEstados,
                     )
                 }
                 SearchTab.RECIPES -> RecipesTab(
@@ -429,6 +434,7 @@ private fun SearchResults(
     onToggle: (String) -> Unit,
     onLocal: (FoodEntity) -> Unit,
     onOnline: (FoodEntity) -> Unit,
+    onEstados: (String) -> Unit,
 ) {
     val nothing = state.results.isEmpty() && state.onlineResults.isEmpty() &&
         !state.searching && !state.searchingOnline
@@ -448,15 +454,38 @@ private fun SearchResults(
                     modifier = Modifier.padding(Spacing.sm),
                 )
             }
-            items(state.results, key = { "local-${it.id}" }) { food ->
-                FoodRow(
-                    food = food,
-                    favorito = food.id in state.favoritos,
-                    selectable = selectable,
-                    selected = food.id in state.selected,
-                    onToggle = { onToggle(food.id) },
-                    onClick = { onLocal(food) },
-                )
+            for (grupo in state.grupos) {
+                val aberto = grupo.principal.id in state.estadosAbertos
+
+                item(key = "local-${grupo.principal.id}") {
+                    FoodRow(
+                        food = grupo.principal,
+                        favorito = grupo.principal.id in state.favoritos,
+                        selectable = selectable,
+                        selected = grupo.principal.id in state.selected,
+                        onToggle = { onToggle(grupo.principal.id) },
+                        onClick = { onLocal(grupo.principal) },
+                        // «+ 2 estados», e o que faz abri-los. Um alimento sozinho nao
+                        // mostra nada — que e a esmagadora maioria do catalogo.
+                        outrosEstados = grupo.quantosOutros,
+                        estadosAbertos = aberto,
+                        onEstados = { onEstados(grupo.principal.id) },
+                    )
+                }
+
+                if (aberto) {
+                    items(grupo.outros, key = { "estado-${it.id}" }) { outro ->
+                        FoodRow(
+                            food = outro,
+                            favorito = outro.id in state.favoritos,
+                            selectable = selectable,
+                            selected = outro.id in state.selected,
+                            onToggle = { onToggle(outro.id) },
+                            onClick = { onLocal(outro) },
+                            recuado = true,
+                        )
+                    }
+                }
             }
         }
         if (state.onlineResults.isNotEmpty() || state.searchingOnline) {
@@ -567,13 +596,25 @@ private fun FoodRow(
     selectable: Boolean = false,
     selected: Boolean = false,
     onToggle: () -> Unit = {},
+    // Quantos outros estados do mesmo alimento estao por baixo desta linha. Zero esconde
+    // tudo o que se segue, e e o caso da esmagadora maioria do catalogo.
+    outrosEstados: Int = 0,
+    estadosAbertos: Boolean = false,
+    onEstados: () -> Unit = {},
+    // Uma linha que e o estado de outra recua, para se ler como pertencendo a de cima.
+    recuado: Boolean = false,
     onClick: () -> Unit,
 ) {
     Card(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+            .padding(
+                start = if (recuado) Spacing.xl else Spacing.lg,
+                end = Spacing.lg,
+                top = Spacing.xs,
+                bottom = Spacing.xs,
+            ),
     ) {
 
         val curatedPt = FoodProvenance.of(food.source, food.id) == FoodProvenance.CURATED
@@ -593,6 +634,27 @@ private fun FoodRow(
             },
             trailingContent = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    // O contador vem antes dos icones: e o unico sinal de que ha mais
+                    // comida escondida, e ao lado da caixa de selecao passava por parte
+                    // dela.
+                    if (outrosEstados > 0) {
+                        TextButton(onClick = onEstados) {
+                            Text(
+                                pluralStringResource(
+                                    Res.plurals.search_outros_estados,
+                                    outrosEstados,
+                                    outrosEstados,
+                                ),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                            // Decorativo: a seta acompanha o «+ 2 estados» que está ao lado,
+                            // e o leitor de ecrã já lê o botão inteiro por esse texto.
+                            Icon(
+                                if (estadosAbertos) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                contentDescription = null,
+                            )
+                        }
+                    }
                     when {
                         online -> Icon(
                             Icons.Default.CloudDownload,

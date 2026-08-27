@@ -29,6 +29,17 @@ data class FoodSearchState(
     val results: List<FoodEntity> = emptyList(),
     val searching: Boolean = false,
 
+    /**
+     * Os mesmos resultados, com os estados do mesmo alimento juntos numa linha.
+     *
+     * Deriva-se aqui e nao no ecra: e a lista que se desenha, e calcula-la a cada
+     * recomposicao era refazer o agrupamento a cada letra que se escreve.
+     */
+    val grupos: List<GrupoDeEstados> = emptyList(),
+
+    /** Que grupos estao abertos, por identificador do alimento principal. */
+    val estadosAbertos: Set<String> = emptySet(),
+
     // Os resultados de fora são estado à parte, com o seu próprio indicador: chegam muito
     // depois dos locais, e misturá-los faria a lista saltar debaixo do dedo.
     val onlineResults: List<FoodEntity> = emptyList(),
@@ -121,11 +132,28 @@ class FoodSearchViewModel(
             .debounce(300)
             .onEach { q ->
                 if (q.length < 2) {
-                    _state.update { it.copy(results = emptyList(), searching = false) }
+                    _state.update {
+                        it.copy(
+                            results = emptyList(),
+                            grupos = emptyList(),
+                            estadosAbertos = emptySet(),
+                            searching = false,
+                        )
+                    }
                 } else {
                     _state.update { it.copy(searching = true) }
                     val results = repository.search(q)
-                    _state.update { it.copy(results = results, searching = false) }
+                    _state.update {
+                        it.copy(
+                            results = results,
+                            grupos = agruparEstados(results),
+                            // Uma procura nova fecha o que estava aberto: os grupos sao
+                            // outros, e um identificador que sobrevivesse abria um grupo
+                            // que a pessoa nunca tocou.
+                            estadosAbertos = emptySet(),
+                            searching = false,
+                        )
+                    }
                 }
             }
             .launchIn(viewModelScope)
@@ -235,6 +263,23 @@ class FoodSearchViewModel(
     }
 
     fun clearSelection() = _state.update { it.copy(selected = emptySet()) }
+
+    /**
+     * Abre ou fecha os outros estados de um alimento.
+     *
+     * Fica no estado e não no ecrã porque a lista se redesenha a cada letra escrita e a cada
+     * favorito marcado, e um grupo aberto tinha de sobreviver a isso — fechá-lo por baixo do
+     * dedo era o mesmo defeito que a lista a saltar.
+     */
+    fun alternarEstados(principalId: String) = _state.update { s ->
+        s.copy(
+            estadosAbertos = if (principalId in s.estadosAbertos) {
+                s.estadosAbertos - principalId
+            } else {
+                s.estadosAbertos + principalId
+            },
+        )
+    }
 
     fun logSelected(slot: MealSlot, epochDay: Long) {
         val ids = _state.value.selected

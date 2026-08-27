@@ -16,6 +16,7 @@ import kotlinx.serialization.json.Json
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import pt.antares.app.core.confecao.LeitorDeConfecao
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.model.FoodSource
 import pt.antares.app.core.network.off.OffApi
@@ -70,6 +71,7 @@ class FoodSearchMergeTest : ViewModelHarness() {
             db.recipeIngredientDao(),
             db.foodDao(),
             diaryRepository(),
+            LeitorDeConfecao(dispatcher),
             dispatcher,
         ),
         templateRepository = MealTemplateRepository(

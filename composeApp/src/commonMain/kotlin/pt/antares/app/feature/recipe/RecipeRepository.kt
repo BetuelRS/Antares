@@ -9,6 +9,8 @@ import kotlinx.serialization.json.Json
 import pt.antares.app.core.calc.IngredientNutrition
 import pt.antares.app.core.calc.RecipeCalc
 import pt.antares.app.core.calc.RecipeNutrition
+import pt.antares.app.core.confecao.LeitorDeConfecao
+import pt.antares.app.core.confecao.MetodoDeConfecao
 import pt.antares.app.core.database.daos.FoodDao
 import pt.antares.app.core.database.daos.RecipeDao
 import pt.antares.app.core.database.daos.RecipeIngredientDao
@@ -44,6 +46,7 @@ class RecipeRepository(
     private val ingredientDao: RecipeIngredientDao,
     private val foodDao: FoodDao,
     private val diaryRepository: DiaryRepository,
+    private val confecao: LeitorDeConfecao,
     private val io: CoroutineDispatcher,
 ) {
     private fun now() = Clock.System.now().toEpochMilliseconds()
@@ -56,7 +59,7 @@ class RecipeRepository(
             val out = ArrayList<RecipeSummary>(recipes.size)
             for (r in recipes) {
                 val rows = ingredientRows(r.id)
-                out += RecipeSummary(r, nutritionOf(rows, r.yieldGrams), rows.size)
+                out += RecipeSummary(r, nutritionOf(rows, r.yieldGrams, r.metodo), rows.size)
             }
             out
         }
@@ -72,7 +75,7 @@ class RecipeRepository(
 
     suspend fun nutrition(recipeId: String): RecipeNutrition = withContext(io) {
         val recipe = recipeDao.byId(recipeId)
-        nutritionOf(ingredientRows(recipeId), recipe?.yieldGrams)
+        nutritionOf(ingredientRows(recipeId), recipe?.yieldGrams, recipe?.metodo)
     }
 
     suspend fun createRecipe(name: String, yieldGrams: Double?, servings: Int? = null): String = withContext(io) {
@@ -99,6 +102,18 @@ class RecipeRepository(
                 updatedAt = now(),
             ),
         )
+    }
+
+    /**
+     * Escolhe — ou tira — o método com que o prato foi cozinhado.
+     *
+     * Fica em campo próprio e não junto com o nome e o peso porque se muda noutro sítio do
+     * ecrã e noutro momento: o nome escreve-se ao criar, o método escolhe-se ao olhar para
+     * os números.
+     */
+    suspend fun updateMetodo(id: String, metodo: String?) = withContext(io) {
+        val existing = recipeDao.byId(id) ?: return@withContext
+        recipeDao.upsert(existing.copy(metodo = metodo, updatedAt = now()))
     }
 
     suspend fun addIngredient(recipeId: String, foodId: String, grams: Double) = withContext(io) {
@@ -139,7 +154,7 @@ class RecipeRepository(
      */
     suspend fun logRecipe(recipeId: String, grams: Double, slot: MealSlot, epochDay: Long) = withContext(io) {
         val recipe = recipeDao.byId(recipeId) ?: return@withContext
-        val n = nutritionOf(ingredientRows(recipeId), recipe.yieldGrams)
+        val n = nutritionOf(ingredientRows(recipeId), recipe.yieldGrams, recipe.metodo)
 
         val asFood = FoodEntity(
             // Identificador derivado da receita, e não aleatório: o registo aponta-lhe, e
@@ -168,19 +183,45 @@ class RecipeRepository(
         diaryRepository.logFood(asFood, grams, slot, epochDay)
     }
 
-    fun nutritionFrom(rows: List<IngredientRow>, yieldGrams: Double?): RecipeNutrition =
-        nutritionOf(rows, yieldGrams)
+    suspend fun nutritionFrom(
+        rows: List<IngredientRow>,
+        yieldGrams: Double?,
+        metodo: String? = null,
+    ): RecipeNutrition = nutritionOf(rows, yieldGrams, metodo)
 
     private suspend fun ingredientRows(recipeId: String): List<IngredientRow> {
         val list = ingredientDao.forRecipe(recipeId)
         return list.map { IngredientRow(it, foodDao.byId(it.foodId)) }
     }
 
-    private fun nutritionOf(rows: List<IngredientRow>, yieldGrams: Double?): RecipeNutrition {
+    /**
+     * A nutrição da receita, com a retenção de cada ingrediente quando há método escolhido.
+     *
+     * **A tabela só se lê quando alguém escolheu um método.** Sem método não há retenção
+     * nenhuma a aplicar, e ler o ficheiro para devolver mapas vazios era trabalho a mais em
+     * cada linha da lista de receitas.
+     */
+    private suspend fun nutritionOf(
+        rows: List<IngredientRow>,
+        yieldGrams: Double?,
+        metodo: String?,
+    ): RecipeNutrition {
+        val tabela = metodo?.let { confecao.tabela() }
+
         val ingredients = rows.mapNotNull { row ->
             // Ingrediente cujo alimento desapareceu do catálogo é saltado: a receita
             // continua a somar o resto, com menos, em vez de deixar de ter valores.
             val f = row.food ?: return@mapNotNull null
+
+            // Um ingrediente sem família — o azeite, o sal, um alimento criado à mão — não
+            // tem linha na tabela, e fica sem retenção. É o que a tabela diz: nada se sabe
+            // sobre ele, e inventar um factor médio era pior do que não ter nenhum.
+            val retencoes = if (metodo != null && tabela != null) {
+                tabela.linha(f.familia, metodo)?.retencoes.orEmpty()
+            } else {
+                emptyMap()
+            }
+
             IngredientNutrition(
                 kcalPer100 = f.kcal,
                 proteinPer100 = f.proteinG,
@@ -192,8 +233,66 @@ class RecipeRepository(
                 fiberPer100 = microsOf(f)[Nutrients.FIBER],
                 sodiumMgPer100 = microsOf(f)[Nutrients.SODIUM],
                 microsPer100 = microsOf(f),
+                retencoes = retencoes,
             )
         }
         return RecipeCalc.compute(ingredients, yieldGrams)
+    }
+
+    /**
+     * Os métodos que fazem sentido para esta receita: os que **alguma** família presente
+     * conhece.
+     *
+     * Uma receita mistura famílias — carne, legumes, cereais —, e cada uma conhece os seus.
+     * Oferecer só a intersecção deixava um cozido de carne com legumes sem «cozido», porque
+     * as tabelas não publicam rendimento de cozer legumes. A união é o que o cozinheiro
+     * reconhece: cozeu-se o prato, e cada ingrediente perde o que a tabela dele diz.
+     */
+    suspend fun metodosPara(recipeId: String): List<MetodoDeConfecao> {
+        val familias = ingredientRows(recipeId).mapNotNull { it.food?.familia }.toSet()
+        if (familias.isEmpty()) return emptyList()
+        val tabela = confecao.tabela()
+        val ordem = tabela.metodos.map { it.id }
+        return familias.flatMap { tabela.metodosDe(it) }
+            .distinctBy { it.id }
+            .sortedBy { ordem.indexOf(it.id) }
+    }
+
+    /**
+     * O peso final que as tabelas prevêem, para quem não pôs a panela na balança.
+     *
+     * **Não se grava sozinho, e não entra em conta nenhuma.** É uma sugestão que o ecrã
+     * mostra ao lado do campo vazio, e que a pessoa aceita ou ignora: um peso final é uma
+     * medição do prato dela, e a tabela é uma mediana de pratos que não são este.
+     *
+     * Devolve nulo se menos de [RecipeCalc.MIN_COVERAGE] do peso tiver rendimento publicado
+     * — abaixo disso a soma descreve parte do tacho e passaria por descrever o tacho todo.
+     */
+    suspend fun pesoFinalSugerido(recipeId: String, metodo: String?): Double? {
+        if (metodo == null) return null
+        val tabela = confecao.tabela()
+        val rows = ingredientRows(recipeId)
+
+        var comRendimento = 0.0
+        var total = 0.0
+        var previsto = 0.0
+
+        for (row in rows) {
+            val gramas = row.ingredient.grams
+            total += gramas
+            val rendimento = row.food?.familia?.let { tabela.linha(it, metodo)?.rendimento }
+            if (rendimento != null) {
+                comRendimento += gramas
+                previsto += gramas * rendimento
+            } else {
+                // Sem rendimento publicado, o ingrediente entra com o peso que tem. É o
+                // que a app já assumia em toda a receita, e aqui fica explícito.
+                previsto += gramas
+            }
+        }
+
+        if (total <= 0.0) return null
+        if (comRendimento / total < RecipeCalc.MIN_COVERAGE) return null
+        return previsto
     }
 }
