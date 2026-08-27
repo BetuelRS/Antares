@@ -7,7 +7,7 @@
 Regista o que comes, o que treinas e quanto pesas. Mostra-te a aritmética por trás de cada meta,
 linha a linha, para poderes conferi-la à mão.
 
-![versão](https://img.shields.io/badge/vers%C3%A3o-2.7.0-orange)
+![versão](https://img.shields.io/badge/vers%C3%A3o-2.8.0-orange)
 ![Android 8.0+](https://img.shields.io/badge/Android-8.0%2B-green)
 ![licença GPL-3.0](https://img.shields.io/badge/licen%C3%A7a-GPL--3.0-blue)
 ![sem rastreio](https://img.shields.io/badge/rastreio-nenhum-lightgrey)

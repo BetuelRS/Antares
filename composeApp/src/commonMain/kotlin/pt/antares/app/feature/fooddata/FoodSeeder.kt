@@ -304,7 +304,7 @@ class FoodSeeder(
          * [CatalogoTemVersaoTest] não deixa que uma suba sem a outra: se ficasse para
          * trás, o catálogo novo viajava dentro do APK e não entrava em telemóvel nenhum.
          */
-        const val VERSAO_DO_CATALOGO = 4
+        const val VERSAO_DO_CATALOGO = 5
 
         private const val NENHUMA = 0
         private const val KEY_CATALOGO = "catalogo_versao"

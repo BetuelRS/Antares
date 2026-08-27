@@ -23,9 +23,41 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.7.0"
+    const val CURRENT = "2.8.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.8.0",
+            title = "O que faltava à comida cozinhada",
+            titleEn = "What the cooked food was missing",
+            highlights = listOf(
+                "**Uma receita cozinhada deixa de ganhar vitaminas ao lume.** A água que " +
+                    "evapora concentrava tudo, vitamina C incluída — e essa perde-se a " +
+                    "cozer. Escolhes como cozinhaste o prato e cada ingrediente perde o " +
+                    "que a tabela dele diz",
+                "**Um mililitro deixa de contar como uma grama.** 200 ml de azeite pesam " +
+                    "184 g, e a app contava-lhes 200",
+                "**A procura junta o mesmo alimento nos seus estados**: uma linha em vez " +
+                    "de sete quase iguais, e as outras a um toque",
+                "**O abacaxi encontra o ananás**, e o cimbalino encontra o café. Quem " +
+                    "escreve «frango» encontra também o que ainda está em inglês",
+                "**A app aprende quanto pesa uma fatia tua**, quando ela não é a da tabela",
+            ),
+            highlightsEn = listOf(
+                "**A cooked recipe no longer gains vitamins from the heat.** Evaporating " +
+                    "water concentrated everything, vitamin C included — and that one is " +
+                    "lost to boiling. Pick how you cooked it and each ingredient loses " +
+                    "what its own table says",
+                "**A millilitre no longer counts as a gram.** 200 ml of olive oil weigh " +
+                    "184 g, and the app was counting 200",
+                "**Search groups a food with its own states**: one line instead of seven " +
+                    "near-identical ones, the rest a tap away",
+                "**Pineapple finds ananás**, and cimbalino finds café. Typing «frango» " +
+                    "also finds what is still in English",
+                "**The app learns how much your own slice weighs**, when it is not the " +
+                    "table's",
+            ),
+        ),
         AppVersion(
             name = "2.7.0",
             title = "A comida cozinha, mede-se e diz o que não sabe",
@@ -305,39 +337,6 @@ object AppChangelog {
                 "The weight chart put the scale's ends where the first and last day should be " +
                     "— it read as a rise where there was a fall",
                 "On a tablet, lists inside the detail pane squeezed into three columns where only two fit",
-            ),
-        ),
-        AppVersion(
-            name = "2.0.0",
-            title = "A app roda, e as contas ficam honestas",
-            titleEn = "The app rotates, and the maths gets honest",
-            highlights = listOf(
-                "**A app roda.** Deitada, num tablet ou em ecrã dividido, deixa de ser um telemóvel esticado",
-                "Num tablet, o exercício **abre ao lado da lista** em vez de a tapar",
-                "**Desfazer em tudo o que apaga** — um registo, uma pesagem, uma série, uma rotina",
-                "O sistema imperial passou a ser um sistema inteiro: peso, distância, ritmo e porções",
-                "As calorias do exercício passam a ser **o que ele gasta a mais** do que estar sentado",
-                "A meta de água segue a referência da EFSA, por sexo, e **a água da comida conta**",
-                "O basal calculado a partir da fita métrica passa a dizer a margem que tem",
-                "O chão de proteína sobe com o treino e com a profundidade do défice, e diz porquê",
-                "Receitas registam-se **por dose** — registar lasanha deixou de propor comê-la toda",
-                "Dez nutrientes novos, que as tabelas já traziam e a app deitava fora",
-                "Os históricos filtram-se por mês, por exercício e por tipo",
-                "O ecrã de conquistas saiu: os marcos do Progresso dizem a mesma coisa sem enfeite",
-            ),
-            highlightsEn = listOf(
-                "**The app rotates.** Landscape, tablet or split screen — no longer a stretched phone",
-                "On a tablet, an exercise **opens beside the list** instead of covering it",
-                "**Undo on everything that deletes** — a log, a weigh-in, a set, a routine",
-                "Imperial is now a whole system: weight, distance, pace and portions",
-                "Exercise calories are now **what it burns beyond sitting still**",
-                "The water target follows the EFSA reference, by sex, and **water from food counts**",
-                "A BMR computed from tape measurements now states the margin it carries",
-                "The protein floor rises with training and with how deep the deficit is, and says why",
-                "Recipes are logged **per serving** — logging lasagna no longer proposes eating all of it",
-                "Ten new nutrients, which the tables already carried and the app was throwing away",
-                "Histories filter by month, by exercise and by type",
-                "The achievements screen is gone: the Progress milestones say the same without the trim",
             ),
         ),
     )

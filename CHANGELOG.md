@@ -17,14 +17,54 @@ Nada por lançar.
 
 ---
 
+## [2.8.0] — 2026-08-25
+
+**O que faltava do bloco D.** Seis promessas do plano que a 2.7.0 deixou por cumprir, e que
+não se viam porque nenhuma delas rebenta nada — dão números errados em silêncio. Esquema da
+base: **v32**, catálogo **v5**.
+
+### Corrigido
+
+- **Uma receita cozinhada deixa de ganhar vitaminas ao lume.** A conta dividia tudo pelo peso
+  final, e a água que evapora concentrava também a vitamina C — uma sopa de 500 g de
+  espinafres reduzida a 400 g saía com 35 mg por 100 g quando os espinafres crus tinham 28.
+  Cozer destrói um quarto dela: são 26,25. Agora escolhe-se como se cozinhou o prato e cada
+  ingrediente perde o que a tabela da família dele diz, porque cozer espinafres e cozer arroz
+  no mesmo tacho não destrói a mesma coisa.
+- **Um mililitro deixa de contar como uma grama.** 200 ml de azeite pesam 184 g e a app
+  contava-lhes 200 — 9 % de gordura a mais em cada colher. 696 líquidos passam a ter a
+  densidade medida ao lado; os outros ficam a 1,00, que é o que a app já assumia.
+- **74 sólidos deixam de ser medidos em mililitros.** O «Lavagante, cozido em água» e o
+  «Leite em pó» estavam marcados como líquidos numa lista herdada de uma versão antiga.
+
+### Adicionado
+
+- **A pesquisa junta o mesmo alimento nos seus estados.** Procurar «frango» dava sete linhas
+  quase iguais — cru, assado, com pele, sem pele. Agora é uma linha por alimento, com «+ 2
+  estados» a abrir as outras. São 360 alimentos em 175 grupos, e o que **não** se junta é
+  tão importante: «carne» e «carne e pele» têm gorduras diferentes, e duas fontes com o mesmo
+  nome são duas medições.
+- **O abacaxi encontra o ananás, e o cimbalino encontra o café.** 47 grupos de palavras que
+  se procuram umas às outras, incluindo o inglês das tabelas — quem escreve «frango» encontra
+  «Chicken, breast, raw». O catálogo continua com um nome por alimento: isto vive no índice
+  de pesquisa e em mais lado nenhum.
+- **A app aprende quanto pesa uma fatia tua.** A tabela diz 30 g e a tua faca corta 45 — a da
+  tabela é uma mediana medida noutro sítio, e a tua é uma medição do que tu comes. Só aparece
+  quando há mesmo um hábito, e só quando difere da tabela em mais de 10 %.
+- **A receita sugere o peso final que as tabelas prevêem**, com um botão que o escreve. Nunca
+  se grava sozinho, e não aparece se menos de 60 % do peso tiver rendimento publicado.
+
+---
+
 ## [2.7.0] — 2026-08-24
 
 **O bloco do catálogo inteiro numa versão.** O catálogo deixa de precisar da loja, aprende a
 dizer o que não sabe, sabe o que acontece à comida quando se cozinha, e passa a dar porções em
 vez de gramas. Esquema da base: **v30**.
 
-*As versões 2.8.0 a 2.15.0 do plano ficam consumidas aqui, ou por usar: o motor de qualidade e
-a oficina de curadoria não mudam nada na app e por isso não se lançam.*
+*O conteúdo que o plano tinha em 2.8.0 a 2.15.0 sai aqui, ou não se lança de todo: o motor de
+qualidade e a oficina de curadoria não mudam nada na app. Os **números** ficam livres, e a
+2.8.0 é usada a seguir para o que faltou desta.*
 
 ### Adicionado
 

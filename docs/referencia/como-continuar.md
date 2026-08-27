@@ -8,15 +8,17 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 ## Onde estamos
 
 - **2.7.0 é a última publicada**, a 2026-08-25, e leva o bloco D inteiro. Esquema da base
-  **v30**, catálogo **v4**. Nove versões feitas. Árvore verde: 1474 testes Kotlin, 41 das
-  ferramentas, detekt e lint limpos, e o CI verde em quatro minutos e meio — que é uma
-  execução, e não cache.
+  **v30**, catálogo **v4**.
+- A **2.8.0 está escrita e por lançar**: é o que faltava do bloco D. Esquema **v32**,
+  catálogo **v5**. Árvore verde: 1533 testes Kotlin, 52 das ferramentas, detekt e lint limpos.
 - A release levou os quatro APK **e** o `catalogo.json` e o `manifesto.json`, e o botão
   «Procurar» no aparelho passou a dizer **«está em dia»**. Antes dela dizia «não deu para
   chegar lá», porque o `latest` do GitHub apontava para a 2.6.0, que não os trazia — ver o
   passo 9 de [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). **A release seguinte tem
   de os levar outra vez**: uma que não os traga não mantém os anteriores, apaga o caminho.
-- **A próxima versão a sair é a 2.16.0**, e abre o bloco E — com perguntas, como manda a A2.
+- **Depois da 2.8.0 vem a 2.16.0**, que abre o bloco E — com perguntas, como manda a A2. Os
+  números do plano entre uma e outra ficam livres: o conteúdo deles saiu na 2.7.0 ou não se
+  lança de todo.
 - A **2.5.1 foi fechada sem sair.** A razão está no plano e não se reabre sem a ler.
 
 ## O bloco D fez-se em três corridas
@@ -34,10 +36,14 @@ em vez de uma versão de cada vez. A cerimónia por versão era perto de um ter�
 o que já estava escrito em cinco lançamentos era cerimónia sem nada por baixo — a razão de as
 corridas existirem.
 
-Os números **2.8.0 a 2.15.0 ficam consumidos ou por usar**, e a próxima versão a sair depois
-da 2.7.0 é a **2.16.0**. Saltar números não custa nada: o `versionCode` deriva do nome e
-continua a crescer. Da corrida 2 nada se lança — o motor de qualidade e a oficina são
-ferramentas do repositório, e o passo 1 do guia diz que essas não se lançam.
+O **conteúdo** que o plano tinha em 2.8.0 a 2.15.0 saiu aqui, ou não se lança de todo: o motor
+de qualidade e a oficina são ferramentas do repositório, e o passo 1 do guia diz que essas não
+se lançam. Os **números** ficam livres, e a 2.8.0 leva o que faltou. Saltar números não custa
+nada: o `versionCode` deriva do nome e continua a crescer.
+
+**A 2.7.0 não fechou o bloco.** Seis promessas do plano ficaram por cumprir e nenhuma delas
+rebentava nada — davam números errados em silêncio, que é o modo de falhar deste bloco. Só
+apareceram ao reler o plano promessa a promessa contra o código, e é isso que a 2.8.0 fecha.
 
 **O que não se junta é o conteúdo com o código.** As decisões sobre nomes, fusões e porções
 são do dono; tomá-las em lote sem ele as ver é o modo de falhar deste bloco — um alimento com
@@ -85,6 +91,8 @@ razão de cada uma em [`arbitragem.mjs`](../../tools/catalogo/arbitragem.mjs).
 | com porção | 2 090 |
 | com família de confeção | 4 153 |
 | com água declarada | 7 019 |
+| líquidos | **773**, dos quais 696 com densidade medida |
+| na fila dos líquidos | 55 — parecem líquidos e ninguém decidiu ainda |
 
 **A regra de arbitragem, em três degraus.** Uma medição ganha a uma estimativa escrita à mão.
 Duas medições que concordam resolvem-se a favor da portuguesa — a TCA mediu produto daqui.
@@ -108,6 +116,9 @@ apagar comida, e o que se corrige é o nome.
 - **Cada lote de vocabulário traz outra leva de duplicados à superfície**, e isso não é a
   tradução a criar problemas: é o inventário a ficar legível. Foram seis voltas de arbitragem
   até aqui, e a seguinte virá com o lote seguinte.
+- **55 candidatos a líquido**, em `tools/catalogo/liquidos-por-decidir.json`. Quase todos
+  óleos, e não se marcam sozinhos: as três regras que tentei marcaram comida sólida — «Olive,
+  black, in oil», «Milk chocolate, bar». O nome inglês é a armadilha.
 
 ## As ferramentas da corrida 2
 

@@ -59,7 +59,7 @@ const MANIFESTO = join(RAIZ, "tools", "catalogo", "manifesto.json");
  * do que o que está gravado, importa; se não, não lê o ficheiro sequer. Deixá-la para trás
  * numa alteração de conteúdo é distribuir um catálogo que ninguém recebe.
  */
-const VERSAO = 4;
+const VERSAO = 5;
 
 const aceitarDesvios = process.argv.includes("--aceitar-desvios");
 const aceitarQualidade = process.argv.includes("--aceitar-qualidade");
@@ -264,8 +264,6 @@ for (const e of vivos) {
 console.log(`\npodados por decisão anterior: ${tudo.length - vivos.length}`);
 console.log(`nomes corrigidos aplicados:   ${nomesAplicados}`);
 console.log(`porções (oficina + tabela):   ${porcoesAplicadas}`);
-console.log(`marcados como líquido:        ${vivos.filter((e) => e.isLiquid).length}`);
-console.log(`  com densidade medida:        ${comDensidade} (sem: ${semDensidade})`);
 console.log(`  desmarcados por serem sólidos: ${desmarcados}`);
 
 // Os que parecem liquidos e nao estao marcados. Nao se marcam sozinhos — ver o cabecalho de
@@ -499,6 +497,13 @@ writeFileSync(COLISOES, JSON.stringify({
 
 console.log(`\ncolisões de nome: ${encontradas.length} (${discordantes.length} discordam na energia)`);
 if (fundido.fundidos) console.log(`  fundidos por decisão: ${fundido.fundidos}`);
+
+// **Depois das fusoes, e nao antes.** Contado antes, o relatorio dizia 782 liquidos e o
+// ficheiro levava 773: nove eram perdedores de uma fusao. Um numero no ecra que nao existe
+// no ficheiro e a forma mais silenciosa de uma ferramenta mentir sobre si propria.
+const liquidosFinais = vivos.filter((e) => e.isLiquid);
+console.log(`marcados como líquido:        ${liquidosFinais.length}`);
+console.log(`  com densidade medida:        ${liquidosFinais.filter((e) => e.densidade != null).length}`);
 console.log(`  → ${COLISOES}`);
 
 // ---------------------------------------------------------------------- a qualidade
