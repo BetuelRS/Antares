@@ -24,6 +24,9 @@ data class OffProduct(
 
     @SerialName("product_name_pt") val productNamePt: String? = null,
     val brands: String? = null,
+    // A miniatura do produto, tal como a Open Food Facts a publica. É o tamanho pequeno de
+    // propósito: numa lista de vinte, o tamanho grande são vinte megabytes.
+    @SerialName("image_small_url") val imageSmallUrl: String? = null,
     @SerialName("serving_quantity") val servingQuantity: String? = null,
 
     @SerialName("serving_size") val servingSize: String? = null,

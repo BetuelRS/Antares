@@ -66,6 +66,19 @@ data class FoodEntity(
      */
     val densidade: Double? = null,
 
+    /**
+     * A fotografia do produto, quando ele vem de uma base que a publica.
+     *
+     * Só os produtos de embalagem a têm — o catálogo que a app traz não tem fotografias de
+     * nada, e não vai passar a ter: uma tabela de composição mede alimentos, não fotografa
+     * embalagens.
+     *
+     * **É um endereço, não uma imagem.** Mostrar a linha implica um pedido ao servidor de
+     * quem a publicou, e por isso a Open Food Facts aparece no ecrã «O que sai daqui» também
+     * como destino de imagens.
+     */
+    val imagemUrl: String? = null,
+
     val verified: Boolean = false,
 
     /**

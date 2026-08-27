@@ -135,7 +135,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 32,
+    version = 33,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -184,6 +184,10 @@ interface DbInfoDao {
         // 1,00 — que e o que a app assumia —, e os liquidos so ganham densidade a serio
         // quando o catalogo seguinte entrar.
         AutoMigration(from = 31, to = 32),
+
+        // A v33 acrescenta `foods.imagemUrl`, anulavel. So os produtos de embalagem a
+        // ganham, e so quando entrarem de novo da Open Food Facts.
+        AutoMigration(from = 32, to = 33),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)

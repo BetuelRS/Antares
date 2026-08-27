@@ -21,7 +21,17 @@ import pt.antares.app.feature.recipe.RecipeRepository
 import pt.antares.app.feature.recipe.RecipeSummary
 import pt.antares.app.feature.templates.MealTemplateRepository
 
-enum class SearchTab { SEARCH, RECENTS, FAVORITES, MINE, RECIPES, TEMPLATES }
+/**
+ * Os separadores da pesquisa. Eram seis.
+ *
+ * **Nada saiu — mudou de sítio.** Os recentes e os favoritos sobem para dentro do [SEARCH],
+ * que já abria nos mais registados e agora abre nos três; as receitas e os modelos juntam-se
+ * em [REFEICOES], que é o mesmo par que a 2.18.0 vai unificar por dentro.
+ *
+ * Seis separadores numa fila que rola é uma escolha entre seis antes de escrever a primeira
+ * letra, e quatro deles respondiam à mesma pergunta: «o que é que eu já comi?».
+ */
+enum class SearchTab { SEARCH, MINE, REFEICOES }
 
 data class FoodSearchState(
     val query: String = "",

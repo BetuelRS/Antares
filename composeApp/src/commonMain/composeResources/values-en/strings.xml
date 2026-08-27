@@ -333,6 +333,9 @@
     <string name="search_title">Add food</string>
     <string name="search_hint">Search food</string>
     <string name="search_tab_search">Search</string>
+    <string name="search_tab_refeicoes">Meals</string>
+    <string name="search_secao_recentes">Recently</string>
+    <string name="search_secao_favoritos">Favourites</string>
     <string name="search_tab_recents">Recent</string>
     <string name="search_tab_favorites">Favorites</string>
     <string name="search_tab_mine">Mine</string>
@@ -1272,8 +1275,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_what_label">What goes</string>
     <string name="outgoing_when_label">When</string>
     <string name="outgoing_off_title">Open Food Facts</string>
-    <string name="outgoing_off_what">The text you type in search, or the barcode you scan. Not who you are, not what you logged.</string>
-    <string name="outgoing_off_when">When you search for a product or scan a code. You can turn this off.</string>
+    <string name="outgoing_off_what">The text you type in search, or the barcode you scan. Not who you are, not what you logged. A result with a photo also asks them for the image.</string>
+    <string name="outgoing_off_when">When you search for a product or scan a code, and once for each photo shown in the list. You can turn this off.</string>
     <string name="outgoing_ai_title">Photo and text analysis</string>
     <string name="outgoing_ai_what">The photo of the meal, or the description you wrote. The image is not kept on the other side.</string>
     <string name="outgoing_ai_when">Only when you ask for an analysis. Never on its own.</string>

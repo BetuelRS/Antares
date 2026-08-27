@@ -23,9 +23,30 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.8.0"
+    const val CURRENT = "2.16.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.16.0",
+            title = "A procura abre no que tu comes",
+            titleEn = "Search opens on what you eat",
+            highlights = listOf(
+                "**Seis separadores passam a três.** Nada desapareceu: os recentes e os " +
+                    "favoritos estão dentro do Procurar, por baixo do que registas mais",
+                "**A linha diz a porção** — «uma fatia 30 g» — nos alimentos que têm uma",
+                "**Criar um alimento leva o nome que escreveste**, em vez de o pedir outra vez",
+                "Os atalhos do que já comeste deixam de desaparecer quando a procura responde",
+                "Os produtos de embalagem mostram a fotografia na lista",
+            ),
+            highlightsEn = listOf(
+                "**Six tabs become three.** Nothing is gone: recents and favourites now sit " +
+                    "inside Search, below what you log most",
+                "**The row shows the serving** — «a slice 30 g» — for foods that have one",
+                "**Creating a food carries the name you typed**, instead of asking again",
+                "The shortcuts to what you have eaten no longer vanish when search answers",
+                "Packaged products show their photo in the list",
+            ),
+        ),
         AppVersion(
             name = "2.8.0",
             title = "O que faltava à comida cozinhada",
@@ -320,23 +341,6 @@ object AppChangelog {
                     "and fat mass, the goal, the weigh-in prompts, the waist and the height",
                 "Waist now reads in inches and height in feet and inches for imperial",
                 "In the run totals, \"107:56:02\" broke across two lines",
-            ),
-        ),
-        AppVersion(
-            name = "2.0.1",
-            title = "Três coisas que só se viam num ecrã",
-            titleEn = "Three things you could only see on a screen",
-            highlights = listOf(
-                "Em libras, o volume do treino mostrava quilos, e a distância misturava vírgula com ponto",
-                "O gráfico do peso tinha os extremos da escala onde deviam estar o primeiro e o " +
-                    "último dia — parecia uma subida onde havia descida",
-                "Num tablet, as listas dentro do painel de detalhe apertavam-se em três colunas onde só cabiam duas",
-            ),
-            highlightsEn = listOf(
-                "In pounds, workout volume still showed kilograms, and distance mixed comma with dot",
-                "The weight chart put the scale's ends where the first and last day should be " +
-                    "— it read as a rise where there was a fall",
-                "On a tablet, lists inside the detail pane squeezed into three columns where only two fit",
             ),
         ),
     )

@@ -7,9 +7,12 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.8.0 é a última publicada**, a 2026-08-25, e fecha o bloco D. Esquema da base **v32**,
-  catálogo **v5**. Dez versões feitas. Árvore verde: 1533 testes Kotlin, 52 das ferramentas,
+- **2.16.0 é a última publicada**, a 2026-08-27, e abre o bloco E. Esquema da base **v33**,
+  catálogo **v5**. Onze versões feitas. Árvore verde: 1539 testes Kotlin, 52 das ferramentas,
   68 Deno, detekt e lint limpos.
+- **Volta-se a fazer versão a versão**, por decisão do dono a 2026-08-27. O bloco D foi a
+  excepção e não o modelo: as corridas existiram porque a cerimónia por versão era um terço
+  do trabalho num bloco de doze, e o bloco E tem quatro.
 - **O bloco D está fechado a sério.** A 2.7.0 levou-o quase todo e deixou seis promessas por
   cumprir; a 2.8.0 fecha-as. Nenhuma delas rebentava nada — davam números errados em
   silêncio, e só apareceram ao reler o plano promessa a promessa contra o código.
@@ -18,9 +21,8 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   chegar lá», porque o `latest` do GitHub apontava para a 2.6.0, que não os trazia — ver o
   passo 9 de [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). **A release seguinte tem
   de os levar outra vez**: uma que não os traga não mantém os anteriores, apaga o caminho.
-- **A próxima versão a sair é a 2.16.0**, que abre o bloco E — com perguntas, como manda a
-  A2. Os números do plano entre a 2.9.0 e a 2.15.0 ficam livres: o conteúdo deles saiu na
-  2.7.0 e na 2.8.0, ou não se lança de todo.
+- **A próxima é a 2.17.0**, a revisão da IA. Os números do plano entre a 2.9.0 e a 2.15.0
+  ficam livres: o conteúdo deles saiu na 2.7.0 e na 2.8.0, ou não se lança de todo.
 - A **2.5.1 foi fechada sem sair.** A razão está no plano e não se reabre sem a ler.
 
 ## O bloco D fez-se em três corridas

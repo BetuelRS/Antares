@@ -17,6 +17,36 @@ Nada por lançar.
 
 ---
 
+## [2.16.0] — 2026-08-27
+
+**Abrir no que se come.** A pesquisa deixa de pedir uma escolha entre seis antes de escrever a
+primeira letra. Esquema da base: **v33**.
+
+### Alterado
+
+- **Seis separadores passam a três** — Procurar, Meus, Refeições. Nada desapareceu: os
+  recentes e os favoritos passam a estar dentro do Procurar, por baixo do que registas mais,
+  e as receitas e os modelos partilham o Refeições. Quatro dos seis respondiam à mesma
+  pergunta, cada um no seu canto.
+- **A linha de um alimento diz a porção**, quando ele tem uma: «uma fatia 30 g» a seguir às
+  kcal. Vale para um em cada quatro alimentos do catálogo, e nos outros a linha fica como
+  estava.
+- **Criar um alimento leva o nome que escreveste.** Quem procurou «pão da avó» e não encontrou
+  já escreveu o nome uma vez.
+
+### Corrigido
+
+- **Os atalhos do que já comeste deixam de desaparecer** no instante em que a pesquisa
+  responde — que era exactamente quando passavam a poder ser comparados com o resto.
+
+### Adicionado
+
+- **Os produtos de embalagem passam a mostrar a fotografia** na lista de resultados de fora.
+  A Open Food Facts publica-a, e agora aparece — o ecrã «O que sai daqui» diz que isso é mais
+  um pedido a eles, um por cada fotografia que vês.
+
+---
+
 ## [2.8.0] — 2026-08-25
 
 **O que faltava do bloco D.** Seis promessas do plano que a 2.7.0 deixou por cumprir, e que

@@ -47,6 +47,7 @@ object OffMapper {
             // Só a primeira marca: o campo traz a lista toda de marcas relacionadas, e num
             // resultado de pesquisa ocupava a linha inteira.
             brand = product.brands?.split(",")?.firstOrNull()?.trim()?.takeIf { it.isNotBlank() },
+            imagemUrl = product.imageSmallUrl?.takeIf { it.isNotBlank() },
             kcal = kcal,
             proteinG = n?.proteins100g ?: 0.0,
             carbsG = n?.carbohydrates100g ?: 0.0,

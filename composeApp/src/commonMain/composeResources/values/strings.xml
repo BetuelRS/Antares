@@ -332,7 +332,10 @@
 
     <string name="search_title">Adicionar alimento</string>
     <string name="search_hint">Pesquisar alimento</string>
-    <string name="search_tab_search">Pesquisa</string>
+    <string name="search_tab_search">Procurar</string>
+    <string name="search_tab_refeicoes">Refeições</string>
+    <string name="search_secao_recentes">Há pouco</string>
+    <string name="search_secao_favoritos">Favoritos</string>
     <string name="search_tab_recents">Recentes</string>
     <string name="search_tab_favorites">Favoritos</string>
     <string name="search_tab_mine">Meus</string>
@@ -1273,8 +1276,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="outgoing_what_label">O que vai</string>
     <string name="outgoing_when_label">Quando</string>
     <string name="outgoing_off_title">Open Food Facts</string>
-    <string name="outgoing_off_what">O texto que escreves na procura, ou o código de barras que lês. Não vai quem és nem o que registaste.</string>
-    <string name="outgoing_off_when">Quando procuras um produto ou lês um código. Podes desligar isto.</string>
+    <string name="outgoing_off_what">O texto que escreves na procura, ou o código de barras que lês. Não vai quem és nem o que registaste. Um resultado com fotografia pede-lhes também a imagem.</string>
+    <string name="outgoing_off_when">Quando procuras um produto ou lês um código, e uma vez por cada fotografia que aparece na lista. Podes desligar isto.</string>
     <string name="outgoing_ai_title">Análise por foto ou por texto</string>
     <string name="outgoing_ai_what">A fotografia da refeição, ou a descrição que escreveste. A imagem não fica guardada do outro lado.</string>
     <string name="outgoing_ai_when">Só quando pedes uma análise. Nunca sozinha.</string>

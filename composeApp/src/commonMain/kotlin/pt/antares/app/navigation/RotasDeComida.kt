@@ -95,8 +95,16 @@ internal fun NavGraphBuilder.rotasDeComida(navController: NavHostController) {
             onFoodSelected = { foodId ->
                 navController.navigate(Route.FoodDetail(foodId, route.slot, route.epochDay))
             },
-            onCreateCustom = {
-                navController.navigate(Route.FoodEdit(slot = route.slot, epochDay = route.epochDay))
+            // O nome escrito na caixa viaja para o ecrã de criar. A rota já o aceitava —
+            // o ecrã do perfil usa-o desde a 2.2.0 —, e era só a pesquisa que o deitava fora.
+            onCreateCustom = { nome ->
+                navController.navigate(
+                    Route.FoodEdit(
+                        slot = route.slot,
+                        epochDay = route.epochDay,
+                        name = nome.takeIf { it.isNotBlank() },
+                    ),
+                )
             },
             onScan = { navController.navigate(Route.BarcodeScan(route.slot, route.epochDay)) },
             onRecipeSelected = { recipeId ->
