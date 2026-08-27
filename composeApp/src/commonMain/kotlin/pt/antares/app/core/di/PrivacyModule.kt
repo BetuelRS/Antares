@@ -102,7 +102,13 @@ val privacyModule = module {
                 ExportSource(
                     "food_log",
                     FoodLogEntity.serializer(),
-                    restore = { linhas -> linhas.forEach { get<FoodLogDao>().upsert(it) } },
+                    // O caminho da foto cai na reposição. É um caminho absoluto dentro
+                    // desta instalação, e as fotos dos pratos não viajam na cópia — repor
+                    // noutro telemóvel deixaria a coluna a apontar para nada, e o diário a
+                    // prometer um retrato que não existe.
+                    restore = { linhas ->
+                        linhas.forEach { get<FoodLogDao>().upsert(it.copy(photoPath = null)) }
+                    },
                 ) { get<FoodLogDao>().exportRows() },
                 ExportSource(
                     "water_log",

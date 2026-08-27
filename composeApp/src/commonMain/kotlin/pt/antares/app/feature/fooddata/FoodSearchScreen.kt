@@ -128,7 +128,9 @@ fun FoodSearchScreen(
         if (!handledInitial) {
             handledInitial = true
 
-            if (initialQuery.isNotBlank()) viewModel.setQuery(initialQuery)
+            // O ditado não entra na caixa de procura: vai para a folha da AI, e pô-lo aqui
+            // deixava «dois ovos e uma torrada» a não encontrar nada por trás da folha.
+            if (initialQuery.isNotBlank() && initialMode != "DESCRIBE") viewModel.setQuery(initialQuery)
             // O atalho de onde se veio: a app abre-se a ler um código ou a fotografar, e a
             // pesquisa é só a estação de passagem.
             aoAbrirCom(initialMode, onScan) { aiMode = it }
@@ -188,6 +190,7 @@ fun FoodSearchScreen(
                     modo = aiMode,
                     slot = aiSlot,
                     epochDay = aiEpochDay,
+                    textoInicial = initialQuery.takeIf { initialMode == "DESCRIBE" }.orEmpty(),
                     onModo = { aiMode = it },
                 )
             }
@@ -320,6 +323,9 @@ private fun AtalhosDaIa(
     modo: AiMode?,
     slot: MealSlot,
     epochDay: Long,
+
+    // O que se ditou, quando se chegou aqui pelo microfone. Vazio em todos os outros casos.
+    textoInicial: String,
     onModo: (AiMode?) -> Unit,
 ) {
     Row(
@@ -345,6 +351,7 @@ private fun AtalhosDaIa(
             mode = m,
             mealSlot = slot,
             epochDay = epochDay,
+            initialText = textoInicial,
             onDismiss = { onModo(null) },
         )
     }

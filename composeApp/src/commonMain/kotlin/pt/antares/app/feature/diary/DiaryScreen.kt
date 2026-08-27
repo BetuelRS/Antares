@@ -141,6 +141,7 @@ fun DiaryScreen(
             }
             pt.antares.app.feature.fooddata.QuickLogBar(
                 onSubmit = { q -> registar(pt.antares.app.feature.fooddata.AddMode.SEARCH, q) },
+                onVoice = { q -> registar(pt.antares.app.feature.fooddata.AddMode.DESCRIBE, q) },
                 onPhoto = { registar(pt.antares.app.feature.fooddata.AddMode.PHOTO, "") },
                 onScan = { registar(pt.antares.app.feature.fooddata.AddMode.SCAN, "") },
             )

@@ -15,7 +15,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ContentCopy
@@ -33,6 +36,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.semantics.Role
 import org.jetbrains.compose.resources.stringResource
@@ -40,6 +45,7 @@ import pt.antares.app.core.database.entities.ExerciseLogEntity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import coil3.compose.AsyncImage
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import pt.antares.app.core.database.entities.FoodLogEntity
@@ -55,6 +61,7 @@ import pt.antares.app.core.util.dayShort
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 import pt.antares.app.core.util.formatMinuteOfDay
+import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 /**
@@ -214,6 +221,24 @@ internal fun LogRow(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+
+            // O retrato do prato, quando o registo veio de uma fotografia e ela ainda não
+            // foi varrida. É a única coisa na linha que não é número, e é para isso que
+            // serve: reconhece-se a refeição antes de se ler o nome que a AI lhe deu.
+            log.photoPath?.let { caminho ->
+                AsyncImage(
+                    model = caminho,
+                    // Decorativa: a linha diz o nome, a porção e as calorias, e a foto
+                    // repete o que o texto já anuncia. Descrevê-la seria ler duas vezes o
+                    // mesmo registo a quem usa leitor de ecrã.
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(FOTO_DO_PRATO)
+                        .clip(RoundedCornerShape(Spacing.sm))
+                        .padding(end = Spacing.sm),
+                )
+            }
 
             Column(
                 Modifier
@@ -531,3 +556,7 @@ internal fun DaySummaryCard(state: DiaryState) {
         }
     }
 }
+
+// Grande o suficiente para se reconhecer o prato de relance, pequena o suficiente para a
+// linha continuar a ser uma linha de diário e não uma galeria.
+private val FOTO_DO_PRATO = 56.dp

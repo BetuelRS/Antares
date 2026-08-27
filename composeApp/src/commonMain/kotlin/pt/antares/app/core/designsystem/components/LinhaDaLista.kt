@@ -1,5 +1,6 @@
 package pt.antares.app.core.designsystem.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -90,6 +91,16 @@ fun LinhaDaLista(
             role = if (onClick != null) Role.Button else null,
         ) { corpo() }
     } else {
-        Row(modifier = modifier.fillMaxWidth()) { corpo() }
+        // O clique também vale sem cartão, e até à 2.17.0 não valia: o `onClick` era aceite
+        // e deitado fora em silêncio. Apanhou-se no emulador, numa lista de resultados que
+        // não respondia a toque nenhum — e nenhum teste o podia ver, porque não muda estado
+        // nenhum: a linha desenha-se igual, e só não faz nada.
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .let { m ->
+                    if (onClick == null) m else m.clickable(role = Role.Button, onClick = onClick)
+                },
+        ) { corpo() }
     }
 }

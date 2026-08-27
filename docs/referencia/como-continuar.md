@@ -7,12 +7,14 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.16.0 é a última publicada**, a 2026-08-27, e abre o bloco E. Esquema da base **v33**,
-  catálogo **v5**. Onze versões feitas. Árvore verde: 1539 testes Kotlin, 52 das ferramentas,
-  68 Deno, detekt e lint limpos.
+- **2.17.0 é a última publicada**, a 2026-08-28. Esquema da base **v34**, catálogo **v5**.
+  Doze versões feitas. Árvore verde: 1575 testes Kotlin, 52 das ferramentas, 68 Deno, detekt
+  e lint limpos.
 - **Volta-se a fazer versão a versão**, por decisão do dono a 2026-08-27. O bloco D foi a
   excepção e não o modelo: as corridas existiram porque a cerimónia por versão era um terço
   do trabalho num bloco de doze, e o bloco E tem quatro.
+- **A próxima é a 2.18.0**, «As minhas refeições» — quatro serões. Abre com as perguntas dela,
+  que estão escritas no plano.
 - **O bloco D está fechado a sério.** A 2.7.0 levou-o quase todo e deixou seis promessas por
   cumprir; a 2.8.0 fecha-as. Nenhuma delas rebentava nada — davam números errados em
   silêncio, e só apareceram ao reler o plano promessa a promessa contra o código.
@@ -21,8 +23,8 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   chegar lá», porque o `latest` do GitHub apontava para a 2.6.0, que não os trazia — ver o
   passo 9 de [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md). **A release seguinte tem
   de os levar outra vez**: uma que não os traga não mantém os anteriores, apaga o caminho.
-- **A próxima é a 2.17.0**, a revisão da IA. Os números do plano entre a 2.9.0 e a 2.15.0
-  ficam livres: o conteúdo deles saiu na 2.7.0 e na 2.8.0, ou não se lança de todo.
+- Os números do plano entre a 2.9.0 e a 2.15.0 ficam livres: o conteúdo deles saiu na 2.7.0 e
+  na 2.8.0, ou não se lança de todo.
 - A **2.5.1 foi fechada sem sair.** A razão está no plano e não se reabre sem a ler.
 
 ## O bloco D fez-se em três corridas
@@ -57,6 +59,33 @@ o nome trocado não rebenta, não dá erro, e custa uma versão a corrigir.
 premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que a corrida no aparelho mostrou
+
+**Da 2.17.0** (emulador Android 16, x86_64). Foi a corrida que mais rendeu até hoje: apanhou
+**dois defeitos que nenhum dos 1575 testes via**, e os dois pela mesma razão — não mudam
+estado nenhum, só não fazem nada.
+
+1. **A migração v33 → v34 passa com o dia intacto.** Instalou-se primeiro um APK com o esquema
+   revertido para v33, registou-se, e actualizou-se por cima: as 899 kcal do azeite ficaram lá,
+   com a hora e tudo.
+2. **A folha da AI já não mostra o aviso legal no ecrã de entrada** — mostra-o na revisão, em
+   frente à lista. Vê-se nas duas capturas.
+3. **A revisão inteira funciona**: campo de gramas escrevível, trocar, acrescentar, guardar
+   como refeição, e o registo cai no diário com as gramas certas.
+4. **A troca liga ao catálogo**: «fatia de pão, 76 kcal» passou a «Arroz branco cozido, 117
+   kcal» com a porção do alimento, e o total foi de 225 para 266.
+5. **A [`LinhaDaLista`](../../composeApp/src/commonMain/kotlin/pt/antares/app/core/designsystem/components/LinhaDaLista.kt)
+   engolia o `onClick` quando `emCartao = false`.** A lista que troca um item não respondia a
+   toque nenhum. O parâmetro era aceite e deitado fora ao desenhar — nada dava erro, nada
+   mudava de aspecto. Corrigido, com um teste de interface.
+6. **O campo de gramas aceitava letras.** O teclado do campo é o dos números, mas um teclado de
+   hardware escreve o que quiser, e a linha ficou a dizer «Ovos e» onde devia dizer gramas.
+   Agora só entram algarismos e um separador.
+
+**O que a corrida não provou:** a fotografia do prato de ponta a ponta. O emulador só tem uma
+cena sintética, e uma análise dela responde «não é comida» — nunca chega a haver o que gravar.
+O que a guarda é: um teste do ViewModel (uma foto, um ficheiro, o mesmo caminho em todos os
+registos), o `FotosDeRefeicaoTest` com ficheiros a sério, e o facto de a miniatura usar o mesmo
+`AsyncImage(model = caminho)` que as fotos de progresso já usam desde a 2.2.0.
 
 **Da 2.16.0** (emulador Android 16, x86_64): a migração v32 → v33 passa com o dia intacto, os
 três separadores aparecem — Procurar · Meus · Refeições —, e a fatia de 30 g está na linha do

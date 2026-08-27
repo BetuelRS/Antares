@@ -58,6 +58,7 @@ val networkModule = module {
         val foodLogDao: FoodLogDao = get()
         val weightLogDao: WeightLogDao = get()
         val prefs: AppPreferences = get()
+        val fotos: pt.antares.app.core.util.LocalPhotoStore = get(FotosDePrato)
         AiRepository(
             client = get(),
 
@@ -69,6 +70,7 @@ val networkModule = module {
             persistUsage = { usage, day ->
                 prefs.setAiUsage(usage.used, usage.limit, usage.trial, day)
             },
+            savePhoto = { id, base64 -> fotos.save(id, base64) },
             io = get(IoDispatcher),
         )
     }

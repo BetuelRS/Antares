@@ -10,6 +10,14 @@ import org.koin.dsl.module
 val IoDispatcher = named("io")
 
 /**
+ * O armazém das fotografias dos pratos, separado do das fotos de progresso.
+ *
+ * A separação é uma salvaguarda e não arrumação: o `deleteAll` apaga a pasta inteira, e
+ * limpar as fotos de progresso levaria as dos pratos atrás.
+ */
+val FotosDePrato = named("fotosDePrato")
+
+/**
  * Tudo o que vive enquanto a app viver, junto num nome só.
  *
  * Era um ficheiro de 511 linhas com todas as ligações da app lá dentro. Passou a cinco, por

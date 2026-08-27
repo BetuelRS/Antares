@@ -7,8 +7,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
- * As fotos de progresso em ficheiros, e nunca na base de dados: são imagens de dezenas de
- * quilobytes cada, e a base ficaria enorme e lenta a copiar.
+ * As imagens em ficheiros, e nunca na base de dados: são dezenas de quilobytes cada, e a
+ * base ficaria enorme e lenta a copiar.
  *
  * Vivem no armazenamento privado da app — não na galeria — e por isso nenhuma outra app as
  * vê e desaparecem com a desinstalação.
@@ -16,9 +16,14 @@ import java.io.File
 actual class LocalPhotoStore(
     private val context: Context,
     private val io: CoroutineDispatcher,
+
+    // A pasta entra por parâmetro para as fotos de progresso e as dos pratos não se
+    // misturarem: o [deleteAll] apaga a pasta toda, e partilhá-la faria com que limpar
+    // umas apagasse as outras.
+    private val pasta: String = DIR_NAME,
 ) {
 
-    private fun dir(): File = File(context.filesDir, DIR_NAME).apply { mkdirs() }
+    private fun dir(): File = File(context.filesDir, pasta).apply { mkdirs() }
 
     actual suspend fun save(id: String, base64Jpeg: String): String? = withContext(io) {
         runCatching {
@@ -61,10 +66,17 @@ actual class LocalPhotoStore(
         }.getOrNull()
     }
 
+    actual suspend fun listAll(): List<String> = withContext(io) {
+        runCatching { dir().listFiles()?.map { it.absolutePath }.orEmpty() }.getOrDefault(emptyList())
+    }
+
     actual suspend fun exists(path: String): Boolean =
         withContext(io) { runCatching { File(path).exists() }.getOrDefault(false) }
 
     companion object {
         const val DIR_NAME = "progress_photos"
+
+        /** As fotos dos pratos, separadas das de progresso pela razão escrita na classe. */
+        const val DIR_REFEICOES = "meal_photos"
     }
 }

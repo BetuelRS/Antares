@@ -146,6 +146,9 @@ fun TodayScreen(
             val day = pt.antares.app.core.util.todayEpochDay()
             pt.antares.app.feature.fooddata.QuickLogBar(
                 onSubmit = { q -> onQuickLog(slot, day, pt.antares.app.feature.fooddata.AddMode.SEARCH, q) },
+                onVoice = { q ->
+                    onQuickLog(slot, day, pt.antares.app.feature.fooddata.AddMode.DESCRIBE, q)
+                },
                 onPhoto = { onQuickLog(slot, day, pt.antares.app.feature.fooddata.AddMode.PHOTO, "") },
                 onScan = { onQuickLog(slot, day, pt.antares.app.feature.fooddata.AddMode.SCAN, "") },
             )

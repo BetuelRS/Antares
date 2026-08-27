@@ -53,6 +53,13 @@ data class AiFoodItem(
     // O que o modelo assumiu para chegar ao número — o tamanho de uma dose, o método de
     // cozedura. Mostra-se para a pessoa poder discordar em vez de aceitar às cegas.
     val assumption: String? = null,
+
+    // O alimento do catálogo por trás deste item, quando alguém trocou o que o modelo
+    // adivinhou por um alimento a sério. **O servidor nunca envia este campo** — nasce nulo
+    // e só a troca no ecrã de revisão o preenche. É ele que faz o registo deixar de ser um
+    // retrato solto: com ele, o registo conta para os «mais registados» e a porção habitual
+    // do alimento passa a valer.
+    val foodId: String? = null,
 ) {
 
     // Abaixo de 60% de confiança, ou sendo estimativa, o ecrã marca o item para revisão em

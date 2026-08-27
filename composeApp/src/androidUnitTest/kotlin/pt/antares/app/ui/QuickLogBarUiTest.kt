@@ -47,7 +47,7 @@ class QuickLogBarUiTest {
         val textos = Textos()
         setContent {
             textos.ler()
-            QuickLogBar(onSubmit = { submetido = it }, onPhoto = {}, onScan = {})
+            QuickLogBar(onSubmit = { submetido = it }, onVoice = {}, onPhoto = {}, onScan = {})
         }
 
         onNodeWithText(textos.hint).performTextInput("aveia")
@@ -64,7 +64,7 @@ class QuickLogBarUiTest {
         val textos = Textos()
         setContent {
             textos.ler()
-            QuickLogBar(onSubmit = { chamadas++ }, onPhoto = {}, onScan = {})
+            QuickLogBar(onSubmit = { chamadas++ }, onVoice = {}, onPhoto = {}, onScan = {})
         }
 
         onNodeWithText(textos.hint).performTextInput("   ")
@@ -80,7 +80,7 @@ class QuickLogBarUiTest {
         val textos = Textos()
         setContent {
             textos.ler()
-            QuickLogBar(onSubmit = {}, onPhoto = { foto++ }, onScan = { codigo++ })
+            QuickLogBar(onSubmit = {}, onVoice = {}, onPhoto = { foto++ }, onScan = { codigo++ })
         }
 
         onNodeWithContentDescription(textos.foto).performClick()
@@ -96,7 +96,7 @@ class QuickLogBarUiTest {
         val textos = Textos()
         setContent {
             textos.ler()
-            QuickLogBar(onSubmit = {}, onPhoto = {}, onScan = {})
+            QuickLogBar(onSubmit = {}, onVoice = {}, onPhoto = {}, onScan = {})
         }
 
         val microfones = onAllNodes(hasContentDescription(textos.voz)).fetchSemanticsNodes().size

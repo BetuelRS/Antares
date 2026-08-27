@@ -281,6 +281,25 @@ interface FoodLogDao {
     @Query("SELECT * FROM food_log WHERE id = :id AND deleted = 0")
     suspend fun byId(id: String): FoodLogEntity?
 
+    /**
+     * Os caminhos de fotografia que ainda são referidos por alguma linha — **incluindo as
+     * apagadas**.
+     *
+     * O `deleted = 0` está de fora de propósito, e é a única consulta deste ficheiro onde
+     * isso é certo: apagar um registo é desfazível, e um ficheiro apagado não volta. Uma
+     * lápide ainda vale como razão para a imagem ficar.
+     */
+    @Query("SELECT DISTINCT photoPath FROM food_log WHERE photoPath IS NOT NULL")
+    suspend fun caminhosDeFoto(): List<String>
+
+    /**
+     * Esquece as fotografias mais antigas do que um dia. Não toca no `updatedAt`: é por ele
+     * que o diário ordena as refeições, e uma varredura que o mexesse baralhava a ordem do
+     * dia sem ninguém ter tocado em nada.
+     */
+    @Query("UPDATE food_log SET photoPath = NULL WHERE photoPath IS NOT NULL AND epochDay < :antesDe")
+    suspend fun esquecerFotosAntesDe(antesDe: Long): Int
+
     // Ordena por `updatedAt` e não por hora da refeição: a app não pergunta a que horas se
     // comeu, e a ordem de registo é a única cronologia que existe.
     @Query("SELECT * FROM food_log WHERE deleted = 0 AND epochDay = :epochDay ORDER BY updatedAt ASC")

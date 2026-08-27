@@ -22,6 +22,25 @@ import pt.antares.app.core.util.todayEpochDay
  * sentidos se vai buscar nada ao catálogo — é o que faz o modelo dar sempre o mesmo
  * resultado, mesmo que o alimento mude ou seja apagado.
  */
+/**
+ * Um item a caminho de um modelo, sem vir de lado nenhum da base.
+ *
+ * Existe para o [MealTemplateRepository.saveItemsAsTemplate] poder receber o que a folha da
+ * AI tem em mão sem que os modelos passem a conhecer o pacote da AI — o que os obrigaria a
+ * mudar de cada vez que o contrato com o servidor mudasse.
+ */
+data class ItemDeModelo(
+    val nome: String,
+    val gramas: Double,
+    val kcal: Int,
+    val proteina: Double,
+    val hidratos: Double,
+    val gordura: Double,
+    val microsPer100Json: String? = null,
+    val liquido: Boolean = false,
+    val foodId: String? = null,
+)
+
 class MealTemplateRepository(
     private val foodLogDao: FoodLogDao,
     private val templateDao: MealTemplateDao,
@@ -35,6 +54,47 @@ class MealTemplateRepository(
 
     suspend fun items(templateId: String): List<MealTemplateItemEntity> =
         withContext(io) { itemDao.forTemplate(templateId) }
+
+    /**
+     * Guarda uma lista de itens como modelo, **sem passar pelo diário**.
+     *
+     * O [saveMealAsTemplate] lê o slot inteiro do dia, e é o que se quer quando se guarda
+     * uma refeição já registada. Não serve para guardar o que se acabou de rever na folha
+     * da AI: quem já tinha registado o pão às oito ficava com ele dentro de um modelo
+     * chamado «Almoço», e o nome deixava de descrever o que lá está.
+     */
+    suspend fun saveItemsAsTemplate(
+        name: String,
+        slot: MealSlot,
+        itens: List<ItemDeModelo>,
+    ): String? = withContext(io) {
+        if (itens.isEmpty()) return@withContext null
+
+        val templateId = newId()
+        val ts = now()
+        templateDao.upsert(
+            MealTemplateEntity(id = templateId, name = name.trim(), slot = slot, updatedAt = ts),
+        )
+        itemDao.upsertAll(
+            itens.map { item ->
+                MealTemplateItemEntity(
+                    id = newId(),
+                    templateId = templateId,
+                    foodId = item.foodId,
+                    nameSnapshot = item.nome,
+                    quantityGrams = item.gramas,
+                    kcalSnapshot = item.kcal,
+                    proteinSnapshot = item.proteina,
+                    carbsSnapshot = item.hidratos,
+                    fatSnapshot = item.gordura,
+                    microsPer100Json = item.microsPer100Json,
+                    isLiquid = item.liquido,
+                    updatedAt = ts,
+                )
+            },
+        )
+        templateId
+    }
 
     suspend fun saveMealAsTemplate(name: String, slot: MealSlot, epochDay: Long): String? =
         withContext(io) {

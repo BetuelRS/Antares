@@ -17,6 +17,47 @@ Nada por lançar.
 
 ---
 
+## [2.17.0] — 2026-08-28
+
+**A revisão da AI deixa de ser só «ver e apagar».** O que o modelo devolve passa a ser
+corrigível: escreve-se as gramas, troca-se um item por um alimento do catálogo, acrescenta-se
+o que ele não viu. Esquema da base: **v34**.
+
+### Alterado
+
+- **O microfone deixa de ir para a pesquisa e passa a ir para a AI.** O que ele pedia já era
+  «diz o que comeste» — uma frase de refeição, com quantidades e mais do que um alimento — e
+  entregava-a a uma pesquisa de catálogo, onde «dois ovos e uma torrada» não encontra nada.
+  O ditado abre a folha da AI **escrito e não analisado**: lê-se antes de gastar uma
+  utilização numa frase que o telemóvel ouviu mal.
+- **As gramas de cada item escrevem-se.** Havia `−10` e `+10`, e ir de 30 g para 180 g eram
+  quinze toques — que ninguém dá, e o número errado ficava.
+
+### Adicionado
+
+- **Trocar um item por um alimento do catálogo.** O modelo acerta no nome e erra no alimento
+  com frequência; agora escolhe-se o certo. É mais do que um nome corrigido: **o registo passa
+  a ligar ao catálogo**, e até aqui tudo o que a AI gravava era um retrato solto — sem
+  micronutrientes medidos, fora dos «mais registados», sem porção habitual.
+- **Acrescentar um alimento em falta.** O modelo omite com a mesma facilidade com que erra: o
+  arroz tapado pela carne na fotografia não aparecia em lista nenhuma, e a única saída era
+  desistir da revisão.
+- **Guardar como refeição, no fim da revisão.** Guarda **os itens que se acabou de rever**, e
+  não a refeição do dia — o método que já existia lia o diário inteiro, e quem tivesse
+  registado o pão às oito ficava com ele dentro de um modelo chamado «Almoço».
+- **A fotografia do prato fica no registo**, e aparece no diário ao lado da linha. Vive **dois
+  meses** e é apagada sozinha; não entra na cópia de segurança. Três refeições fotografadas por
+  dia dariam perto de mil imagens por ano nas cinco cópias que rodam em Documentos, e a foto é
+  uma ajuda a rever — o registo são os números, e esses ficam para sempre.
+
+### Corrigido
+
+- **O aviso legal aparecia nas quatro fases da folha**, incluindo por cima de um campo vazio e
+  de uma mensagem de erro. Um aviso de que os números são estimados, onde não há números
+  nenhuns, deixa de se ler onde é preciso. Agora está só na revisão, em frente à lista.
+
+---
+
 ## [2.16.0] — 2026-08-27
 
 **Abrir no que se come.** A pesquisa deixa de pedir uma escolha entre seis antes de escrever a

@@ -74,6 +74,11 @@ class AntaresApplication : Application() {
             appScope.launch {
                 get<AppPreferences>().onboardingDone.first { feito -> feito }
                 get<AutoBackup>().correrSeNecessario()
+
+                // A seguir à cópia, e nunca antes: a varredura apaga fotografias de pratos,
+                // e se a app morresse a meio deste arranque era melhor tê-las apagado
+                // depois de a cópia dos números estar escrita do que antes.
+                get<pt.antares.app.core.util.FotosDeRefeicao>().varrer()
             }
         }
 

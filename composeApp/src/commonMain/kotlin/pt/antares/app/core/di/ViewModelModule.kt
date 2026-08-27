@@ -103,7 +103,15 @@ val viewModelModule = module {
     viewModel { RunHistoryViewModel(get()) }
     viewModel { RunDetailViewModel(get()) }
 
-    viewModel { pt.antares.app.feature.ai.AiViewModel(get()) }
+    viewModel {
+        val catalogo: pt.antares.app.feature.fooddata.FoodRepository = get()
+        val modelos: pt.antares.app.feature.templates.MealTemplateRepository = get()
+        pt.antares.app.feature.ai.AiViewModel(
+            repository = get(),
+            procurarNoCatalogo = { texto -> catalogo.search(texto) },
+            guardarModelo = { nome, slot, itens -> modelos.saveItemsAsTemplate(nome, slot, itens) },
+        )
+    }
     viewModel { pt.antares.app.feature.coach.CoachViewModel(get(), get()) }
 
     viewModel { pt.antares.app.feature.health.HealthViewModel(get(), get()) }

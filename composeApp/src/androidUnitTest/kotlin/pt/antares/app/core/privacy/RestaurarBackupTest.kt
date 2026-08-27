@@ -111,6 +111,45 @@ class RestaurarBackupTest : KoinTest {
         )
     }
 
+    /**
+     * A fotografia do prato não atravessa a reposição.
+     *
+     * O caminho é absoluto e é desta instalação, e as fotos dos pratos **não** viajam na
+     * cópia — são muitas e vivem dois meses. Repor noutro telemóvel deixava a coluna a
+     * apontar para um ficheiro que nunca existiu ali, e o diário a prometer um retrato que
+     * não há. Nulo é o estado certo: os números do registo voltam inteiros, e o retrato não.
+     */
+    @Test
+    fun `a foto do prato nao viaja na copia`() = runTest {
+        val db = emMemoria
+        db.foodLogDao().upsert(
+            pt.antares.app.core.database.entities.FoodLogEntity(
+                id = "r1",
+                epochDay = 20_000,
+                mealSlot = pt.antares.app.core.model.MealSlot.LUNCH,
+                foodId = null,
+                nameSnapshot = "arroz",
+                quantityGrams = 200.0,
+                kcalSnapshot = 260,
+                proteinSnapshot = 5.4,
+                carbsSnapshot = 56.0,
+                fatSnapshot = 0.6,
+                microsPer100Json = null,
+                photoPath = "/data/user/0/pt.antares.app/files/meal_photos/x.jpg",
+                updatedAt = 1L,
+            ),
+        )
+
+        val ficheiro = get<DataExporter>().exportJson()
+        db.foodLogDao().softDelete("r1", now = 2L)
+
+        assertIs<ImportResult.Done>(get<BackupImporter>().import(ficheiro, ImportMode.REPLACE))
+
+        val linha = db.foodLogDao().byId("r1")
+        assertEquals(260, linha?.kcalSnapshot, "os números do registo não voltaram")
+        assertEquals(null, linha?.photoPath, "o caminho da foto atravessou a reposição")
+    }
+
     @Test
     fun `um ficheiro que nao e uma copia nao chega a tocar na base`() = runTest {
         val db = emMemoria

@@ -31,9 +31,19 @@ import pt.antares.app.generated.resources.quick_log_scan
 import pt.antares.app.generated.resources.quick_log_voice
 import pt.antares.app.generated.resources.quick_log_voice_prompt
 
+/**
+ * A barra de registo rápido do Hoje e do diário.
+ *
+ * A voz **não** vai para a pesquisa, e é a correção desta versão. O que se pede a quem
+ * carrega no microfone é «diz o que comeste» — uma frase de refeição, com quantidades e
+ * mais do que um alimento —, e isso entregue a uma pesquisa de catálogo não encontra nada:
+ * «dois ovos e uma torrada» não é o nome de alimento nenhum. Vai para a folha da AI, que é
+ * a única coisa nesta app que sabe ler uma frase dessas.
+ */
 @Composable
 fun QuickLogBar(
     onSubmit: (String) -> Unit,
+    onVoice: (String) -> Unit,
     onPhoto: () -> Unit,
     onScan: () -> Unit,
     modifier: Modifier = Modifier,
@@ -52,7 +62,7 @@ fun QuickLogBar(
 
     val voice = rememberVoiceInput { heard ->
         keyboard?.hide()
-        onSubmit(heard)
+        onVoice(heard)
         text = ""
     }
     val voicePrompt = stringResource(Res.string.quick_log_voice_prompt)

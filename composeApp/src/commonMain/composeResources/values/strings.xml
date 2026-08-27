@@ -817,6 +817,16 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="ai_source_estimated">Estimado</string>
     <string name="ai_check">Confere este</string>
     <string name="ai_remove">Remover</string>
+    <string name="ai_grams">Gramas</string>
+    <string name="ai_swap">Trocar</string>
+    <string name="ai_swap_title">Trocar por outro alimento</string>
+    <string name="ai_add_item">Faltou alguma coisa</string>
+    <string name="ai_add_title">Acrescentar um alimento</string>
+    <string name="ai_per_100g">%1$d kcal por 100 g</string>
+    <string name="ai_save_as_meal">Guardar como refeição</string>
+    <string name="ai_meal_name_hint">Nome da refeição</string>
+    <string name="ai_save">Guardar</string>
+    <string name="ai_saved_as_meal">Guardada como «%1$s». Está em Refeições.</string>
     <string name="ai_trial_banner">Tens %1$d de %2$d análises grátis</string>
     <string name="ai_quota_banner">Restam %1$d análises hoje</string>
     <string name="ai_trial_over">Gastaste as análises grátis. O Antares Pro dá 30 por dia.</string>

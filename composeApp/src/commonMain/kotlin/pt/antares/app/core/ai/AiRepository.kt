@@ -34,6 +34,10 @@ class AiRepository(
     private val latestWeightKg: suspend () -> Double?,
 
     private val persistUsage: suspend (AiUsage, String) -> Unit,
+
+    // Grava a fotografia do prato e devolve o caminho, ou nulo se não deu. Nulo não é erro
+    // nem cancela o registo: os números são o registo, e a foto é só o retrato dele.
+    private val savePhoto: suspend (String, String) -> String? = { _, _ -> null },
     private val io: CoroutineDispatcher,
     private val lang: () -> String = { "pt" },
     private val json: Json = Json,
@@ -91,9 +95,16 @@ class AiRepository(
         mealSlot: MealSlot,
         epochDay: Long,
         origin: LogOrigin,
+
+        // A fotografia analisada, em base64, quando veio de uma. Grava-se **uma vez** e o
+        // caminho repete-se em todos os registos: uma foto de um prato dá tantos registos
+        // quantos os alimentos que o modelo viu, e são todos a mesma imagem.
+        photoBase64: String? = null,
     ) = withContext(io) {
         // Um instante só para todos os itens, para a refeição ficar junta na ordem do dia.
         val timestamp = now()
+
+        val photoPath = photoBase64?.let { savePhoto(newId(), it) }
         items.forEach { item ->
 
             // A AI devolve os micronutrientes da porção; a base guarda-os por 100 g. Sem
@@ -108,7 +119,9 @@ class AiRepository(
                     id = newId(),
                     epochDay = epochDay,
                     mealSlot = mealSlot,
-                    foodId = null,
+                    // Nulo enquanto for o que o modelo adivinhou; preenchido quando alguém
+                    // trocou o item por um alimento do catálogo no ecrã de revisão.
+                    foodId = item.foodId,
                     nameSnapshot = item.name,
                     quantityGrams = item.grams,
                     kcalSnapshot = item.kcal,
@@ -120,6 +133,7 @@ class AiRepository(
 
                     isLiquid = DrinkClassifier.isLiquid(item.name, item.name),
                     eatenAtMin = currentMinuteOfDay().takeIf { epochDay == todayEpochDay() },
+                    photoPath = photoPath,
                     updatedAt = timestamp,
                 ),
             )

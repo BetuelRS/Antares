@@ -23,9 +23,36 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.16.0"
+    const val CURRENT = "2.17.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.17.0",
+            title = "A revisão da AI passa a corrigir-se",
+            titleEn = "The AI review becomes editable",
+            highlights = listOf(
+                "**O microfone deixa de ir para a pesquisa e passa a ir para a AI.** Já dizia " +
+                    "«diz o que comeste», e entregava a frase a uma procura de catálogo — onde " +
+                    "«dois ovos e uma torrada» não encontra nada",
+                "**As gramas escrevem-se.** De 30 g para 180 g eram quinze toques no +10",
+                "**Trocar um item por um alimento do catálogo**, e o registo passa a ligar-se a " +
+                    "ele: micronutrientes medidos, porção habitual, e conta para os mais registados",
+                "**Acrescentar o que a AI não viu** — o arroz que ficou tapado pela carne",
+                "**Guardar como refeição no fim**, com o que acabaste de rever e mais nada",
+                "**A fotografia do prato fica no diário** durante dois meses, e apaga-se sozinha",
+            ),
+            highlightsEn = listOf(
+                "**The mic no longer goes to search — it goes to the AI.** It already said " +
+                    "\"say what you ate\", then handed that sentence to a catalogue search, " +
+                    "where \"two eggs and a slice of toast\" finds nothing",
+                "**Grams are typed now.** Going from 30 g to 180 g was fifteen taps on +10",
+                "**Swap an item for a catalogue food**, and the entry links to it: measured " +
+                    "micronutrients, its usual serving, and it counts towards your most logged",
+                "**Add what the AI missed** — the rice hidden behind the meat",
+                "**Save as a meal at the end**, with what you just reviewed and nothing else",
+                "**The photo of the plate stays in the diary** for two months, then clears itself",
+            ),
+        ),
         AppVersion(
             name = "2.16.0",
             title = "A procura abre no que tu comes",
@@ -320,27 +347,6 @@ object AppChangelog {
                     "places — the largest being small text, which is everywhere",
                 "A height outside 100–250 cm was ignored without a word, and your metabolism " +
                     "kept being calculated from the old one",
-            ),
-        ),
-        AppVersion(
-            name = "2.0.2",
-            title = "O imperial passa a ser imperial em todo o lado",
-            titleEn = "Imperial becomes imperial everywhere",
-            highlights = listOf(
-                "Quem escolhe libras via «153,9 lb» e, três linhas abaixo, «0,4 kg/semana» " +
-                    "e «Tendência: 70,6 kg» — a mesma pessoa em duas escalas",
-                "Foram catorze textos: o check-in semanal, o ritmo, a faixa saudável, a massa " +
-                    "magra e a gorda, a meta, os avisos da pesagem, a cintura e a altura",
-                "A cintura passa a polegadas e a altura a pés e polegadas, para quem usa imperial",
-                "Nos totais das corridas, «107:56:02» partia-se em duas linhas",
-            ),
-            highlightsEn = listOf(
-                "In pounds you saw \"153.9 lb\" and, three lines below, \"0.4 kg/week\" and " +
-                    "\"Trend: 70.6 kg\" — the same person on two scales",
-                "Fourteen texts in all: the weekly check-in, the rate, the healthy range, lean " +
-                    "and fat mass, the goal, the weigh-in prompts, the waist and the height",
-                "Waist now reads in inches and height in feet and inches for imperial",
-                "In the run totals, \"107:56:02\" broke across two lines",
             ),
         ),
     )

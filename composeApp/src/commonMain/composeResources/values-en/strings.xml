@@ -816,6 +816,16 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="ai_source_estimated">Estimated</string>
     <string name="ai_check">Check this one</string>
     <string name="ai_remove">Remove</string>
+    <string name="ai_grams">Grams</string>
+    <string name="ai_swap">Swap</string>
+    <string name="ai_swap_title">Swap for another food</string>
+    <string name="ai_add_item">Something is missing</string>
+    <string name="ai_add_title">Add a food</string>
+    <string name="ai_per_100g">%1$d kcal per 100 g</string>
+    <string name="ai_save_as_meal">Save as a meal</string>
+    <string name="ai_meal_name_hint">Meal name</string>
+    <string name="ai_save">Save</string>
+    <string name="ai_saved_as_meal">Saved as "%1$s". It is in Meals.</string>
     <string name="ai_trial_banner">You have %1$d of %2$d free analyses</string>
     <string name="ai_quota_banner">%1$d analyses left today</string>
     <string name="ai_trial_over">You've used your free analyses. Antares Pro gives you 30 a day.</string>

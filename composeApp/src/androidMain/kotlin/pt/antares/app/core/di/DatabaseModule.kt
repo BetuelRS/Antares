@@ -35,6 +35,14 @@ val databaseModule = module {
 
     single { LocalPhotoStore(androidContext(), get(IoDispatcher)) }
 
+    single(pt.antares.app.core.di.FotosDePrato) {
+        LocalPhotoStore(androidContext(), get(IoDispatcher), LocalPhotoStore.DIR_REFEICOES)
+    }
+
+    single {
+        pt.antares.app.core.util.FotosDeRefeicao(get(), get(pt.antares.app.core.di.FotosDePrato))
+    }
+
     single { pt.antares.app.core.privacy.BackupStore(androidContext(), get(IoDispatcher)) }
 
     // Dentro do armazenamento privado, ao contrário da cópia de segurança: um catálogo é

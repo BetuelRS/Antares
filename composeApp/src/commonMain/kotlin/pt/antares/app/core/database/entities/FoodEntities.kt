@@ -180,6 +180,20 @@ data class FoodLogEntity(
      * as contas que dependem dela.
      */
     @ColumnInfo(defaultValue = "NULL") val eatenAtMin: Int? = null,
+
+    /**
+     * O caminho da fotografia do prato, quando o registo veio de uma análise por foto.
+     *
+     * **Uma foto dá vários registos**, um por alimento que o modelo viu, e todos guardam o
+     * mesmo caminho — o ficheiro é um só. É por isso que apagar um registo nunca apaga a
+     * imagem: os outros ainda a mostram, e o apagar aqui é suave e desfazível. Quem apaga
+     * o ficheiro é a varredura do [pt.antares.app.core.util.FotosDeRefeicao], que corre no
+     * arranque.
+     *
+     * Volta a nulo quando a foto é varrida por idade. **Nulo é um estado normal e final**,
+     * não um valor por preencher: o registo continua inteiro, só deixou de ter retrato.
+     */
+    @ColumnInfo(defaultValue = "NULL") val photoPath: String? = null,
     val updatedAt: Long,
     val deleted: Boolean = false,
 )
