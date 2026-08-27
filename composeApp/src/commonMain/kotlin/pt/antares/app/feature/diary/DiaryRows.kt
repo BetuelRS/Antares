@@ -226,7 +226,7 @@ internal fun LogRow(
                 // e escrever «sem hora» em cada linha do histórico seria ruído.
                 val hora = log.eatenAtMin?.let { " · ${formatMinuteOfDay(it)}" }.orEmpty()
                 Text(
-                    "${porcaoComUnidade(log.quantityGrams, log.isLiquid)}" +
+                    "${porcaoComUnidade(log.quantityGrams, log.isLiquid, log.densidade)}" +
                         " · ${log.kcalSnapshot} ${stringResource(Res.string.common_kcal)}$hora",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

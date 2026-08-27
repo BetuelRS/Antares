@@ -131,7 +131,7 @@ fun FoodDetailScreen(
                 Text(
                     stringResource(
                         Res.string.food_usual_amount,
-                        paraCampo(usual, state.unitSystem, food.isLiquid),
+                        paraCampo(usual, state.unitSystem, food.isLiquid, food.densidade),
                         unit,
                     ),
                     style = MaterialTheme.typography.bodySmall,
@@ -221,7 +221,7 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
                 last.roundToInt() == COLHER_DE_SOPA_G.roundToInt() ||
                 food.servingGrams?.roundToInt() == last.roundToInt()
             if (!duplicate) {
-                val texto = "${paraCampo(last, state.unitSystem, food.isLiquid)} $unit"
+                val texto = "${paraCampo(last, state.unitSystem, food.isLiquid, food.densidade)} $unit"
                 AssistChip(
                     onClick = { onPick(last) },
                     label = { Text(stringResource(Res.string.food_last_amount, texto)) },
@@ -230,11 +230,11 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
         }
         AssistChip(
             onClick = { onPick(PORCAO_BASE_G) },
-            label = { Text("${paraCampo(PORCAO_BASE_G, state.unitSystem, food.isLiquid)} $unit") },
+            label = { Text("${paraCampo(PORCAO_BASE_G, state.unitSystem, food.isLiquid, food.densidade)} $unit") },
         )
         food.servingGrams?.let { grams ->
             val nome = food.servingName ?: stringResource(Res.string.food_serving)
-            val quanto = paraCampo(grams, state.unitSystem, food.isLiquid)
+            val quanto = paraCampo(grams, state.unitSystem, food.isLiquid, food.densidade)
             AssistChip(onClick = { onPick(grams) }, label = { Text("$nome ($quanto $unit)") })
         }
 
@@ -242,7 +242,7 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
         // três perguntas diferentes que a mesma pessoa faz em dias diferentes, e sem elas
         // registar um queijo é ir pesá-lo.
         for (porcao in state.porcoesExtra) {
-            val quanto = paraCampo(porcao.gramas, state.unitSystem, food.isLiquid)
+            val quanto = paraCampo(porcao.gramas, state.unitSystem, food.isLiquid, food.densidade)
             AssistChip(
                 onClick = { onPick(porcao.gramas) },
                 label = { Text("${porcao.nome} ($quanto $unit)") },

@@ -38,21 +38,55 @@ object UnitConversions {
     fun flOzToMl(flOz: Double): Double = flOz * ML_PER_FLOZ
 
     /**
-     * A quantidade de uma porção como se escreve e como se lê. A app guarda gramas para o que
-     * é sólido e mililitros para o que é líquido, e o número é o mesmo nas duas — o que muda
-     * é a unidade em que se converte.
+     * A quantidade de uma porção como se escreve e como se lê.
+     *
+     * **A app guarda sempre gramas**, porque é em gramas que a nutrição está medida — cada
+     * alimento traz os seus valores por 100 g, e a conta do dia é `gramas ÷ 100`. O que se
+     * mostra é outra coisa: num líquido são mililitros, e num sistema imperial são onças.
+     *
+     * A [densidade] é o que fecha a diferença entre as duas. Sem ela, um mililitro valia uma
+     * grama — certo para a água, e errado para tudo o resto: 200 ml de azeite pesam 182 g, e
+     * a app contava-lhes 200. Nula quer dizer que ninguém a mediu, e aí volta a valer 1,00.
      */
-    fun portionToDisplay(quantity: Double, system: UnitSystem, liquid: Boolean): Double = when {
-        system != UnitSystem.IMPERIAL -> quantity
-        liquid -> mlToFlOz(quantity)
-        else -> gToOz(quantity)
+    fun portionToDisplay(
+        quantity: Double,
+        system: UnitSystem,
+        liquid: Boolean,
+        densidade: Double? = null,
+    ): Double {
+        val emMl = if (liquid) quantity / densidadeUtil(densidade) else quantity
+        return when {
+            system != UnitSystem.IMPERIAL -> emMl
+            liquid -> mlToFlOz(emMl)
+            else -> gToOz(quantity)
+        }
     }
 
-    fun portionToStored(shown: Double, system: UnitSystem, liquid: Boolean): Double = when {
-        system != UnitSystem.IMPERIAL -> shown
-        liquid -> flOzToMl(shown)
-        else -> ozToG(shown)
+    fun portionToStored(
+        shown: Double,
+        system: UnitSystem,
+        liquid: Boolean,
+        densidade: Double? = null,
+    ): Double {
+        val emMl = when {
+            system != UnitSystem.IMPERIAL -> shown
+            liquid -> flOzToMl(shown)
+            else -> return ozToG(shown)
+        }
+        return if (liquid) emMl * densidadeUtil(densidade) else emMl
     }
+
+    /**
+     * A densidade a usar: a medida, ou 1,00.
+     *
+     * Uma densidade zero ou negativa não é uma medição — é um erro que dividia por zero — e
+     * por isso também cai no valor da água.
+     */
+    private fun densidadeUtil(densidade: Double?): Double =
+        densidade?.takeIf { it > 0 } ?: DENSIDADE_DA_AGUA
+
+    /** Um grama por mililitro, que é a definição do grama. */
+    const val DENSIDADE_DA_AGUA = 1.0
 
     // Arredonda para polegadas inteiras antes de separar pés: sem isso, 5 pés e 12
     // polegadas era um resultado possível.

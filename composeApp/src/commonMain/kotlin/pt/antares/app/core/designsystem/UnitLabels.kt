@@ -113,9 +113,9 @@ fun ratePerWeekWithUnit(kgPerWeek: Double, system: UnitSystem): String {
  * gramas, e ao inteiro uma refeição inteira mudava de tamanho no arredondamento.
  */
 @Composable
-fun porcaoComUnidade(quantidade: Double, liquido: Boolean): String {
+fun porcaoComUnidade(quantidade: Double, liquido: Boolean, densidade: Double? = null): String {
     val system = rememberUnitSystem()
-    val valor = UnitConversions.portionToDisplay(quantidade, system, liquido)
+    val valor = UnitConversions.portionToDisplay(quantidade, system, liquido, densidade)
     val numero = if (system == UnitSystem.IMPERIAL) {
         ((valor * UMA_CASA).roundToInt() / UMA_CASA.toDouble()).toString()
     } else {

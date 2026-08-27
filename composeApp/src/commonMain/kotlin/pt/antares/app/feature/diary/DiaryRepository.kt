@@ -105,6 +105,7 @@ class DiaryRepository(
                 microsPer100Json = snapshotMicros(food),
                 origin = origin,
                 isLiquid = food.isLiquid,
+                densidade = food.densidade,
                 eatenAtMin = horaDe(epochDay),
                 updatedAt = now(),
             ),

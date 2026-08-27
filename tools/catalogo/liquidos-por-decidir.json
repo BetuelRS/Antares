@@ -1,0 +1,277 @@
+[
+  {
+    "id": "usda-167702",
+    "nome": "Oil, flaxseed, cold pressed",
+    "familia": null
+  },
+  {
+    "id": "usda-167737",
+    "nome": "Oil, corn, peanut, and olive",
+    "familia": null
+  },
+  {
+    "id": "usda-169867",
+    "nome": "Oil, corn and canola",
+    "familia": null
+  },
+  {
+    "id": "usda-171012",
+    "nome": "Oil, soybean, salad or cooking, (partially hydrogenated)",
+    "familia": null
+  },
+  {
+    "id": "usda-171016",
+    "nome": "Oil, sesame, salad or cooking",
+    "familia": null
+  },
+  {
+    "id": "usda-171017",
+    "nome": "Oil, sunflower, linoleic (less than 60%)",
+    "familia": null
+  },
+  {
+    "id": "usda-171024",
+    "nome": "Oil, cottonseed, salad or cooking",
+    "familia": null
+  },
+  {
+    "id": "usda-171025",
+    "nome": "Oil, sunflower, linoleic, (approx. 65%)",
+    "familia": null
+  },
+  {
+    "id": "usda-171027",
+    "nome": "Oil, safflower, salad or cooking, high oleic (primary safflower oil of commerce)",
+    "familia": null
+  },
+  {
+    "id": "usda-171029",
+    "nome": "Oil, corn, industrial and retail, all purpose salad or cooking",
+    "familia": null
+  },
+  {
+    "id": "usda-171042",
+    "nome": "Oil, industrial, canola, high oleic",
+    "familia": null
+  },
+  {
+    "id": "usda-171274",
+    "nome": "Leite, leitelho, desidratado",
+    "familia": null
+  },
+  {
+    "id": "usda-171410",
+    "nome": "Oil, peanut, salad or cooking",
+    "familia": null
+  },
+  {
+    "id": "usda-171411",
+    "nome": "Óleo, soja, para salada ou cozinha",
+    "familia": null
+  },
+  {
+    "id": "usda-171413",
+    "nome": "Oil, olive, salad or cooking",
+    "familia": null
+  },
+  {
+    "id": "usda-171424",
+    "nome": "Oil, tomatoseed",
+    "familia": null
+  },
+  {
+    "id": "usda-171425",
+    "nome": "Oil, teaseed",
+    "familia": null
+  },
+  {
+    "id": "usda-171426",
+    "nome": "Oil, soybean lecithin",
+    "familia": null
+  },
+  {
+    "id": "usda-171428",
+    "nome": "Oil, babassu",
+    "familia": null
+  },
+  {
+    "id": "usda-171430",
+    "nome": "Oil, pam cooking spray, original",
+    "familia": null
+  },
+  {
+    "id": "usda-171433",
+    "nome": "Oil, cooking and salad, enova, 80% diglycerides",
+    "familia": null
+  },
+  {
+    "id": "usda-171438",
+    "nome": "Oil, industrial, soy, low linolenic",
+    "familia": null
+  },
+  {
+    "id": "usda-171439",
+    "nome": "Oil, industrial, soy, ultra low linolenic",
+    "familia": null
+  },
+  {
+    "id": "usda-171440",
+    "nome": "Oil, industrial, soy, fully hydrogenated",
+    "familia": null
+  },
+  {
+    "id": "usda-171441",
+    "nome": "Oil, industrial, cottonseed, fully hydrogenated",
+    "familia": null
+  },
+  {
+    "id": "usda-171442",
+    "nome": "Oil, flaxseed, contains added sliced flaxseed",
+    "familia": null
+  },
+  {
+    "id": "usda-172225",
+    "nome": "Leite, leitelho, líquido, inteiro",
+    "familia": null
+  },
+  {
+    "id": "usda-172328",
+    "nome": "Oil, sunflower, linoleic, (partially hydrogenated)",
+    "familia": null
+  },
+  {
+    "id": "usda-172336",
+    "nome": "Oil, canola",
+    "familia": null
+  },
+  {
+    "id": "usda-172337",
+    "nome": "Oil, mustard",
+    "familia": null
+  },
+  {
+    "id": "usda-172338",
+    "nome": "Oil, sunflower, high oleic (70% and over)",
+    "familia": null
+  },
+  {
+    "id": "usda-172357",
+    "nome": "Oil, industrial, mid-oleic, sunflower",
+    "familia": null
+  },
+  {
+    "id": "usda-172359",
+    "nome": "Oil, industrial, canola for salads, woks and light frying",
+    "familia": null
+  },
+  {
+    "id": "usda-172360",
+    "nome": "Oil, industrial, canola (partially hydrogenated) oil for deep fat frying",
+    "familia": null
+  },
+  {
+    "id": "usda-172362",
+    "nome": "Oil, industrial, soy ( partially hydrogenated), all purpose",
+    "familia": null
+  },
+  {
+    "id": "usda-172363",
+    "nome": "Oil, industrial, soy (partially hydrogenated ) and soy (winterized), pourable clear fry",
+    "familia": null
+  },
+  {
+    "id": "usda-172370",
+    "nome": "Oil, vegetable, soybean, refined",
+    "familia": null
+  },
+  {
+    "id": "usda-173563",
+    "nome": "Oil, cupu assu",
+    "familia": null
+  },
+  {
+    "id": "usda-173565",
+    "nome": "Oil, soybean, salad or cooking, (partially hydrogenated) and cottonseed",
+    "familia": null
+  },
+  {
+    "id": "usda-173576",
+    "nome": "Oil, oat",
+    "familia": null
+  },
+  {
+    "id": "ptx_azeite",
+    "nome": "Azeite",
+    "familia": null
+  },
+  {
+    "id": "ptx2_oleo_vegetal",
+    "nome": "Óleo vegetal",
+    "familia": null
+  },
+  {
+    "id": "ptx3_leite_achocolatado",
+    "nome": "Leite achocolatado",
+    "familia": null
+  },
+  {
+    "id": "tca-395",
+    "nome": "Azeite (4 marcas)",
+    "familia": null
+  },
+  {
+    "id": "tca-34",
+    "nome": "Leite condensado",
+    "familia": "lacticinios_ovos"
+  },
+  {
+    "id": "tca-500",
+    "nome": "Leite creme",
+    "familia": "lacticinios_ovos"
+  },
+  {
+    "id": "tca-35",
+    "nome": "Leite evaporado",
+    "familia": "lacticinios_ovos"
+  },
+  {
+    "id": "tca-389",
+    "nome": "Óleo \"Becel\"",
+    "familia": null
+  },
+  {
+    "id": "tca-392",
+    "nome": "Óleo alimentar",
+    "familia": null
+  },
+  {
+    "id": "tca-388",
+    "nome": "Óleo de amendoim",
+    "familia": null
+  },
+  {
+    "id": "tca-390",
+    "nome": "Óleo de girassol",
+    "familia": null
+  },
+  {
+    "id": "tca-2120000009",
+    "nome": "Óleo de linhaça",
+    "familia": null
+  },
+  {
+    "id": "tca-391",
+    "nome": "Óleo de milho",
+    "familia": null
+  },
+  {
+    "id": "tca-393",
+    "nome": "Óleo de soja",
+    "familia": null
+  },
+  {
+    "id": "tca-314",
+    "nome": "Vinagre",
+    "familia": null
+  }
+]

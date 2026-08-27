@@ -54,6 +54,18 @@ data class FoodEntity(
     // Separa mililitros de gramas na apresentação; a nutrição continua toda por 100 g.
     @ColumnInfo(defaultValue = "0") val isLiquid: Boolean = false,
 
+    /**
+     * Gramas por mililitro, para os líquidos.
+     *
+     * **Um mililitro não é uma grama.** A app guarda gramas e mostra mililitros, e até aqui
+     * os dois números eram o mesmo — o que está certo para a água e errado para tudo o
+     * resto: 200 ml de azeite pesam 182 g, e a app contava-lhe 200.
+     *
+     * Nulo quer dizer que ninguém a mediu para este alimento, e aí trata-se como 1,00 —
+     * exactamente o que a app fazia antes de esta coluna existir.
+     */
+    val densidade: Double? = null,
+
     val verified: Boolean = false,
 
     /**
@@ -131,6 +143,15 @@ data class FoodLogEntity(
     val origin: LogOrigin = LogOrigin.MANUAL,
 
     @ColumnInfo(defaultValue = "0") val isLiquid: Boolean = false,
+
+    /**
+     * A densidade do alimento no momento em que se registou, em gramas por mililitro.
+     *
+     * Fica congelada aqui como tudo o resto do registo: sem ela, corrigir a densidade de um
+     * alimento mudava a leitura de todos os registos antigos dele — que é exactamente o que
+     * o diário existe para não fazer.
+     */
+    val densidade: Double? = null,
 
     /**
      * A que horas se comeu, em minutos desde a meia-noite local — de 0 a 1439.

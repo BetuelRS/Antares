@@ -32,6 +32,8 @@ import { colisoes, aplicarFusoes } from "./colisoes.mjs";
 import { porDeAcordoConsigo } from "./coerencia.mjs";
 import { completar } from "./fontes/usda-completo.mjs";
 import { familiaDeUsda } from "../confecao/familias.mjs";
+import { densidadeDe, pareceSolido } from "./densidade.mjs";
+import { candidatosALiquido } from "./liquidos.mjs";
 import { lerCsv } from "../confecao/tabelas.mjs";
 import { lerVocabulario as lerVocabularioDeNomes, traduzirNome } from "../vocabulario/traduzir.mjs";
 
@@ -41,6 +43,7 @@ const DADOS = join(HERE, "dados");
 const DESVIOS = join(HERE, "desvios.json");
 const CORRECOES = join(HERE, "correcoes.json");
 const QUALIDADE = join(HERE, "qualidade.json");
+const LIQUIDOS_POR_DECIDIR = join(HERE, "liquidos-por-decidir.json");
 const COLISOES = join(HERE, "colisoes.json");
 const FUSOES = join(HERE, "fusoes.json");
 const POR_TRADUZIR = join(RAIZ, "tools", "vocabulario", "por-traduzir.json");
@@ -217,11 +220,22 @@ const porcoesDoUsda = existsSync(PORCOES_USDA) ? JSON.parse(readFileSync(PORCOES
 
 const vivos = tudo.filter((e) => !podados.has(e.id));
 let nomesAplicados = 0;
+let comDensidade = 0;
+let semDensidade = 0;
+let desmarcados = 0;
 let porcoesAplicadas = 0;
 for (const e of vivos) {
   const nome = correcoes.nomes[e.id];
   if (nome != null && nome !== e.namePt) { e.namePt = nome; nomesAplicados++; }
-  e.isLiquid = liquidos.has(e.id);
+  // A marca de liquido, e a densidade que a torna util. Um nome que diga «cozido em
+  // agua» ou «em po» perde a marca: sao solidos que a lista antiga trouxe por engano, e
+  // marcados assim ofereciam mililitros para uma ameijoa.
+  e.isLiquid = liquidos.has(e.id) && !pareceSolido(e);
+  if (e.isLiquid) {
+    const d = densidadeDe(e);
+    if (d != null) { e.densidade = d; comDensidade++; } else { semDensidade++; }
+  }
+  if (liquidos.has(e.id) && !e.isLiquid) desmarcados++;
 
   /**
    * A porção decidida na oficina ganha à tabela: é uma pessoa a dizer como come aquilo, e a
@@ -251,6 +265,15 @@ console.log(`\npodados por decisão anterior: ${tudo.length - vivos.length}`);
 console.log(`nomes corrigidos aplicados:   ${nomesAplicados}`);
 console.log(`porções (oficina + tabela):   ${porcoesAplicadas}`);
 console.log(`marcados como líquido:        ${vivos.filter((e) => e.isLiquid).length}`);
+console.log(`  com densidade medida:        ${comDensidade} (sem: ${semDensidade})`);
+console.log(`  desmarcados por serem sólidos: ${desmarcados}`);
+
+// Os que parecem liquidos e nao estao marcados. Nao se marcam sozinhos — ver o cabecalho de
+// `liquidos.mjs`: as tres regras que tentei marcaram comida solida, e um solido em
+// mililitros nao rebenta nada, so mente em silencio.
+const porDecidir = candidatosALiquido(vivos, pareceSolido);
+writeFileSync(LIQUIDOS_POR_DECIDIR, JSON.stringify(porDecidir, null, 2) + "\n");
+console.log(`  parecem líquidos e não estão marcados: ${porDecidir.length} → fila`);
 
 // --------------------------------------------------------------------- o vocabulário
 
@@ -594,6 +617,9 @@ const alimentos = vivos.map((e) => ({
   // linha de atalhos as oferecer sem ninguém escrever um número.
   porcoes: e.porcoes ?? null,
   isLiquid: Boolean(e.isLiquid),
+  // Gramas por mililitro. Ausente quer dizer que ninguém a mediu para este alimento, e
+  // a app trata-o como 1,00 — que é o que já fazia antes de esta coluna existir.
+  ...(e.densidade != null ? { densidade: e.densidade } : {}),
   verified: Boolean(e.verified),
 }));
 

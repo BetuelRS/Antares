@@ -177,9 +177,11 @@ internal fun EditLogDialog(
     // Escreve-se na unidade escolhida e grava-se sempre em gramas — a mesma volta e meia do
     // ecrã do alimento, e pela mesma razão: a base não muda com uma preferência.
     val unidades = rememberUnitSystem()
-    var text by remember(unidades) { mutableStateOf(paraCampo(log.quantityGrams, unidades, log.isLiquid)) }
+    var text by remember(unidades) {
+        mutableStateOf(paraCampo(log.quantityGrams, unidades, log.isLiquid, log.densidade))
+    }
     val parsed = text.replace(',', '.').toDoubleOrNull()
-        ?.let { UnitConversions.portionToStored(it, unidades, log.isLiquid) }
+        ?.let { UnitConversions.portionToStored(it, unidades, log.isLiquid, log.densidade) }
         ?.takeIf { it in 1.0..5000.0 }
 
     val previewKcal = parsed?.let { (log.kcalSnapshot * it / log.quantityGrams).toInt() }

@@ -62,6 +62,7 @@ data class AlimentoDoCatalogo(
     val servingName: String? = null,
     val servingGrams: Double? = null,
     val isLiquid: Boolean = false,
+    val densidade: Double? = null,
     val verified: Boolean = false,
 )
 
@@ -119,6 +120,7 @@ internal fun linhaDe(
     servingName = alimento.servingName,
     servingGrams = alimento.servingGrams,
     isLiquid = alimento.isLiquid,
+    densidade = alimento.densidade,
     verified = alimento.verified,
     updatedAt = agora,
     deleted = false,

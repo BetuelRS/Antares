@@ -145,7 +145,14 @@ data class PortionState(
 
     val quantityGrams: Double?
         get() = quantityText.replace(',', '.').toDoubleOrNull()
-            ?.let { UnitConversions.portionToStored(it, unitSystem, food?.isLiquid == true) }
+            ?.let {
+                UnitConversions.portionToStored(
+                    it,
+                    unitSystem,
+                    food?.isLiquid == true,
+                    food?.densidade,
+                )
+            }
             ?.takeIf { it in 1.0..5000.0 }
 
     val previewKcal: Int get() = scale { it.kcal.toDouble() }.roundToInt()
@@ -238,7 +245,7 @@ class FoodDetailViewModel(
                     favorito = marca?.isFavorite == true,
                     ultimaPorcaoG = marca?.lastAmountG,
                     unitSystem = unidades,
-                    quantityText = paraCampo(inicial, unidades, food?.isLiquid == true),
+                    quantityText = paraCampo(inicial, unidades, food?.isLiquid == true, food?.densidade),
                     usualG = usual,
                     microsPer100 = micros,
                     estadosPer100 = estados,
@@ -268,7 +275,14 @@ class FoodDetailViewModel(
     }
 
     fun setQuick(grams: Double) = _state.update {
-        it.copy(quantityText = paraCampo(grams, it.unitSystem, it.food?.isLiquid == true))
+        it.copy(
+            quantityText = paraCampo(
+                grams,
+                it.unitSystem,
+                it.food?.isLiquid == true,
+                it.food?.densidade,
+            ),
+        )
     }
 
     fun toggleFavorite() {
@@ -299,13 +313,22 @@ class FoodDetailViewModel(
  * O valor guardado para o que o campo mostra. Em onças fica com uma casa decimal: uma onça são
  * quase trinta gramas, e arredondar ao inteiro dava saltos de trinta gramas por toque.
  */
-fun paraCampo(quantidade: Double, system: UnitSystem, liquido: Boolean = false): String =
-    if (system == UnitSystem.IMPERIAL) {
-        val v = UnitConversions.portionToDisplay(quantidade, system, liquido)
-        ((v * UMA_CASA).roundToInt() / UMA_CASA.toDouble()).toString()
+fun paraCampo(
+    quantidade: Double,
+    system: UnitSystem,
+    liquido: Boolean = false,
+    densidade: Double? = null,
+): String {
+    val mostrado = UnitConversions.portionToDisplay(quantidade, system, liquido, densidade)
+    // O imperial mostra uma casa decimal porque uma onça são quase trinta gramas, e
+    // arredondar ao inteiro dava saltos de trinta gramas por toque. O métrico não precisa
+    // dela — mas passa a precisar de arredondar o que a densidade deixou com casas.
+    return if (system == UnitSystem.IMPERIAL) {
+        ((mostrado * UMA_CASA).roundToInt() / UMA_CASA.toDouble()).toString()
     } else {
-        quantidade.roundToInt().toString()
+        mostrado.roundToInt().toString()
     }
+}
 
 private const val UMA_CASA = 10
 
