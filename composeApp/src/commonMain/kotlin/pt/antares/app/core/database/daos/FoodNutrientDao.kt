@@ -53,4 +53,21 @@ interface FoodNutrientDao {
         maxPer100g: Double,
         limit: Int,
     ): List<FoodEntity>
+
+    /**
+     * Os índices que a `food_nutrient` tem, como o SQLite os declara.
+     *
+     * Existe para um teste-guarda, e é a única maneira honesta de o escrever nesta máquina:
+     * a alternativa era comparar relógios, e uma comparação de relógio num servidor
+     * partilhado mede a carga tanto quanto mede o código — esse teste já ficou vermelho duas
+     * vezes por isso, a segunda no CI.
+     *
+     * Ler o `sqlite_master` não é intrometer-se em nada: é a mesma tabela que o Room lê para
+     * conferir o esquema ao abrir.
+     */
+    @Query(
+        "SELECT sql FROM sqlite_master WHERE type = 'index' AND tbl_name = 'food_nutrient' " +
+            "AND sql IS NOT NULL",
+    )
+    suspend fun indicesDaTabela(): List<String>
 }

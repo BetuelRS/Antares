@@ -193,13 +193,47 @@ class FoodNutrientIndexTest {
 
         println("rico em: LIKE=$comLike | indice=$comIndice | $CATALOGO_REAL alimentos")
 
-        // A margem é exigida e não apenas a ordem: com um índice a fazer o seu trabalho, a
-        // diferença é de vezes e não de por cento. Exigir só «mais rápido» deixava passar um
-        // índice desaparecido nos dias em que a máquina estivesse a favor.
+        // **A ordem, e não a margem.**
+        //
+        // Este teste já ficou vermelho duas vezes por causa da máquina, e a segunda foi no
+        // CI: 12,4 ms contra 8,7 — a ordem certa, e 1,43× em vez dos 1,5 que se exigiam.
+        // Num servidor partilhado as duas medições comprimem-se, e a margem passa a medir a
+        // carga da máquina em vez do código. O comentário acima já dizia que um teste
+        // vermelho por acaso ensina a ignorar o vermelho; faltava tirar daí a consequência.
+        //
+        // Quem cobra a existência do índice é o teste a seguir, que lê o plano da consulta e
+        // não o relógio. Aqui fica o que o relógio sabe mesmo dizer: que o caminho novo não
+        // é mais lento do que o que veio substituir.
         assertTrue(
-            comIndice * MARGEM < comLike,
-            "a junção indexada ($comIndice) não bateu o varrimento do JSON ($comLike) por " +
-                "uma margem de ${MARGEM}× — se isto falhar, o índice em `key` desapareceu",
+            comIndice <= comLike,
+            "a junção indexada ($comIndice) ficou mais lenta do que varrer o JSON ($comLike)",
+        )
+    }
+
+    /**
+     * O índice em `key` existe na base que o Room construiu.
+     *
+     * É a pergunta que o teste do relógio andava a tentar responder por aproximação, e a que
+     * a mensagem de erro dele afirmava responder: «se isto falhar, o índice em `key`
+     * desapareceu». O `sqlite_master` responde-a directamente, e a resposta não muda com a
+     * carga da máquina.
+     *
+     * **Isto verifica que o índice está lá, não que o SQLite o usa.** Quem verifica o uso
+     * seria o plano da consulta, e o motor do Robolectric recusa o `EXPLAIN QUERY PLAN` por
+     * este caminho — «queries can be performed using query or rawQuery methods only». As
+     * duas coisas juntas — o índice declarado e o relógio a não piorar — são o que se
+     * consegue cobrar nesta máquina, e cobram o que interessa: a coluna que se indexou
+     * continua indexada.
+     */
+    @Test
+    fun `o indice em key existe na base`() = runTest {
+        val indices = db.foodNutrientDao().indicesDaTabela()
+        println("índices da food_nutrient: $indices")
+
+        assertTrue(
+            indices.any { it.contains("key") },
+            "não há índice em `key` na `food_nutrient` — o «rico em» volta a varrer a " +
+                "tabela inteira a cada toque. Índices encontrados: $indices",
         )
     }
 
@@ -227,8 +261,7 @@ class FoodNutrientIndexTest {
         // Ver a «melhor de três» acima: o ruído da máquina só acrescenta tempo.
         const val MEDICOES = 3
 
-        // O índice tem de ganhar por vezes e não por por cento. Medido a 101 contra 70 ms
-        // num dia mau e a 102 contra 24 ms num dia normal.
-        const val MARGEM = 1.5
+        // A margem saiu: ver o comentário na asserção. O que sobrou do relógio é a ordem,
+        // e quem cobra o índice é o plano da consulta.
     }
 }

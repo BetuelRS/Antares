@@ -12,6 +12,10 @@ class DeadCodeSweepTest {
         "countForRun" to "lida pelos testes de corrida, para provar a poda dos pontos",
         "deleteForRun" to "usada pela poda dentro do próprio DAO e verificada em teste",
         "observeRoutineForDay" to "lida pelos testes do plano semanal",
+        "indicesDaTabela" to
+            "lida pelo teste-guarda do índice em `key`. Existe porque a alternativa era " +
+            "comparar relógios, e uma comparação de relógio num servidor partilhado mede a " +
+            "carga tanto quanto mede o código — esse teste ficou vermelho duas vezes por isso",
     )
 
     private fun fontesDaApp(): List<File> =

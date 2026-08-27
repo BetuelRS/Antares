@@ -23,6 +23,7 @@ import kotlinx.serialization.Serializable
     tableName = "food_nutrient",
     primaryKeys = ["foodId", "key"],
     indices = [Index("key")],
+    
 )
 data class FoodNutrientEntity(
     val foodId: String,
