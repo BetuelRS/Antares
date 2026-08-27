@@ -58,7 +58,16 @@ premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que a corrida no aparelho mostrou
 
-Emulador Android 16, x86_64, antes de lançar:
+**Da 2.16.0** (emulador Android 16, x86_64): a migração v32 → v33 passa com o dia intacto, os
+três separadores aparecem — Procurar · Meus · Refeições —, e a fatia de 30 g está na linha do
+pão de forma. A porção só aparece nos alimentos que têm uma, que é um em cada quatro.
+
+**Da 2.8.0:** o leite abre a dizer 97 ml para 100 g, que é 100 ÷ 1,03. E foi aqui que se
+apanhou o que 1533 testes não apanharam — a densidade estava no catálogo, na base e na
+conversão, e não fazia nada, porque a versão do catálogo tinha ficado em 4. Quem actualizasse
+ficava com o catálogo antigo.
+
+**Da 2.7.0**, que é a corrida que fixou o que se verifica:
 
 1. **A actualização a partir da 2.6.0 passa.** A migração salta três versões de esquema, da
    v28 para a v30, e o dia registado na 2.6.0 — 1 050 kcal em dois registos — aparece igual
