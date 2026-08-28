@@ -24,6 +24,7 @@ val daoModule = module {
     single { get<AntaresDb>().waterLogDao() }
     single { get<AntaresDb>().recipeDao() }
     single { get<AntaresDb>().recipeIngredientDao() }
+    single { get<AntaresDb>().recipeStepDao() }
     single { get<AntaresDb>().exerciseLogDao() }
     single { get<AntaresDb>().exerciseLibraryDao() }
     single { get<AntaresDb>().routineDao() }

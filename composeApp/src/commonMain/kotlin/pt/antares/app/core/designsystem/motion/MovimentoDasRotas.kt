@@ -31,7 +31,7 @@ object MovimentoDasRotas {
         for (r in listOf("Today", "Diary", "Workout", "Run", "Me")) put(r, Movimento.ENTRE_IRMAOS)
 
         // Modos em que se entra e de que se sai por baixo.
-        for (r in listOf("BarcodeScan", "RecipeIngredientPick")) put(r, Movimento.DE_BAIXO)
+        put("BarcodeScan", Movimento.DE_BAIXO)
 
         // Sessões: não se está a navegar, está-se a entrar noutro estado da app.
         for (r in listOf("WorkoutSession", "RunLive", "Fasting", "Onboarding")) {

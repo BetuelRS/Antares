@@ -80,7 +80,7 @@ class MealTemplateRepositoryTest {
         assertEquals(2, repo.items(templateId).size)
 
         val applied = repo.applyTemplate(templateId, MealSlot.DINNER, 200)
-        assertEquals(2, applied)
+        assertEquals(2, applied.size)
 
         val dinner = db.foodLogDao().mealLogs(200, MealSlot.DINNER)
         assertEquals(2, dinner.size)
@@ -104,7 +104,7 @@ class MealTemplateRepositoryTest {
         assertEquals(12.0, items.first().proteinSnapshot)
 
         val applied = repo.applyTemplate(templateId, MealSlot.BREAKFAST, 300)
-        assertEquals(1, applied)
+        assertEquals(1, applied.size)
         assertEquals(350, db.foodLogDao().mealLogs(300, MealSlot.BREAKFAST).first().kcalSnapshot)
     }
 

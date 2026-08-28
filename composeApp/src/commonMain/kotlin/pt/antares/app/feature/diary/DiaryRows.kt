@@ -76,13 +76,9 @@ internal fun MealHeader(
     slot: MealSlot,
     totalKcal: Int,
     hasLogs: Boolean,
-
     onOpenDetail: (() -> Unit)?,
     onAdd: () -> Unit,
-    onSaveAsTemplate: () -> Unit,
-    onCopyFromDay: () -> Unit,
-    onMoveMeal: (MealSlot) -> Unit,
-    onClearMeal: () -> Unit,
+    accoes: AccoesDaRefeicao,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     var moveOpen by remember { mutableStateOf(false) }
@@ -125,14 +121,19 @@ internal fun MealHeader(
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     DropdownMenuItem(
+                        text = { Text(stringResource(Res.string.templates_apply_meal)) },
+                        onClick = { menuOpen = false; accoes.onApplyTemplate() },
+                    )
+
+                    DropdownMenuItem(
                         text = { Text(stringResource(Res.string.diary_copy_from_day)) },
-                        onClick = { menuOpen = false; onCopyFromDay() },
+                        onClick = { menuOpen = false; accoes.onCopyFromDay() },
                     )
 
                     if (hasLogs) {
                         DropdownMenuItem(
                             text = { Text(stringResource(Res.string.templates_save_meal)) },
-                            onClick = { menuOpen = false; onSaveAsTemplate() },
+                            onClick = { menuOpen = false; accoes.onSaveAsTemplate() },
                         )
 
                         DropdownMenuItem(
@@ -141,7 +142,7 @@ internal fun MealHeader(
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(Res.string.diary_clear_meal)) },
-                            onClick = { menuOpen = false; onClearMeal() },
+                            onClick = { menuOpen = false; accoes.onClearMeal() },
                         )
                     }
                 }
@@ -149,7 +150,7 @@ internal fun MealHeader(
                     MealSlot.entries.filter { it != slot }.forEach { destino ->
                         DropdownMenuItem(
                             text = { Text(slotLabel(destino)) },
-                            onClick = { moveOpen = false; onMoveMeal(destino) },
+                            onClick = { moveOpen = false; accoes.onMoveMeal(destino) },
                         )
                     }
                 }
@@ -353,10 +354,13 @@ internal fun LazyListScope.mealSection(
             hasLogs = logs.isNotEmpty(),
             onOpenDetail = if (logs.isNotEmpty()) ({ folhas.detailMeal = slot }) else null,
             onAdd = { folhas.addSheetSlot = slot },
-            onSaveAsTemplate = { folhas.saveTemplateSlot = slot },
-            onCopyFromDay = { folhas.copyIntoSlot = slot; viewModel.loadCopyCandidates(slot) },
-            onMoveMeal = { destino -> viewModel.moveMeal(slot, destino) },
-            onClearMeal = { folhas.clearMealSlot = slot },
+            accoes = AccoesDaRefeicao(
+                onSaveAsTemplate = { folhas.saveTemplateSlot = slot },
+                onApplyTemplate = { folhas.aplicarModeloSlot = slot },
+                onCopyFromDay = { folhas.copyIntoSlot = slot; viewModel.loadCopyCandidates(slot) },
+                onMoveMeal = { destino -> viewModel.moveMeal(slot, destino) },
+                onClearMeal = { folhas.clearMealSlot = slot },
+            ),
         )
     }
 

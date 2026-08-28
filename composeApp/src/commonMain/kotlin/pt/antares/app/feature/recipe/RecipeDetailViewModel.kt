@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
 import pt.antares.app.core.calc.RecipeNutrition
+import pt.antares.app.core.database.entities.RecipeStepEntity
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.LifeStage
 import pt.antares.app.core.model.Sex
@@ -35,6 +36,14 @@ data class RecipePortionState(
 
     /** Com doses, o campo conta doses. Sem elas, conta gramas — como sempre contou. */
     val byServings: Boolean = false,
+
+    /**
+     * Os passos de preparação, pela ordem em que se fazem.
+     *
+     * Estão aqui e não só no ecrã de edição porque é aqui que se lê a receita com o tacho ao
+     * lume — o ecrã de edição é para a escrever, e ninguém cozinha com um formulário aberto.
+     */
+    val passos: List<RecipeStepEntity> = emptyList(),
 ) {
     val quantityGrams: Double?
         get() {
@@ -152,6 +161,7 @@ class RecipeDetailViewModel(
                     reference = reference,
                     sex = sex,
                     lifeStage = stage,
+                    passos = repository.stepsOf(recipeId),
                 )
             }
         }

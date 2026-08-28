@@ -2,6 +2,7 @@ package pt.antares.app.feature.templates
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import pt.antares.app.core.database.daos.FoodLogDao
@@ -15,6 +16,7 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.currentMinuteOfDay
 import pt.antares.app.core.util.todayEpochDay
+import kotlin.math.roundToInt
 
 /**
  * Refeições guardadas para repetir. Um modelo é uma cópia congelada de um dia: guardar
@@ -41,6 +43,16 @@ data class ItemDeModelo(
     val foodId: String? = null,
 )
 
+/**
+ * Um modelo com o que a linha da lista diz sobre ele sem o abrir: quantos itens tem e
+ * quantas calorias somam.
+ */
+data class ModeloComResumo(
+    val modelo: MealTemplateEntity,
+    val itens: Int,
+    val kcal: Int,
+)
+
 class MealTemplateRepository(
     private val foodLogDao: FoodLogDao,
     private val templateDao: MealTemplateDao,
@@ -50,7 +62,20 @@ class MealTemplateRepository(
     private val newId: () -> String = { Ids.newUuid() },
 ) {
 
-    fun observeTemplates(): Flow<List<MealTemplateEntity>> = templateDao.observeAll()
+    /**
+     * Os modelos já com o que a linha precisa de dizer: quantos itens e quantas calorias.
+     *
+     * Um modelo sem itens não aparece na agregação, e entra aqui com zeros — não se esconde
+     * da lista. Um modelo vazio é uma coisa que se apaga, e para isso tem de se ver.
+     */
+    fun observeResumos(): Flow<List<ModeloComResumo>> =
+        combine(templateDao.observeAll(), templateDao.observeResumos()) { modelos, resumos ->
+            val porId = resumos.associateBy { it.id }
+            modelos.map { m ->
+                val r = porId[m.id]
+                ModeloComResumo(m, itens = r?.itens ?: 0, kcal = r?.kcal ?: 0)
+            }
+        }
 
     suspend fun items(templateId: String): List<MealTemplateItemEntity> =
         withContext(io) { itemDao.forTemplate(templateId) }
@@ -134,23 +159,43 @@ class MealTemplateRepository(
             templateId
         }
 
-    suspend fun applyTemplate(templateId: String, slot: MealSlot, epochDay: Long): Int =
+    /**
+     * Aplica um modelo a um dia, e **devolve os registos que criou**.
+     *
+     * Devolvia a contagem, e deitava os identificadores fora. Sem eles não há desfazer
+     * nenhum: aplicar um modelo de sete itens ao dia errado obrigava a apagar sete linhas à
+     * mão, uma a uma, à procura de quais tinham acabado de entrar.
+     *
+     * O [multiplicador] escala as quantidades e os macros. Os micronutrientes não são
+     * tocados: ficam guardados **por 100 g**, e por 100 g meia dose e dose e meia valem o
+     * mesmo — escalá-los aqui era contá-los duas vezes na leitura.
+     */
+    suspend fun applyTemplate(
+        templateId: String,
+        slot: MealSlot,
+        epochDay: Long,
+        multiplicador: Double = 1.0,
+    ): List<String> =
         withContext(io) {
             val items = itemDao.forTemplate(templateId)
             val ts = now()
+            val f = multiplicador.takeIf { it > 0 } ?: 1.0
+            val criados = ArrayList<String>(items.size)
             items.forEach { item ->
+                val id = newId()
+                criados += id
                 foodLogDao.upsert(
                     FoodLogEntity(
-                        id = newId(),
+                        id = id,
                         epochDay = epochDay,
                         mealSlot = slot,
                         foodId = item.foodId,
                         nameSnapshot = item.nameSnapshot,
-                        quantityGrams = item.quantityGrams,
-                        kcalSnapshot = item.kcalSnapshot,
-                        proteinSnapshot = item.proteinSnapshot,
-                        carbsSnapshot = item.carbsSnapshot,
-                        fatSnapshot = item.fatSnapshot,
+                        quantityGrams = item.quantityGrams * f,
+                        kcalSnapshot = (item.kcalSnapshot * f).roundToInt(),
+                        proteinSnapshot = item.proteinSnapshot * f,
+                        carbsSnapshot = item.carbsSnapshot * f,
+                        fatSnapshot = item.fatSnapshot * f,
                         microsPer100Json = item.microsPer100Json,
                         // Manual e não uma origem própria: aplicar um modelo é o mesmo que
                         // registar à mão o que já lá estava, e a origem serve para explicar
@@ -164,8 +209,19 @@ class MealTemplateRepository(
                     ),
                 )
             }
-            items.size
+            criados
         }
+
+    /**
+     * Desfaz uma aplicação, apagando exactamente os registos que ela criou.
+     *
+     * Apagar é marcar, como em todo o diário — e é isso que faz o desfazer do desfazer
+     * continuar a ser possível se alguém lá voltar.
+     */
+    suspend fun desfazerAplicacao(logIds: List<String>) = withContext(io) {
+        val ts = now()
+        logIds.forEach { foodLogDao.softDelete(it, ts) }
+    }
 
     /** Devolve o modelo e os itens que foram com ele. A ordem é a inversa de os apagar. */
     suspend fun restoreTemplate(templateId: String) = withContext(io) {

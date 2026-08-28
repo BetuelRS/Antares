@@ -17,6 +17,63 @@ Nada por lançar.
 
 ---
 
+## [2.18.1] — 2026-08-28
+
+**A preparação, escrita e por ordem.** A segunda metade da 2.18.0, e o terceiro número é o
+que a regra manda: partir uma versão a meio não desloca as cem referências cruzadas do plano
+— ver [versionamento.md](docs/referencia/versionamento.md). Esquema da base: **v35**.
+
+### Adicionado
+
+- **Passos de preparação nas receitas.** Escrever, corrigir, apagar com desfazer, e subir ou
+  descer um de cada vez. A ordem é o dado — «leva ao lume» antes de «tempera» é outra
+  receita —, e é por isso que os passos têm posição própria, ao contrário dos ingredientes,
+  onde a ordem não significa nada.
+- **Os passos aparecem onde se cozinha**, no ecrã da receita, por baixo dos números. Quem
+  abre esse ecrã vem registar o que comeu; quem vem cozinhar rola até ao fim, e é uma vez só.
+- Os passos entram na exportação e na cópia de segurança, como tudo o resto que se escreve.
+
+**O que os passos não fazem:** não entram em conta nenhuma. Uma receita continua a ser a
+soma dos ingredientes, e um passo é texto que quem cozinhou escreveu para si próprio — é a
+única coisa numa receita que a app não sabe conferir, e é de propósito.
+
+---
+
+## [2.18.0] — 2026-08-28
+
+**As refeições guardadas deixam de se aplicar às cegas.** Uma refeição guardada é uma cópia
+congelada de um dia que pode ter meses; o que lá está deixou de ser óbvio muito antes de
+alguém lhe voltar a tocar. Esquema da base: **v34**.
+
+### Adicionado
+
+- **Ver antes de aplicar.** Um toque na linha abre a lista do que lá está, com as gramas e as
+  calorias de cada item. Antes, o mesmo toque escrevia sete registos no diário e fechava o
+  ecrã — e saber o que tinha entrado obrigava a ir ao diário ver.
+- **Multiplicador.** Meia refeição, ou duas. As gramas e os macros escalam; os
+  micronutrientes ficam por 100 g, que é como a base os guarda em todo o lado.
+- **Desfazer ao aplicar.** Aplicar ao dia errado escrevia sete linhas que depois se apagavam
+  uma a uma, à procura de quais tinham acabado de entrar no meio das que já lá estavam.
+- **Atalho no diário:** «aplicar refeição guardada» no menu de cada refeição, ao lado do
+  «guardar» que já lá estava. É a olhar para o dia que nasce a vontade de repetir.
+- **Aviso quando o peso final não bate com os ingredientes.** A 2.8.0 previa o peso e só o
+  dizia com o campo vazio; escrever 2000 g em 400 g de ingredientes não dizia nada, e todos
+  os valores por 100 g saíam cinco vezes errados em silêncio. O limiar não é uma percentagem
+  escolhida à mão: a app compara com o intervalo que **os próprios métodos de confeção**
+  publicados dão — medido, dentro da mesma família o rendimento muda até 0,43 só por se
+  escolher outro método.
+
+### Alterado
+
+- **A linha de uma refeição guardada diz quantos itens e quantas calorias.** Dizia o nome e a
+  refeição do dia — «Almoço» —, que é a coisa menos útil que se pode dizer sobre uma lista
+  chamada «Almoço de segunda».
+- **Acrescentar ingredientes deixa de sair do ecrã da receita.** Era um ecrã de pesquisa
+  inteiro por ingrediente, com ida e volta; passa a ser uma folha que **não se fecha ao
+  escolher** — quem faz uma receita acrescenta ingredientes em série.
+
+---
+
 ## [2.17.0] — 2026-08-28
 
 **A revisão da AI deixa de ser só «ver e apagar».** O que o modelo devolve passa a ser

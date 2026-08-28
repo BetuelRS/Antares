@@ -9,7 +9,6 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.feature.fooddata.FoodSearchScreen
 import pt.antares.app.feature.recipe.RecipeDetailScreen
 import pt.antares.app.feature.recipe.RecipeEditScreen
-import pt.antares.app.feature.recipe.RecipePickViewModel
 
 /**
  * Receitas: criar, escolher ingredientes e ver o resultado.
@@ -22,22 +21,8 @@ internal fun NavGraphBuilder.rotasDeReceitas(navController: NavHostController) {
         val route = entry.toRoute<Route.RecipeEdit>()
         RecipeEditScreen(
             recipeId = route.recipeId,
-            onAddIngredient = { recipeId -> navController.navigate(Route.RecipeIngredientPick(recipeId)) },
             onDone = { navController.popBackStack() },
             onBack = { navController.popBackStack() },
-        )
-    }
-    composable<Route.RecipeIngredientPick> { entry ->
-        val route = entry.toRoute<Route.RecipeIngredientPick>()
-        val pickViewModel: RecipePickViewModel = koinViewModel()
-        FoodSearchScreen(
-            onBack = { navController.popBackStack() },
-            onFoodSelected = { foodId ->
-                pickViewModel.add(route.recipeId, foodId) { navController.popBackStack() }
-            },
-            onCreateCustom = {},
-            onScan = {},
-            pickMode = true,
         )
     }
     composable<Route.RecipeDetail> { entry ->

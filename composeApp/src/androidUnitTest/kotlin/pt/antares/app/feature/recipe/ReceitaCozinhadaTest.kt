@@ -65,6 +65,7 @@ class ReceitaCozinhadaTest : ViewModelHarness() {
     private fun repository() = RecipeRepository(
         db.recipeDao(),
         db.recipeIngredientDao(),
+        db.recipeStepDao(),
         db.foodDao(),
         diaryRepository(),
         LeitorDeConfecao(dispatcher, precarregada = tabela),

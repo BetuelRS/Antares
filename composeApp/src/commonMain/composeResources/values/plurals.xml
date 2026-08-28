@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <plurals name="modelo_itens">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d itens</item>
+    </plurals>
+    <plurals name="recipe_ingredientes_acrescentados">
+        <item quantity="one">%1$d ingrediente acrescentado</item>
+        <item quantity="other">%1$d ingredientes acrescentados</item>
+    </plurals>
     <plurals name="today_streak_days">
         <item quantity="one">%1$d dia seguido a registar</item>
         <item quantity="other">%1$d dias seguidos a registar</item>

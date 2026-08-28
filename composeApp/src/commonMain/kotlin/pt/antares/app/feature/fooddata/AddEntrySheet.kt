@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,7 +35,7 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 
-enum class AddMode { SEARCH, SCAN, PHOTO, DESCRIBE, QUICK }
+enum class AddMode { SEARCH, SCAN, PHOTO, DESCRIBE, QUICK, MEALS }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,6 +78,17 @@ fun AddEntrySheet(
                 title = stringResource(Res.string.add_entry_describe),
                 desc = stringResource(Res.string.add_entry_describe_desc),
                 onClick = { onPick(AddMode.DESCRIBE) },
+            )
+
+            // As refeições guardadas entram aqui e no menu de cada refeição do diário. São
+            // dois sítios para a mesma coisa de propósito: a vontade de repetir uma refeição
+            // nasce a olhar para o dia, e não dentro de «adicionar comida».
+            AddOption(
+                icon = Icons.Default.Restaurant,
+                tint = MaterialTheme.colorScheme.primary,
+                title = stringResource(Res.string.add_entry_meals),
+                desc = stringResource(Res.string.add_entry_meals_desc),
+                onClick = { onPick(AddMode.MEALS) },
             )
 
             AddOption(

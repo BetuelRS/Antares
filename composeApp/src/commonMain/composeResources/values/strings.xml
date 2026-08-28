@@ -476,6 +476,14 @@
     <string name="recipe_metodo_hint">Opcional — com isto, as vitaminas que o lume destrói deixam de contar como se sobrevivessem.</string>
     <string name="recipe_metodo_nenhum">Não vai ao lume</string>
     <string name="recipe_peso_sugerido">As tabelas prevêem %1$d g. Se pesaste, o teu peso ganha.</string>
+    <string name="recipe_passos">Preparação</string>
+    <string name="recipe_passos_vazio">Sem passos escritos. Uma receita funciona sem eles — os passos são para quando queres voltar a fazê-la igual.</string>
+    <string name="recipe_passo_novo">Acrescentar um passo</string>
+    <string name="recipe_passo_editar">Corrigir o passo</string>
+    <string name="recipe_passo_dica">Ex.: leva ao lume brando 20 minutos, mexendo</string>
+    <string name="recipe_passo_subir">Subir este passo</string>
+    <string name="recipe_passo_descer">Descer este passo</string>
+    <string name="recipe_peso_fora">Nenhum modo de cozinhar destes ingredientes dá este peso — as tabelas prevêem entre %1$d e %2$d g. Se pesaste o tacho, o teu número ganha.</string>
     <string name="recipe_peso_sugerido_usar">Usar %1$d g</string>
     <string name="recipe_retencao_nota">Contado com o que o lume destrói: os minerais quase todos ficam, e as vitaminas do grupo B e a C perdem-se em parte.</string>
     <string name="recipe_add_ingredient">Adicionar ingrediente</string>
@@ -958,6 +966,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="search_tab_templates">Templates</string>
     <string name="templates_save_meal">Guardar como template</string>
     <string name="templates_name_hint">Nome do template</string>
+    <string name="add_entry_meals">Refeição guardada</string>
+    <string name="add_entry_meals_desc">Repetir uma refeição que já montaste, inteira ou a meio</string>
+    <string name="templates_apply_meal">Aplicar refeição guardada</string>
+    <string name="modelo_multiplicador">Vezes</string>
+    <string name="modelo_aplicar">Adicionar ao diário</string>
+    <string name="modelo_aplicado">Refeição adicionada</string>
     <string name="templates_delete">Apagar template</string>
     <string name="templates_empty_title">Sem templates ainda</string>
     <string name="templates_empty_subtitle">Guarda uma refeição como template no menu «⋮» de cada refeição do diário.</string>

@@ -7,13 +7,17 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.17.0 é a última publicada**, a 2026-08-28. Esquema da base **v34**, catálogo **v5**.
-  Doze versões feitas. Árvore verde: 1575 testes Kotlin, 52 das ferramentas, 68 Deno, detekt
-  e lint limpos.
+- **2.18.1 é a última publicada**, a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
+  Catorze versões feitas. Árvore verde: 1604 testes Kotlin, 52 das ferramentas, 68 Deno,
+  detekt e lint limpos.
+- **A 2.18.0 partiu-se em duas** (regra B2): as refeições guardadas na 2.18.0, os passos de
+  preparação na 2.18.1. A segunda metade fica no terceiro número, e a razão está escrita em
+  [`versionamento.md`](versionamento.md) — inserir um MINOR a meio deslocava as cem
+  referências cruzadas do plano.
 - **Volta-se a fazer versão a versão**, por decisão do dono a 2026-08-27. O bloco D foi a
   excepção e não o modelo: as corridas existiram porque a cerimónia por versão era um terço
   do trabalho num bloco de doze, e o bloco E tem quatro.
-- **A próxima é a 2.18.0**, «As minhas refeições» — quatro serões. Abre com as perguntas dela,
+- **A próxima é a 2.19.0**, «O exercício avulso» — dois serões. Abre com as perguntas dela,
   que estão escritas no plano.
 - **O bloco D está fechado a sério.** A 2.7.0 levou-o quase todo e deixou seis promessas por
   cumprir; a 2.8.0 fecha-as. Nenhuma delas rebentava nada — davam números errados em
@@ -59,6 +63,33 @@ o nome trocado não rebenta, não dá erro, e custa uma versão a corrigir.
 premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que a corrida no aparelho mostrou
+
+**Da 2.18.0 e da 2.18.1** (emulador Android 16, x86_64):
+
+1. **A migração v34 → v35 passa com o dia intacto.** Instalou-se a 2.17.0 de lançamento,
+   fez-se o arranque, registaram-se 640 kcal, e actualizou-se por cima: o registo ficou lá
+   com a hora.
+2. **O atalho do diário abre direto no separador das refeições**, e a linha diz «1 item ·
+   640 kcal · Breakfast» — antes dizia só o nome e «Breakfast».
+3. **A pré-visualização abre com o multiplicador.** A meio, 640 kcal passam a 320 e o item
+   passa de 100 g para 50 g à vista, antes de se gravar seja o que for.
+4. **O menu de uma refeição vazia mostra só o que faz sentido:** «aplicar» e «copiar de
+   outro dia». Guardar, mover e limpar continuam escondidos sem registos.
+5. **«Saved meal» aparece na folha de adicionar**, com ícone próprio.
+
+**O que a corrida não conseguiu provar, e porquê.** O toque no «Anular» do aviso — nem o
+desta versão nem o que existe desde a 2.3.0. O aviso dura **quatro segundos**, e conduzir o
+emulador por coordenada fixa não serve num ecrã que muda de altura a cada registo; conduzir
+pela árvore de acessibilidade serve, mas cada leitura da árvore custa perto de dois segundos
+e o aviso morre antes do toque chegar.
+
+**A comparação é que fecha a questão:** apagou-se um registo pelo caminho antigo, com o mesmo
+método, e o «Anular» falhou exactamente do mesmo modo. Um mecanismo que está publicado há
+quinze versões não se partiu esta tarde — o que se partiu foi a forma de lhe tocar.
+
+O que fica a guardar o desfazer: o `AplicarRefeicaoGuardadaTest`, que prova que ele apaga
+**exactamente** os registos criados e deixa em paz os que já lá estavam, visto a falhar com o
+código estragado de propósito.
 
 **Da 2.17.0** (emulador Android 16, x86_64). Foi a corrida que mais rendeu até hoje: apanhou
 **dois defeitos que nenhum dos 1575 testes via**, e os dois pela mesma razão — não mudam
@@ -243,6 +274,11 @@ teste-guarda a exigir que sejam a mesma. Ver [`tools/README.md`](../../tools/REA
   partido.
 - **`MSYS_NO_PATHCONV=1` em todo o comando `adb` que toque em `/sdcard`.** Sem isso o Git Bash
   reescreve o caminho e lêem-se ficheiros velhos sem dar por isso.
+- **O aviso de anular não se toca pelo `adb`.** Dura quatro segundos; uma coordenada fixa
+  falha num ecrã que muda de altura, e ler a árvore de acessibilidade para achar o botão
+  custa perto de dois segundos. Provado na 2.18.1 contra o desfazer que existe desde a 2.3.0:
+  falha igual. **O desfazer verifica-se em teste**, e no aparelho verifica-se só que o aviso
+  aparece com o botão lá.
 - **`adb uninstall` não garante que os dados desaparecem.** Estado limpo é `pm clear`, mais
   apagar `/sdcard/Documents/Antares` à mão.
 - **Ficheiros apagados continuam dentro do APK.** A pasta intermédia de recursos do Gradle não

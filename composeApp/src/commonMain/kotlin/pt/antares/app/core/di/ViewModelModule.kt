@@ -19,7 +19,6 @@ import pt.antares.app.feature.onboarding.OnboardingViewModel
 import pt.antares.app.feature.profile.ui.ProfileSettingsViewModel
 import pt.antares.app.feature.recipe.RecipeDetailViewModel
 import pt.antares.app.feature.recipe.RecipeEditViewModel
-import pt.antares.app.feature.recipe.RecipePickViewModel
 import pt.antares.app.feature.stats.NutritionStatsViewModel
 import pt.antares.app.feature.profile.ui.WeightViewModel
 import pt.antares.app.core.privacy.PrivacyViewModel
@@ -74,10 +73,12 @@ val viewModelModule = module {
     viewModel { FoodEditViewModel(get(), get()) }
 
     viewModel { BarcodeResolveViewModel(get(), get(), get()) }
-    viewModel { RecipeEditViewModel(get()) }
+    viewModel {
+        val catalogo: pt.antares.app.feature.fooddata.FoodRepository = get()
+        RecipeEditViewModel(get(), procurarNoCatalogo = { texto -> catalogo.search(texto) })
+    }
     viewModel { RecipeDetailViewModel(get(), get(), get()) }
     viewModel { pt.antares.app.feature.fooddata.RichInViewModel(get(), get(), get()) }
-    viewModel { RecipePickViewModel(get()) }
     viewModel { NutritionStatsViewModel(get(), get()) }
 
     viewModel { AddExerciseViewModel(get(), get(), get()) }

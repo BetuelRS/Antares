@@ -15,6 +15,8 @@ import pt.antares.app.core.database.entities.CoachReportEntity
 import pt.antares.app.core.database.entities.BodyMeasurementEntity
 import pt.antares.app.core.database.entities.GoalHistoryEntity
 import pt.antares.app.core.database.entities.DailyTargetOverrideEntity
+import pt.antares.app.core.database.daos.RecipeStepDao
+import pt.antares.app.core.database.entities.RecipeStepEntity
 import pt.antares.app.core.database.entities.FoodLogEntity
 import pt.antares.app.core.database.entities.UserProfileEntity
 import pt.antares.app.core.database.entities.WaterLogEntity
@@ -145,6 +147,11 @@ val privacyModule = module {
                     RecipeIngredientEntity.serializer(),
                     restore = { linhas -> linhas.forEach { get<RecipeIngredientDao>().upsert(it) } },
                 ) { get<RecipeIngredientDao>().exportRows() },
+                ExportSource(
+                    "recipe_step",
+                    RecipeStepEntity.serializer(),
+                    restore = { linhas -> linhas.forEach { get<RecipeStepDao>().upsert(it) } },
+                ) { get<RecipeStepDao>().exportRows() },
                 ExportSource(
                     "exercise_log",
                     ExerciseLogEntity.serializer(),

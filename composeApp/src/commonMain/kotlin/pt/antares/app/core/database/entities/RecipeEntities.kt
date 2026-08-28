@@ -41,3 +41,38 @@ data class RecipeIngredientEntity(
     val updatedAt: Long,
     val deleted: Boolean = false,
 )
+
+@Serializable
+@Entity(
+    tableName = "recipe_step",
+    indices = [Index("recipeId")],
+)
+/**
+ * Um passo de preparação.
+ *
+ * **É a única coisa numa receita que a app não sabe conferir.** Os ingredientes somam-se, o
+ * peso final compara-se com as tabelas, a nutrição recalcula-se — um passo é texto que quem
+ * cozinhou escreveu para si próprio, e não entra em conta nenhuma. É de propósito: uma
+ * receita continua a ser um alimento composto, e os passos são o que faltava para ela também
+ * servir para cozinhar.
+ *
+ * Ao contrário do ingrediente, **a ordem é o dado**: «leva ao lume» antes de «tempera» é
+ * outra receita. Por isso há [posicao] e não a ordem de introdução — reordenar ingredientes
+ * não muda nada, reordenar passos muda tudo.
+ */
+data class RecipeStepEntity(
+    @PrimaryKey val id: String,
+    val recipeId: String,
+
+    /**
+     * A posição na lista, a contar de zero e sem buracos.
+     *
+     * Renumera-se a lista inteira a cada movimento, em vez de se guardarem posições
+     * fracionárias entre vizinhos: uma receita tem passos que se contam pelos dedos, e a
+     * aritmética de chaves fracionárias custava mais a ler do que o que poupava.
+     */
+    val posicao: Int,
+    val texto: String,
+    val updatedAt: Long,
+    val deleted: Boolean = false,
+)

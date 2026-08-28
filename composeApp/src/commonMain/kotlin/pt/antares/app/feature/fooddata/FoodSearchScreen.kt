@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items as itemsDaColuna
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CloudDownload
@@ -25,10 +27,17 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItem
 import androidx.compose.ui.draw.clip
@@ -70,6 +79,8 @@ import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
+import pt.antares.app.core.designsystem.components.rememberDesfazer
+import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.linhaInteira
@@ -133,12 +144,13 @@ fun FoodSearchScreen(
             if (initialQuery.isNotBlank() && initialMode != "DESCRIBE") viewModel.setQuery(initialQuery)
             // O atalho de onde se veio: a app abre-se a ler um código ou a fotografar, e a
             // pesquisa é só a estação de passagem.
-            aoAbrirCom(initialMode, onScan) { aiMode = it }
+            aoAbrirCom(initialMode, onScan, viewModel::setTab) { aiMode = it }
         }
     }
     val suggestions by viewModel.suggestions.collectAsState()
     val openFood by viewModel.openFood.collectAsState()
     val templateApplied by viewModel.templateApplied.collectAsState()
+    val preVisualizacao by viewModel.preVisualizacao.collectAsState()
 
     val multiSelect = !pickMode && aiSlot != null && aiEpochDay != null
 
@@ -150,6 +162,10 @@ fun FoodSearchScreen(
             onFoodSelected(it)
             viewModel.consumeOpenFood()
         }
+    }
+
+    preVisualizacao?.let { pre ->
+        AplicarRefeicaoGuardada(pre, viewModel, aiSlot, aiEpochDay)
     }
 
     LaunchedEffect(templateApplied) {
@@ -283,11 +299,20 @@ fun FoodSearchScreen(
  * Vem do atalho da aplicação ou de um botão noutro ecrã, e é uma cadeia de texto porque
  * atravessa a navegação — que só sabe transportar tipos simples.
  */
-private fun aoAbrirCom(modo: String, onLerCodigo: () -> Unit, onIa: (AiMode) -> Unit) {
+private fun aoAbrirCom(
+    modo: String,
+    onLerCodigo: () -> Unit,
+    onSeparador: (SearchTab) -> Unit,
+    onIa: (AiMode) -> Unit,
+) {
     when (modo) {
         "SCAN" -> onLerCodigo()
         "PHOTO" -> onIa(AiMode.PHOTO)
         "DESCRIBE" -> onIa(AiMode.TEXT)
+        // Vem do menu de uma refeição do diário, que é onde a vontade de repetir uma
+        // refeição guardada nasce — e não a três toques de distância, dentro de «adicionar
+        // comida».
+        "MEALS" -> onSeparador(SearchTab.REFEICOES)
         else -> Unit
     }
 }
@@ -466,7 +491,7 @@ private fun CorpoDoSeparador(
                     onFood = { onFoodSelected(it.id) },
                     onTemplate = { id ->
                         if (aiSlot != null && aiEpochDay != null) {
-                            viewModel.applyTemplate(id, aiSlot, aiEpochDay)
+                            viewModel.verModelo(id)
                         }
                     },
                 )
@@ -489,11 +514,7 @@ private fun CorpoDoSeparador(
                 onNew = onNewRecipe,
                 onSelect = onRecipeSelected,
                 onEdit = onEditRecipe,
-                onApply = { id ->
-                    if (aiSlot != null && aiEpochDay != null) {
-                        viewModel.applyTemplate(id, aiSlot, aiEpochDay)
-                    }
-                },
+                onApply = { resumo -> viewModel.verModelo(resumo) },
                 onDelete = { id ->
                     apagar({ viewModel.deleteTemplate(id) }, { viewModel.restoreTemplate(id) })
                 },
@@ -533,9 +554,9 @@ private fun YourStuff(
     selectable: Boolean,
     selectedIds: Set<String>,
     onToggle: (String) -> Unit,
-    templates: List<pt.antares.app.core.database.entities.MealTemplateEntity>,
+    templates: List<pt.antares.app.feature.templates.ModeloComResumo>,
     onFood: (FoodEntity) -> Unit,
-    onTemplate: (String) -> Unit,
+    onTemplate: (pt.antares.app.feature.templates.ModeloComResumo) -> Unit,
     // Os que eram separadores próprios. Chegam aqui como listas porque a pergunta que
     // respondem é a mesma, e separá-las obrigava a escolher entre elas antes de escrever.
     recentes: List<FoodEntity> = emptyList(),
@@ -554,11 +575,11 @@ private fun YourStuff(
                     modifier = Modifier.padding(Spacing.sm),
                 )
             }
-            items(templates, key = { "tpl-${it.id}" }) { template ->
+            items(templates, key = { "tpl-${it.modelo.id}" }) { resumo ->
                 LinhaDaLista(
-                    titulo = template.name,
-                    subtitulo = mealSlotLabel(template.slot),
-                    onClick = { onTemplate(template.id) },
+                    titulo = resumo.modelo.name,
+                    subtitulo = subtituloDoModelo(resumo),
+                    onClick = { onTemplate(resumo) },
                     modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
                 )
             }
@@ -748,11 +769,11 @@ private fun SearchResults(
 @Composable
 private fun RefeicoesTab(
     recipes: List<RecipeSummary>,
-    templates: List<pt.antares.app.core.database.entities.MealTemplateEntity>,
+    templates: List<pt.antares.app.feature.templates.ModeloComResumo>,
     onNew: () -> Unit,
     onSelect: (String) -> Unit,
     onEdit: (String) -> Unit,
-    onApply: (String) -> Unit,
+    onApply: (pt.antares.app.feature.templates.ModeloComResumo) -> Unit,
     onDelete: (String) -> Unit,
 ) {
     ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
@@ -771,13 +792,16 @@ private fun RefeicoesTab(
                     modifier = Modifier.padding(Spacing.sm),
                 )
             }
-            items(templates, key = { "tpl-${it.id}" }) { template ->
+            items(templates, key = { "tpl-${it.modelo.id}" }) { resumo ->
                 LinhaDaLista(
-                    titulo = template.name,
-                    subtitulo = mealSlotLabel(template.slot),
-                    onClick = { onApply(template.id) },
+                    titulo = resumo.modelo.name,
+                    subtitulo = subtituloDoModelo(resumo),
+                    // Abre a pré-visualização em vez de aplicar já. Aplicar escreve no
+                    // diário, e um toque numa lista não pode ser a última coisa que
+                    // acontece antes de sete registos entrarem no dia.
+                    onClick = { onApply(resumo) },
                     aoLado = {
-                        IconButton(onClick = { onDelete(template.id) }) {
+                        IconButton(onClick = { onDelete(resumo.modelo.id) }) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.templates_delete),
@@ -967,3 +991,132 @@ private val SEM_MARGEM = PaddingValues(0.dp)
 // Grande o suficiente para se distinguir um rótulo, pequena o suficiente para a linha não
 // mudar de altura por causa dela.
 private val MINIATURA = 44.dp
+
+/**
+ * O que a linha de uma refeição guardada diz sem se abrir: quantos itens e quantas calorias.
+ *
+ * Dizia o nome e a refeição do dia — «Almoço» —, que é a coisa menos útil que se pode dizer
+ * sobre uma lista chamada «Almoço de segunda». Quem escolhe entre duas refeições guardadas
+ * escolhe pelo tamanho delas.
+ */
+@Composable
+private fun subtituloDoModelo(resumo: pt.antares.app.feature.templates.ModeloComResumo): String {
+    val itens = pluralStringResource(
+        Res.plurals.modelo_itens,
+        resumo.itens,
+        resumo.itens,
+    )
+    return "$itens · ${resumo.kcal} ${stringResource(Res.string.common_kcal)} · " +
+        mealSlotLabel(resumo.modelo.slot)
+}
+
+/**
+ * Ver uma refeição guardada antes de ela entrar no diário, e escolher quantas vezes.
+ *
+ * Antes desta versão, tocar na linha escrevia os registos e fechava o ecrã. Uma refeição
+ * guardada é uma cópia congelada de um dia que pode ter meses — o que lá está deixou de ser
+ * óbvio muito antes de alguém lhe voltar a tocar, e aplicar às cegas ao dia errado era um
+ * toque de distância.
+ *
+ * O multiplicador está aqui e não no fim: metade das vezes é ele que decide se o que se vai
+ * aplicar é o que se comeu.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PreVisualizacaoSheet(
+    pre: pt.antares.app.feature.templates.PreVisualizacaoDeModelo,
+    onMultiplicador: (String) -> Unit,
+    onAplicar: () -> Unit,
+    onFechar: () -> Unit,
+) {
+    ModalBottomSheet(
+        onDismissRequest = onFechar,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(Spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(Spacing.md),
+        ) {
+            Text(pre.modelo.name, style = MaterialTheme.typography.titleMedium)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = pre.multiplicadorTexto,
+                    onValueChange = onMultiplicador,
+                    label = { Text(stringResource(Res.string.modelo_multiplicador)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier.width(MULTIPLICADOR_LARGURA),
+                )
+                Text(
+                    "${pre.kcal} ${stringResource(Res.string.common_kcal)}",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+
+            LazyColumn(
+                modifier = Modifier.heightIn(max = PRE_ALTURA),
+                verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+            ) {
+                itemsDaColuna(pre.itens, key = { it.id }) { item ->
+                    LinhaDaLista(
+                        titulo = item.nameSnapshot,
+                        subtitulo = "${pre.gramasDe(item).roundToInt()} " +
+                            stringResource(Res.string.common_grams_short) +
+                            " · ${pre.kcalDe(item)} ${stringResource(Res.string.common_kcal)}",
+                        emCartao = false,
+                    )
+                }
+            }
+
+            PrimaryButton(
+                text = stringResource(Res.string.modelo_aplicar),
+                onClick = onAplicar,
+                modifier = Modifier.fillMaxWidth(),
+                // Uma refeição guardada sem itens não escreve nada, e o botão não pode
+                // prometer que escreve.
+                enabled = pre.itens.isNotEmpty(),
+            )
+        }
+    }
+}
+
+private val MULTIPLICADOR_LARGURA = 120.dp
+
+private val PRE_ALTURA = 360.dp
+
+/**
+ * A pré-visualização ligada ao desfazer, num sítio só.
+ *
+ * Está fora do [FoodSearchScreen] porque ele já estava no tecto das 120 linhas — e porque o
+ * que aqui há é uma coisa inteira: ver, escolher quantas vezes, aplicar, e ter volta atrás.
+ */
+@Composable
+private fun AplicarRefeicaoGuardada(
+    pre: pt.antares.app.feature.templates.PreVisualizacaoDeModelo,
+    viewModel: FoodSearchViewModel,
+    slot: MealSlot?,
+    epochDay: Long?,
+) {
+    val desfazer = rememberDesfazer()
+    val mensagem = stringResource(Res.string.modelo_aplicado)
+
+    PreVisualizacaoSheet(
+        pre = pre,
+        onMultiplicador = viewModel::escreverMultiplicador,
+        onAplicar = {
+            // Sem dia e sem refeição não há para onde aplicar — é o caso de quem abriu a
+            // pesquisa para escolher um ingrediente, e não para registar.
+            if (slot != null && epochDay != null) {
+                viewModel.aplicarPreVisualizacao(slot, epochDay) { criados ->
+                    desfazer(mensagem) { viewModel.desfazerAplicacao(criados) }
+                }
+            }
+        },
+        onFechar = viewModel::fecharPreVisualizacao,
+    )
+}

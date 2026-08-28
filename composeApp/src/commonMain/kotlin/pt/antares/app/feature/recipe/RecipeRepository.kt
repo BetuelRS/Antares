@@ -14,9 +14,11 @@ import pt.antares.app.core.confecao.MetodoDeConfecao
 import pt.antares.app.core.database.daos.FoodDao
 import pt.antares.app.core.database.daos.RecipeDao
 import pt.antares.app.core.database.daos.RecipeIngredientDao
+import pt.antares.app.core.database.daos.RecipeStepDao
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.RecipeEntity
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
+import pt.antares.app.core.database.entities.RecipeStepEntity
 import pt.antares.app.core.model.FoodSource
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
@@ -44,6 +46,7 @@ data class RecipeSummary(
 class RecipeRepository(
     private val recipeDao: RecipeDao,
     private val ingredientDao: RecipeIngredientDao,
+    private val stepDao: RecipeStepDao,
     private val foodDao: FoodDao,
     private val diaryRepository: DiaryRepository,
     private val confecao: LeitorDeConfecao,
@@ -70,6 +73,88 @@ class RecipeRepository(
             for (i in list) out += IngredientRow(i, foodDao.byId(i.foodId))
             out
         }
+
+    // ---- os passos de preparação ----------------------------------------------------
+
+    fun observeSteps(recipeId: String): Flow<List<RecipeStepEntity>> =
+        stepDao.observeForRecipe(recipeId)
+
+    /** Leitura única, para quem só quer mostrar a receita e não a está a editar. */
+    suspend fun stepsOf(recipeId: String): List<RecipeStepEntity> =
+        withContext(io) { stepDao.forRecipe(recipeId) }
+
+    /** Junta um passo ao fim. Texto em branco não entra: um passo vazio não instrui nada. */
+    suspend fun addStep(recipeId: String, texto: String): String? = withContext(io) {
+        val limpo = texto.trim()
+        if (limpo.isEmpty()) return@withContext null
+        val id = Ids.newUuid()
+        stepDao.upsert(
+            RecipeStepEntity(
+                id = id,
+                recipeId = recipeId,
+                // No fim da lista, que é onde um passo novo pertence enquanto ninguém o
+                // mover: quem escreve uma receita escreve-a pela ordem em que a faz.
+                posicao = stepDao.forRecipe(recipeId).size,
+                texto = limpo,
+                updatedAt = now(),
+            ),
+        )
+        id
+    }
+
+    /** Reescreve o texto de um passo, sem lhe mexer na posição. */
+    suspend fun updateStep(step: RecipeStepEntity, texto: String) = withContext(io) {
+        val limpo = texto.trim()
+        if (limpo.isEmpty()) return@withContext
+        stepDao.upsert(step.copy(texto = limpo, updatedAt = now()))
+    }
+
+    suspend fun removeStep(step: RecipeStepEntity) = withContext(io) {
+        stepDao.softDelete(step.id, now())
+        // Renumera o que sobra: sem isto ficava um buraco na sequência, e o passo seguinte
+        // a entrar herdava a posição de um que ainda lá está.
+        renumerar(step.recipeId)
+    }
+
+    /**
+     * Devolve um passo apagado ao sítio onde estava.
+     *
+     * A posição vem com ele — é uma coluna da linha, e a lápide guardou-a. Mas a lista foi
+     * renumerada entretanto, e por isso renumera-se outra vez: o passo volta para a posição
+     * que tinha, e os que estavam a partir dela andam um para a frente.
+     */
+    suspend fun restoreStep(stepId: String, recipeId: String) = withContext(io) {
+        stepDao.restore(stepId, now())
+        renumerar(recipeId)
+    }
+
+    /**
+     * Move um passo uma posição para cima ou para baixo.
+     *
+     * Uma posição de cada vez, e não arrastar: arrastar numa lista dentro de uma coluna que
+     * rola é um gesto que compete com o rolar, e uma receita tem passos que se contam pelos
+     * dedos. Nos extremos não faz nada — e não é engano, é o fim da lista.
+     */
+    suspend fun moveStep(recipeId: String, from: Int, to: Int) = withContext(io) {
+        val passos = stepDao.forRecipe(recipeId).toMutableList()
+        if (from !in passos.indices || to !in passos.indices || from == to) return@withContext
+
+        passos.add(to, passos.removeAt(from))
+        val ts = now()
+        stepDao.upsertAll(
+            passos.mapIndexed { i, passo -> passo.copy(posicao = i, updatedAt = ts) },
+        )
+    }
+
+    /** Põe as posições em 0, 1, 2… pela ordem em que estão, sem buracos nem empates. */
+    private suspend fun renumerar(recipeId: String) {
+        val passos = stepDao.forRecipe(recipeId)
+        val ts = now()
+        stepDao.upsertAll(
+            passos.mapIndexed { i, passo -> passo.copy(posicao = i, updatedAt = ts) }
+                .filterIndexed { i, passo -> passo.posicao != passos[i].posicao },
+        )
+    }
 
     suspend fun recipeById(id: String): RecipeEntity? = withContext(io) { recipeDao.byId(id) }
 
@@ -268,6 +353,25 @@ class RecipeRepository(
      * Devolve nulo se menos de [RecipeCalc.MIN_COVERAGE] do peso tiver rendimento publicado
      * — abaixo disso a soma descreve parte do tacho e passaria por descrever o tacho todo.
      */
+    /**
+     * O intervalo de pesos finais que as tabelas conseguem explicar para esta receita, com
+     * **qualquer** um dos métodos disponíveis.
+     *
+     * Serve para o ecrã saber quando discordar de um peso escrito à mão, sem inventar uma
+     * percentagem de tolerância. Medido no ficheiro de confeção: dentro da mesma família, o
+     * rendimento muda até **0,43** só por se escolher outro método — o porco vai de 0,39
+     * estufado a 0,82 assado. Um limiar fixo escolhido por mim estaria errado para metade
+     * das receitas; o que a tabela publica não está.
+     *
+     * Nulo quando nem sequer há cobertura para um método — aí não há o que comparar, e a
+     * app não tem opinião nenhuma sobre o peso que a pessoa escreveu.
+     */
+    suspend fun envelopeDePesoFinal(recipeId: String): ClosedFloatingPointRange<Double>? {
+        val pesos = metodosPara(recipeId).mapNotNull { pesoFinalSugerido(recipeId, it.id) }
+        if (pesos.isEmpty()) return null
+        return pesos.min()..pesos.max()
+    }
+
     suspend fun pesoFinalSugerido(recipeId: String, metodo: String?): Double? {
         if (metodo == null) return null
         val tabela = confecao.tabela()

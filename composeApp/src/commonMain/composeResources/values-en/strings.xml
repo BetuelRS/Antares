@@ -476,6 +476,14 @@
     <string name="recipe_metodo_hint">Optional — with this, the vitamins heat destroys stop counting as if they had survived.</string>
     <string name="recipe_metodo_nenhum">Not cooked</string>
     <string name="recipe_peso_sugerido">The tables predict %1$d g. If you weighed it, your weight wins.</string>
+    <string name="recipe_passos">Method</string>
+    <string name="recipe_passos_vazio">No steps written. A recipe works without them — steps are for when you want to make it the same way again.</string>
+    <string name="recipe_passo_novo">Add a step</string>
+    <string name="recipe_passo_editar">Fix the step</string>
+    <string name="recipe_passo_dica">E.g. simmer for 20 minutes, stirring</string>
+    <string name="recipe_passo_subir">Move this step up</string>
+    <string name="recipe_passo_descer">Move this step down</string>
+    <string name="recipe_peso_fora">No way of cooking these ingredients gives this weight — the tables predict between %1$d and %2$d g. If you weighed the pan, your number wins.</string>
     <string name="recipe_peso_sugerido_usar">Use %1$d g</string>
     <string name="recipe_retencao_nota">Counted with what heat destroys: most minerals stay, and the B vitamins and vitamin C are partly lost.</string>
     <string name="recipe_add_ingredient">Add ingredient</string>
@@ -957,6 +965,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="search_tab_templates">Templates</string>
     <string name="templates_save_meal">Save as template</string>
     <string name="templates_name_hint">Template name</string>
+    <string name="add_entry_meals">Saved meal</string>
+    <string name="add_entry_meals_desc">Repeat a meal you already built, whole or half</string>
+    <string name="templates_apply_meal">Apply a saved meal</string>
+    <string name="modelo_multiplicador">Times</string>
+    <string name="modelo_aplicar">Add to diary</string>
+    <string name="modelo_aplicado">Meal added</string>
     <string name="templates_delete">Delete template</string>
     <string name="templates_empty_title">No templates yet</string>
     <string name="templates_empty_subtitle">Save a meal as a template from the «⋮» menu on any diary meal.</string>

@@ -23,9 +23,40 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.17.0"
+    const val CURRENT = "2.18.1"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.18.1",
+            title = "As refeições guardadas, e a preparação",
+            titleEn = "Saved meals, and the method",
+            highlights = listOf(
+                "**Vês a refeição guardada antes de ela entrar no diário** — o que lá está, " +
+                    "com as gramas e as calorias de cada item",
+                "**Meia refeição, ou duas.** Um campo diz quantas vezes, e o total muda à vista",
+                "**Desfazer ao aplicar.** Ao dia errado eram sete linhas para apagar à mão",
+                "A linha diz **quantos itens e quantas calorias**, em vez de dizer só «Almoço»",
+                "**Acrescentar ingredientes sem sair da receita** — a folha não se fecha a cada " +
+                    "escolha, e faz-se a lista de uma vez",
+                "**A app avisa quando o peso final não bate com os ingredientes**, e nunca o " +
+                    "corrige: quem pesou o tacho ganha à tabela",
+                "**Passos de preparação**, por ordem, com subir e descer — e a lê-los no ecrã " +
+                    "da receita, com o tacho ao lume",
+            ),
+            highlightsEn = listOf(
+                "**You see a saved meal before it enters the diary** — what is in it, with the " +
+                    "grams and calories of each item",
+                "**Half a meal, or two.** A field says how many times, and the total follows",
+                "**Undo when applying.** To the wrong day it was seven rows to delete by hand",
+                "The row says **how many items and how many calories**, instead of just \"Lunch\"",
+                "**Add ingredients without leaving the recipe** — the sheet stays open, so you " +
+                    "build the list in one go",
+                "**The app warns when the final weight does not match the ingredients**, and " +
+                    "never corrects it: whoever weighed the pan beats the table",
+                "**Method steps**, in order, with move up and down — and readable on the recipe " +
+                    "screen, with the pan on the stove",
+            ),
+        ),
         AppVersion(
             name = "2.17.0",
             title = "A revisão da AI passa a corrigir-se",
@@ -318,35 +349,6 @@ object AppChangelog {
                 "The adaptive-targets switch lived on two screens, the fasting clock redrew " +
                     "sixty times a minute to change once, and admin sat in plain sight of " +
                     "anyone who just wanted to change the theme",
-            ),
-        ),
-        AppVersion(
-            name = "2.0.3",
-            title = "Os números deixam de mudar sozinhos",
-            titleEn = "Numbers stop changing on their own",
-            highlights = listOf(
-                "Uma série feita a 62,5 kg voltava pré-preenchida a 63, e a linha da série " +
-                    "gravada dizia 63 enquanto a correção dizia 62,5 — a mesma série, dois números",
-                "Uma série gravada com o peso errado só se resolvia apagando e refazendo — e o " +
-                    "descanso recomeçava. Agora toca-se na linha e corrige-se",
-                "Apagar uma série a meio fazia a seguinte repetir um número já usado, e é por " +
-                    "esse número que o histórico ordena",
-                "Oito estilos de letra caíam na fonte do sistema em vez da da app, em 176 " +
-                    "sítios — o maior deles o texto pequeno, que está em todo o lado",
-                "Uma altura fora de 100–250 cm era ignorada sem dizer nada, e o metabolismo " +
-                    "continuava a ser calculado com a altura antiga",
-            ),
-            highlightsEn = listOf(
-                "A set logged at 62.5 kg came back pre-filled as 63, and the saved row said 63 " +
-                    "while the edit dialog said 62.5 — the same set, two numbers",
-                "A set saved with the wrong weight could only be deleted and redone — and the " +
-                    "rest timer restarted. Now you tap the row and fix it",
-                "Deleting a set mid-workout made the next one repeat an index already in use, " +
-                    "and that index is what the history sorts by",
-                "Eight text styles fell back to the system font instead of the app's, in 176 " +
-                    "places — the largest being small text, which is everywhere",
-                "A height outside 100–250 cm was ignored without a word, and your metabolism " +
-                    "kept being calculated from the old one",
             ),
         ),
     )

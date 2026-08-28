@@ -69,6 +69,7 @@ class FoodSearchMergeTest : ViewModelHarness() {
         recipeRepository = RecipeRepository(
             db.recipeDao(),
             db.recipeIngredientDao(),
+            db.recipeStepDao(),
             db.foodDao(),
             diaryRepository(),
             LeitorDeConfecao(dispatcher),

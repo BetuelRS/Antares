@@ -61,7 +61,7 @@ val repositoryModule = module {
             io = get(IoDispatcher),
         )
     }
-    single { RecipeRepository(get(), get(), get(), get(), get(), get(IoDispatcher)) }
+    single { RecipeRepository(get(), get(), get(), get(), get(), get(), get(IoDispatcher)) }
     single { NutritionStatsRepository(get(), get(), get(IoDispatcher)) }
     single { ProgressRepository(get(), get(), get(), get(), get(IoDispatcher)) }
     single { ProgressPhotoRepository(get(), get(), get(), get(IoDispatcher)) }

@@ -20,6 +20,8 @@ import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.feature.recipe.RecipeRepository
 import pt.antares.app.feature.recipe.RecipeSummary
 import pt.antares.app.feature.templates.MealTemplateRepository
+import pt.antares.app.feature.templates.ModeloComResumo
+import pt.antares.app.feature.templates.PreVisualizacaoDeModelo
 
 /**
  * Os separadores da pesquisa. Eram seis.
@@ -83,8 +85,19 @@ class FoodSearchViewModel(
     val recipes: StateFlow<List<RecipeSummary>> = recipeRepository.observeSummaries()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    val templates: StateFlow<List<MealTemplateEntity>> = templateRepository.observeTemplates()
+    val templates: StateFlow<List<ModeloComResumo>> = templateRepository.observeResumos()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /**
+     * A refeição guardada que se está a ver antes de aplicar, ou nulo quando não há nenhuma
+     * aberta.
+     *
+     * Ver antes de aplicar existe porque aplicar escreve no diário — até aqui um toque numa
+     * linha escrevia sete registos e fechava o ecrã, e a única forma de saber o que tinha
+     * entrado era ir ao diário ver.
+     */
+    private val _preVisualizacao = MutableStateFlow<PreVisualizacaoDeModelo?>(null)
+    val preVisualizacao: StateFlow<PreVisualizacaoDeModelo?> = _preVisualizacao
 
     private val _templateApplied = MutableStateFlow(false)
     val templateApplied: StateFlow<Boolean> = _templateApplied
@@ -255,11 +268,54 @@ class FoodSearchViewModel(
         _openFood.value = null
     }
 
-    fun applyTemplate(templateId: String, slot: MealSlot, epochDay: Long) {
+    /** Abre a pré-visualização, lendo os itens que a refeição guardada tem. */
+    fun verModelo(modelo: ModeloComResumo) {
         viewModelScope.launch {
-            templateRepository.applyTemplate(templateId, slot, epochDay)
+            _preVisualizacao.value = PreVisualizacaoDeModelo(
+                modelo = modelo.modelo,
+                itens = templateRepository.items(modelo.modelo.id),
+            )
+        }
+    }
+
+    fun fecharPreVisualizacao() {
+        _preVisualizacao.value = null
+    }
+
+    /**
+     * O multiplicador escrito na pré-visualização.
+     *
+     * O texto guarda-se sempre, mesmo vazio ou por acabar — apagar «1» para escrever «0,5»
+     * passa por um campo vazio, e recusá-lo tornava o campo impossível de limpar. É a mesma
+     * regra do campo de gramas da folha da AI.
+     */
+    fun escreverMultiplicador(texto: String) = _preVisualizacao.update { it?.comTexto(texto) }
+
+    /**
+     * Aplica o que está na pré-visualização e devolve os registos criados, para o ecrã
+     * poder oferecer o desfazer.
+     *
+     * O desfazer não é um extra: aplicar ao dia errado — ou à refeição errada — escrevia
+     * sete linhas que depois se apagavam uma a uma, à procura de quais tinham acabado de
+     * entrar no meio das que já lá estavam.
+     */
+    fun aplicarPreVisualizacao(slot: MealSlot, epochDay: Long, onAplicado: (List<String>) -> Unit) {
+        val pre = _preVisualizacao.value ?: return
+        viewModelScope.launch {
+            val criados = templateRepository.applyTemplate(
+                pre.modelo.id,
+                slot,
+                epochDay,
+                pre.multiplicador,
+            )
+            _preVisualizacao.value = null
+            onAplicado(criados)
             _templateApplied.value = true
         }
+    }
+
+    fun desfazerAplicacao(logIds: List<String>) {
+        viewModelScope.launch { templateRepository.desfazerAplicacao(logIds) }
     }
 
     fun consumeTemplateApplied() {

@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import pt.antares.app.core.model.Sex
@@ -338,6 +339,10 @@ internal class DiarySheets {
     var quickAddSlot by mutableStateOf<MealSlot?>(null)
     var copyIntoSlot by mutableStateOf<MealSlot?>(null)
     var clearMealSlot by mutableStateOf<MealSlot?>(null)
+
+    // Não abre folha nenhuma: leva à pesquisa, no separador das refeições. Vive aqui na
+    // mesma porque é o sítio onde os pedidos de uma secção do diário se juntam.
+    var aplicarModeloSlot by mutableStateOf<MealSlot?>(null)
 }
 
 @Composable
@@ -358,6 +363,13 @@ internal fun DiaryDialogHost(
             },
             onDismiss = { folhas.quickLogPendente = null },
         )
+    }
+
+    folhas.aplicarModeloSlot?.let { slot ->
+        LaunchedEffect(slot) {
+            folhas.aplicarModeloSlot = null
+            onAddFood(slot, epochDay, pt.antares.app.feature.fooddata.AddMode.MEALS)
+        }
     }
 
     folhas.addSheetSlot?.let { slot ->

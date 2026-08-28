@@ -6,6 +6,7 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import pt.antares.app.core.database.entities.RecipeEntity
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
+import pt.antares.app.core.database.entities.RecipeStepEntity
 
 @Dao
 interface RecipeDao {
@@ -51,4 +52,30 @@ interface RecipeIngredientDao {
 
     @Query("SELECT * FROM recipe_ingredient WHERE deleted = 0")
     suspend fun exportRows(): List<RecipeIngredientEntity>
+}
+
+@Dao
+interface RecipeStepDao {
+
+    @Upsert
+    suspend fun upsert(step: RecipeStepEntity)
+
+    @Upsert
+    suspend fun upsertAll(steps: List<RecipeStepEntity>)
+
+    @Query("UPDATE recipe_step SET deleted = 1, updatedAt = :now WHERE id = :id")
+    suspend fun softDelete(id: String, now: Long)
+
+    @Query("UPDATE recipe_step SET deleted = 0, updatedAt = :now WHERE id = :id")
+    suspend fun restore(id: String, now: Long)
+
+    // Pela posição, e não pela ordem de introdução: num passo, a ordem é o dado.
+    @Query("SELECT * FROM recipe_step WHERE recipeId = :recipeId AND deleted = 0 ORDER BY posicao ASC")
+    fun observeForRecipe(recipeId: String): Flow<List<RecipeStepEntity>>
+
+    @Query("SELECT * FROM recipe_step WHERE recipeId = :recipeId AND deleted = 0 ORDER BY posicao ASC")
+    suspend fun forRecipe(recipeId: String): List<RecipeStepEntity>
+
+    @Query("SELECT * FROM recipe_step WHERE deleted = 0")
+    suspend fun exportRows(): List<RecipeStepEntity>
 }

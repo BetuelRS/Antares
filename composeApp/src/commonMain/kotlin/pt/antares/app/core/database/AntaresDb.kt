@@ -32,6 +32,7 @@ import pt.antares.app.core.database.daos.MealTemplateDao
 import pt.antares.app.core.database.daos.MealTemplateItemDao
 import pt.antares.app.core.database.daos.RecipeDao
 import pt.antares.app.core.database.daos.RecipeIngredientDao
+import pt.antares.app.core.database.daos.RecipeStepDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.RunDao
 import pt.antares.app.core.database.daos.TrackPointDao
@@ -58,6 +59,7 @@ import pt.antares.app.core.database.entities.MealTemplateEntity
 import pt.antares.app.core.database.entities.MealTemplateItemEntity
 import pt.antares.app.core.database.entities.RecipeEntity
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
+import pt.antares.app.core.database.entities.RecipeStepEntity
 import pt.antares.app.core.database.entities.ExerciseEntity
 import pt.antares.app.core.database.entities.FastingProtocolEntity
 import pt.antares.app.core.database.entities.FastingSessionEntity
@@ -115,6 +117,7 @@ interface DbInfoDao {
         WaterLogEntity::class,
         RecipeEntity::class,
         RecipeIngredientEntity::class,
+        RecipeStepEntity::class,
         ExerciseLogEntity::class,
         ExerciseEntity::class,
         RoutineEntity::class,
@@ -135,7 +138,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 34,
+    version = 35,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -193,6 +196,11 @@ interface DbInfoDao {
         // registos antigos sem foto — que e o que eles sempre foram —, e a coluna so se
         // enche a partir da proxima analise por fotografia.
         AutoMigration(from = 33, to = 34),
+
+        // A v35 acrescenta a tabela `recipe_step`. Quem atualiza fica com as receitas
+        // exactamente como estavam — uma receita sem passos e uma receita com zero passos
+        // sao a mesma coisa, e nenhuma conta muda por causa disto.
+        AutoMigration(from = 34, to = 35),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)
@@ -258,6 +266,8 @@ abstract class AntaresDb : RoomDatabase() {
     abstract fun waterLogDao(): WaterLogDao
     abstract fun recipeDao(): RecipeDao
     abstract fun recipeIngredientDao(): RecipeIngredientDao
+
+    abstract fun recipeStepDao(): RecipeStepDao
     abstract fun exerciseLogDao(): ExerciseLogDao
     abstract fun exerciseLibraryDao(): ExerciseLibraryDao
     abstract fun routineDao(): RoutineDao

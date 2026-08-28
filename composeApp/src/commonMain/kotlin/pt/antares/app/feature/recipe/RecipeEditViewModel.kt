@@ -3,6 +3,7 @@ package pt.antares.app.feature.recipe
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -10,10 +11,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.antares.app.core.calc.RecipeNutrition
 import pt.antares.app.core.confecao.MetodoDeConfecao
+import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.RecipeIngredientEntity
+import pt.antares.app.core.database.entities.RecipeStepEntity
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
 import kotlin.math.roundToInt
@@ -43,6 +47,19 @@ data class RecipeEditState(
      * mede ganha sempre a uma mediana de pratos que não são este.
      */
     val pesoSugerido: Double? = null,
+
+    /**
+     * O peso escrito à mão que **nenhum** método de confeção explica.
+     *
+     * Nulo é o caso normal: ou não há cobertura para comparar, ou o que está escrito cabe
+     * no que as tabelas prevêem. Quando não é nulo, traz o intervalo que elas prevêem, para
+     * o ecrã poder dizer o número em vez de dizer «parece errado».
+     *
+     * **Avisa e nunca corrige.** Quem pesou o tacho tem razão contra uma mediana de pratos
+     * que não são este; o que a app pode fazer é não deixar passar em silêncio um 2000 onde
+     * se quis escrever 200.
+     */
+    val pesoForaDoPrevisto: ClosedFloatingPointRange<Double>? = null,
 ) {
     val yieldGrams: Double? get() = yieldText.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
 
@@ -61,12 +78,174 @@ data class RecipeEditState(
 // Cinquenta doses é uma cozinha industrial, não uma receita de quem regista o que come.
 private const val MAX_DOSES = 50
 
+// O que um ingrediente novo pesa até alguém escrever outra coisa. Era já o que o ecrã de
+// escolha usava; fica no mesmo valor para a folha não mudar o resultado de nada.
+private const val GRAMAS_POR_OMISSAO = 100.0
+
+private const val MAX_RESULTADOS = 20
+
+// Um passo é uma instrução, não um parágrafo de livro. O tecto existe para a lista se
+// continuar a ler de relance com o tacho ao lume.
+private const val MAX_TEXTO_DE_PASSO = 280
+
+/**
+ * A procura de ingredientes que se abre por cima da receita.
+ *
+ * Existe para acrescentar ingredientes **sem sair do ecrã**. Até aqui cada ingrediente era
+ * uma viagem a um ecrã de pesquisa inteiro e uma volta atrás: uma receita de oito
+ * ingredientes eram oito idas e oito regressos, e a receita saía do ecrã de cada vez.
+ *
+ * A folha não se fecha ao escolher, e é isso que a torna útil: escolhe-se, vê-se a linha
+ * aparecer por baixo, e escolhe-se outra vez.
+ */
+/**
+ * Um passo a ser escrito ou corrigido.
+ *
+ * [passo] nulo é um passo novo — a folha é a mesma nos dois casos, e a diferença está só em
+ * haver ou não uma linha para reescrever.
+ */
+data class EdicaoDePasso(
+    val passo: RecipeStepEntity? = null,
+    val texto: String = "",
+) {
+    val podeGravar: Boolean get() = texto.isNotBlank()
+}
+
+data class ProcuraDeIngrediente(
+    val texto: String = "",
+    val resultados: List<FoodEntity> = emptyList(),
+    val aProcurar: Boolean = false,
+    val acrescentados: Int = 0,
+)
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipeEditViewModel(
     private val repository: RecipeRepository,
+
+    // Função em vez do repositório inteiro: o que este ecrã pode ler do catálogo fica
+    // escrito no módulo que o cria, e é o mesmo padrão do [AiViewModel].
+    private val procurarNoCatalogo: suspend (String) -> List<FoodEntity> = { emptyList() },
 ) : ViewModel() {
 
+    /** O passo que está a ser editado, ou nulo. Nulo com a folha aberta é um passo novo. */
+    private val _passoEmEdicao = MutableStateFlow<EdicaoDePasso?>(null)
+    val passoEmEdicao: StateFlow<EdicaoDePasso?> = _passoEmEdicao
+
+    fun escreverPasso() {
+        viewModelScope.launch {
+            garantirReceita()
+            _passoEmEdicao.value = EdicaoDePasso()
+        }
+    }
+
+    fun editarPasso(passo: RecipeStepEntity) {
+        _passoEmEdicao.value = EdicaoDePasso(passo = passo, texto = passo.texto)
+    }
+
+    fun escreverTextoDoPasso(texto: String) =
+        _passoEmEdicao.update { it?.copy(texto = texto.take(MAX_TEXTO_DE_PASSO)) }
+
+    fun fecharEdicaoDePasso() {
+        _passoEmEdicao.value = null
+    }
+
+    /** Grava o que está na folha: um passo novo no fim, ou o texto de um que já existe. */
+    fun gravarPasso() {
+        val edicao = _passoEmEdicao.value ?: return
+        val id = recipeId.value ?: return
+        viewModelScope.launch {
+            val existente = edicao.passo
+            if (existente == null) repository.addStep(id, edicao.texto)
+            else repository.updateStep(existente, edicao.texto)
+            _passoEmEdicao.value = null
+        }
+    }
+
+    fun removerPasso(passo: RecipeStepEntity) {
+        viewModelScope.launch { repository.removeStep(passo) }
+    }
+
+    fun devolverPasso(passo: RecipeStepEntity) {
+        viewModelScope.launch { repository.restoreStep(passo.id, passo.recipeId) }
+    }
+
+    /**
+     * Sobe ou desce um passo uma posição.
+     *
+     * Nos extremos não faz nada, e o ecrã desliga o botão: um botão que não faz nada é pior
+     * do que um que não está lá.
+     */
+    fun moverPasso(passo: RecipeStepEntity, para: Int) {
+        val id = recipeId.value ?: return
+        viewModelScope.launch { repository.moveStep(id, passo.posicao, para) }
+    }
+
+    private val _procura = MutableStateFlow<ProcuraDeIngrediente?>(null)
+    val procura: StateFlow<ProcuraDeIngrediente?> = _procura
+
+    private var procuraJob: Job? = null
+
+    /** Abre a folha, criando a receita primeiro se ela ainda não existir. */
+    fun abrirProcura() {
+        viewModelScope.launch {
+            garantirReceita()
+            _procura.value = ProcuraDeIngrediente()
+        }
+    }
+
+    fun fecharProcura() {
+        procuraJob?.cancel()
+        _procura.value = null
+    }
+
+    fun procurar(texto: String) {
+        val atual = _procura.value ?: return
+        _procura.value = atual.copy(texto = texto, aProcurar = true)
+
+        procuraJob?.cancel()
+        procuraJob = viewModelScope.launch {
+            val achados = procurarNoCatalogo(texto).take(MAX_RESULTADOS)
+            val agora = _procura.value ?: return@launch
+            // A consulta pode ter demorado mais do que a letra seguinte: escrever por cima
+            // de uma procura mais recente devolvia resultados de um texto que já não está lá.
+            if (agora.texto != texto) return@launch
+            _procura.value = agora.copy(resultados = achados, aProcurar = false)
+        }
+    }
+
+    /**
+     * Junta o alimento à receita e **deixa a folha aberta**.
+     *
+     * Fechá-la ao escolher era repor a viagem que esta versão veio tirar: quem faz uma
+     * receita acrescenta ingredientes em série, não um de cada vez.
+     */
+    fun acrescentar(food: FoodEntity) {
+        val id = recipeId.value ?: return
+        viewModelScope.launch {
+            repository.addIngredient(id, food.id, GRAMAS_POR_OMISSAO)
+            _procura.update { it?.copy(acrescentados = it.acrescentados + 1) }
+        }
+    }
+
+    private suspend fun garantirReceita(): String =
+        recipeId.value ?: repository.createRecipe(
+            name.value.ifBlank { " " },
+            yieldText.value.replace(',', '.').toDoubleOrNull(),
+        ).also { recipeId.value = it }
+
     private val recipeId = MutableStateFlow<String?>(null)
+
+    /**
+     * Os passos de preparação, pela ordem em que se fazem.
+     *
+     * Fluxo à parte do estado do ecrã: mudam por outras razões — escrever, mover, apagar —
+     * e metê-los no `combine` de cinco fluxos que já lá está obrigava a recalcular a
+     * nutrição a cada letra escrita num passo.
+     */
+    val passos: StateFlow<List<RecipeStepEntity>> = recipeId
+        .flatMapLatest { id -> if (id == null) flowOf(emptyList()) else repository.observeSteps(id) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     private val name = MutableStateFlow("")
     private val yieldText = MutableStateFlow("")
     private val servingsText = MutableStateFlow("")
@@ -88,9 +267,13 @@ class RecipeEditViewModel(
         .flatMapLatest { (id, mt) ->
             flowOf(
                 if (id == null) {
-                    emptyList<MetodoDeConfecao>() to null
+                    Confecao()
                 } else {
-                    repository.metodosPara(id) to repository.pesoFinalSugerido(id, mt)
+                    Confecao(
+                        metodos = repository.metodosPara(id),
+                        sugerido = repository.pesoFinalSugerido(id, mt),
+                        envelope = repository.envelopeDePesoFinal(id),
+                    )
                 },
             )
         }
@@ -98,7 +281,7 @@ class RecipeEditViewModel(
     val state: StateFlow<RecipeEditState> =
         combine(recipeId, campos, rows, saved, metodo) { id, campos, rws, sv, mt ->
             Quinteto(id, campos, rws, sv, mt)
-        }.combine(confecao) { q, (metodos, sugerido) ->
+        }.combine(confecao) { q, conf ->
             val (nm, yt, st) = q.campos
             val yieldG = yt.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
             RecipeEditState(
@@ -110,12 +293,25 @@ class RecipeEditViewModel(
                 nutrition = repository.nutritionFrom(q.rows, yieldG, q.metodo),
                 saved = q.saved,
                 metodo = q.metodo,
-                metodos = metodos,
+                metodos = conf.metodos,
                 // A sugestão só aparece com o campo vazio: com um peso escrito, propor
                 // outro era discutir com quem tem a balança à frente.
-                pesoSugerido = sugerido.takeIf { yieldG == null },
+                pesoSugerido = conf.sugerido.takeIf { yieldG == null },
+                // E com o campo escrito, a app só abre a boca quando **nenhum** método
+                // explica o número. Foi a metade que faltava: até aqui, escrever 2000 g em
+                // 400 g de ingredientes não dizia nada, e os valores por 100 g saíam cinco
+                // vezes errados sem um aviso.
+                pesoForaDoPrevisto = conf.envelope
+                    ?.takeIf { env -> yieldG != null && yieldG !in env },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RecipeEditState())
+
+    /** O que o repositório sabe sobre a confeção desta receita, num sítio só. */
+    private data class Confecao(
+        val metodos: List<MetodoDeConfecao> = emptyList(),
+        val sugerido: Double? = null,
+        val envelope: ClosedFloatingPointRange<Double>? = null,
+    )
 
     // O `combine` de cinco fluxos não tem sobrecarga com destruturação, e um `Triple` de
     // `Triple`s lia-se pior do que isto.
@@ -157,16 +353,6 @@ class RecipeEditViewModel(
     fun aceitarPesoSugerido() {
         val sugerido = state.value.pesoSugerido ?: return
         yieldText.value = formatGrams(sugerido.roundToInt().toDouble())
-    }
-
-    fun ensureRecipeThen(navigate: (String) -> Unit) {
-        viewModelScope.launch {
-            val id = recipeId.value ?: repository.createRecipe(
-                name.value.ifBlank { " " },
-                yieldText.value.replace(',', '.').toDoubleOrNull(),
-            ).also { recipeId.value = it }
-            navigate(id)
-        }
     }
 
     fun updateGrams(

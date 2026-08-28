@@ -82,3 +82,23 @@ fun rememberApagarComDesfazer(): (apagar: () -> Unit, desfazer: () -> Unit) -> U
         }
     }
 }
+
+/**
+ * Um desfazer para o que **não** é apagar.
+ *
+ * O [rememberApagarComDesfazer] traz a frase «apagado» colada, e é o que se quer nos catorze
+ * sítios que apagam. Aplicar uma refeição guardada é o contrário — escreve —, e precisava da
+ * mesma rede: aplicar ao dia errado escrevia sete linhas que depois se apagavam uma a uma,
+ * à procura de quais tinham acabado de entrar no meio das que já lá estavam.
+ *
+ * A mensagem entra por parâmetro; o rótulo do botão é o mesmo da app inteira, porque o gesto
+ * é o mesmo.
+ */
+@Composable
+fun rememberDesfazer(): (mensagem: String, desfazer: () -> Unit) -> Unit {
+    val undo = LocalUndo.current
+    val rotulo = stringResource(Res.string.undo_action)
+    return remember(undo, rotulo) {
+        { mensagem, desfazer -> undo?.show(mensagem, rotulo, desfazer) }
+    }
+}

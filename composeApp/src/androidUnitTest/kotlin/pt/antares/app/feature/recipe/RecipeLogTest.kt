@@ -34,6 +34,7 @@ class RecipeLogTest : ViewModelHarness() {
     private fun repository() = RecipeRepository(
         db.recipeDao(),
         db.recipeIngredientDao(),
+        db.recipeStepDao(),
         db.foodDao(),
         diaryRepository(),
         LeitorDeConfecao(dispatcher),

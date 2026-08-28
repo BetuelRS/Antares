@@ -25,6 +25,7 @@ import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.AntaresCard
+import androidx.compose.foundation.layout.Row
 import pt.antares.app.core.nutrition.MicroGap
 import pt.antares.app.core.nutrition.NutritionFactsCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
@@ -134,6 +135,25 @@ fun RecipeDetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 source = Res.string.nutrition_source_recipe,
             )
+
+            // A preparação por baixo dos números, e não por cima: quem abre este ecrã vem
+            // registar o que comeu. Quem vem cozinhar rola até aqui, e é uma vez só.
+            if (state.passos.isNotEmpty()) {
+                Text(
+                    stringResource(Res.string.recipe_passos),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                for ((indice, passo) in state.passos.withIndex()) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                        Text(
+                            "${indice + 1}.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                        Text(passo.texto, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
 
             PrimaryButton(
                 text = stringResource(Res.string.common_save),

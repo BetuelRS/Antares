@@ -100,9 +100,6 @@ sealed interface Route {
     data class RecipeEdit(val recipeId: String? = null) : Route
 
     @Serializable
-    data class RecipeIngredientPick(val recipeId: String) : Route
-
-    @Serializable
     data class RecipeDetail(val recipeId: String, val slot: String, val epochDay: Long) : Route
 
     @Serializable
