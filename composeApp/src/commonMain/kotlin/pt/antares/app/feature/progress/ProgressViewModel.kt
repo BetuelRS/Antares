@@ -110,7 +110,18 @@ class ProgressViewModel(
                 weightSeries = pesagens,
                 trendSeries = WeightTrend.trendPairs(pesagens),
                 goalWeightKg = perfil?.goalWeightKg,
-                weeklyRateKg = WeightTrend.weeklyRateKg(pesagens),
+                // A janela que a pessoa escolheu no perfil, e não a de omissão.
+                //
+                // O `motor/03` do estudo seguiu esta definição pelo código e concluiu que
+                // ela «não faz absolutamente nada» — um interruptor que mente, numa app cujo
+                // argumento é mostrar as contas. Metade disso foi corrigido: o perfil de
+                // saúde passou a lê-la, e **este ecrã não**. O resultado era pior do que o
+                // defeito original: o mesmo ritmo semanal calculado com janelas diferentes
+                // em dois ecrãs, sem nada a dizer porquê.
+                weeklyRateKg = WeightTrend.weeklyRateKg(
+                    pesagens,
+                    windowDays = perfil?.trendWindowDays ?: WeightTrend.JANELA_POR_OMISSAO_DIAS,
+                ),
                 unitSystem = perfil?.unitSystem ?: UnitSystem.METRIC,
                 consistency = grelha,
                 consistencyPct = ProgressCalc.consistencyPct(grelha),
