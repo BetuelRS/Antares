@@ -1,5 +1,13 @@
 # Como continuar
 
+> **Antes de trabalhar numa área, abrir os documentos dela em `estudo/`** — o de área, o
+> esboço quando existe, e os do motor ou do sistema que a versão tocar. É a regra **C5**, e
+> a rota está em [`a-divida-com-o-estudo.md`](a-divida-com-o-estudo.md).
+>
+> **Nasceu de um falhanço:** treze versões saíram construídas a partir das linhas-resumo do
+> plano, sem um único esboço aberto — e este ficheiro, que é o que se lê ao começar, não
+> mencionava o estudo em lado nenhum. A 2.18.0 divergiu do esboço dela no ponto principal.
+
 Este ficheiro é o que se lê ao começar uma sessão nova. Substitui a mensagem que antes era
 reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia sem ninguém notar.
 
@@ -214,13 +222,14 @@ Duas, e nenhuma delas aparece na app. Estão documentadas em
 ## As regras
 
 
-[`regras.md`](regras.md) é a fonte única. São 29, em grupos A a F, e cada uma diz quem a
+[`regras.md`](regras.md) é a fonte única. São 30, em grupos A a F, e cada uma diz quem a
 verifica. As que mais mandam no dia a dia:
 
 | | |
 |---|---|
 | **A1** | nada começa sem o dono mandar, versão a versão. O plano não é autorização. |
-| **A2** | cada versão abre com perguntas. Estão pré-escritas no plano. |
+| **A2** | cada versão abre com perguntas. Estão pré-escritas no plano — mas **depois** de abrir os documentos do estudo: metade delas já lá está respondida. |
+| **C5** | abrir os documentos da área antes de lhe mexer, e **nomeá-los no registo da versão**. |
 | **A5** | nada entra a meio sem sair outra coisa. |
 | **B2** | versão que cresce a meio parte-se. Já aconteceu uma vez, e a excepção de numeração está em [`versionamento.md`](versionamento.md). |
 | **C1** | confirmar o achado no código antes de lhe tocar. Já apanhou seis achados errados, quatro deles vindos do próprio estudo. |
@@ -231,6 +240,18 @@ verifica. As que mais mandam no dia a dia:
 
 **Nomes de classes e ficheiros são substantivos, não frases.** Regra do dono, dada depois de
 um ecrã se ter chamado `OQueSaiDaquiScreen`. Português nos nomes é aceite; frases não.
+
+## A ordem de uma versão
+
+1. **Abrir o estudo da área** — a rota está em [`a-divida-com-o-estudo.md`](a-divida-com-o-estudo.md).
+   O esboço, quando existe, é quem decide a forma.
+2. **Medir as premissas do plano contra o código** (C1). Em todas as versões deste ano houve
+   pelo menos uma errada, e mede-se — não se lê.
+3. **Perguntar** (A2), já com o estudo e a medição na mão.
+4. Construir, com testes que se vêem a falhar antes de se aceitarem.
+5. Correr no aparelho (D3).
+6. Fechar os documentos, **nomeando no registo da versão os ficheiros do estudo que se
+   abriram**. Um registo que não os nomeia é um registo de uma versão feita sem eles.
 
 ## Verificar
 

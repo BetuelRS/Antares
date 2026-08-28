@@ -1,6 +1,6 @@
 # Regras de trabalho
 
-As vinte e oito regras que governam a produção da Antares. Escolhidas item a item
+As trinta regras que governam a produção da Antares. Escolhidas item a item
 pelo dono a **2026-08-18**, antes de a produção começar.
 
 Cada uma diz **quem a verifica**, porque uma regra que ninguém verifica é
@@ -53,6 +53,7 @@ decoração:
 | **C2** | **Ler os comentários do ficheiro antes de o mudar.** Neste código os comentários são o registo de decisões já tomadas. Sete auto-correções do estudo vieram de não os ter lido — várias vezes descreviam exatamente o defeito que se ia reportar. | eu |
 | **C3** | **Nunca escrever um número que não se contou nessa resposta.** | eu |
 | **C4** | **Número do catálogo que se cita, reconta-se.** Estende a C3 aos documentos. Citá-los desatualizados é exatamente o que pôs este repositório no estado que obrigou ao estudo. | teste |
+| **C5** | **Antes de mexer numa área, abrir os documentos dela em `estudo/`** — o de área, o esboço quando existe, e os do motor ou do sistema que a versão tocar. O plano diz o que a versão traz; o estudo diz porquê e com que forma. **Treze versões saíram sem isto**, e a rota está em [`a-divida-com-o-estudo.md`](a-divida-com-o-estudo.md). Verifica-se por escrito: o registo da versão no plano **nomeia os ficheiros abertos**. | eu |
 
 ---
 

@@ -32,6 +32,13 @@ class DocumentationHonestyTest {
         // deles precisamente para explicar porque é que não estão aqui.
         "apks/",
 
+        // O estudo vive fora do git por decisão do dono — o registo durável é o `git log`.
+        // A documentação cita-o mais do que qualquer outra coisa, e de propósito: a regra C5
+        // manda abri-lo antes de mexer numa área, e a rota em `a-divida-com-o-estudo.md` é
+        // uma tabela de caminhos para lá. Verificá-los aqui era exigir o estudo numa máquina
+        // que só clonou o repositório.
+        "estudo/",
+
         // O que o Gradle escreve. Estes caminhos são a resposta a «onde é que fica o APK
         // depois de compilar», e por isso a documentação tem de os citar — mas numa cópia
         // acabada de clonar, ou logo a seguir a um `clean`, ainda não existem. Sem esta

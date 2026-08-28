@@ -227,6 +227,9 @@ tasks.withType<Test>().configureEach {
         rootProject.file("README.md"),
         rootProject.file("CHANGELOG.md"),
         rootProject.file("docs/referencia/dados-e-licencas.md"),
+        rootProject.file("docs/referencia/como-continuar.md"),
+        rootProject.file("docs/referencia/regras.md"),
+        rootProject.file("docs/referencia/a-divida-com-o-estudo.md"),
     ).withPropertyName("documentosQueOsTestesLeem").withPathSensitivity(PathSensitivity.RELATIVE)
 }
 
