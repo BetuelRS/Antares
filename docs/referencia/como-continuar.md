@@ -8,7 +8,8 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 ## Onde estamos
 
 - **2.18.1 é a última publicada**, a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
-  Catorze versões feitas. Árvore verde: 1604 testes Kotlin, 52 das ferramentas, 68 Deno,
+  **Treze das 51 versões do plano feitas** — a 2.18.1 é uma metade partida, e não uma vaga
+  nova, como a 2.5.1. Árvore verde: 1604 testes Kotlin, 52 das ferramentas, 68 Deno,
   detekt e lint limpos.
 - **A 2.18.0 partiu-se em duas** (regra B2): as refeições guardadas na 2.18.0, os passos de
   preparação na 2.18.1. A segunda metade fica no terceiro número, e a razão está escrita em
