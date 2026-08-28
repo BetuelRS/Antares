@@ -56,19 +56,42 @@ class BodyCompositionTest {
         assertTrue(pct in 20.0..35.0, "esperava 20-35%, deu $pct")
     }
 
+    /**
+     * Os valores saem **já corrigidos do viés por sexo**.
+     *
+     * A fórmula crua dava 15,7 no homem e 27,4 na mulher. Potter et al. (2022), contra
+     * DEXA, mostram que ela subestima a gordura dos homens em 2,6 pontos e sobrestima a das
+     * mulheres em 2,3 — os números fixados aqui são os de depois da correcção, que são os
+     * que a app mostra.
+     */
     @Test
     fun `os valores da formula US Navy estao fixados`() {
 
         assertEquals(
-            15.7,
+            18.3,
             BodyComposition.navyBodyFat(Sex.MALE, 178, waistCm = 84.0, neckCm = 38.0)!!,
             0.2,
         )
         assertEquals(
-            27.4,
+            25.1,
             BodyComposition.navyBodyFat(Sex.FEMALE, 165, 74.0, 32.0, hipCm = 96.0)!!,
             0.2,
         )
+    }
+
+    /**
+     * O viés corrige-se em direções opostas, e é isso que o distingue de uma margem.
+     *
+     * Um erro aleatório anula-se ao longo do tempo; um viés não se anula nunca. Se alguém
+     * um dia "simplificar" isto para um só valor, ou lhe trocar o sinal, este teste cai.
+     */
+    @Test
+    fun `o vies sobe nos homens e desce nas mulheres`() {
+        val homem = BodyComposition.navyBodyFat(Sex.MALE, 178, waistCm = 84.0, neckCm = 38.0)!!
+        val mulher = BodyComposition.navyBodyFat(Sex.FEMALE, 165, 74.0, 32.0, hipCm = 96.0)!!
+
+        assertEquals(2.6, homem - 15.7, 0.2)
+        assertEquals(-2.3, mulher - 27.4, 0.2)
     }
 
     @Test

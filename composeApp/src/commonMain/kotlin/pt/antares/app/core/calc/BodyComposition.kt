@@ -68,8 +68,34 @@ object BodyComposition {
     }
 
     /**
+     * O desvio sistemático do método das circunferências, contra a absorciometria.
+     *
+     * Potter et al. (2022), contra DEXA: a fórmula **subestima** a gordura dos homens em 2,6
+     * pontos percentuais e **sobrestima** a das mulheres em 2,3. Não é ruído — é sempre na
+     * mesma direção, todos os dias.
+     *
+     * **Porque isto importa mais do que a incerteza que a app já declara.** O erro-padrão de
+     * 3,6 pp do [NavyUncertainty] é aleatório e anula-se ao longo do tempo; um viés não se
+     * anula nunca. Num homem de 80 kg, 2,6 pp são 2,08 kg de massa magra a mais, e isso
+     * inflaciona o metabolismo basal em cerca de 45 kcal por dia — na mesma direção, sempre.
+     * O `AdaptiveTdee` acabaria por o corrigir, mas leva semanas e o número inicial fica
+     * previsivelmente errado.
+     *
+     * O `NavyUncertainty` já dizia «com viés por sexo» no comentário dele e a conta não o
+     * aplicava: o código descrevia-se a si próprio como fazendo uma coisa que não fazia.
+     */
+    private fun viesDaFita(sex: Sex): Double = when (sex) {
+        Sex.MALE -> VIES_HOMENS_PP
+        Sex.FEMALE -> VIES_MULHERES_PP
+    }
+
+    /**
      * Massa gorda pelo método da marinha americana, a partir de fita métrica. Precisa de
      * anca nas mulheres; sem ela devolve null em vez de improvisar com a fórmula masculina.
+     *
+     * O resultado sai **já corrigido do viés por sexo** — ver [viesDaFita]. O filtro de
+     * plausibilidade aplica-se depois da correcção, que é onde ele descreve o número que a
+     * app vai mesmo mostrar.
      */
     fun navyBodyFat(
         sex: Sex,
@@ -96,7 +122,7 @@ object BodyComposition {
             }
         }
         if (denominator <= 0) return null
-        val pct = 495.0 / denominator - 450.0
+        val pct = 495.0 / denominator - 450.0 + viesDaFita(sex)
         return pct.takeIf { it.isFinite() && it in PLAUSIBLE_BODY_FAT }
     }
 
@@ -178,4 +204,9 @@ object BodyComposition {
     // Fora deste intervalo é engano de digitação ou unidade trocada: 3% é o limite da
     // sobrevivência e 70% não existe em ninguém que consiga usar a app.
     private val PLAUSIBLE_BODY_FAT = 3.0..70.0
+
+    // Potter et al. (2022), circunferências contra DEXA. Somam-se porque é o que corrige a
+    // direção do desvio: a fórmula dá pouco aos homens e demais às mulheres.
+    private const val VIES_HOMENS_PP = 2.6
+    private const val VIES_MULHERES_PP = -2.3
 }
