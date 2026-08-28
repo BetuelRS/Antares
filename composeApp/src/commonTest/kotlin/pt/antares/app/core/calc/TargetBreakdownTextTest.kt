@@ -142,6 +142,9 @@ class TargetBreakdownTextTest {
             TargetBreakdown.Kind.ACTIVITY to 3,
             TargetBreakdown.Kind.RATE to 3,
             TargetBreakdown.Kind.FLOOR to 0,
+            // Os dois passos de margem: o basal e o «mais ou menos» dele.
+            TargetBreakdown.Kind.BMR_UNCERTAIN to 2,
+            TargetBreakdown.Kind.BMR_MIFFLIN_INCERTO to 2,
         )
         forEachStep { step ->
             assertEquals(

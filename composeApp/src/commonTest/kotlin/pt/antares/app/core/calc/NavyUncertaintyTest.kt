@@ -101,4 +101,45 @@ class NavyUncertaintyTest {
 
         assertEquals(esperado, NavyUncertainty.bmrKcal(BmrFormula.KATCH_MCARDLE, 80.0))
     }
+
+    // ---- a metade que faltava: a Mifflin --------------------------------------------
+
+    /**
+     * A app declarava a margem da estimativa **boa** e calava-se sobre a **má**.
+     *
+     * Quem mediu a cintura via ±62 kcal; quem nunca mediu a massa gorda — a maioria — via um
+     * número nu, e é esse que traz mais margem. É o achado principal do
+     * `estudo/motor/01-metabolismo-e-metas.md`.
+     */
+    @Test
+    fun `a Mifflin passa a declarar a margem dela`() {
+        val erro = MifflinUncertainty.bmrKcal(BmrFormula.MIFFLIN_ST_JEOR, 1750.0)
+
+        assertEquals(175.0, erro)
+    }
+
+    /** As de massa magra têm o erro da fita, e esse já é declarado noutro sítio. */
+    @Test
+    fun `as formulas de massa magra nao usam esta margem`() {
+        assertNull(MifflinUncertainty.bmrKcal(BmrFormula.KATCH_MCARDLE, 1750.0))
+        assertNull(MifflinUncertainty.bmrKcal(BmrFormula.CUNNINGHAM, 1750.0))
+    }
+
+    /**
+     * É percentagem e não um valor fixo: o erro da fórmula escala com o número que ela
+     * produz, e «±175 kcal» a toda a gente seria exagerado num basal de 1 200.
+     */
+    @Test
+    fun `a margem da Mifflin escala com o basal`() {
+        val pequeno = MifflinUncertainty.bmrKcal(BmrFormula.MIFFLIN_ST_JEOR, 1200.0)!!
+        val grande = MifflinUncertainty.bmrKcal(BmrFormula.MIFFLIN_ST_JEOR, 2400.0)!!
+
+        assertEquals(2.0, grande / pequeno)
+    }
+
+    /** Um basal impossível não produz margem nenhuma, como no outro caminho. */
+    @Test
+    fun `sem basal nao ha margem`() {
+        assertNull(MifflinUncertainty.bmrKcal(BmrFormula.MIFFLIN_ST_JEOR, 0.0))
+    }
 }

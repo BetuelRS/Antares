@@ -125,6 +125,9 @@ private fun stepText(step: TargetBreakdown.Step): String {
         TargetBreakdown.Kind.BMR_UNCERTAIN ->
             stringResource(Res.string.show_maths_bmr_uncertain, a[0], a[1])
 
+        TargetBreakdown.Kind.BMR_MIFFLIN_INCERTO ->
+            stringResource(Res.string.show_maths_bmr_mifflin_incerto, a[0], a[1])
+
         TargetBreakdown.Kind.PROTEIN_TRAINED ->
             stringResource(Res.string.show_maths_protein_trained, a[0], a[1], a[2])
     }

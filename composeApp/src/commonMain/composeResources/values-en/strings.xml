@@ -913,7 +913,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="adaptive_keep">Keep</string>
     <string name="adaptive_disclaimer">Calculated automatically from your data. Not medical advice.</string>
     <string name="settings_adaptive_title">Adaptive targets</string>
-    <string name="settings_adaptive_desc">Suggest a new target every week, based on real progress.</string>
+    <string name="settings_adaptive_desc">Suggest a new target every week, based on real progress.</string>
+    <string name="settings_adaptive_desc_off">Off: the target stays fixed at the starting calculation, which assumes 7,700 kcal per kilo. That rule ignores metabolic adaptation and overestimates loss after a few months — turning this on measures your real expenditure and corrects the target with it.</string>
 
     <string name="admin_title">Admin</string>
     <string name="admin_open">Unlimited access</string>
@@ -1175,6 +1176,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="show_maths_activity">%1$s × %2$s (activity) = %3$d kcal you burn per day</string>
     <string name="show_maths_rate">%1$d %2$s = %3$d kcal — your target</string>
     <string name="show_maths_bmr_uncertain">This basal rate is about %1$s kcal, give or take %2$s kcal: your body fat came from the tape measure, and the method is off by 3.6 percentage points. Everything below inherits that margin.</string>
+    <string name="show_maths_bmr_mifflin_incerto">This basal rate is about %1$s kcal, give or take %2$s kcal: it comes from a formula that only knows your weight, height, age and sex, and that is off by about 10% for a typical person — more for someone carrying a lot of fat. Measuring your waist and neck narrows this margin. Everything below inherits it.</string>
     <string name="show_maths_protein_trained">Protein: %1$s g per kg of lean mass × %2$s kg = %3$s g. It is higher because you train with weights while in a deficit — Helms et al. (2014) asks for 2.3 to 3.1, rising with how deep the deficit is. With no training logged it would be 1.8.</string>
     <string name="show_maths_footer">That is the whole calculation, with no hidden steps. You can check every line by hand: only the multiplication is rounded, and it is rounded to the nearest calorie.</string>
     <string name="settings_height_ft">Feet</string>

@@ -193,7 +193,18 @@ private fun SeccaoDoComportamento(
         Column {
             ToggleRow(
                 title = stringResource(Res.string.settings_adaptive_title),
-                desc = stringResource(Res.string.settings_adaptive_desc),
+                // Com o interruptor desligado, a descrição diz o que se passa a usar em vez
+                // disto. O `estudo/motor/01-metabolismo-e-metas.md` nota que a app tem a
+                // resposta certa à regra dos 7 700 kcal por quilo — mede o gasto e corrige-o
+                // semana a semana — e que desligar isto devolve a pessoa exactamente à regra
+                // que a literatura abandonou, sem nada no ecrã a dizê-lo.
+                desc = stringResource(
+                    if (adaptativas) {
+                        Res.string.settings_adaptive_desc
+                    } else {
+                        Res.string.settings_adaptive_desc_off
+                    },
+                ),
                 checked = adaptativas,
                 onChange = onAdaptativas,
             )

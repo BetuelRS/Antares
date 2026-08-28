@@ -41,8 +41,42 @@ object NavyUncertainty {
             BmrFormula.CUNNINGHAM ->
                 NutritionCalc.bmrCunningham(leanKg) - NutritionCalc.bmrCunningham(0.0)
             // A Mifflin sai do peso e da altura, que a fita não mede. O erro dela é outro
-            // e não é este.
+            // e não é este — está no [MifflinUncertainty].
             BmrFormula.MIFFLIN_ST_JEOR -> null
+        }
+    }
+}
+
+/**
+ * De quanto é o «cerca de» num basal calculado sem massa gorda nenhuma.
+ *
+ * **A app declarava a margem da estimativa boa e calava-se sobre a má**, que é o inverso do
+ * que devia ser — é o achado principal do `estudo/motor/01-metabolismo-e-metas.md`. Quem
+ * mediu a cintura via ±62 kcal; quem nunca mediu a massa gorda, e é a maioria, via um número
+ * nu. E é esse que traz mais margem.
+ *
+ * A Mifflin-St Jeor erra tipicamente **10 %** do basal contra calorimetria indireta, e vai a
+ * 36 % em obesidade. Num basal de 1 750 kcal são ±175 kcal — quase o triplo do que a app já
+ * mostrava no outro caminho.
+ *
+ * **É percentagem e não um valor fixo** porque o erro da fórmula escala com o número que ela
+ * produz: dizer «±175 kcal» a toda a gente seria exagerado num basal de 1 200 e curto num de
+ * 2 400.
+ */
+object MifflinUncertainty {
+
+    // Mifflin et al. (1990), contra calorimetria indireta. O extremo baixo do que a
+    // literatura reporta, pela mesma razão do [NavyUncertainty]: um intervalo exagerado
+    // ensina a ignorá-lo.
+    const val RELATIVE_ERROR = 0.10
+
+    /** O «mais ou menos» em kcal, ou nulo quando a fórmula usada não é esta. */
+    fun bmrKcal(formula: BmrFormula, bmr: Double): Double? {
+        if (bmr <= 0.0) return null
+        return when (formula) {
+            BmrFormula.MIFFLIN_ST_JEOR -> bmr * RELATIVE_ERROR
+            // As duas de massa magra têm o erro da fita, e esse já é declarado.
+            BmrFormula.KATCH_MCARDLE, BmrFormula.CUNNINGHAM -> null
         }
     }
 }

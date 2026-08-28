@@ -16,12 +16,20 @@ object OneRepMax {
 /**
  * Limites do que se aceita numa série.
  *
- * Um engano de dedo aqui não se corrige: o [PrDetector] compara sempre contra o
- * melhor anterior, portanto um valor absurdo fica como recorde para sempre, e o
- * mesmo número segue para o volume por músculo e para a proposta adaptativa.
+ * **Este comentário dizia que um engano de dedo aqui não se corrigia** — que um valor
+ * absurdo ficava como recorde para sempre. Era verdade quando foi escrito, e o
+ * `estudo/transversal/02-robustez.md` cita-o como o exemplo do padrão que mais o incomoda:
+ * a app identifica o risco, escreve-o num comentário, e não fecha a saída.
  *
- * O teto do peso é generoso de propósito — o recorde do mundo de peso morto anda
- * pelos 500 kg, por isso nenhum levantador real lhe chega.
+ * Deixou de ser verdade em dois passos. O `updateSet` passou a ser chamado do ecrã da
+ * sessão, portanto uma série corrige-se onde se escreveu; e o [PrDetector] **calcula** o
+ * melhor a partir das séries em vez de guardar um recorde, portanto corrigir a série corrige
+ * o recorde no mesmo instante. Um zero a mais deixa de sobreviver à correcção.
+ *
+ * O que estes limites ainda fazem é travar o disparate à entrada, para ele nem chegar ao
+ * volume por músculo nem à proposta adaptativa. O teto do peso é generoso de propósito — o
+ * recorde do mundo de peso morto anda pelos 500 kg, por isso nenhum levantador real lhe
+ * chega.
  */
 object SetLimits {
     const val MAX_WEIGHT_KG = 500.0

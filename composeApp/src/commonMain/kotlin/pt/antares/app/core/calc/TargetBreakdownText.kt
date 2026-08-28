@@ -67,6 +67,12 @@ object TargetBreakdownText {
             step.values[0].roundToInt().toString(),
         )
 
+        // Mesma forma, outra razão: aqui o erro é o da fórmula e não o da fita.
+        TargetBreakdown.Kind.BMR_MIFFLIN_INCERTO -> listOf(
+            step.exact.roundToInt().toString(),
+            step.values[0].roundToInt().toString(),
+        )
+
         TargetBreakdown.Kind.PROTEIN_TRAINED -> listOf(
             fixedDecimals(step.values[0], 1, comma),
             trimmedDecimal(step.values[1], comma = comma),

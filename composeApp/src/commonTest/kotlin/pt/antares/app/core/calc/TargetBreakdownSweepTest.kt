@@ -100,13 +100,20 @@ class TargetBreakdownSweepTest {
     @Test
     fun `cada passo comeca onde o anterior acabou`() {
         eachBreakdown { c, b ->
-            for (i in 1 until b.steps.size) {
-                val anterior = b.steps[i - 1]
-                val entrada = b.steps[i].values[0]
+            // Os passos de margem anotam o basal em vez de o transformar: o número deles é
+            // o «mais ou menos», e não uma etapa nova da conta. Ver TargetBreakdown.Kind.anota.
+            val elos = b.steps.filterNot { it.kind.anota }
+            for (i in 1 until elos.size) {
+                val anterior = elos[i - 1]
+                val entrada = elos[i].values[0]
 
                 val ok = abs(entrada - anterior.exact) < 1e-6 ||
                     entrada.roundToInt() == anterior.result && abs(entrada - anterior.result) < 1e-6
-                assertTrue(ok, "passo ${b.steps[i].kind} entra em $entrada, anterior acabou em ${anterior.exact} — ${c.label}")
+                assertTrue(
+                    ok,
+                    "passo ${elos[i].kind} entra em $entrada, " +
+                        "anterior acabou em ${anterior.exact} — ${c.label}",
+                )
             }
         }
     }

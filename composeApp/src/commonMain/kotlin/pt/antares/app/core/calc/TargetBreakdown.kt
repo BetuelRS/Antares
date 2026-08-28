@@ -36,6 +36,25 @@ data class TargetBreakdown(
         PROTEIN_TRAINED,
 
         BMR_UNCERTAIN,
+
+        /** O mesmo, para o basal que não passa pela massa magra. A margem é outra. */
+        BMR_MIFFLIN_INCERTO,
+
+        ;
+
+        /**
+         * Se este passo **anota** o número anterior em vez de o transformar.
+         *
+         * A cadeia da conta é uma corrente: cada passo entra com o resultado do anterior.
+         * Os dois passos de margem não entram nela — trazem o «mais ou menos» do basal, e o
+         * número deles é a margem, não uma etapa nova do cálculo.
+         *
+         * Está declarado aqui e não numa lista dentro dos testes porque é uma propriedade
+         * do passo: quem acrescentar um terceiro tipo de anotação tem de a marcar, e o
+         * teste da corrente apanha-o se se esquecer.
+         */
+        val anota: Boolean
+            get() = this == BMR_UNCERTAIN || this == BMR_MIFFLIN_INCERTO
     }
 }
 
@@ -81,6 +100,17 @@ object TargetBreakdownCalc {
                 ),
                 exact = e.bmr,
             )
+
+            // Pela mesma razão do ramo de cima, e é a metade que faltava: a app declarava a
+            // margem da estimativa boa e calava-se sobre a má. Quem nunca mediu a massa
+            // gorda — a maioria — via o número mais incerto da app sem margem nenhuma.
+            MifflinUncertainty.bmrKcal(BmrFormula.MIFFLIN_ST_JEOR, e.bmr)?.let { erro ->
+                steps += TargetBreakdown.Step(
+                    kind = TargetBreakdown.Kind.BMR_MIFFLIN_INCERTO,
+                    values = listOf(erro),
+                    exact = e.bmr,
+                )
+            }
         }
 
         steps += TargetBreakdown.Step(

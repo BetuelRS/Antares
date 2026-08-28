@@ -53,13 +53,15 @@ class TargetBreakdownTest {
     fun `cada passo comeca onde o anterior acabou`() {
 
         val b = breakdown(profile())
-        for (i in 1 until b.steps.size) {
-            val anterior = b.steps[i - 1].result
-            val entrada = b.steps[i].values[0].roundToInt()
+        // Sem os passos de margem: eles anotam o basal, não o transformam.
+        val elos = b.steps.filterNot { it.kind.anota }
+        for (i in 1 until elos.size) {
+            val anterior = elos[i - 1].result
+            val entrada = elos[i].values[0].roundToInt()
             assertEquals(
                 anterior,
                 entrada,
-                "passo ${b.steps[i].kind} começa em $entrada mas o anterior acabou em $anterior",
+                "passo ${elos[i].kind} começa em $entrada mas o anterior acabou em $anterior",
             )
         }
     }
