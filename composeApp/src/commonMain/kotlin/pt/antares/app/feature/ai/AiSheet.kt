@@ -119,7 +119,7 @@ fun AiFoodSheet(
 
     ModalBottomSheet(
         onDismissRequest = {
-            viewModel.reset()
+            viewModel.fecharGuardandoOTexto()
             onDismiss()
         },
         sheetState = sheetState,
@@ -276,17 +276,7 @@ private fun ReviewStep(state: AiState, accoes: AccoesDaRevisao) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
-    AvisosDaRevisao(state.warnings)
-
-    // Tirar todos os itens da lista é uma coisa que se faz — e deixava o ecrã com um
-    // título, uma dica, e nada. O botão de confirmar continuava lá, a não registar nada.
-    if (state.items.isEmpty()) {
-        Text(
-            stringResource(Res.string.ai_items_empty),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+    AvisosDaRevisao(state)
 
     LazyColumn(
         modifier = Modifier.heightIn(max = LISTA_ALTURA),
@@ -334,6 +324,17 @@ private fun ReviewStep(state: AiState, accoes: AccoesDaRevisao) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
+    // A razão de o botão estar cinzento fica **ao lado dele**, e não no topo do ecrã com a
+    // lista pelo meio. É o padrão que o resto da app segue, e a área 04 do estudo apanhou
+    // esta como a excepção: um controlo desativado sem explicação encostada é um beco.
+    if (!state.canConfirm) {
+        Text(
+            stringResource(Res.string.ai_items_empty),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
     PrimaryButton(
         text = stringResource(Res.string.ai_confirm),
         onClick = accoes.onConfirm,
@@ -343,8 +344,8 @@ private fun ReviewStep(state: AiState, accoes: AccoesDaRevisao) {
 }
 
 @Composable
-private fun AvisosDaRevisao(warnings: List<String>) {
-    if (warnings.contains(AiWarnings.UNCLEAR_IMAGE)) {
+private fun AvisosDaRevisao(state: AiState) {
+    if (state.imagemPoucoClara) {
         Text(
             stringResource(Res.string.ai_unclear_image),
             style = MaterialTheme.typography.bodySmall,
@@ -352,7 +353,7 @@ private fun AvisosDaRevisao(warnings: List<String>) {
         )
     }
 
-    if (warnings.contains(AiWarnings.VAGUE_ITEM)) {
+    if (state.vague) {
         Text(
             stringResource(Res.string.ai_vague_item),
             style = MaterialTheme.typography.bodySmall,

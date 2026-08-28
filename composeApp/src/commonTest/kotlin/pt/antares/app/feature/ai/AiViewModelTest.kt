@@ -10,6 +10,7 @@ import pt.antares.app.core.ai.AiClient
 import pt.antares.app.core.ai.AiFoodItem
 import pt.antares.app.core.ai.AiRepository
 import pt.antares.app.core.ai.AiUsage
+import pt.antares.app.core.ai.AiWarnings
 import pt.antares.app.core.ai.ExerciseAnalysis
 import pt.antares.app.core.ai.FoodAnalysis
 import pt.antares.app.core.ai.LabelAnalysis
@@ -92,16 +93,23 @@ class AiViewModelTest {
         updatedAt = 0,
     )
 
-    private class ClienteQueDevolve(private val itens: List<AiFoodItem>) : AiClient {
+    private class ClienteQueDevolve(
+        private val itens: List<AiFoodItem>,
+        private val avisos: List<String> = emptyList(),
+    ) : AiClient {
         override suspend fun analyzeFoodText(text: String, lang: String, day: String) =
-            AppResult.Success(FoodAnalysis(items = itens, usage = AiUsage(1, 30, true)))
+            AppResult.Success(
+                FoodAnalysis(items = itens, warnings = avisos, usage = AiUsage(1, 30, true)),
+            )
 
         override suspend fun analyzeFoodPhoto(
             imageBase64: String,
             mime: String,
             lang: String,
             day: String,
-        ) = AppResult.Success(FoodAnalysis(items = itens, usage = AiUsage(1, 30, true)))
+        ) = AppResult.Success(
+            FoodAnalysis(items = itens, warnings = avisos, usage = AiUsage(1, 30, true)),
+        )
 
         override suspend fun readLabel(imageBase64: String, mime: String, lang: String, day: String):
             AppResult<LabelAnalysis> = AppResult.Failure(AppError.Unknown("não é preciso aqui"))
@@ -124,9 +132,10 @@ class AiViewModelTest {
         itens: List<AiFoodItem> = listOf(item()),
         catalogo: List<FoodEntity> = listOf(food()),
         registos: Registos = Registos(),
+        warnings: List<String> = emptyList(),
     ): Pair<AiViewModel, Registos> {
         val repo = AiRepository(
-            client = ClienteQueDevolve(itens),
+            client = ClienteQueDevolve(itens, warnings),
             ensureAccount = {},
             saveFoodLog = { registos.linhas += it },
             latestWeightKg = { 70.0 },
@@ -153,8 +162,9 @@ class AiViewModelTest {
     private suspend fun emRevisao(
         itens: List<AiFoodItem> = listOf(item()),
         catalogo: List<FoodEntity> = listOf(food()),
+        warnings: List<String> = emptyList(),
     ): Pair<AiViewModel, Registos> {
-        val (viewModel, registos) = vm(itens, catalogo)
+        val (viewModel, registos) = vm(itens, catalogo, warnings = warnings)
         viewModel.onTextChange("arroz")
         viewModel.analyzeText()
         return viewModel to registos
@@ -404,5 +414,66 @@ class AiViewModelTest {
 
         assertNull(registos.linhas.single().photoPath)
         assertTrue(registos.fotosGravadas.isEmpty())
+    }
+
+    // ---- os defeitos concretos da área 04 do estudo ---------------------------------
+
+    /**
+     * Cancelar guardava o texto e fechar apagava-o. Dois gestos parecidos com memórias
+     * opostas, e um arrastão para baixo por engano custava a frase toda.
+     */
+    @Test
+    fun `fechar a folha guarda o que se escreveu`() = runTest {
+        val (viewModel, _) = vm()
+        viewModel.onTextChange("dois ovos mexidos e uma torrada")
+
+        viewModel.fecharGuardandoOTexto()
+
+        assertEquals("dois ovos mexidos e uma torrada", viewModel.state.value.text)
+        assertEquals(AiPhase.INPUT, viewModel.state.value.phase)
+    }
+
+    /** E a análise não sobrevive: uma revisão velha a reaparecer é pior do que nenhuma. */
+    @Test
+    fun `fechar a folha deita fora a analise`() = runTest {
+        val (viewModel, _) = emRevisao()
+        assertTrue(viewModel.state.value.items.isNotEmpty())
+
+        viewModel.fecharGuardandoOTexto()
+
+        assertTrue(viewModel.state.value.items.isEmpty())
+        assertEquals(AiPhase.INPUT, viewModel.state.value.phase)
+    }
+
+    /** O `reset` continua a limpar tudo — é o que corre depois de gravar. */
+    @Test
+    fun `o reset continua a apagar o texto`() = runTest {
+        val (viewModel, _) = vm()
+        viewModel.onTextChange("uma sopa")
+
+        viewModel.reset()
+
+        assertEquals("", viewModel.state.value.text)
+    }
+
+    /**
+     * O estado calculava `vague` e a folha perguntava directamente à lista de avisos. Um
+     * estado que o ecrã ignora é o sinal de que os dois divergiram.
+     */
+    @Test
+    fun `os avisos do modelo lêem-se pelo estado`() = runTest {
+        val (viewModel, _) = emRevisao(warnings = listOf(AiWarnings.VAGUE_ITEM))
+
+        assertTrue(viewModel.state.value.vague)
+        assertTrue(!viewModel.state.value.imagemPoucoClara)
+        assertTrue(!viewModel.state.value.notFood)
+    }
+
+    @Test
+    fun `a imagem pouco clara tambem`() = runTest {
+        val (viewModel, _) = emRevisao(warnings = listOf(AiWarnings.UNCLEAR_IMAGE))
+
+        assertTrue(viewModel.state.value.imagemPoucoClara)
+        assertTrue(!viewModel.state.value.vague)
     }
 }

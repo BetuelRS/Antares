@@ -80,7 +80,18 @@ data class AiState(
 
     val notFood: Boolean get() = warnings.contains(AiWarnings.NOT_FOOD)
 
+    /**
+     * O modelo identificou alguma coisa vaga — «uma sandes», sem dizer de quê.
+     *
+     * **Era calculado aqui e lido em lado nenhum**, com a folha a perguntar directamente à
+     * lista de avisos. A área 04 do estudo apanhou-o como defeito concreto: um estado que o
+     * ecrã ignora é o sinal de que os dois divergiram, e o próximo a mexer num deles parte o
+     * outro sem dar por isso. Agora é este que a folha lê, como já lia o [notFood].
+     */
     val vague: Boolean get() = warnings.contains(AiWarnings.VAGUE_ITEM)
+
+    /** A fotografia veio difícil de ler. Mesma razão do [vague]: um sítio só a decidir. */
+    val imagemPoucoClara: Boolean get() = warnings.contains(AiWarnings.UNCLEAR_IMAGE)
 }
 
 class AiViewModel(
@@ -296,6 +307,23 @@ class AiViewModel(
         job?.cancel()
         procuraJob?.cancel()
         _state.value = AiState(usage = _state.value.usage)
+    }
+
+    /**
+     * Fechar a folha sem deitar fora o que se escreveu.
+     *
+     * **Cancelar guardava o texto e fechar apagava-o** — dois gestos parecidos com memórias
+     * opostas, e a área 04 do estudo apanhou-o como defeito concreto. Um arrastão para baixo
+     * por engano custava a frase toda, que é a parte que deu trabalho a escrever.
+     *
+     * A análise, essa, vai-se: os itens de uma foto que já não está à vista voltariam a
+     * aparecer da próxima vez que a folha abrisse, e uma revisão velha é pior do que nenhuma.
+     * O que sobrevive é o que a pessoa escreveu.
+     */
+    fun fecharGuardandoOTexto() {
+        job?.cancel()
+        procuraJob?.cancel()
+        _state.value = AiState(usage = _state.value.usage, text = _state.value.text)
     }
 
     companion object {
