@@ -32,6 +32,7 @@ Factos, para consultar. Sem opinião e sem narrativa.
 | [Como continuar](referencia/como-continuar.md) | o que se lê ao começar uma sessão: onde estamos, as regras que mais mandam, e as armadilhas já pagas |
 | [Regras de trabalho](referencia/regras.md) | as 30 regras da produção, e quem verifica cada uma |
 | [A dívida com o estudo](referencia/a-divida-com-o-estudo.md) | o que abrir em `estudo/` antes de cada área, e a auditoria das treze versões que saíram sem isso |
+| [O que ficou de fora](referencia/o-que-ficou-de-fora.md) | versão a versão, o que falta — o medido separado do que ainda não foi lido |
 | [Base de dados](referencia/base-de-dados.md) | tabelas, versões do esquema, regras das migrações |
 | [Testes-guarda](referencia/testes-guarda.md) | o que cada um defende, e o que fazer quando falha |
 | [Versionamento](referencia/versionamento.md) | o esquema de números e a fórmula do `versionCode` |

@@ -2,7 +2,8 @@
 
 > **Antes de trabalhar numa área, abrir os documentos dela em `estudo/`** — o de área, o
 > esboço quando existe, e os do motor ou do sistema que a versão tocar. É a regra **C5**, e
-> a rota está em [`a-divida-com-o-estudo.md`](a-divida-com-o-estudo.md).
+> a rota está em [`a-divida-com-o-estudo.md`](a-divida-com-o-estudo.md), e o que já se sabe
+> que falta em [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md).
 >
 > **Nasceu de um falhanço:** treze versões saíram construídas a partir das linhas-resumo do
 > plano, sem um único esboço aberto — e este ficheiro, que é o que se lê ao começar, não

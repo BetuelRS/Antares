@@ -230,6 +230,7 @@ tasks.withType<Test>().configureEach {
         rootProject.file("docs/referencia/como-continuar.md"),
         rootProject.file("docs/referencia/regras.md"),
         rootProject.file("docs/referencia/a-divida-com-o-estudo.md"),
+        rootProject.file("docs/referencia/o-que-ficou-de-fora.md"),
     ).withPropertyName("documentosQueOsTestesLeem").withPathSensitivity(PathSensitivity.RELATIVE)
 }
 

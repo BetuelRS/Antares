@@ -125,6 +125,12 @@ também não abri.
 
 ---
 
+## O que já se sabe que ficou de fora
+
+A lista por versão, com o que foi medido separado do que ainda não foi lido, está em
+[`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md). Este guia diz o que abrir; esse diz o
+que falta.
+
 ## A auditoria do que já saiu
 
 Treze versões do plano saíram, mais a metade partida 2.18.1. **Nenhuma foi construída com o
