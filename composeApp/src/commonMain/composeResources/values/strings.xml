@@ -484,6 +484,7 @@
     <string name="recipe_passo_subir">Subir este passo</string>
     <string name="recipe_passo_descer">Descer este passo</string>
     <string name="recipe_peso_fora">Nenhum modo de cozinhar destes ingredientes dá este peso — as tabelas prevêem entre %1$d e %2$d g. Se pesaste o tacho, o teu número ganha.</string>
+    <string name="recipe_peso_abaixo">Nenhuma confeção publicada tira tanto peso — abaixo de %1$d g não há método que explique este número. Se pesaste o tacho, o teu número ganha.</string>
     <string name="recipe_peso_sugerido_usar">Usar %1$d g</string>
     <string name="recipe_retencao_nota">Contado com o que o lume destrói: os minerais quase todos ficam, e as vitaminas do grupo B e a C perdem-se em parte.</string>
     <string name="recipe_add_ingredient">Adicionar ingrediente</string>
@@ -1194,6 +1195,11 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="quick_log_voice_prompt">Diz o que comeste</string>
     <string name="diary_again">Outra vez, como %1$s</string>
     <string name="search_your_meals">As tuas refeições</string>
+    <string name="refeicao_do_diario">guardada do diário</string>
+    <string name="refeicao_kcal_dose">%1$d kcal/dose</string>
+    <string name="refeicao_renomear">Mudar o nome</string>
+    <string name="refeicao_nome">Nome</string>
+    <string name="refeicao_item_removido">Item removido</string>
     <string name="search_your_foods">Os teus alimentos</string>
     <string name="add_entry_quick">Só as calorias</string>
     <string name="add_entry_quick_desc">Quando não dá para registar com detalhe. Um número e segue.</string>
@@ -1261,6 +1267,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_nunca_hoje">Ainda não há nenhuma cópia de segurança dos teus dados.</string>
     <string name="copia_inclui">O que vai na cópia</string>
     <string name="copia_inclui_total">Registos ao todo: %1$s.</string>
+    <string name="copia_nao_inclui">Não vai, e apaga-se sozinha: a fotografia de um prato dura %1$s dias no telemóvel. São três por dia a dar perto de mil por ano, e em cinco cópias que rodam enchiam o telemóvel de quem nunca pediu isso. Os números da refeição ficam para sempre e vão na cópia — a fotografia é só para rever o mês passado.</string>
     <string name="copia_conta_linha">%1$s: %2$s</string>
     <string name="copia_conta_food_log">Refeições</string>
     <string name="copia_conta_weight_log">Pesagens</string>

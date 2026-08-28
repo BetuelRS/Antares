@@ -60,6 +60,16 @@ data class RecipeEditState(
      * se quis escrever 200.
      */
     val pesoForaDoPrevisto: ClosedFloatingPointRange<Double>? = null,
+
+    /**
+     * O chão, para as receitas onde o [pesoForaDoPrevisto] não tem como existir.
+     *
+     * Metade do catálogo não tem família de confeção, e uma receita feita só desses
+     * ingredientes não tem envelope nenhum — até aqui aceitava qualquer peso final em
+     * silêncio. Quando não é nulo, traz o peso abaixo do qual nenhuma confeção publicada
+     * chega, e o ecrã diz esse número.
+     */
+    val pesoAbaixoDoExplicavel: Double? = null,
 ) {
     val yieldGrams: Double? get() = yieldText.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
 
@@ -273,6 +283,7 @@ class RecipeEditViewModel(
                         metodos = repository.metodosPara(id),
                         sugerido = repository.pesoFinalSugerido(id, mt),
                         envelope = repository.envelopeDePesoFinal(id),
+                        minimo = repository.pesoMinimoExplicavel(id),
                     )
                 },
             )
@@ -303,6 +314,11 @@ class RecipeEditViewModel(
                 // vezes errados sem um aviso.
                 pesoForaDoPrevisto = conf.envelope
                     ?.takeIf { env -> yieldG != null && yieldG !in env },
+                // E onde não há envelope — receita de ingredientes sem família —, o chão
+                // que a tabela publica. Um dos dois avisos, nunca os dois: o envelope é
+                // sobre esta receita, o chão é sobre qualquer uma.
+                pesoAbaixoDoExplicavel = conf.minimo
+                    ?.takeIf { chao -> conf.envelope == null && yieldG != null && yieldG < chao },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RecipeEditState())
 
@@ -311,6 +327,7 @@ class RecipeEditViewModel(
         val metodos: List<MetodoDeConfecao> = emptyList(),
         val sugerido: Double? = null,
         val envelope: ClosedFloatingPointRange<Double>? = null,
+        val minimo: Double? = null,
     )
 
     // O `combine` de cinco fluxos não tem sobrecarga com destruturação, e um `Triple` de

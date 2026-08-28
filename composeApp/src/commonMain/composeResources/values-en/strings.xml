@@ -484,6 +484,7 @@
     <string name="recipe_passo_subir">Move this step up</string>
     <string name="recipe_passo_descer">Move this step down</string>
     <string name="recipe_peso_fora">No way of cooking these ingredients gives this weight — the tables predict between %1$d and %2$d g. If you weighed the pan, your number wins.</string>
+    <string name="recipe_peso_abaixo">No published cooking method loses this much weight — below %1$d g nothing explains this number. If you weighed the pan, your number wins.</string>
     <string name="recipe_peso_sugerido_usar">Use %1$d g</string>
     <string name="recipe_retencao_nota">Counted with what heat destroys: most minerals stay, and the B vitamins and vitamin C are partly lost.</string>
     <string name="recipe_add_ingredient">Add ingredient</string>
@@ -1193,6 +1194,11 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="quick_log_voice_prompt">Say what you ate</string>
     <string name="diary_again">Again, like %1$s</string>
     <string name="search_your_meals">Your meals</string>
+    <string name="refeicao_do_diario">saved from the diary</string>
+    <string name="refeicao_kcal_dose">%1$d kcal/serving</string>
+    <string name="refeicao_renomear">Rename</string>
+    <string name="refeicao_nome">Name</string>
+    <string name="refeicao_item_removido">Item removed</string>
     <string name="search_your_foods">Your foods</string>
     <string name="add_entry_quick">Calories only</string>
     <string name="add_entry_quick_desc">For when logging properly is not going to happen. One number and move on.</string>
@@ -1260,6 +1266,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_nunca_hoje">There is still no backup of your data.</string>
     <string name="copia_inclui">What goes in the backup</string>
     <string name="copia_inclui_total">Records in total: %1$s.</string>
+    <string name="copia_nao_inclui">Not included, and deleted on its own: a photo of a meal lasts %1$s days on the phone. Three a day is close to a thousand a year, and across five rotating copies they would fill a phone nobody asked to fill. The meal\'s numbers stay forever and go in the copy — the photo is only for reviewing last month.</string>
     <string name="copia_conta_linha">%1$s: %2$s</string>
     <string name="copia_conta_food_log">Meals</string>
     <string name="copia_conta_weight_log">Weigh-ins</string>

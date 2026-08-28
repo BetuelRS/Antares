@@ -19,12 +19,6 @@ import pt.antares.app.core.util.todayEpochDay
 import kotlin.math.roundToInt
 
 /**
- * Refeições guardadas para repetir. Um modelo é uma cópia congelada de um dia: guardar
- * copia os registos para o modelo, aplicar copia-os de volta para outro dia. Em nenhum dos
- * sentidos se vai buscar nada ao catálogo — é o que faz o modelo dar sempre o mesmo
- * resultado, mesmo que o alimento mude ou seja apagado.
- */
-/**
  * Um item a caminho de um modelo, sem vir de lado nenhum da base.
  *
  * Existe para o [MealTemplateRepository.saveItemsAsTemplate] poder receber o que a folha da
@@ -53,6 +47,12 @@ data class ModeloComResumo(
     val kcal: Int,
 )
 
+/**
+ * Refeições guardadas para repetir. Um modelo é uma cópia congelada de um dia: guardar
+ * copia os registos para o modelo, aplicar copia-os de volta para outro dia. Em nenhum dos
+ * sentidos se vai buscar nada ao catálogo — é o que faz o modelo dar sempre o mesmo
+ * resultado, mesmo que o alimento mude ou seja apagado.
+ */
 class MealTemplateRepository(
     private val foodLogDao: FoodLogDao,
     private val templateDao: MealTemplateDao,
@@ -221,6 +221,42 @@ class MealTemplateRepository(
     suspend fun desfazerAplicacao(logIds: List<String>) = withContext(io) {
         val ts = now()
         logIds.forEach { foodLogDao.softDelete(it, ts) }
+    }
+
+    /**
+     * Muda o nome de um modelo.
+     *
+     * Até aqui um modelo só se podia apagar — está escrito na tabela de problemas da área
+     * 05 do estudo, e é o que fazia um nome mal escolhido no dia em que se guardou durar
+     * para sempre. O nome é a única coisa do modelo que não descreve a comida: mudá-lo não
+     * mexe em número nenhum e não invalida os registos que já saíram dele.
+     *
+     * Um nome em branco não passa. O modelo continua a existir na lista e ficaria lá sem
+     * nada escrito na linha, que é pior do que o nome que tinha.
+     */
+    suspend fun renomearModelo(templateId: String, nome: String) = withContext(io) {
+        val limpo = nome.trim()
+        if (limpo.isEmpty()) return@withContext
+        val modelo = templateDao.byId(templateId) ?: return@withContext
+        templateDao.upsert(modelo.copy(name = limpo, updatedAt = now()))
+    }
+
+    /**
+     * Tira um item de um modelo, de modo a poder voltar.
+     *
+     * A outra metade da edição: uma refeição guardada de um dia em que também se comeu uma
+     * bolacha traz a bolacha para sempre, e a alternativa era apagar o modelo e voltar a
+     * guardá-lo a partir de um dia que já não existe.
+     *
+     * Apaga por marca, como tudo o resto — o [restaurarItem] é o desfazer, e é ele que
+     * torna esta operação oferecível numa lista onde se toca por engano.
+     */
+    suspend fun removerItem(itemId: String) = withContext(io) {
+        itemDao.softDelete(itemId, now())
+    }
+
+    suspend fun restaurarItem(itemId: String) = withContext(io) {
+        itemDao.restore(itemId, now())
     }
 
     /** Devolve o modelo e os itens que foram com ele. A ordem é a inversa de os apagar. */

@@ -374,6 +374,17 @@ private fun PesoFinal(state: RecipeEditState, viewModel: RecipeEditViewModel) {
                     modifier = Modifier.padding(top = Spacing.xs),
                 )
             }
+
+            // A rede por baixo, para as receitas de ingredientes sem família de confeção —
+            // que são a maioria, e que até aqui aceitavam qualquer peso em silêncio.
+            state.pesoAbaixoDoExplicavel?.let { chao ->
+                Text(
+                    stringResource(Res.string.recipe_peso_abaixo, chao.roundToInt()),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = Spacing.xs),
+                )
+            }
     }
 }
 

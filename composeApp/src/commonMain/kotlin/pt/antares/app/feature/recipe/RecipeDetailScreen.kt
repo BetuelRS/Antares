@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -44,6 +48,11 @@ fun RecipeDetailScreen(
     epochDay: Long,
     onSaved: () -> Unit,
     onBack: () -> Unit,
+
+    // Editar mudou de sítio: era um lápis na linha da lista, e a lista passou a ser uma só
+    // com as duas origens misturadas — um botão por linha que só existisse para metade
+    // delas era a divisão antiga desenhada outra vez. Fica onde se vê o que se vai mudar.
+    onEdit: (String) -> Unit = {},
     viewModel: RecipeDetailViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -52,7 +61,20 @@ fun RecipeDetailScreen(
     LaunchedEffect(state.saved) { if (state.saved) onSaved() }
 
     AntaresScaffold(
-        topBar = { AntaresTopBar(title = stringResource(Res.string.recipe_log), onBack = onBack) },
+        topBar = {
+            AntaresTopBar(
+                title = stringResource(Res.string.recipe_log),
+                onBack = onBack,
+                actions = {
+                    IconButton(onClick = { onEdit(recipeId) }) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = stringResource(Res.string.recipe_edit),
+                        )
+                    }
+                },
+            )
+        },
     ) { padding ->
         if (state.loading) {
             LoadingState(Modifier.padding(padding))

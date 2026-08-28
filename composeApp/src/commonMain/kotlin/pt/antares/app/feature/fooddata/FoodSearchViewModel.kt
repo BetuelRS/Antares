@@ -99,8 +99,20 @@ class FoodSearchViewModel(
     private val _preVisualizacao = MutableStateFlow<PreVisualizacaoDeModelo?>(null)
     val preVisualizacao: StateFlow<PreVisualizacaoDeModelo?> = _preVisualizacao
 
-    private val _templateApplied = MutableStateFlow(false)
-    val templateApplied: StateFlow<Boolean> = _templateApplied
+    /**
+     * Alguma coisa entrou no diário e o ecrã já não tem razão para estar aberto.
+     *
+     * Chamava-se `templateApplied` e era escrita por dois sítios: aplicar uma refeição
+     * guardada, e registar vários alimentos marcados de uma vez — que não tem modelo
+     * nenhum. **A área 05 do estudo apanhou isto como defeito concreto:** o nome passou a
+     * mentir para reaproveitar o caminho de saída, e quem lá mexesse a seguir partia uma
+     * das duas coisas.
+     *
+     * O nome passa a ser o que a bandeira significa. As duas escritas continuam certas,
+     * porque as duas escrevem mesmo no diário.
+     */
+    private val _escritoNoDiario = MutableStateFlow(false)
+    val escritoNoDiario: StateFlow<Boolean> = _escritoNoDiario
 
     private val _state = MutableStateFlow(FoodSearchState())
     val state: StateFlow<FoodSearchState> = _state
@@ -282,14 +294,58 @@ class FoodSearchViewModel(
         _preVisualizacao.value = null
     }
 
+    /** A escala escolhida nos chips. Fora das [PreVisualizacaoDeModelo.ESCALAS] não entra. */
+    fun escolherEscala(escala: Double) = _preVisualizacao.update { it?.comEscala(escala) }
+
     /**
-     * O multiplicador escrito na pré-visualização.
+     * Muda o nome da refeição guardada que está aberta.
      *
-     * O texto guarda-se sempre, mesmo vazio ou por acabar — apagar «1» para escrever «0,5»
-     * passa por um campo vazio, e recusá-lo tornava o campo impossível de limpar. É a mesma
-     * regra do campo de gramas da folha da AI.
+     * **Editar um modelo estava na tabela de problemas da área 05** — «não se pode editar
+     * um modelo, só apagar» — e era verdade desde que os modelos existem. A pré-visualização
+     * é o sítio: é onde se vê o que lá está, e portanto onde se percebe que o nome não o
+     * descreve.
      */
-    fun escreverMultiplicador(texto: String) = _preVisualizacao.update { it?.comTexto(texto) }
+    fun renomearModelo(nome: String) {
+        val pre = _preVisualizacao.value ?: return
+        viewModelScope.launch {
+            templateRepository.renomearModelo(pre.modelo.id, nome)
+            val limpo = nome.trim()
+            if (limpo.isNotEmpty()) {
+                _preVisualizacao.update { p ->
+                    p?.copy(modelo = p.modelo.copy(name = limpo))
+                }
+            }
+        }
+    }
+
+    /**
+     * Tira um item da refeição guardada aberta, com volta atrás.
+     *
+     * A outra metade da edição. Recarrega os itens do repositório em vez de os tirar da
+     * lista em memória: é a mesma leitura que o desfazer usa a seguir, e assim as duas não
+     * podem discordar.
+     */
+    fun removerItemDoModelo(itemId: String, onRemovido: () -> Unit) {
+        val pre = _preVisualizacao.value ?: return
+        viewModelScope.launch {
+            templateRepository.removerItem(itemId)
+            recarregarPreVisualizacao(pre.modelo.id)
+            onRemovido()
+        }
+    }
+
+    fun restaurarItemDoModelo(itemId: String) {
+        val pre = _preVisualizacao.value ?: return
+        viewModelScope.launch {
+            templateRepository.restaurarItem(itemId)
+            recarregarPreVisualizacao(pre.modelo.id)
+        }
+    }
+
+    private suspend fun recarregarPreVisualizacao(templateId: String) {
+        val itens = templateRepository.items(templateId)
+        _preVisualizacao.update { it?.copy(itens = itens) }
+    }
 
     /**
      * Aplica o que está na pré-visualização e devolve os registos criados, para o ecrã
@@ -310,7 +366,7 @@ class FoodSearchViewModel(
             )
             _preVisualizacao.value = null
             onAplicado(criados)
-            _templateApplied.value = true
+            _escritoNoDiario.value = true
         }
     }
 
@@ -318,8 +374,8 @@ class FoodSearchViewModel(
         viewModelScope.launch { templateRepository.desfazerAplicacao(logIds) }
     }
 
-    fun consumeTemplateApplied() {
-        _templateApplied.value = false
+    fun consumirEscritoNoDiario() {
+        _escritoNoDiario.value = false
     }
 
     fun toggleSelect(foodId: String) = _state.update { s ->
@@ -361,7 +417,7 @@ class FoodSearchViewModel(
             }
             _state.update { it.copy(selected = emptySet()) }
 
-            _templateApplied.value = true
+            _escritoNoDiario.value = true
         }
     }
 

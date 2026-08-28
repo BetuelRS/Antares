@@ -33,6 +33,7 @@ internal fun NavGraphBuilder.rotasDeReceitas(navController: NavHostController) {
             epochDay = route.epochDay,
             onSaved = { navController.popBackStack(Route.Diary, inclusive = false) },
             onBack = { navController.popBackStack() },
+            onEdit = { id -> navController.navigate(Route.RecipeEdit(id)) },
         )
     }
 }

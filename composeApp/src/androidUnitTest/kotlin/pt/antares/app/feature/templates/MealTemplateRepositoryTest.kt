@@ -112,4 +112,62 @@ class MealTemplateRepositoryTest {
     fun `guardar refeicao vazia devolve null`() = runTest {
         assertNull(repo.saveMealAsTemplate("Vazio", MealSlot.SNACK, 100))
     }
+
+    /**
+     * «Não se pode editar um modelo, só apagar» estava na tabela de problemas da área 05 do
+     * estudo, e era verdade desde que os modelos existem.
+     */
+    @Test
+    fun `mudar o nome nao mexe no que la esta dentro`() = runTest {
+        logFood("a", 100, MealSlot.LUNCH, "Arroz", 200, 5.0)
+        val id = repo.saveMealAsTemplate("Almoco", MealSlot.LUNCH, 100)!!
+
+        repo.renomearModelo(id, "  Almoço de sempre  ")
+
+        assertEquals("Almoço de sempre", db.mealTemplateDao().byId(id)?.name)
+        assertEquals(1, repo.items(id).size)
+        assertEquals(200, repo.items(id).first().kcalSnapshot)
+    }
+
+    /** Sem nome, a linha da lista ficava em branco — que é pior do que o nome que tinha. */
+    @Test
+    fun `um nome em branco nao passa`() = runTest {
+        logFood("a", 100, MealSlot.LUNCH, "Arroz", 200, 5.0)
+        val id = repo.saveMealAsTemplate("Almoço", MealSlot.LUNCH, 100)!!
+
+        repo.renomearModelo(id, "   ")
+
+        assertEquals("Almoço", db.mealTemplateDao().byId(id)?.name)
+    }
+
+    @Test
+    fun `tirar um item deixa o resto em paz, e volta atras`() = runTest {
+        logFood("a", 100, MealSlot.LUNCH, "Arroz", 200, 5.0)
+        logFood("b", 100, MealSlot.LUNCH, "Bolacha", 90, 1.0)
+        val id = repo.saveMealAsTemplate("Almoço", MealSlot.LUNCH, 100)!!
+
+        val bolacha = repo.items(id).first { it.nameSnapshot == "Bolacha" }
+        repo.removerItem(bolacha.id)
+
+        assertEquals(listOf("Arroz"), repo.items(id).map { it.nameSnapshot })
+
+        repo.restaurarItem(bolacha.id)
+
+        assertEquals(setOf("Arroz", "Bolacha"), repo.items(id).map { it.nameSnapshot }.toSet())
+    }
+
+    /** O que a edição vale: aplicar depois já não escreve o que se tirou. */
+    @Test
+    fun `aplicar depois de tirar um item nao escreve o item tirado`() = runTest {
+        logFood("a", 100, MealSlot.LUNCH, "Arroz", 200, 5.0)
+        logFood("b", 100, MealSlot.LUNCH, "Bolacha", 90, 1.0)
+        val id = repo.saveMealAsTemplate("Almoço", MealSlot.LUNCH, 100)!!
+
+        repo.removerItem(repo.items(id).first { it.nameSnapshot == "Bolacha" }.id)
+        repo.applyTemplate(id, MealSlot.LUNCH, 300)
+
+        val escritos = db.foodLogDao().mealLogs(300, MealSlot.LUNCH)
+        assertEquals(listOf("Arroz"), escritos.map { it.nameSnapshot })
+        assertEquals(200, escritos.sumOf { it.kcalSnapshot })
+    }
 }

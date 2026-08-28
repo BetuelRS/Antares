@@ -344,16 +344,6 @@ class RecipeRepository(
     }
 
     /**
-     * O peso final que as tabelas prevêem, para quem não pôs a panela na balança.
-     *
-     * **Não se grava sozinho, e não entra em conta nenhuma.** É uma sugestão que o ecrã
-     * mostra ao lado do campo vazio, e que a pessoa aceita ou ignora: um peso final é uma
-     * medição do prato dela, e a tabela é uma mediana de pratos que não são este.
-     *
-     * Devolve nulo se menos de [RecipeCalc.MIN_COVERAGE] do peso tiver rendimento publicado
-     * — abaixo disso a soma descreve parte do tacho e passaria por descrever o tacho todo.
-     */
-    /**
      * O intervalo de pesos finais que as tabelas conseguem explicar para esta receita, com
      * **qualquer** um dos métodos disponíveis.
      *
@@ -372,6 +362,39 @@ class RecipeRepository(
         return pesos.min()..pesos.max()
     }
 
+    /**
+     * O peso abaixo do qual **nenhuma** confeção publicada explica o que foi escrito.
+     *
+     * A rede por baixo do [envelopeDePesoFinal], para as receitas em que ele é nulo — as de
+     * ingredientes sem família, que são a maioria: metade do catálogo não tem família de
+     * confeção. Sem isto, uma receita de 1 200 g de ingredientes aceitava 50 g de peso
+     * final em silêncio, e os valores por 100 g saíam vinte e quatro vezes errados.
+     *
+     * **A área 05 do estudo pedia aqui «a mesma tolerância do aviso do rótulo»** — os 10 %
+     * do [pt.antares.app.feature.fooddata.FoodEditState.kcalMismatch]. Medi e não serve:
+     * a tabela publica rendimentos de 0,39 a 0,82, o que quer dizer que perder 40 % do peso
+     * a cozinhar é vulgar e ±10 % acusava metade dos estufados. O próprio exemplo do estudo
+     * — 500 g declarados em 1 200 g de ingredientes — dá 0,42 e é fisicamente possível.
+     *
+     * Não há tecto, e é de propósito: arroz, massa e sopa **ganham** peso com água que não
+     * é ingrediente pesado, e um tecto acusava quem cozinha certo.
+     */
+    suspend fun pesoMinimoExplicavel(recipeId: String): Double? {
+        val minimo = confecao.tabela().rendimentoMinimo ?: return null
+        val soma = ingredientRows(recipeId).sumOf { it.ingredient.grams }
+        return (soma * minimo).takeIf { soma > 0 }
+    }
+
+    /**
+     * O peso final que as tabelas prevêem, para quem não pôs a panela na balança.
+     *
+     * **Não se grava sozinho, e não entra em conta nenhuma.** É uma sugestão que o ecrã
+     * mostra ao lado do campo vazio, e que a pessoa aceita ou ignora: um peso final é uma
+     * medição do prato dela, e a tabela é uma mediana de pratos que não são este.
+     *
+     * Devolve nulo se menos de [RecipeCalc.MIN_COVERAGE] do peso tiver rendimento publicado
+     * — abaixo disso a soma descreve parte do tacho e passaria por descrever o tacho todo.
+     */
     suspend fun pesoFinalSugerido(recipeId: String, metodo: String?): Double? {
         if (metodo == null) return null
         val tabela = confecao.tabela()

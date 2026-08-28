@@ -10,10 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items as itemsDaColuna
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Delete
@@ -27,17 +26,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItem
 import androidx.compose.ui.draw.clip
@@ -78,9 +70,6 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.AntaresTopBar
-import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
-import pt.antares.app.core.designsystem.components.rememberDesfazer
-import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.ListaAdaptavel
 import pt.antares.app.core.designsystem.components.linhaInteira
@@ -149,13 +138,12 @@ fun FoodSearchScreen(
     }
     val suggestions by viewModel.suggestions.collectAsState()
     val openFood by viewModel.openFood.collectAsState()
-    val templateApplied by viewModel.templateApplied.collectAsState()
+    val escritoNoDiario by viewModel.escritoNoDiario.collectAsState()
     val preVisualizacao by viewModel.preVisualizacao.collectAsState()
 
     val multiSelect = !pickMode && aiSlot != null && aiEpochDay != null
 
     val marcados = state.selected.size
-    val apagar = rememberApagarComDesfazer()
 
     LaunchedEffect(openFood) {
         openFood?.let {
@@ -165,12 +153,12 @@ fun FoodSearchScreen(
     }
 
     preVisualizacao?.let { pre ->
-        AplicarRefeicaoGuardada(pre, viewModel, aiSlot, aiEpochDay)
+        FolhaDaRefeicaoGuardada(pre, viewModel, aiSlot, aiEpochDay)
     }
 
-    LaunchedEffect(templateApplied) {
-        if (templateApplied) {
-            viewModel.consumeTemplateApplied()
+    LaunchedEffect(escritoNoDiario) {
+        if (escritoNoDiario) {
+            viewModel.consumirEscritoNoDiario()
             onBack()
         }
     }
@@ -181,12 +169,23 @@ fun FoodSearchScreen(
             BotaoFlutuante(
                 marcados = marcados,
                 podeCriar = !pickMode,
+                // No separador das refeições, criar quer dizer montar uma receita. Havia
+                // aqui dois botões de criar ao mesmo tempo — este e um de largura toda no
+                // topo da lista —, e a área 05 do estudo apanhou-o como inútil. Ficou o
+                // botão que já lá estava, a fazer o que o separador aberto pede.
+                naRefeicoes = state.tab == SearchTab.REFEICOES,
                 onRegistar = if (aiSlot != null && aiEpochDay != null) {
                     { viewModel.logSelected(aiSlot, aiEpochDay) }
                 } else {
                     null
                 },
-                onCriar = { onCreateCustom(state.query.trim()) },
+                onCriar = {
+                    if (state.tab == SearchTab.REFEICOES) {
+                        onNewRecipe()
+                    } else {
+                        onCreateCustom(state.query.trim())
+                    }
+                },
             )
         },
     ) { padding ->
@@ -248,7 +247,6 @@ fun FoodSearchScreen(
                 multiSelect = multiSelect,
                 aiSlot = aiSlot,
                 aiEpochDay = aiEpochDay,
-                apagar = apagar,
                 onFoodSelected = onFoodSelected,
                 navegacao = NavegacaoDaPesquisa(onRecipeSelected, onEditRecipe, onNewRecipe),
             )
@@ -321,6 +319,7 @@ private fun aoAbrirCom(
 private fun BotaoFlutuante(
     marcados: Int,
     podeCriar: Boolean,
+    naRefeicoes: Boolean,
     onRegistar: (() -> Unit)?,
     onCriar: () -> Unit,
 ) {
@@ -338,7 +337,15 @@ private fun BotaoFlutuante(
             onClick = onCriar,
             // Decorativo: o botão traz o texto ao lado do ícone.
             icon = { Icon(Icons.Default.Add, contentDescription = null) },
-            text = { Text(stringResource(Res.string.food_create_cta)) },
+            // O botão diz o que vai criar. O mesmo desenho a fazer duas coisas sem mudar de
+            // palavra era pior do que os dois botões que substitui.
+            text = {
+                Text(
+                    stringResource(
+                        if (naRefeicoes) Res.string.recipe_new else Res.string.food_create_cta,
+                    ),
+                )
+            },
         )
     }
 }
@@ -458,7 +465,6 @@ private fun CorpoDoSeparador(
     multiSelect: Boolean,
     aiSlot: MealSlot?,
     aiEpochDay: Long?,
-    apagar: (() -> Unit, () -> Unit) -> Unit,
     onFoodSelected: (String) -> Unit,
     navegacao: NavegacaoDaPesquisa,
 ) {
@@ -505,19 +511,14 @@ private fun CorpoDoSeparador(
                     onEstados = viewModel::alternarEstados,
                 )
             }
-            // Receitas e modelos no mesmo separador, um a seguir ao outro. São a mesma
-            // pergunta — «o que é que eu já montei?» — e a 2.18.0 junta-os também por
-            // dentro.
+            // As refeições guardadas aparecem sempre, e não só a quem chegou aqui por uma
+            // refeição do diário. Escondê-las sem slot deixava-as sem forma nenhuma de se
+            // verem — nem para saber o que lá está, nem para mudar o nome ou apagar.
             SearchTab.REFEICOES -> RefeicoesTab(
                 recipes = recipes,
-                templates = if (aiSlot != null && aiEpochDay != null) templates else emptyList(),
-                onNew = onNewRecipe,
+                templates = templates,
                 onSelect = onRecipeSelected,
-                onEdit = onEditRecipe,
                 onApply = { resumo -> viewModel.verModelo(resumo) },
-                onDelete = { id ->
-                    apagar({ viewModel.deleteTemplate(id) }, { viewModel.restoreTemplate(id) })
-                },
             )
             SearchTab.MINE -> {
                 val list = myFoods
@@ -757,88 +758,94 @@ private fun SearchResults(
 }
 
 /**
- * Receitas e modelos, um a seguir ao outro.
+ * As refeições já montadas, **numa lista só**.
  *
- * Eram dois separadores, e a pergunta é a mesma: «o que é que eu já montei?». A diferença
- * entre uma receita e um modelo é como se construiu — a receita soma ingredientes, o modelo
- * guarda um dia — e essa distinção não vale uma escolha antes de olhar para as duas listas.
+ * A 2.16.0 pôs receitas e modelos no mesmo separador; a 2.18.0 juntou-os por dentro; e
+ * ficaram na mesma duas secções com dois títulos, que é o que o esboço da área 05 diz para
+ * não fazer. Duas secções continuam a obrigar a saber a diferença antes de procurar — e a
+ * diferença é como a refeição foi montada, que não é a pergunta de quem a quer registar.
  *
- * Os modelos vêm primeiro por serem menos: uma lista curta em cima de uma comprida encontra-se
- * de relance, ao contrário do inverso.
+ * Agora é uma lista por ordem de nome, e **a origem está escrita na linha**. A escolha que
+ * o utilizador tinha de fazer antes de olhar passou a informação que ele lê ao olhar.
+ *
+ * As acções vivem lá dentro — a receita no ecrã dela, a refeição guardada na folha de
+ * pré-visualização. Uma lista onde cada linha traz um botão diferente conforme a origem
+ * seria a mesma divisão outra vez, desenhada de outra maneira.
  */
 @Composable
 private fun RefeicoesTab(
     recipes: List<RecipeSummary>,
     templates: List<pt.antares.app.feature.templates.ModeloComResumo>,
-    onNew: () -> Unit,
     onSelect: (String) -> Unit,
-    onEdit: (String) -> Unit,
     onApply: (pt.antares.app.feature.templates.ModeloComResumo) -> Unit,
-    onDelete: (String) -> Unit,
 ) {
+    val refeicoes = juntarRefeicoes(templates, recipes)
+
     ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
-        linhaInteira {
-            SecondaryButton(
-                text = stringResource(Res.string.recipe_new),
-                onClick = onNew,
-                modifier = Modifier.fillMaxWidth().padding(Spacing.lg),
+        if (refeicoes.isEmpty()) {
+            linhaInteira { EmptyState(title = stringResource(Res.string.templates_empty_title)) }
+        }
+
+        items(refeicoes, key = { it.chave }) { refeicao ->
+            LinhaDaLista(
+                titulo = refeicao.nome,
+                subtitulo = subtituloDaRefeicao(refeicao),
+                // Abre em vez de agir. Aplicar escreve no diário, e um toque numa lista não
+                // pode ser a última coisa que acontece antes de sete registos entrarem no
+                // dia — mudar o nome e apagar ficam lá dentro, onde se vê o que se apaga.
+                onClick = {
+                    when (refeicao) {
+                        is RefeicaoGuardada.DoDiario -> onApply(refeicao.resumo)
+                        is RefeicaoGuardada.DeIngredientes -> onSelect(refeicao.resumo.recipe.id)
+                    }
+                },
+                aoLado = {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        // Decorativo: a linha inteira é o alvo, e a seta só diz que ela abre.
+                        contentDescription = null,
+                    )
+                },
+                modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
             )
         }
+    }
+}
 
-        if (templates.isNotEmpty()) {
-            linhaInteira {
-                SectionHeader(
-                    title = stringResource(Res.string.search_your_meals),
-                    modifier = Modifier.padding(Spacing.sm),
-                )
-            }
-            items(templates, key = { "tpl-${it.modelo.id}" }) { resumo ->
-                LinhaDaLista(
-                    titulo = resumo.modelo.name,
-                    subtitulo = subtituloDoModelo(resumo),
-                    // Abre a pré-visualização em vez de aplicar já. Aplicar escreve no
-                    // diário, e um toque numa lista não pode ser a última coisa que
-                    // acontece antes de sete registos entrarem no dia.
-                    onClick = { onApply(resumo) },
-                    aoLado = {
-                        IconButton(onClick = { onDelete(resumo.modelo.id) }) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = stringResource(Res.string.templates_delete),
-                            )
-                        }
-                    },
-                    modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
-                )
-            }
-        }
+/**
+ * O que a linha diz sobre uma refeição sem a abrir — **incluindo de onde ela veio**.
+ *
+ * Com as duas origens na mesma lista, a origem passa a ser conteúdo da linha e não o sítio
+ * onde ela está. A guardada do diário di-lo por extenso; a montada de ingredientes di-lo
+ * pelas palavras que usa, «ingredientes» e «doses», que a outra nunca tem.
+ */
+@Composable
+private fun subtituloDaRefeicao(refeicao: RefeicaoGuardada): String = when (refeicao) {
+    is RefeicaoGuardada.DoDiario -> {
+        val r = refeicao.resumo
+        pluralStringResource(Res.plurals.modelo_itens, r.itens, r.itens) +
+            " · ${r.kcal} ${stringResource(Res.string.common_kcal)}" +
+            " · ${stringResource(Res.string.refeicao_do_diario)}"
+    }
 
-        if (recipes.isNotEmpty()) {
-            linhaInteira {
-                SectionHeader(
-                    title = stringResource(Res.string.search_tab_recipes),
-                    modifier = Modifier.padding(Spacing.sm),
-                )
-            }
-            items(recipes, key = { "rec-${it.recipe.id}" }) { summary ->
-                LinhaDaLista(
-                    titulo = summary.recipe.name,
-                    subtitulo = "${summary.nutrition.kcalPer100} ${stringResource(Res.string.common_kcal)} / 100 " +
-                        "${stringResource(Res.string.common_grams_short)} · " +
-                        "${summary.ingredientCount} ${stringResource(Res.string.recipe_ingredients)}",
-                    onClick = { onSelect(summary.recipe.id) },
-                    aoLado = {
-                        IconButton(onClick = { onEdit(summary.recipe.id) }) {
-                            Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.recipe_edit))
-                        }
-                    },
-                    modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
-                )
-            }
-        }
-
-        if (recipes.isEmpty() && templates.isEmpty()) {
-            linhaInteira { EmptyState(title = stringResource(Res.string.templates_empty_title)) }
+    is RefeicaoGuardada.DeIngredientes -> {
+        val r = refeicao.resumo
+        val doses = r.recipe.servings?.takeIf { it > 0 }
+        val ingredientes = pluralStringResource(
+            Res.plurals.refeicao_ingredientes,
+            r.ingredientCount,
+            r.ingredientCount,
+        )
+        // Com doses definidas, as calorias que interessam são as de uma dose: é a
+        // quantidade que se regista. Sem elas, o por-100-g é o único número honesto.
+        if (doses != null) {
+            ingredientes +
+                " · ${stringResource(Res.string.refeicao_kcal_dose, r.nutrition.totalKcal / doses)}" +
+                " · ${pluralStringResource(Res.plurals.refeicao_doses, doses, doses)}"
+        } else {
+            ingredientes +
+                " · ${r.nutrition.kcalPer100} ${stringResource(Res.string.common_kcal)}" +
+                " / 100 ${stringResource(Res.string.common_grams_short)}"
         }
     }
 }
@@ -1008,115 +1015,4 @@ private fun subtituloDoModelo(resumo: pt.antares.app.feature.templates.ModeloCom
     )
     return "$itens · ${resumo.kcal} ${stringResource(Res.string.common_kcal)} · " +
         mealSlotLabel(resumo.modelo.slot)
-}
-
-/**
- * Ver uma refeição guardada antes de ela entrar no diário, e escolher quantas vezes.
- *
- * Antes desta versão, tocar na linha escrevia os registos e fechava o ecrã. Uma refeição
- * guardada é uma cópia congelada de um dia que pode ter meses — o que lá está deixou de ser
- * óbvio muito antes de alguém lhe voltar a tocar, e aplicar às cegas ao dia errado era um
- * toque de distância.
- *
- * O multiplicador está aqui e não no fim: metade das vezes é ele que decide se o que se vai
- * aplicar é o que se comeu.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PreVisualizacaoSheet(
-    pre: pt.antares.app.feature.templates.PreVisualizacaoDeModelo,
-    onMultiplicador: (String) -> Unit,
-    onAplicar: () -> Unit,
-    onFechar: () -> Unit,
-) {
-    ModalBottomSheet(
-        onDismissRequest = onFechar,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
-            Text(pre.modelo.name, style = MaterialTheme.typography.titleMedium)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.md),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedTextField(
-                    value = pre.multiplicadorTexto,
-                    onValueChange = onMultiplicador,
-                    label = { Text(stringResource(Res.string.modelo_multiplicador)) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.width(MULTIPLICADOR_LARGURA),
-                )
-                Text(
-                    "${pre.kcal} ${stringResource(Res.string.common_kcal)}",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-
-            LazyColumn(
-                modifier = Modifier.heightIn(max = PRE_ALTURA),
-                verticalArrangement = Arrangement.spacedBy(Spacing.xs),
-            ) {
-                itemsDaColuna(pre.itens, key = { it.id }) { item ->
-                    LinhaDaLista(
-                        titulo = item.nameSnapshot,
-                        subtitulo = "${pre.gramasDe(item).roundToInt()} " +
-                            stringResource(Res.string.common_grams_short) +
-                            " · ${pre.kcalDe(item)} ${stringResource(Res.string.common_kcal)}",
-                        emCartao = false,
-                    )
-                }
-            }
-
-            PrimaryButton(
-                text = stringResource(Res.string.modelo_aplicar),
-                onClick = onAplicar,
-                modifier = Modifier.fillMaxWidth(),
-                // Uma refeição guardada sem itens não escreve nada, e o botão não pode
-                // prometer que escreve.
-                enabled = pre.itens.isNotEmpty(),
-            )
-        }
-    }
-}
-
-private val MULTIPLICADOR_LARGURA = 120.dp
-
-private val PRE_ALTURA = 360.dp
-
-/**
- * A pré-visualização ligada ao desfazer, num sítio só.
- *
- * Está fora do [FoodSearchScreen] porque ele já estava no tecto das 120 linhas — e porque o
- * que aqui há é uma coisa inteira: ver, escolher quantas vezes, aplicar, e ter volta atrás.
- */
-@Composable
-private fun AplicarRefeicaoGuardada(
-    pre: pt.antares.app.feature.templates.PreVisualizacaoDeModelo,
-    viewModel: FoodSearchViewModel,
-    slot: MealSlot?,
-    epochDay: Long?,
-) {
-    val desfazer = rememberDesfazer()
-    val mensagem = stringResource(Res.string.modelo_aplicado)
-
-    PreVisualizacaoSheet(
-        pre = pre,
-        onMultiplicador = viewModel::escreverMultiplicador,
-        onAplicar = {
-            // Sem dia e sem refeição não há para onde aplicar — é o caso de quem abriu a
-            // pesquisa para escolher um ingrediente, e não para registar.
-            if (slot != null && epochDay != null) {
-                viewModel.aplicarPreVisualizacao(slot, epochDay) { criados ->
-                    desfazer(mensagem) { viewModel.desfazerAplicacao(criados) }
-                }
-            }
-        },
-        onFechar = viewModel::fecharPreVisualizacao,
-    )
 }

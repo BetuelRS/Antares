@@ -44,6 +44,18 @@ data class TabelaDeConfecao(
     fun linha(familia: String?, metodo: String): LinhaDeConfecao? =
         familia?.let { porChave["$it:$metodo"] }
 
+    /**
+     * O rendimento mais baixo que a tabela publica, seja qual for a família ou o método.
+     *
+     * É o chão do que qualquer confeção conhecida explica. Serve para receitas cujos
+     * ingredientes não têm família nenhuma — aí não há envelope próprio, e sem isto a app
+     * não tinha opinião sobre peso final nenhum, por mais absurdo que fosse.
+     *
+     * **Sai da tabela e não de um número escolhido por mim.** Se um dia entrar um método
+     * mais agressivo, o chão desce sozinho com ele.
+     */
+    val rendimentoMinimo: Double? by lazy { linhas.mapNotNull { it.rendimento }.minOrNull() }
+
     /** Os métodos que fazem sentido para esta família, pela ordem em que a tabela os declara. */
     fun metodosDe(familia: String?): List<MetodoDeConfecao> {
         if (familia == null) return emptyList()

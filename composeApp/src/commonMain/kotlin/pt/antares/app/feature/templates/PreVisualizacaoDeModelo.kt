@@ -17,24 +17,18 @@ data class PreVisualizacaoDeModelo(
     val itens: List<MealTemplateItemEntity>,
 
     /**
-     * Quantas vezes a refeição, como está escrito no campo.
+     * Quantas vezes a refeição.
      *
-     * Vive como texto e não como número pela mesma razão do campo de gramas da folha da AI:
-     * quem apaga «1» para escrever «0,5» passa por um campo vazio, e um estado que recuse o
-     * vazio é um campo que não se consegue limpar.
+     * **Era um campo de texto, e passa a ser um dos valores de [ESCALAS].** O esboço da área
+     * 05 desenha quatro chips e o campo livre foi invenção minha: obrigava a escrever para
+     * fazer o que quase sempre se quer — metade, o mesmo, ou o dobro —, e trazia atrás um
+     * filtro de algarismos, um limite de caracteres e um estado que aceitava o vazio.
+     *
+     * Fora da lista não entra nada. Um valor que não esteja nas escalas não tem chip que o
+     * ponha lá, e o estado deixa de poder ser inválido.
      */
-    val multiplicadorTexto: String = "1",
+    val multiplicador: Double = 1.0,
 ) {
-    /**
-     * O número que vale, ou **1 quando o texto ainda não é um número**.
-     *
-     * Nunca zero nem negativo: aplicar zero vezes uma refeição escreve sete linhas de zero
-     * calorias, que é pior do que não escrever nada — ficam no diário a somar nada e a
-     * ocupar a lista.
-     */
-    val multiplicador: Double
-        get() = multiplicadorTexto.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 } ?: 1.0
-
     /** As calorias que vão mesmo entrar, já com o multiplicador. */
     val kcal: Int get() = (itens.sumOf { it.kcalSnapshot } * multiplicador).roundToInt()
 
@@ -43,34 +37,34 @@ data class PreVisualizacaoDeModelo(
 
     fun kcalDe(item: MealTemplateItemEntity): Int = (item.kcalSnapshot * multiplicador).roundToInt()
 
-    fun comTexto(texto: String): PreVisualizacaoDeModelo =
-        copy(multiplicadorTexto = apenasNumero(texto).take(MAX_CARACTERES))
+    /**
+     * Escolhe uma escala. Um valor de fora da lista fica de fora — não há caminho na
+     * interface que lá chegue, e aceitá-lo aqui era deixar a porta aberta a um zero que
+     * escreveria registos de zero calorias.
+     */
+    fun comEscala(escala: Double): PreVisualizacaoDeModelo =
+        if (escala in ESCALAS) copy(multiplicador = escala) else this
 
-    private companion object {
+    companion object {
 
-        // Chega para «0,25» e para «10». Uma refeição multiplicada por mil não é uma
-        // refeição; é um dedo preso no teclado.
-        const val MAX_CARACTERES = 4
+        /**
+         * As quatro do esboço, por esta ordem.
+         *
+         * Meia refeição, a refeição, uma vez e meia, duas. Cobre o que se faz — comi metade,
+         * comi a dobrar — sem pedir que se escreva um número para o caso normal, que é ×1.
+         */
+        val ESCALAS = listOf(0.5, 1.0, 1.5, 2.0)
     }
 }
 
 /**
- * Algarismos e, quando muito, um separador decimal.
+ * O que se lê num chip: `×1`, `×1,5`.
  *
- * O teclado deste campo já é o dos números, mas um teclado de hardware escreve o que quiser
- * — foi assim que apareceu o mesmo problema no campo de gramas da folha da AI, na 2.17.0.
+ * O inteiro perde a casa decimal — `×1,0` num chip lê-se como uma precisão que não existe.
+ * A vírgula é a mesma decisão de idioma do resto da app, e entra por parâmetro para esta
+ * função poder ser testada sem composição nenhuma à volta.
  */
-private fun apenasNumero(texto: String): String {
-    val limpo = StringBuilder()
-    var jaTemSeparador = false
-    for (c in texto) {
-        when {
-            c.isDigit() -> limpo.append(c)
-            (c == ',' || c == '.') && !jaTemSeparador -> {
-                jaTemSeparador = true
-                limpo.append(c)
-            }
-        }
-    }
-    return limpo.toString()
+fun rotuloDaEscala(escala: Double, virgula: Boolean): String {
+    val texto = escala.toString().removeSuffix(".0")
+    return "×" + if (virgula) texto.replace('.', ',') else texto
 }

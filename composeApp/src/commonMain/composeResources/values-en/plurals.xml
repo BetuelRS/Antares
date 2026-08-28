@@ -5,6 +5,14 @@
         <item quantity="one">%1$d item</item>
         <item quantity="other">%1$d items</item>
     </plurals>
+    <plurals name="refeicao_ingredientes">
+        <item quantity="one">%1$d ingredient</item>
+        <item quantity="other">%1$d ingredients</item>
+    </plurals>
+    <plurals name="refeicao_doses">
+        <item quantity="one">%1$d serving</item>
+        <item quantity="other">%1$d servings</item>
+    </plurals>
     <plurals name="recipe_ingredientes_acrescentados">
         <item quantity="one">%1$d ingredient added</item>
         <item quantity="other">%1$d ingredients added</item>

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.util.FotosDeRefeicao
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -56,6 +57,7 @@ import pt.antares.app.generated.resources.copia_import_resumo
 import pt.antares.app.generated.resources.copia_import_sem_data
 import pt.antares.app.generated.resources.copia_inclui
 import pt.antares.app.generated.resources.copia_inclui_total
+import pt.antares.app.generated.resources.copia_nao_inclui
 import pt.antares.app.generated.resources.privacy_error
 import pt.antares.app.generated.resources.privacy_export
 import pt.antares.app.generated.resources.privacy_export_desc
@@ -105,11 +107,18 @@ fun BackupScreen(
 }
 
 /**
- * As contagens do que a cópia leva.
+ * As contagens do que a cópia leva — **e a única coisa que ela não leva**.
  *
  * Uma cópia é um ficheiro opaco: dizer «cópia feita» e dizer «cópia feita com 487 refeições
  * e 92 treinos» custa o mesmo e só a segunda se pode conferir. Um ficheiro vazio, escrito
  * por um erro que ninguém viu, lê-se aqui de relance.
+ *
+ * A linha do que **não** vai é a correcção do defeito que o `estudo/dados/02-perder-tudo.md`
+ * marca mais duramente. Ele dá 18 e 19 à robustez e à longevidade da cópia, e **12 à
+ * honestidade**, com a conclusão escrita: «a app protege-se bem e não conta a ninguém como».
+ * A fotografia do prato foi posta fora da cópia com razão — mil imagens por ano em cinco
+ * cópias que rodam — mas ninguém era avisado nem disso nem de que ela se apaga aos sessenta
+ * dias. Uma decisão defensável tomada em silêncio lê-se, do lado de lá, como uma perda.
  */
 @Composable
 private fun OQueVaiNaCopia(viewModel: CopiaViewModel = koinViewModel()) {
@@ -128,6 +137,17 @@ private fun OQueVaiNaCopia(viewModel: CopiaViewModel = koinViewModel()) {
                 stringResource(
                     Res.string.copia_inclui_total,
                     state.contagens.values.sum().toString(),
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                // O número sai da constante que manda na varredura, e não escrito à mão.
+                // Um texto a prometer sessenta dias enquanto o código apaga aos trinta é
+                // pior do que não haver texto nenhum.
+                stringResource(
+                    Res.string.copia_nao_inclui,
+                    FotosDeRefeicao.DIAS_DE_VIDA.toString(),
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
