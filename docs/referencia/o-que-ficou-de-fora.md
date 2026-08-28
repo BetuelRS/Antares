@@ -52,8 +52,25 @@ deliberadamente **fora** da cópia, com razão escrita — mil imagens por ano e
 que rodam. A razão continua a parecer boa; a decisão foi tomada sem eu ter lido a página onde
 o estudo argumenta o contrário.
 
-→ **Reabrir com o `estudo/dados/02-perder-tudo.md` aberto.** É o item mais urgente desta
-lista, porque é o único já publicado.
+→ **Reaberto a 2026-08-28, com o `estudo/dados/02-perder-tudo.md` e o
+`estudo/propostas/00-o-custo-de-mudar.md` abertos.** A decisão mantém-se: a foto do prato
+fica fora da cópia e continua a durar sessenta dias. O eixo do estudo é a **re-obtenção** —
+«um peso pode voltar a medir-se, uma foto de há dois anos não» — e no ficheiro de imagem a
+foto do prato está mesmo na mesma categoria da de progresso. O que a distingue é o custo:
+três por dia dão perto de mil por ano, e em cinco cópias que rodam enchiam o telemóvel.
+
+**O defeito não era a decisão. Era o silêncio.** O `estudo/dados/02-perder-tudo.md` dá 18 e 19 à robustez e à
+longevidade da cópia e **12 à honestidade**, e escreve porquê: «a app protege-se bem e não
+conta a ninguém como». Nenhuma linha da app dizia que a foto não ia na cópia, nem que se
+apaga aos sessenta dias. O ecrã da cópia passa a dizê-lo, com o número tirado da constante
+que manda na varredura.
+
+**E o §4 do `estudo/dados/02-perder-tudo.md` está ultrapassado:** ele descreve a cópia automática do Android como
+ligada e bem configurada, com as fotos de progresso de fora, e a correção como «duas linhas
+em cada um dos dois ficheiros». Medido hoje: `allowBackup="false"`, e o `backup_rules.xml` e
+o `data_extraction_rules.xml` **não existem**. A correção 5 das dez não tem ficheiros onde
+ser feita. O caminho escolhido foi outro — e é o item «Segundo» do próprio documento, que
+ele punha depois.
 
 ## 2.2.0 · O que sai daqui
 
@@ -69,35 +86,74 @@ Não é uma falha minha; é uma dívida com data. Tem casa: a 2.40.0.
 **Nada ficou de fora segundo o registo** — entraram as seis peças e a migração foi toda de
 uma vez. O esboço `20-sistema-de-desenho` **não foi aberto**, e é a versão que ele desenha.
 
-## 2.6.0 · O vocabulário — **o maior buraco medido**
+## 2.6.0 · O vocabulário — **eu é que estava errado**
 
-Duas metades, e só uma entrou.
+**Esta secção dizia «o maior buraco medido». Não era um buraco: era uma decisão do dono,
+tomada a 2026-08-22 e escrita no registo da versão, no plano.**
 
-**Entrou, e bem:** o `tools/catalogo/vocabulario.mjs` existe, o `construir.mjs` chumba se um
-importador emitir uma chave não declarada, e as referências da EFSA são cruzadas com o
-`seed_efsa_drv.csv` em vez de escritas de cabeça — o próprio ficheiro conta que isso já
-tinha falhado uma vez, com o zinco.
+Escrevi-a a comparar o código com o **parágrafo da promessa** da 2.6.0 e nunca li o bloco
+**«Respondidas a…»** que está por baixo dele. É o mesmo erro que esta pasta inteira existe
+para corrigir, cometido dentro do documento que a devia corrigir — trabalhar de um resumo,
+neste caso de meio registo.
 
-**Não entrou: os oito nutrientes novos.** Nenhum deles.
+**O que o registo diz, e é o que vale:**
 
-| Prometido | No catálogo |
-|---|---|
-| energia em **kJ** — obrigatória nos rótulos da UE | não |
-| **sal**, distinto do sódio, que é o que se lê na embalagem | não — só `sodium_mg` |
-| **biotina** | não |
-| **crómio** | não |
-| **molibdénio** | não |
-| **flúor** | não |
-| **cafeína** | não |
-| **frutose** | não |
+- A regra dada pelo dono foi «só os que se conseguem interpretar».
+- **Nenhum nutriente novo entra no catálogo.** Contaram-se as fontes: biotina, crómio,
+  molibdénio, flúor e cafeína não apareciam na CIQUAL, na TCA nem no USDA. Declará-los dava
+  cinco chaves eternamente vazias.
+- O **sal** é o sódio ×2,5 e a **energia em kJ** são as kcal ×4,184. Não são medições novas,
+  são escalas de números que a app já tem, e entram como conversões no ecrã do alimento.
+- A **frutose** só existe na CIQUAL e não tem referência da EFSA: fica declarada de fora.
 
-Medido: o catálogo tem **40 chaves de micronutriente** em 7 932 alimentos, e o
-`Nutrients.kt` declara **42 chaves** — que é exactamente o número que o plano registou como
-o **«hoje»**, antes da versão. O contador não se moveu.
+**Confirmado no código a 2026-08-28:** o `FoodDetailViewModel` tem `previewKj` e
+`previewSalG`, com `KJ_POR_KCAL = 4.184` e `SAL_POR_SODIO = 2.5`, e o ecrã do alimento
+mostra os dois ao lado do rótulo. Dois dos oito estão feitos, e a tabela que aqui estava
+dizia «não» aos dois.
 
-## 2.7.0 · A ausência tipada
+O `Nutrients.kt` declarar 42 chaves é o que o registo prevê — o contador não se moveu porque
+foi decidido que não se movia.
 
-**Quatro dos seis estados do EuroFIR estão representados, dois não.**
+### O que **é** novo, e é para o dono decidir
+
+A contagem de 2026-08-22 foi feita contra o `usda-source.json`, que é a extracção antiga e
+traz **dezoito** chaves de micronutriente. Desde então o `usda-completo.mjs` passou a ler o
+`food_nutrient.csv` do SR Legacy por inteiro, e esse ficheiro está no repositório.
+
+Contado nele a 2026-08-28:
+
+| Nutriente | Identificador USDA | Alimentos com valor |
+|---|---|---:|
+| **cafeína** | 1057 | **5 215** |
+| **flúor** | 1099 | **538** |
+| frutose | 1012 | 1 745 — e 1 836 na CIQUAL (código 32210) |
+| crómio | 1096 | **0** |
+| molibdénio | 1102 | **0** |
+| biotina | 1176 | **0** |
+
+Os três que o registo dava por inexistentes e continuam inexistentes: crómio, molibdénio,
+biotina. A decisão sobre esses está certa e não se reabre.
+
+**A cafeína e o flúor são outra coisa.** A premissa em que a decisão assentou — «não existem
+em fonte nenhuma» — deixou de ser verdade para os dois, não porque a decisão fosse má, mas
+porque a fonte que a app lê mudou. A cafeína em 5 215 alimentos é a que interessa: é um
+estimulante que se segue, e é dela que se faz a pergunta «quanto café é que eu bebi?».
+
+**Não se acrescenta nada por iniciativa minha** (A1). O que aqui fica é a premissa medida
+outra vez, para o dono decidir se a quer reabrir.
+
+## 2.7.0 · A ausência tipada — **também não era um buraco**
+
+Mesma correcção, mesma causa. Esta secção dizia que faltavam dois dos seis estados do
+EuroFIR. **Faltam de propósito**, por decisão de 2026-08-23 escrita no registo da versão:
+
+> «Três estados, não seis. Medido, abaixo do limite de deteção, vestígios — mais a ausência,
+> que é a falta da célula. "Não se aplica" e "assumido zero" não aparecem em fonte nenhuma
+> das três: declará-los era ter estados que nunca acontecem.»
+
+E está escrito outra vez no código, no KDoc do
+[`EstadoDeNutriente.kt`](../../composeApp/src/commonMain/kotlin/pt/antares/app/core/nutrition/EstadoDeNutriente.kt),
+onde eu o teria lido se tivesse aberto o ficheiro antes de escrever a tabela.
 
 | Estado | Como está |
 |---|---|
@@ -105,12 +161,57 @@ o **«hoje»**, antes da versão. O contador não se moveu.
 | `nao_medido` | a ausência da chave |
 | `vestigios` | `EstadoDeNutriente.Vestigios` |
 | `abaixo_do_limite` | `EstadoDeNutriente.AbaixoDoLimite(limite)` |
-| **`nao_se_aplica`** | **em falta** |
-| **`assumido_zero`** | **em falta** |
+| `nao_se_aplica` | **fora, por decisão** — nenhuma das três fontes o emite |
+| `assumido_zero` | **fora, por decisão** — idem |
 
-Os dois que faltam são precisamente os que distinguem «este alimento não tem esta coisa por
-natureza» de «ninguém mediu». Hoje caem os dois na mesma ausência — que é a forma de falhar
-que a versão existia para acabar.
+Se um dia entrar uma fonte que os emita, entram com ela. Um estado que nunca acontece é uma
+ramificação que ninguém consegue testar.
+
+## 2.6.0 e 2.7.0 · o que isto ensina sobre este documento
+
+As duas secções acima estiveram erradas durante o tempo em que este ficheiro existiu, e
+erradas do mesmo modo: **medi o código contra a promessa da versão e não contra o registo
+dela.** O registo está no mesmo ficheiro, uns parágrafos abaixo, e responde exactamente à
+pergunta que eu estava a fazer.
+
+A regra que daqui sai, e que vale para quem ler isto a seguir:
+
+> **Uma versão do plano tem duas partes: o que ela prometeu e o que ficou decidido.** Ler só
+> a primeira produz uma lista de buracos que não existem — e uma lista assim é pior do que
+> não haver lista nenhuma, porque manda trabalhar naquilo que já foi decidido não fazer.
+
+## O bloco D contra o `estudo/dados/04-as-fontes-de-dados.md` — achado novo, a 2026-08-28
+
+Abertos: `estudo/dados/04-as-fontes-de-dados.md`, `estudo/propostas/02-o-catalogo.md`.
+
+O documento dá **10 / 20** ao catálogo e a frase dele é «os dados valem 15, o sistema que os
+mantém vale 5». Quase tudo o que ele diagnostica foi fechado pelo bloco D: o oleoduto fora
+da app, determinístico e a chumbar quando perde um alimento que a fonte declara (§2), o
+motor de qualidade (§6), a oficina (§10), o catálogo descarregável (§5), as fusões (§7), a
+confeção com rendimentos e retenções (§7). Os 99 alimentos do CIQUAL que se perdiam já não
+se perdem.
+
+**O que sobrevive dele é a §3, «o mesmo facto em dois sítios» — e sobrevive meio.**
+
+A queixa original era a fibra: estava na coluna para o CIQUAL e o USDA e dentro do JSON de
+micros só para os 1 376 do INSA, e a `food_nutrient` — que responde ao «ricos em» —
+constrói-se só do JSON. **Isso está resolvido**: a fibra e o sódio vivem hoje só nos micros,
+e as colunas deles nem existem na entidade. Medido: fibra em 7 676 alimentos, sódio em 7 609.
+
+**O que não está:** os açúcares e a gordura saturada ficaram só na coluna. Medido no
+catálogo construído — `sugarsG` em 6 999 alimentos e `satFatG` em 7 374, e **zero** dos dois
+dentro dos micros. A `food_nutrient` tem zero linhas de açúcares e zero de saturados em
+7 932 alimentos.
+
+**Não é um defeito visível hoje:** nenhum dos dois tem referência da EFSA, e o ecrã do «rico
+em» só oferece as 25 chaves que têm. É uma armadilha — qualquer coisa futura que leia a
+`food_nutrient` à procura de açúcares encontra nada, sem erro nenhum.
+
+**Qual das duas metades ganha é decisão do dono**, e tem custo permanente: são 81 usos em
+Kotlin e nas ferramentas, duas migrações de esquema e o mapeador da Open Food Facts, onde os
+açúcares e os saturados são campos de rótulo a sério. O que se fez a 2026-08-28 foi tornar a
+armadilha barulhenta: o `tools/catalogo/onde-vive-o-nutriente.test.mjs` escreve onde cada um
+vive hoje e chumba quando isso mudar por acidente.
 
 ## 2.8.0 · O catálogo que se atualiza sozinho
 
@@ -139,8 +240,24 @@ O conteúdo saiu na 2.7.0 e na 2.8.0, ou não se lança por ser ferramenta. Medi
 
 ## 2.16.0 · Abrir no que se come
 
-**Nada medido em falta** contra as linhas do plano. O esboço `03-adicionar-comida` **não foi
-aberto** — e é a versão que ele desenha.
+**Releitura a 2026-08-28.** Abertos: `estudo/areas/03-adicionar-comida.md`,
+`estudo/esbocos/03-adicionar-comida.html`.
+
+Das oito coisas que a área diz estarem mal, **três já estavam fechadas**: a voz vai para a
+AI (2.17.0), os chips de sugestão deixaram de desaparecer quando ficam úteis, e a pesquisa
+ordena pela história — marcado primeiro, usado há pouco a seguir. As miniaturas dos produtos
+da Open Food Facts também lá estão.
+
+**Fechadas a 2026-08-28:** a duplicação das refeições guardadas em dois sítios, que o estudo
+nomeia em «o que é inútil» · o estado vazio que dizia «escreve pelo menos 2 letras» a quem
+nunca registou nada · o aviso «estimado» que não levava a lado nenhum · a colher de sopa a
+aparecer em todos os alimentos.
+
+**Fica em aberto, e é decisão do dono:** a composição dos três separadores. O estudo propõe
+*Tudo · Favoritos · Meus*, com as refeições como secção; a app tem *Procurar · Meus ·
+Refeições*, com os favoritos como secção. São três de qualquer maneira — que é a queixa do
+estudo, «seis é demasiado» — e trocá-los seria reorganizar a navegação uma terceira vez na
+mesma semana.
 
 ## 2.17.0 · A revisão da IA
 
@@ -168,7 +285,30 @@ E o argumento que dei ao dono — «receita deixa de ser palavra errada assim qu
 — o esboço contradiz: diz que faltam **passos, tempo e fotografia**, e avisa que isso é «uma
 app dentro da app». Construí um terço e apresentei o assunto como fechado.
 
-O `estudo/areas/05-receitas-e-modelos.md` **continua por abrir** — só li o esboço.
+**Aberto a 2026-08-28**, e as seis divergências acima foram fechadas menos uma: a lista
+passou a ser uma só com a origem escrita na linha, o multiplicador passou a chips, editar um
+modelo passou a existir — mudar o nome e tirar um item —, e o aviso do rendimento ganhou a
+rede que lhe faltava.
+
+**O sítio próprio não se construiu, e a razão está no `estudo/propostas/00-o-custo-de-mudar.md`:** os trinta que o
+estudo defende não incluem a área 05, e o sítio próprio é o item caro dela. Fica na tabela
+do fim, para o dono.
+
+**Dois defeitos concretos da área, que a 2.18.0 não tinha fechado, fecharam agora:** o
+`templateApplied` era escrito por quem regista vários alimentos marcados — que não tem
+modelo nenhum — e o nome mentia para reaproveitar o caminho de saída; e o aviso do peso
+final não existia de todo para receitas de ingredientes sem família de confeção.
+
+**E o aviso do rendimento não pôde seguir o estudo à letra.** Ele pede «a mesma tolerância
+do aviso do rótulo», que são 10 %. Medido: a tabela de confeção publica rendimentos de 0,39
+a 0,82, portanto perder 40 % do peso a cozinhar é vulgar e ±10 % acusava metade dos
+estufados — o próprio exemplo do estudo, 500 g em 1 200 g de ingredientes, dá 0,42 e é
+fisicamente possível. O chão passou a sair da própria tabela.
+
+**Sobre os passos de preparação:** a área 05 diz que eles só entram «se o dono quiser que
+receita queira mesmo dizer receita», e chama à alternativa «a decisão mais barata e
+provavelmente a mais certa». O dono quis, e disse-o. A condição que o estudo põe está
+cumprida — o que não estava é eu saber que a estava a pôr.
 
 ---
 
@@ -177,16 +317,19 @@ O `estudo/areas/05-receitas-e-modelos.md` **continua por abrir** — só li o es
 Nada aqui é um achado. É a lista dos documentos que decidem cada versão já publicada e que
 nunca foram abertos.
 
+**Encolheu a 2026-08-28.** Foram abertos, e saíram desta tabela:
+`estudo/propostas/00-o-custo-de-mudar.md`, `estudo/dados/02-perder-tudo.md`,
+`estudo/dados/04-as-fontes-de-dados.md`, `estudo/propostas/02-o-catalogo.md`,
+`estudo/areas/03-adicionar-comida.md`, `estudo/areas/05-receitas-e-modelos.md` e os esboços
+03 e 05.
+
 | Versão | Por abrir |
 |---|---|
 | 2.0.3 · 2.0.4 | `estudo/transversal/02-robustez.md`, `estudo/motor/01-metabolismo-e-metas.md`, `estudo/motor/03-peso-tendencia-e-projecao.md`, `estudo/areas/16-perfil-corpo-e-metas.md` |
-| 2.1.0 · 2.2.0 | `estudo/dados/01-o-que-sai-do-telemovel.md`, `estudo/dados/02-perder-tudo.md`, `estudo/dados/03-sincronizacao-caseira.md`, `estudo/transversal/04-longevidade.md` |
+| 2.1.0 · 2.2.0 | `estudo/dados/01-o-que-sai-do-telemovel.md`, `estudo/dados/03-sincronizacao-caseira.md`, `estudo/transversal/04-longevidade.md` |
 | 2.3.0 | `estudo/areas/20-navegacao-e-sistema-de-desenho.md` + esboço `20` |
-| 2.4.0 → 2.8.0 | `estudo/dados/04-as-fontes-de-dados.md`, `estudo/propostas/02-o-catalogo.md` + esboço `22` |
-| 2.16.0 | `estudo/areas/03-adicionar-comida.md` + esboço `03` |
+| 2.4.0 → 2.8.0 | esboço `22-catalogo` |
 | 2.17.0 | `estudo/areas/04-comida-por-ia.md`, `estudo/sistema/02-servidor-e-custo.md` |
-| 2.18.0 · 2.18.1 | `estudo/areas/05-receitas-e-modelos.md` (o esboço já foi lido) |
-| **todas** | `estudo/propostas/00-o-custo-de-mudar.md` — o estudo diz para o ler **antes de decidir o que fazer**, e nunca foi aberto |
 
 ---
 
@@ -196,12 +339,8 @@ Só o que está na Parte A. Cada linha precisa de autorização para virar traba
 
 | O quê | Onde nasceu | Casa provável |
 |---|---|---|
-| **A foto do prato fora da cópia de segurança** | 2.17.0, minha decisão | reabrir já, com `estudo/dados/02` |
-| **Os oito nutrientes** — kJ, sal, biotina, crómio, molibdénio, flúor, cafeína, frutose | 2.6.0 | número próprio; toca no catálogo e no vocabulário |
-| **`nao_se_aplica` e `assumido_zero`** | 2.7.0 | número próprio, pequeno |
-| **«Uma lista só»** e o sítio próprio das refeições | 2.18.0, contra o esboço | 2.18.2, ou a seguir à releitura |
-| **Editar uma refeição guardada** | 2.18.0, omissão | com a anterior |
-| **Multiplicador em chips**, origem na linha | 2.18.0, contra o esboço | com a anterior |
+| **A cafeína e o flúor** — a premissa da decisão de 2.6.0 mudou: 5 215 e 538 alimentos no `food_nutrient.csv` que o oleoduto passou a ler | 2.6.0, medido outra vez a 2026-08-28 | só se o dono reabrir a decisão |
+| **O sítio próprio das refeições guardadas** — alcançável do «Eu» e do diário, fora da pesquisa | 2.18.0, contra o esboço | adiado com razão: o `estudo/propostas/00-o-custo-de-mudar.md` não põe a área 05 nos trinta que defende, e é o item caro dela |
 | **A instrução da cintura por sexo** | 2.0.4, por verificar | ler `estudo/areas/16` antes de decidir se é dívida |
 | **2 909 alimentos em inglês** | 2.13.0 | trabalho de meses, na oficina |
 | **73,7 % do catálogo sem porção** | 2.14.0 | idem |
