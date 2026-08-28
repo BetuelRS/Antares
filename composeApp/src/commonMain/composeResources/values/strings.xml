@@ -340,6 +340,8 @@
     <string name="search_tab_favorites">Favoritos</string>
     <string name="search_tab_mine">Meus</string>
     <string name="search_min_chars">Escreve pelo menos 2 letras para pesquisar.</string>
+    <string name="search_sem_historico">Aqui vais ver o que comes mais vezes, o que comeste há pouco e o que marcares. Ainda não há nada — escreve o nome de um alimento para começar.</string>
+    <string name="food_estimated_corrigir">Corrigir este alimento</string>
     <string name="search_empty_title">Sem alimentos</string>
     <string name="search_empty_subtitle">Tenta outro termo ou cria um alimento teu.</string>
     <string name="food_create_cta">Criar alimento</string>

@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -57,6 +58,9 @@ fun FoodDetailScreen(
     epochDay: Long,
     onSaved: () -> Unit,
     onBack: () -> Unit,
+
+    // Para onde vai quem lê «este valor é estimado» e sabe o número certo.
+    onCorrigir: (String) -> Unit = {},
     viewModel: FoodDetailViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -116,6 +120,12 @@ fun FoodDetailScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                // O aviso passa a levar a algum lado. Dizia que o número era estimado e
+                // deixava a pessoa com ele na mão: a app sabe criar e editar alimentos, e
+                // quem tem o pacote à frente sabe o número melhor do que a tabela.
+                TextButton(onClick = { onCorrigir(food.id) }) {
+                    Text(stringResource(Res.string.food_estimated_corrigir))
+                }
             }
 
             val unit = stringResource(portionUnitLabel(state.unitSystem, food.isLiquid))
@@ -263,10 +273,18 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
                 label = { Text("${porcao.nome} ($quanto $unit)") },
             )
         }
-        AssistChip(
-            onClick = { onPick(COLHER_DE_SOPA_G) },
-            label = { Text(stringResource(Res.string.food_tbsp)) },
-        )
+        // A colher de sopa só onde a app não tem melhor.
+        //
+        // Aparecia em tudo, e a área 03 do estudo apanhou-a em «o que é inútil»: é uma
+        // unidade de volume aplicada a todos os alimentos — 15 g de azeite faz sentido,
+        // 15 g de bife não. Onde há porções nomeadas, elas vieram de uma fonte que mediu
+        // este alimento, e uma colher genérica por baixo delas é ruído a competir com dado.
+        if (state.porcoesExtra.isEmpty()) {
+            AssistChip(
+                onClick = { onPick(COLHER_DE_SOPA_G) },
+                label = { Text(stringResource(Res.string.food_tbsp)) },
+            )
+        }
     }
 }
 

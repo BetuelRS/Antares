@@ -340,6 +340,8 @@
     <string name="search_tab_favorites">Favorites</string>
     <string name="search_tab_mine">Mine</string>
     <string name="search_min_chars">Type at least 2 letters to search.</string>
+    <string name="search_sem_historico">This is where you\'ll see what you eat most, what you ate recently, and what you star. There\'s nothing yet — type a food name to get started.</string>
+    <string name="food_estimated_corrigir">Correct this food</string>
     <string name="search_empty_title">No foods</string>
     <string name="search_empty_subtitle">Try another term or create your own food.</string>
     <string name="food_create_cta">Create food</string>

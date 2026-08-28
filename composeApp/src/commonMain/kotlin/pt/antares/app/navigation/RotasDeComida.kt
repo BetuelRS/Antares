@@ -79,6 +79,7 @@ internal fun NavGraphBuilder.rotasDeComida(navController: NavHostController) {
                             // atualizou sozinho, e sair dele seria perder o dia onde se está.
                             onSaved = { escolhido = null },
                             onBack = { escolhido = null },
+                            onCorrigir = { id -> navController.navigate(Route.FoodEdit(id)) },
                         )
                     }
                 },
@@ -128,6 +129,7 @@ internal fun NavGraphBuilder.rotasDeComida(navController: NavHostController) {
 
             onSaved = { navController.popBackStack(Route.Diary, inclusive = false) },
             onBack = { navController.popBackStack() },
+            onCorrigir = { id -> navController.navigate(Route.FoodEdit(id)) },
         )
     }
     composable<Route.FoodEdit> { entry ->

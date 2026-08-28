@@ -245,8 +245,6 @@ fun FoodSearchScreen(
                 state = state,
                 viewModel = viewModel,
                 multiSelect = multiSelect,
-                aiSlot = aiSlot,
-                aiEpochDay = aiEpochDay,
                 onFoodSelected = onFoodSelected,
                 navegacao = NavegacaoDaPesquisa(onRecipeSelected, onEditRecipe, onNewRecipe),
             )
@@ -463,8 +461,6 @@ private fun CorpoDoSeparador(
     state: FoodSearchState,
     viewModel: FoodSearchViewModel,
     multiSelect: Boolean,
-    aiSlot: MealSlot?,
-    aiEpochDay: Long?,
     onFoodSelected: (String) -> Unit,
     navegacao: NavegacaoDaPesquisa,
 ) {
@@ -485,6 +481,11 @@ private fun CorpoDoSeparador(
 
                 // Com a caixa vazia, as três respostas a «o que é que eu já comi?» —
                 // que era o que quatro separadores diziam, cada um no seu sítio.
+                //
+                // As refeições guardadas **não** estão aqui, e é de propósito. Estavam, e
+                // só cinco delas — o que fazia do separador a única forma de ver a sexta.
+                // A área 03 do estudo apanha isso em «o que é inútil»: duas portas mal
+                // feitas em vez de uma boa. Ficou a que mostra todas.
                 YourStuff(
                     favoritos = state.favoritos,
                     foods = mostLogged,
@@ -493,13 +494,7 @@ private fun CorpoDoSeparador(
                     selectable = multiSelect,
                     selectedIds = state.selected,
                     onToggle = viewModel::toggleSelect,
-                    templates = if (aiSlot != null && aiEpochDay != null) templates.take(5) else emptyList(),
                     onFood = { onFoodSelected(it.id) },
-                    onTemplate = { id ->
-                        if (aiSlot != null && aiEpochDay != null) {
-                            viewModel.verModelo(id)
-                        }
-                    },
                 )
             } else {
                 SearchResults(
@@ -555,36 +550,22 @@ private fun YourStuff(
     selectable: Boolean,
     selectedIds: Set<String>,
     onToggle: (String) -> Unit,
-    templates: List<pt.antares.app.feature.templates.ModeloComResumo>,
     onFood: (FoodEntity) -> Unit,
-    onTemplate: (pt.antares.app.feature.templates.ModeloComResumo) -> Unit,
     // Os que eram separadores próprios. Chegam aqui como listas porque a pergunta que
     // respondem é a mesma, e separá-las obrigava a escolher entre elas antes de escrever.
     recentes: List<FoodEntity> = emptyList(),
     marcados: List<FoodEntity> = emptyList(),
 ) {
-    val vazio = listOf(foods, templates, recentes, marcados).all { it.isEmpty() }
+    val vazio = listOf(foods, recentes, marcados).all { it.isEmpty() }
     if (vazio) {
-        EmptyState(title = stringResource(Res.string.search_min_chars))
+        // Descreve o estado da lista, e não o campo de procura. A frase antiga — «escreve
+        // pelo menos 2 letras» — aparecia a quem ainda não tinha registado nada, mesmo com
+        // uma letra já escrita: dizia o que fazer com o campo e nada sobre o que faltava
+        // aqui. A área 03 do estudo apanhou-a como estado vazio enganador.
+        EmptyState(title = stringResource(Res.string.search_sem_historico))
         return
     }
     ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
-        if (templates.isNotEmpty()) {
-            linhaInteira {
-                SectionHeader(
-                    title = stringResource(Res.string.search_your_meals),
-                    modifier = Modifier.padding(Spacing.sm),
-                )
-            }
-            items(templates, key = { "tpl-${it.modelo.id}" }) { resumo ->
-                LinhaDaLista(
-                    titulo = resumo.modelo.name,
-                    subtitulo = subtituloDoModelo(resumo),
-                    onClick = { onTemplate(resumo) },
-                    modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
-                )
-            }
-        }
         if (foods.isNotEmpty()) {
             linhaInteira {
                 SectionHeader(
@@ -999,20 +980,3 @@ private val SEM_MARGEM = PaddingValues(0.dp)
 // mudar de altura por causa dela.
 private val MINIATURA = 44.dp
 
-/**
- * O que a linha de uma refeição guardada diz sem se abrir: quantos itens e quantas calorias.
- *
- * Dizia o nome e a refeição do dia — «Almoço» —, que é a coisa menos útil que se pode dizer
- * sobre uma lista chamada «Almoço de segunda». Quem escolhe entre duas refeições guardadas
- * escolhe pelo tamanho delas.
- */
-@Composable
-private fun subtituloDoModelo(resumo: pt.antares.app.feature.templates.ModeloComResumo): String {
-    val itens = pluralStringResource(
-        Res.plurals.modelo_itens,
-        resumo.itens,
-        resumo.itens,
-    )
-    return "$itens · ${resumo.kcal} ${stringResource(Res.string.common_kcal)} · " +
-        mealSlotLabel(resumo.modelo.slot)
-}
