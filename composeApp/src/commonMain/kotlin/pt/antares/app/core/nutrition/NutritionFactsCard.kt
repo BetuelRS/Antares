@@ -130,6 +130,7 @@ fun NutritionFactsCard(
                     )
                 }
                 if (expanded) {
+
                     if (breakdown.vitamins.isNotEmpty()) {
                         MicroSection(
                             stringResource(Res.string.nutrition_vitamins),
@@ -337,13 +338,14 @@ private fun MicroRow(
                 },
             )
         }
-        // «Da CIQUAL» por baixo do número, e só quando este número não veio de onde veio o
-        // alimento. É o que o esboço 22 pede, e é a resposta a uma pergunta que a app já
-        // deixava fazer sem poder responder: um alimento do INSA com o iodo da CIQUAL dizia
-        // «INSA» no rodapé e mais nada.
+        // **O nome da fonte, e mais nada** — e só quando este número não veio de onde veio o
+        // alimento. É como o esboço 22 o desenha: «Iodo 32 µg / CIQUAL · medido», uma marca
+        // por linha e curta. A primeira tentativa pôs aqui a frase inteira, e a corrida no
+        // aparelho mostrou o que ela é vinte e três vezes seguidas: uma parede de texto que
+        // se deixa de ler à terceira linha.
         origem?.let {
             Text(
-                stringResource(Res.string.nutrition_origem_deste, stringResource(provenanceResCurto(it))),
+                stringResource(provenanceResCurto(it)),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
