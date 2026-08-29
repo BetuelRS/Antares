@@ -64,6 +64,17 @@ fun NutritionFactsCard(
      * quanto há, quando o que se sabe é o contrário.
      */
     estados: Map<String, EstadoDeNutriente> = emptyMap(),
+
+    /**
+     * De onde veio cada nutriente que **nao** veio da fonte do alimento.
+     *
+     * O esboco 22 pede a origem por nutriente, e a razao e a fusao por prioridade: um
+     * alimento do INSA pode levar o iodo da CIQUAL. Escreve-se **so onde diverge** — repetir
+     * a origem do alimento em dezoito linhas seria dizer dezoito vezes o que o rodape do
+     * cartao ja diz uma.
+     */
+    origens: Map<String, FoodProvenance> = emptyMap(),
+    origemDoAlimento: FoodProvenance? = null,
 ) {
     val labels = breakdown?.labels.orEmpty()
 
@@ -120,13 +131,28 @@ fun NutritionFactsCard(
                 }
                 if (expanded) {
                     if (breakdown.vitamins.isNotEmpty()) {
-                        MicroSection(stringResource(Res.string.nutrition_vitamins), breakdown.vitamins)
+                        MicroSection(
+                            stringResource(Res.string.nutrition_vitamins),
+                            breakdown.vitamins,
+                            origens,
+                            origemDoAlimento,
+                        )
                     }
                     if (breakdown.minerals.isNotEmpty()) {
-                        MicroSection(stringResource(Res.string.nutrition_minerals), breakdown.minerals)
+                        MicroSection(
+                            stringResource(Res.string.nutrition_minerals),
+                            breakdown.minerals,
+                            origens,
+                            origemDoAlimento,
+                        )
                     }
                     if (breakdown.others.isNotEmpty()) {
-                        MicroSection(stringResource(Res.string.nutrition_others), breakdown.others)
+                        MicroSection(
+                            stringResource(Res.string.nutrition_others),
+                            breakdown.others,
+                            origens,
+                            origemDoAlimento,
+                        )
                     }
                 }
             }
@@ -226,10 +252,20 @@ private fun unidadeDaChave(chave: String): String = when {
 }
 
 @Composable
-private fun MicroSection(title: String, values: List<MicroValue>) {
+private fun MicroSection(
+    title: String,
+    values: List<MicroValue>,
+    origens: Map<String, FoodProvenance> = emptyMap(),
+    origemDoAlimento: FoodProvenance? = null,
+) {
     Spacer(Modifier.height(Spacing.sm))
     Text(title, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-    values.forEach { MicroRow(it) }
+    values.forEach { valor ->
+        // Nula quando o nutriente veio de onde veio o alimento, que e o caso comum. Nesses
+        // a linha fica como estava: o rodape do cartao ja diz a origem, uma vez.
+        val divergente = origens[valor.key]?.takeIf { it != origemDoAlimento }
+        MicroRow(valor, origem = divergente)
+    }
 }
 
 @Composable
@@ -259,7 +295,13 @@ private fun HighlightChip(value: MicroValue) {
 }
 
 @Composable
-private fun MicroRow(value: MicroValue, showBar: Boolean = true) {
+private fun MicroRow(
+    value: MicroValue,
+    showBar: Boolean = true,
+
+    // Nula no caso comum — ver [MicroSection].
+    origem: FoodProvenance? = null,
+) {
     // Acima de 10 as casas decimais não acrescentam nada; abaixo, são a diferença entre
     // 0,8 mg e nada.
     val amount = if (value.amount >= 10) value.amount.roundToInt().toString() else fmtG(value.amount)
@@ -293,6 +335,17 @@ private fun MicroRow(value: MicroValue, showBar: Boolean = true) {
                         MaterialTheme.colorScheme.tertiary
                     else -> MaterialTheme.colorScheme.onSurface
                 },
+            )
+        }
+        // «Da CIQUAL» por baixo do número, e só quando este número não veio de onde veio o
+        // alimento. É o que o esboço 22 pede, e é a resposta a uma pergunta que a app já
+        // deixava fazer sem poder responder: um alimento do INSA com o iodo da CIQUAL dizia
+        // «INSA» no rodapé e mais nada.
+        origem?.let {
+            Text(
+                stringResource(Res.string.nutrition_origem_deste, stringResource(provenanceResCurto(it))),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         if (pct != null && showBar) {

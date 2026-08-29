@@ -59,7 +59,7 @@ const MANIFESTO = join(RAIZ, "tools", "catalogo", "manifesto.json");
  * do que o que está gravado, importa; se não, não lê o ficheiro sequer. Deixá-la para trás
  * numa alteração de conteúdo é distribuir um catálogo que ninguém recebe.
  */
-const VERSAO = 5;
+const VERSAO = 6;
 
 const aceitarDesvios = process.argv.includes("--aceitar-desvios");
 const aceitarQualidade = process.argv.includes("--aceitar-qualidade");
@@ -120,12 +120,25 @@ for (const e of ciqual.alimentos) {
   if (par.micros) {
     const micros = e.micros ? { ...e.micros } : {};
     for (const [k, v] of Object.entries(par.micros)) {
-      if (micros[k] == null && v > 0) { micros[k] = v; microsPreenchidos++; tocado = true; }
+      if (micros[k] == null && v > 0) {
+        micros[k] = v;
+        marcarOrigem(e, k, "USDA");
+        microsPreenchidos++;
+        tocado = true;
+      }
     }
     if (Object.keys(micros).length) e.micros = micros;
   }
   for (const campo of ["sugarsG", "satFatG", "fiberG", "sodiumMg"]) {
-    if (e[campo] == null && par[campo] != null) { e[campo] = par[campo]; tocado = true; }
+    if (e[campo] == null && par[campo] != null) {
+      e[campo] = par[campo];
+      // A fibra e o sódio acabam dentro dos micros — ver `microsCom`. Os outros dois ficam
+      // em coluna e não têm onde levar a marca, que é a armadilha que o
+      // `onde-vive-o-nutriente.test.mjs` já vigia.
+      if (campo === "fiberG") marcarOrigem(e, "fiber_g", "USDA");
+      if (campo === "sodiumMg") marcarOrigem(e, "sodium_mg", "USDA");
+      tocado = true;
+    }
   }
   if (tocado) enriquecidos++;
 }
@@ -198,6 +211,10 @@ for (const e of tudo) {
   if (!tabela || !Object.keys(tabela).length) continue;
   if (e.micros != null) continue;
   e.micros = tabela;
+  // Estes micros não são do alimento: são de um alimento equivalente da CIQUAL, escolhido à
+  // mão. É o que o ecrã já dizia em prosa — «micronutrientes de um alimento equivalente da
+  // CIQUAL» — e passa a estar na linha de cada nutriente, que é onde se lê o número.
+  for (const k of Object.keys(tabela)) marcarOrigem(e, k, "CIQUAL");
   curadosComMicros++;
 }
 console.log(`curados que ganharam micros da tabela: ${curadosComMicros}`);
@@ -586,6 +603,46 @@ function microsCom(e) {
   return Object.keys(micros).length ? ordenar(micros) : null;
 }
 
+/**
+ * De onde veio **este** nutriente, quando não veio da fonte do alimento.
+ *
+ * O esboço 22 pede a origem por nutriente, e a razão é a fusão por prioridade: um alimento do
+ * INSA pode levar o iodo da CIQUAL, e um da CIQUAL pode levar metade dos micros do USDA. Uma
+ * origem por alimento diz a de quem lhe deu o nome e as calorias, e cala a dos outros.
+ *
+ * **Só se escreve a excepção.** O caso comum — o nutriente vem de onde vem o alimento — não
+ * ocupa um byte, e a app resolve-o em leitura. É a mesma escolha de formato da ausência
+ * tipada: o comum fica nu, e só o que diverge se marca.
+ */
+function marcarOrigem(e, chave, origem) {
+  e.microsOrigem ??= {};
+  e.microsOrigem[chave] = origem;
+}
+
+/**
+ * As origens que sobrevivem à emissão: só as dos nutrientes que ficaram mesmo no alimento.
+ *
+ * A `coerencia` apaga a água de quem não fecha o balanço de massa, e a fusão faz desaparecer
+ * o alimento perdedor. Uma marca de origem para um nutriente que já não existe é ruído que a
+ * app teria de aprender a ignorar.
+ */
+function origensCom(e, micros) {
+  if (!e.microsOrigem || !micros) return null;
+  const saida = {};
+  for (const [k, v] of Object.entries(e.microsOrigem)) {
+    if (micros[k] != null && v !== origemDoAlimento(e)) saida[k] = v;
+  }
+  return Object.keys(saida).length ? ordenar(saida) : null;
+}
+
+/** A origem que a app deduz do alimento, e que por isso não vale a pena escrever de novo. */
+function origemDoAlimento(e) {
+  if (e.id.startsWith("ciqual-")) return "CIQUAL";
+  if (e.id.startsWith("tca-")) return "TCA";
+  if (e.id.startsWith("usda-")) return "USDA";
+  return null;
+}
+
 /** Por ordem de chave, para o `git diff` do catálogo dizer o que mudou e não onde mudou. */
 function ordenar(mapa) {
   const saida = {};
@@ -611,6 +668,10 @@ const alimentos = vivos.map((e) => ({
   // micronutrientes a sério, e viver nos dois sítios era a app poder mostrar dois números
   // para o mesmo alimento — já acontecia em 29 deles, porque a coluna arredondava.
   micros: microsCom(e),
+
+  // De onde veio cada nutriente que **não** veio da fonte do alimento. Ausente no caso
+  // comum, que é a esmagadora maioria — ver `marcarOrigem`.
+  ...(origensCom(e, microsCom(e)) ? { microsOrigem: origensCom(e, microsCom(e)) } : {}),
 
   // A família de confeção. Nula quer dizer «não se cozinha isto» e não «não sabemos»: é o
   // que faz a app não oferecer «e se for cozido?» a um gelado.

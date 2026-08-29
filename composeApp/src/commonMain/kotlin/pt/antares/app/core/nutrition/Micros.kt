@@ -48,6 +48,37 @@ fun estadosDeJson(texto: String?): Map<String, EstadoDeNutriente> =
         ?: emptyMap()
 
 /**
+ * De onde veio cada nutriente que não veio da fonte do alimento.
+ *
+ * O mapa traz **só as excepções** — é assim que o oleoduto o escreve, e é o que faz esta
+ * coluna custar poucos bytes em 7 932 alimentos. Quem quiser a origem de um nutriente
+ * qualquer pergunta ao [origemDoNutriente], que sabe o que fazer com a ausência.
+ *
+ * Uma origem que esta versão da app não conheça é deitada fora em vez de rebentar a leitura:
+ * o catálogo actualiza-se sozinho e pode vir de uma versão mais recente do que ela.
+ */
+fun origensDeJson(texto: String?): Map<String, FoodProvenance> =
+    lerObjecto(texto)
+        ?.mapNotNull { (chave, valor) ->
+            val bruto = (valor as? JsonPrimitive)?.takeIf { it.isString }?.content ?: return@mapNotNull null
+            FoodProvenance.entries.firstOrNull { it.name == bruto }?.let { chave to it }
+        }
+        ?.toMap()
+        ?: emptyMap()
+
+/**
+ * A origem de **um** nutriente: a excepção quando ela existe, e a do alimento quando não.
+ *
+ * A ausência não é falta de informação — é a informação. Escrever a origem do alimento em
+ * cada uma das suas dezoito chaves seria repetir o mesmo facto dezoito vezes por linha.
+ */
+fun origemDoNutriente(
+    chave: String,
+    origens: Map<String, FoodProvenance>,
+    doAlimento: FoodProvenance,
+): FoodProvenance = origens[chave] ?: doAlimento
+
+/**
  * O objeto inteiro, sem julgar o que está lá dentro.
  *
  * O `ignoreUnknownKeys` importa: a lista de nutrientes cresce, e um catálogo semeado por uma

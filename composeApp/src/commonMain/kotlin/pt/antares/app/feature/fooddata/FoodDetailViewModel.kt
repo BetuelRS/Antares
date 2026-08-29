@@ -31,7 +31,9 @@ import pt.antares.app.feature.stats.NutritionStatsRepository
 import kotlin.math.roundToInt
 import pt.antares.app.core.nutrition.microsDeJson
 import pt.antares.app.core.nutrition.EstadoDeNutriente
+import pt.antares.app.core.nutrition.FoodProvenance
 import pt.antares.app.core.nutrition.estadosDeJson
+import pt.antares.app.core.nutrition.origensDeJson
 import pt.antares.app.core.nutrition.microsParaJson
 
 data class PortionState(
@@ -50,6 +52,10 @@ data class PortionState(
     // O que a fonte procurou e não conseguiu medir. Fica à parte dos números porque não
     // entra em conta nenhuma — ver [EstadoDeNutriente].
     val estadosPer100: Map<String, EstadoDeNutriente> = emptyMap(),
+
+    // De onde veio cada nutriente que nao veio da fonte do alimento. So as excepcoes:
+    // ver `origensDeJson`.
+    val origensPer100: Map<String, FoodProvenance> = emptyMap(),
     val reference: EfsaReference? = null,
     val sex: Sex = Sex.MALE,
 
@@ -237,6 +243,7 @@ class FoodDetailViewModel(
 
             val micros = microsDeJson(food?.microsJson)
             val estados = estadosDeJson(food?.microsJson)
+            val origens = origensDeJson(food?.microsOrigemJson)
             val reference = statsRepository.loadReference()
             val perfil = profileRepository.observeProfile().first()
             val sex = perfil?.sex ?: Sex.MALE
@@ -259,6 +266,7 @@ class FoodDetailViewModel(
                     unidadeAprendidaG = minhaUnidade,
                     microsPer100 = micros,
                     estadosPer100 = estados,
+                    origensPer100 = origens,
                     reference = reference,
                     sex = sex,
                     lifeStage = stage,

@@ -54,6 +54,14 @@ data class AlimentoDoCatalogo(
      */
     val micros: JsonObject? = null,
 
+    /**
+     * De onde veio cada nutriente que **não** veio da fonte do alimento.
+     *
+     * Ausente no caso comum, e de propósito: o oleoduto só escreve a excepção. Um alimento
+     * do INSA pode levar o iodo da CIQUAL e um da CIQUAL pode levar metade dos micros do
+     * USDA — e uma origem por alimento diz a de quem lhe deu o nome e cala a dos outros.
+     */
+    val microsOrigem: JsonObject? = null,
     /** A família de confeção, ou nulo quando o alimento não se cozinha. Ver [FoodEntity]. */
     val familia: String? = null,
 
@@ -115,6 +123,7 @@ internal fun linhaDe(
     fatG = alimento.fatG,
     satFatG = alimento.satFatG,
     microsJson = alimento.micros?.toString(),
+    microsOrigemJson = alimento.microsOrigem?.toString(),
     familia = alimento.familia,
     porcoesJson = alimento.porcoes?.let { Json.encodeToString(it) },
     servingName = alimento.servingName,
@@ -304,7 +313,7 @@ class FoodSeeder(
          * [CatalogoTemVersaoTest] não deixa que uma suba sem a outra: se ficasse para
          * trás, o catálogo novo viajava dentro do APK e não entrava em telemóvel nenhum.
          */
-        const val VERSAO_DO_CATALOGO = 5
+        const val VERSAO_DO_CATALOGO = 6
 
         private const val NENHUMA = 0
         private const val KEY_CATALOGO = "catalogo_versao"

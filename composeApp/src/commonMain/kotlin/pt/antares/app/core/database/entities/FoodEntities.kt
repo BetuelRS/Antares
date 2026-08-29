@@ -48,6 +48,18 @@ data class FoodEntity(
     // coluna por cada deixaria a tabela quase toda a null. Nulo aqui é o que faz um
     // alimento não contribuir para os ecrãs de micronutrientes.
     val microsJson: String?,
+
+    /**
+     * De onde veio cada nutriente que **não** veio da [source] deste alimento, em JSON.
+     *
+     * A fusão por prioridade faz um alimento do INSA levar o iodo da CIQUAL, e um da CIQUAL
+     * levar metade dos micros do USDA. Até aqui o ecrã dizia uma origem para o alimento
+     * inteiro, que é a de quem lhe deu o nome e as calorias — e calava a dos outros números.
+     *
+     * **Só a excepção é escrita.** Nulo, que é o caso de 7 261 dos 7 932 alimentos, quer
+     * dizer que todos os nutrientes vieram de onde veio o alimento.
+     */
+    @ColumnInfo(defaultValue = "NULL") val microsOrigemJson: String? = null,
     val servingName: String?,
     val servingGrams: Double?,
 

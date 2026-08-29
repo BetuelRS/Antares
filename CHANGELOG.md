@@ -21,6 +21,8 @@ que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
 emulador ecrã a ecrã, e — a terceira — os dezassete esboços comparados um a um com o que a app
 faz hoje, incluindo os das áreas que ainda não têm versão.*
 
+Esquema da base: **v36**, catálogo **v6**.
+
 ### Alterado
 
 - **O microfone, a câmara e o leitor de códigos passam a viver dentro do campo de procura**, e
@@ -85,6 +87,12 @@ faz hoje, incluindo os das áreas que ainda não têm versão.*
   amostras, um rótulo tem tolerâncias legais, e uma estimativa é um palpite. A app já levava
   essa margem até ao total do dia; faltava dizê-la onde ela nasce, que é onde se escolhe o
   alimento.
+- **Cada nutriente diz de onde veio, quando não veio de onde veio o alimento.** Um alimento
+  medido em Portugal pode levar o iodo da tabela francesa e metade das vitaminas da americana
+  — é o que a junção das três fontes faz —, e a app dizia uma origem só, a de quem lhe deu o
+  nome e as calorias. Agora a linha do iodo diz «Este valor vem da Tabela da CIQUAL», e as que
+  não dizem nada são as que vieram de onde o alimento veio. São 671 alimentos com pelo menos
+  um nutriente de outra fonte.
 - **O diário reparte a margem do dia pelas origens**, da que mais traz para a que menos traz.
   «±150 kcal» não sugere gesto nenhum; saber que 120 dessas vêm dos 400 kcal que a AI adivinhou
   sugere um — pesar aquele prato. Aparece nos mesmos dois casos em que a margem já aparecia, e

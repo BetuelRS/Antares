@@ -105,10 +105,10 @@ estado de uma execução no GitHub, que um teste local não consegue consultar s
 
 ## Porquê tantas
 
-Vinte e nove é muito, e o risco é conhecido: uma lista longa lê-se uma vez e nunca
+Trinta é muito, e o risco é conhecido: uma lista longa lê-se uma vez e nunca
 mais. A defesa é a coluna da direita.
 
-Este repositório já provou qual é o filtro. Há **62 testes-guarda** documentados em
+Este repositório já provou qual é o filtro. Há **64 testes-guarda** documentados em
 [Testes-guarda](testes-guarda.md), e foram eles — não os documentos — que fizeram
 as decisões sobreviver a meses de trabalho. As regras marcadas **teste** cuidam-se
 sozinhas. As marcadas **tu** são decisões, e por isso não podem ser automatizadas.

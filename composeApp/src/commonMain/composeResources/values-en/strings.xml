@@ -379,6 +379,7 @@
     <string name="origem_curta_curated">Written by hand</string>
     <string name="origem_curta_user">Created by you</string>
     <string name="origem_curta_unknown">No declared source</string>
+    <string name="nutrition_origem_deste">This value comes from the %1$s</string>
     <string name="nutrition_source_label">Data source</string>
     <string name="nutrition_states_title">Looked for, not found</string>
     <string name="nutrition_state_traces">traces</string>

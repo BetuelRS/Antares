@@ -1,7 +1,7 @@
 {
-  "versao": 5,
+  "versao": 6,
   "url": "https://github.com/BetuelRS/Antares/releases/latest/download/catalogo.json",
-  "sha256": "cf2d73c1fbe4058ccbcadc50145bda6e045bf5dd181212c6efa669f6ad0dc0e4",
+  "sha256": "d877e8d33f90627d6c66f88e7a69218d311c238d5ae0d80ee159e822857648b2",
   "alimentos": 7932,
-  "nota": "7932 alimentos, catálogo v5."
+  "nota": "7932 alimentos, catálogo v6."
 }
