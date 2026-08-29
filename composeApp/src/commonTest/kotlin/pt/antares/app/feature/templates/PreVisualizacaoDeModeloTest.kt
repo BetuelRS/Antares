@@ -105,4 +105,26 @@ class PreVisualizacaoDeModeloTest {
     fun `uma refeicao vazia soma zero`() {
         assertEquals(0, pre().copy(itens = emptyList()).kcal)
     }
+
+    /**
+     * O item tirado fica na pré-visualização, à espera de voltar.
+     *
+     * **Não é um detalhe de arrumação.** O desfazer da app inteira é um aviso ao fundo do
+     * ecrã, e a folha da refeição guardada é uma janela por cima do andaime onde esse aviso
+     * se desenha: no aparelho, tirar um item mostrava um desfazer que não aparecia sequer na
+     * árvore de acessibilidade. O que volta atrás tem de viver dentro da folha.
+     */
+    @Test
+    fun `o item removido viaja com a pre-visualizacao`() {
+        val item = item("Arroz", 150.0, 200)
+        val p = pre().copy(removido = item)
+
+        assertEquals(item, p.removido)
+    }
+
+    /** Sem nada removido, não há nada para desfazer — e é o estado normal. */
+    @Test
+    fun `por omissao nao ha nada removido`() {
+        assertEquals(null, pre().removido)
+    }
 }

@@ -69,6 +69,16 @@ que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
   topo do ecrã com a lista pelo meio.
 - **O estado vazio da pesquisa deixa de dizer «escreve pelo menos 2 letras»** a quem ainda
   não registou nada. Descrevia o campo, e não o que faltava na lista.
+- **Uma receita sem nome deixa de ser uma linha em branco.** Ela nasce no instante em que se
+  abre a folha de ingredientes ou a de passos, e quem recua sem escrever nada deixava-a na
+  lista sem nada escrito — e apagar uma receita passa por conseguir abri-la.
+- **A colher de sopa também desaparece nos alimentos que trazem a porção da própria fonte**,
+  e não só nos que têm porções nomeadas à parte.
+- **Tirar um item de uma refeição guardada passa a ter volta atrás visível.** O desfazer da
+  app é um aviso ao fundo do ecrã, e a folha da refeição é uma janela por cima dele: o aviso
+  não chegava a aparecer. Passa a ser uma linha dentro da folha, sem os quatro segundos de
+  corrida.
+- **Uma frase em inglês mostrava a barra invertida no ecrã.**
 
 ---
 

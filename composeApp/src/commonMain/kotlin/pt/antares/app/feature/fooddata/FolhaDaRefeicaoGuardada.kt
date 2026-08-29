@@ -55,6 +55,7 @@ import pt.antares.app.generated.resources.refeicao_item_removido
 import pt.antares.app.generated.resources.refeicao_nome
 import pt.antares.app.generated.resources.refeicao_renomear
 import pt.antares.app.generated.resources.templates_delete
+import pt.antares.app.generated.resources.undo_action
 import kotlin.math.roundToInt
 
 private val ALTURA_DA_LISTA = 320.dp
@@ -80,7 +81,6 @@ internal fun FolhaDaRefeicaoGuardada(
 ) {
     val desfazer = rememberDesfazer()
     val aplicada = stringResource(Res.string.modelo_aplicado)
-    val itemRemovido = stringResource(Res.string.refeicao_item_removido)
     var aRenomear by rememberSaveable { mutableStateOf(false) }
 
     if (aRenomear) {
@@ -135,20 +135,35 @@ internal fun FolhaDaRefeicaoGuardada(
                             " · ${pre.kcalDe(item)} ${stringResource(Res.string.common_kcal)}",
                         emCartao = false,
                         aoLado = {
-                            IconButton(
-                                onClick = {
-                                    val id = item.id
-                                    viewModel.removerItemDoModelo(id) {
-                                        desfazer(itemRemovido) {
-                                            viewModel.restaurarItemDoModelo(id)
-                                        }
-                                    }
-                                },
-                            ) {
+                            IconButton(onClick = { viewModel.removerItemDoModelo(item.id) }) {
                                 Icon(Icons.Default.Close, stringResource(Res.string.common_delete))
                             }
                         },
                     )
+                }
+            }
+
+            // O desfazer de tirar um item vive **aqui dentro**, e não no aviso ao fundo do
+            // ecrã como o resto da app. A folha é uma janela por cima do andaime, e o aviso
+            // desenha-se por baixo dela: no aparelho não aparecia sequer na árvore de
+            // acessibilidade. Um desfazer que ninguém vê não é um desfazer.
+            //
+            // De caminho fica melhor do que o aviso: sem corrida contra os quatro segundos.
+            pre.removido?.let { removido ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(Res.string.refeicao_item_removido, removido.nameSnapshot),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1f),
+                    )
+                    TextButton(onClick = viewModel::restaurarUltimoItem) {
+                        Text(stringResource(Res.string.undo_action))
+                    }
                 }
             }
 

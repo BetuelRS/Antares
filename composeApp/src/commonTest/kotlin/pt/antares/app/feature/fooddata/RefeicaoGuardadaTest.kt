@@ -104,4 +104,28 @@ class RefeicaoGuardadaTest {
     fun `sem nada, a lista fica vazia`() {
         assertEquals(emptyList(), juntarRefeicoes(emptyList(), emptyList()))
     }
+
+    /**
+     * Uma receita sem nome é possível, e apareceu no aparelho.
+     *
+     * A linha dela nasce quando se abre a folha de ingredientes ou a de passos — eles
+     * precisam de um pai onde se agarrar — e quem recua sem escrever nada deixa-a na base.
+     * O que este teste guarda é que ela **entra na lista**: escondê-la fazia dela uma coisa
+     * que ninguém consegue apagar, porque apagar passa por abri-la.
+     */
+    @Test
+    fun `uma receita sem nome continua na lista`() {
+        val lista = juntarRefeicoes(emptyList(), listOf(receita("")))
+
+        assertEquals(1, lista.size)
+        assertEquals("", lista.single().nome)
+    }
+
+    /** E fica no princípio, que é onde se dá por ela. */
+    @Test
+    fun `a receita sem nome fica no principio`() {
+        val lista = juntarRefeicoes(listOf(modelo("Almoço")), listOf(receita("")))
+
+        assertEquals("", lista.first().nome)
+    }
 }

@@ -279,7 +279,11 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
         // unidade de volume aplicada a todos os alimentos — 15 g de azeite faz sentido,
         // 15 g de bife não. Onde há porções nomeadas, elas vieram de uma fonte que mediu
         // este alimento, e uma colher genérica por baixo delas é ruído a competir com dado.
-        if (state.porcoesExtra.isEmpty()) {
+        //
+        // **As porções nomeadas vêm de dois sítios**, e a primeira versão disto só olhava
+        // para um: a `porcoesExtra`, e não a porção do próprio alimento. No aparelho, o
+        // «Arroz carreteiro» mostrava «porção (300 g)» e a colher ao lado.
+        if (state.porcoesExtra.isEmpty() && food.servingGrams == null) {
             AssistChip(
                 onClick = { onPick(COLHER_DE_SOPA_G) },
                 label = { Text(stringResource(Res.string.food_tbsp)) },

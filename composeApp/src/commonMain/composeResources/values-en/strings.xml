@@ -340,7 +340,7 @@
     <string name="search_tab_favorites">Favorites</string>
     <string name="search_tab_mine">Mine</string>
     <string name="search_min_chars">Type at least 2 letters to search.</string>
-    <string name="search_sem_historico">This is where you\'ll see what you eat most, what you ate recently, and what you star. There\'s nothing yet — type a food name to get started.</string>
+    <string name="search_sem_historico">This is where you'll see what you eat most, what you ate recently, and what you star. There's nothing yet — type a food name to get started.</string>
     <string name="food_estimated_corrigir">Correct this food</string>
     <string name="search_empty_title">No foods</string>
     <string name="search_empty_subtitle">Try another term or create your own food.</string>
@@ -491,6 +491,7 @@
     <string name="recipe_retencao_nota">Counted with what heat destroys: most minerals stay, and the B vitamins and vitamin C are partly lost.</string>
     <string name="recipe_add_ingredient">Add ingredient</string>
     <string name="recipe_delete">Delete recipe</string>
+    <string name="recipe_sem_nome">Untitled recipe</string>
     <string name="recipe_delete_title">Delete this recipe?</string>
     <string name="recipe_delete_body">The recipe stops appearing in search. Meals already logged with it are unchanged.</string>
     <string name="recipe_per100">Per 100 g</string>
@@ -975,7 +976,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="modelo_multiplicador">Times</string>
     <string name="modelo_aplicar">Add to diary</string>
     <string name="modelo_aplicado">Meal added</string>
-    <string name="templates_delete">Delete template</string>
+    <string name="templates_delete">Delete saved meal</string>
     <string name="templates_empty_title">No templates yet</string>
     <string name="templates_empty_subtitle">Save a meal as a template from the «⋮» menu on any diary meal.</string>
 
@@ -1202,7 +1203,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="refeicao_kcal_dose">%1$d kcal/serving</string>
     <string name="refeicao_renomear">Rename</string>
     <string name="refeicao_nome">Name</string>
-    <string name="refeicao_item_removido">Item removed</string>
+    <string name="refeicao_item_removido">%1$s was taken out.</string>
     <string name="search_your_foods">Your foods</string>
     <string name="add_entry_quick">Calories only</string>
     <string name="add_entry_quick_desc">For when logging properly is not going to happen. One number and move on.</string>
@@ -1270,7 +1271,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_nunca_hoje">There is still no backup of your data.</string>
     <string name="copia_inclui">What goes in the backup</string>
     <string name="copia_inclui_total">Records in total: %1$s.</string>
-    <string name="copia_nao_inclui">Not included, and deleted on its own: a photo of a meal lasts %1$s days on the phone. Three a day is close to a thousand a year, and across five rotating copies they would fill a phone nobody asked to fill. The meal\'s numbers stay forever and go in the copy — the photo is only for reviewing last month.</string>
+    <string name="copia_nao_inclui">Not included, and deleted on its own: a photo of a meal lasts %1$s days on the phone. Three a day is close to a thousand a year, and across five rotating copies they would fill a phone nobody asked to fill. The meal's numbers stay forever and go in the copy — the photo is only for reviewing last month.</string>
     <string name="copia_conta_linha">%1$s: %2$s</string>
     <string name="copia_conta_food_log">Meals</string>
     <string name="copia_conta_weight_log">Weigh-ins</string>

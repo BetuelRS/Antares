@@ -28,6 +28,19 @@ data class PreVisualizacaoDeModelo(
      * ponha lá, e o estado deixa de poder ser inválido.
      */
     val multiplicador: Double = 1.0,
+
+    /**
+     * O último item tirado, à espera de voltar.
+     *
+     * **Vive aqui e não num aviso ao fundo do ecrã.** A folha é uma janela por cima de tudo,
+     * e o aviso de anular da app desenha-se no andaime que fica por baixo dela: tirar um item
+     * mostrava um desfazer que ninguém via nem conseguia tocar — verificado no aparelho a
+     * 2026-08-28, onde ele nem sequer aparecia na árvore de acessibilidade.
+     *
+     * Dentro da folha não há corrida contra os quatro segundos do aviso: fica enquanto a
+     * folha estiver aberta, que é o tempo em que a pessoa ainda está a olhar para o que fez.
+     */
+    val removido: MealTemplateItemEntity? = null,
 ) {
     /** As calorias que vão mesmo entrar, já com o multiplicador. */
     val kcal: Int get() = (itens.sumOf { it.kcalSnapshot } * multiplicador).roundToInt()

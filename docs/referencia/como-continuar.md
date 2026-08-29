@@ -23,7 +23,7 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 - **2.18.1 é a última publicada**, a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
   **Treze das 51 versões do plano feitas** — a 2.18.1 é uma metade partida, e não uma vaga
   nova, como a 2.5.1. Árvore verde: 1633 testes Kotlin, 54 das ferramentas, 68 Deno,
-  detekt e lint limpos.
+  detekt e lint limpos. Depois da releitura: **1638 testes Kotlin e 54 das ferramentas**.
 - **A auditoria com o estudo está feita**, a 2026-08-28, e ainda não saiu numa versão. O que
   mudou está por publicar: ver o CHANGELOG e os registos de releitura no plano. **Uma das
   correcções muda números já gravados** — o viés por sexo da fita métrica sobe 2,6 pontos a
@@ -81,6 +81,43 @@ o nome trocado não rebenta, não dá erro, e custa uma versão a corrigir.
 premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que a corrida no aparelho mostrou
+
+**Da releitura com o estudo** (emulador Android 16, x86_64, instalação limpa). Foi a corrida
+que mais rendeu até hoje: **quatro defeitos, e nenhum deles visto por 1 638 testes.**
+
+1. **Uma string mostrava a barra invertida no ecrã.** O estado vazio da pesquisa dizia, em
+   inglês, «This is where you\'ll see what you eat most». O Compose Resources **não desfaz o
+   escape do XML do Android** — a barra vai para o ecrã como qualquer outro carácter. As
+   outras trezentas strings inglesas escrevem o apóstrofo nu; as duas que traziam a barra
+   eram as duas que eu tinha acabado de escrever. Corrigido, com teste-guarda gémeo do que já
+   existia para o `%%`.
+2. **A lista das refeições tinha uma linha sem nome.** Uma receita nasce no instante em que
+   se abre a folha de ingredientes ou a de passos — eles precisam de um pai onde se agarrar —
+   e quem recua sem escrever nada deixa-a na base. Com a lista só, ela passou a ser uma linha
+   em branco com uma seta. Passa a dizer «Receita sem nome», que é o que a torna apagável:
+   apagar uma receita passa por abri-la.
+3. **A colher de sopa continuava a aparecer com uma porção nomeada.** A correcção da área 03
+   escondia-a quando havia `porcoesExtra` — e as porções nomeadas vêm de **dois** sítios. O
+   «Arroz carreteiro» mostrava «porção (300 g)» e a colher ao lado.
+4. **O desfazer de tirar um item de uma refeição guardada não existia.** A folha é uma janela
+   por cima do andaime, e o aviso de anular desenha-se no andaime: no aparelho ele não
+   aparecia sequer na árvore de acessibilidade. **Construí um desfazer que ninguém alcançava.**
+   Passa a ser uma linha dentro da própria folha — «X saiu da refeição · Anular» —, que de
+   caminho não tem a corrida contra os quatro segundos.
+
+**O que a corrida confirmou a funcionar:** a lista só, ordenada por nome e com a origem
+escrita na linha, exactamente como o esboço a desenha · os chips ×0,5 ×1 ×1,5 ×2, com 525
+kcal a passar a 263 e a 1050, e as gramas a acompanhar · mudar o nome, que chega à lista no
+mesmo instante · tirar um item e voltar atrás · o botão flutuante a dizer «Nova receita» no
+separador das refeições · o aviso «este valor é estimado» com o caminho para corrigir · a
+linha do que a cópia **não** leva, com os sessenta dias tirados da constante · a margem da
+Mifflin no «mostra-me as contas» — «1986 kcal, com 199 para cada lado» · e o interruptor das
+metas adaptativas a mudar de texto quando se desliga.
+
+**O que a corrida não conseguiu provar:** nada de novo. O aviso de anular do resto da app
+continua a não se conseguir tocar por `adb` — ver as armadilhas.
+
+### As corridas anteriores
 
 **Da 2.18.0 e da 2.18.1** (emulador Android 16, x86_64):
 

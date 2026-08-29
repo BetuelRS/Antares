@@ -491,6 +491,7 @@
     <string name="recipe_retencao_nota">Contado com o que o lume destrói: os minerais quase todos ficam, e as vitaminas do grupo B e a C perdem-se em parte.</string>
     <string name="recipe_add_ingredient">Adicionar ingrediente</string>
     <string name="recipe_delete">Apagar receita</string>
+    <string name="recipe_sem_nome">Receita sem nome</string>
     <string name="recipe_delete_title">Apagar esta receita?</string>
     <string name="recipe_delete_body">A receita deixa de aparecer na pesquisa. As refeições já registadas com ela não se alteram.</string>
     <string name="recipe_per100">Por 100 g</string>
@@ -976,7 +977,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="modelo_multiplicador">Vezes</string>
     <string name="modelo_aplicar">Adicionar ao diário</string>
     <string name="modelo_aplicado">Refeição adicionada</string>
-    <string name="templates_delete">Apagar template</string>
+    <string name="templates_delete">Apagar refeição guardada</string>
     <string name="templates_empty_title">Sem templates ainda</string>
     <string name="templates_empty_subtitle">Guarda uma refeição como template no menu «⋮» de cada refeição do diário.</string>
 
@@ -1203,7 +1204,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="refeicao_kcal_dose">%1$d kcal/dose</string>
     <string name="refeicao_renomear">Mudar o nome</string>
     <string name="refeicao_nome">Nome</string>
-    <string name="refeicao_item_removido">Item removido</string>
+    <string name="refeicao_item_removido">%1$s saiu da refeição.</string>
     <string name="search_your_foods">Os teus alimentos</string>
     <string name="add_entry_quick">Só as calorias</string>
     <string name="add_entry_quick_desc">Quando não dá para registar com detalhe. Um número e segue.</string>

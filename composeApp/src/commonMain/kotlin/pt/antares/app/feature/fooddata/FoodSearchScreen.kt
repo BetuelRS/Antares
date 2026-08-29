@@ -769,7 +769,14 @@ private fun RefeicoesTab(
 
         items(refeicoes, key = { it.chave }) { refeicao ->
             LinhaDaLista(
-                titulo = refeicao.nome,
+                // Uma receita pode não ter nome: a linha dela nasce no instante em que se
+                // abre a folha de ingredientes ou a de passos, porque eles precisam de um
+                // pai onde se agarrar — e quem recua sem escrever nada deixa-a lá. Apanhado
+                // no aparelho a 2026-08-28, onde aparecia uma linha em branco com uma seta.
+                //
+                // Mostra-se com um nome em vez de se esconder, pela mesma razão que um
+                // modelo vazio aparece na lista: o que não se vê não se apaga.
+                titulo = refeicao.nome.ifBlank { stringResource(Res.string.recipe_sem_nome) },
                 subtitulo = subtituloDaRefeicao(refeicao),
                 // Abre em vez de agir. Aplicar escreve no diário, e um toque numa lista não
                 // pode ser a última coisa que acontece antes de sete registos entrarem no

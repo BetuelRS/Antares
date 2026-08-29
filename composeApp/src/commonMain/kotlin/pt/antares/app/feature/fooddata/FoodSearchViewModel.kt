@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.MealTemplateEntity
+import pt.antares.app.core.database.entities.MealTemplateItemEntity
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.feature.recipe.RecipeRepository
@@ -325,26 +326,31 @@ class FoodSearchViewModel(
      * lista em memória: é a mesma leitura que o desfazer usa a seguir, e assim as duas não
      * podem discordar.
      */
-    fun removerItemDoModelo(itemId: String, onRemovido: () -> Unit) {
+    fun removerItemDoModelo(itemId: String) {
         val pre = _preVisualizacao.value ?: return
+        val item = pre.itens.firstOrNull { it.id == itemId } ?: return
         viewModelScope.launch {
             templateRepository.removerItem(itemId)
-            recarregarPreVisualizacao(pre.modelo.id)
-            onRemovido()
+            recarregarPreVisualizacao(pre.modelo.id, removido = item)
         }
     }
 
-    fun restaurarItemDoModelo(itemId: String) {
+    /** Devolve o último item tirado. Sem nenhum à espera, não faz nada. */
+    fun restaurarUltimoItem() {
         val pre = _preVisualizacao.value ?: return
+        val item = pre.removido ?: return
         viewModelScope.launch {
-            templateRepository.restaurarItem(itemId)
-            recarregarPreVisualizacao(pre.modelo.id)
+            templateRepository.restaurarItem(item.id)
+            recarregarPreVisualizacao(pre.modelo.id, removido = null)
         }
     }
 
-    private suspend fun recarregarPreVisualizacao(templateId: String) {
+    private suspend fun recarregarPreVisualizacao(
+        templateId: String,
+        removido: MealTemplateItemEntity?,
+    ) {
         val itens = templateRepository.items(templateId)
-        _preVisualizacao.update { it?.copy(itens = itens) }
+        _preVisualizacao.update { it?.copy(itens = itens, removido = removido) }
     }
 
     /**

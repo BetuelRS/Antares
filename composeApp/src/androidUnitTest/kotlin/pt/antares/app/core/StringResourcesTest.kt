@@ -31,6 +31,31 @@ class StringResourcesTest {
         )
     }
 
+    /**
+     * O mesmo problema do `%%`, com outra personagem.
+     *
+     * **Apanhado no aparelho a 2026-08-28**, e por nenhum dos 1633 testes: o estado vazio da
+     * pesquisa mostrava, escrito no ecrã, «This is where you\'ll see what you eat most». O
+     * Compose Resources não desfaz o escape do XML do Android, e a barra invertida vai para o
+     * ecrã como qualquer outro carácter.
+     *
+     * O apóstrofo escreve-se nu. É o que as outras trezentas strings inglesas já faziam — as
+     * duas que traziam a barra eram as duas que eu tinha acabado de escrever.
+     */
+    @Test
+    fun `nenhuma string escapa o apostrofo`() {
+        val offenders = stringFiles().flatMap { file ->
+            stringEntry.findAll(file.readText())
+                .filter { it.groupValues[2].contains("\\'") }
+                .map { "${file.parentFile.name}/${it.groupValues[1]}" }
+        }
+        assertEquals(
+            emptyList(),
+            offenders,
+            "o Compose Resources não desfaz o escape — a app mostraria a barra invertida",
+        )
+    }
+
     @Test
     fun `PT e EN tem exatamente as mesmas chaves`() {
         val byLocale = stringFiles().associate { file ->
