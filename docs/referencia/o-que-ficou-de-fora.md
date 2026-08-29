@@ -35,13 +35,17 @@ por estilo. A correção 1 das dez do estudo está fechada.
 
 ## 2.0.4 · As mentiras pequenas
 
-**Uma por verificar: a instrução da cintura.** O estudo diz que «ao nível do umbigo» está
-errado para mulheres e invalida o erro-padrão que a app declara. Hoje o
-`bodycomp_measure_hint` diz *«Mede de manhã, relaxado, com a fita justa mas sem apertar»* —
-**já não fala do umbigo, e também não distingue sexo**. Pode ser a correção certa ou pode ser
-a instrução a perder a referência anatómica toda.
+**A instrução da cintura estava certa, e eu é que não a tinha visto.** Esta secção dizia que
+ela «já não fala do umbigo e também não distingue sexo». Medi uma string — o
+`bodycomp_measure_hint` — e concluí do que faltava nela. As instruções por sexo existem ao
+lado dela: `bodycomp_waist_hint_male` diz «a cintura ao nível do umbigo»,
+`bodycomp_waist_hint_female` diz «no ponto mais estreito do tronco, que costuma ficar acima
+do umbigo», e o `bodycomp_neck_hint` diz «abaixo da laringe». É exactamente o que o
+`estudo/motor/04-corpo.md` pede — e é lá que ele está, e não no `estudo/areas/16-perfil-corpo-e-metas.md`,
+para onde a rota me mandava.
 
-→ Decide-se com o `estudo/areas/16-perfil-corpo-e-metas.md` aberto. **Não decidir sem isso.**
+**O que faltava mesmo era o viés por sexo**, que o mesmo documento pede na linha seguinte e
+o comentário do `NavyUncertainty` já prometia sem cumprir. Corrigido a 2026-08-29.
 
 O `updateSet` está ligado (`WorkoutSessionScreen.kt` chama-o), e a administração saiu do menu.
 
@@ -347,6 +351,71 @@ também erra.
 
 ---
 
+---
+
+# A comparação com os esboços, feita à vista — 2026-08-29
+
+Os esboços foram desenhados no navegador e postos ao lado do emulador, ecrã a ecrã. As
+imagens ficaram numa pasta **Antares-provas**, ao lado do repositório e fora dele: são
+capturas de ecrã, e capturas de ecrã envelhecem sozinhas dentro do git. **Isto não é uma
+leitura do código — é o que aparece no telemóvel.**
+
+## Esboço 05 · «As minhas refeições»
+
+| O esboço desenha | A app faz | |
+|---|---|:--:|
+| Uma lista só, as duas origens misturadas | uma lista só | ✅ |
+| `Almoço de sempre · 4 itens · 640 kcal · guardada do diário` | `Segunda · 1 item · 525 kcal · saved from the diary` | ✅ |
+| `Bacalhau à Gomes de Sá · 7 ingredientes · 512 kcal/dose · 4 doses` | `Bacalhau a Gomes de Sa · 2 ingredients · 47 kcal/serving · 4 servings` | ✅ |
+| Seta `›` em cada linha | seta em cada linha | ✅ |
+| Ao abrir: nome, chips ×0,5 ×1 ×1,5 ×2, itens, registar | igual, com o total ao lado dos chips | ✅ |
+| **Um ecrã próprio**, com «As minhas refeições» no cabeçalho | um separador dentro de «Adicionar comida» | ❌ |
+| **Uma caixa de procura dentro da lista** | não existe — a caixa de cima procura alimentos | ❌ |
+| Um quadrado de imagem à esquerda de cada linha | sem miniatura | ❌ |
+
+**Cinco de oito.** As três que faltam são de arrumação, não de conteúdo: a linha diz tudo o
+que o esboço quer que ela diga.
+
+## Esboço 03 · o ecrã de abertura
+
+O esboço numera seis propostas para a secção 1. Contadas contra o que corre:
+
+| # | O que o esboço pede | | |
+|---|---|:--:|---|
+| 1 | Três separadores em vez de seis | ⚠️ | são três, mas outros: o esboço quer *Tudo · Favoritos · Meus*, a app tem *Procurar · Meus · Refeições* |
+| 2 | Abrir no que interessa: **as tuas refeições**, o que comes mais, os recentes | ⚠️ | dois dos três. **As refeições saíram do ecrã de abertura a 2026-08-29, por minha mão** |
+| 3 | A porção habitual na linha — «180 g habituais» | ❌ | a linha mostra a porção da fonte, não a habitual |
+| 4 | Miniaturas onde a Open Food Facts as tem | ✅ | |
+| 5 | Criar alimento sai do botão flutuante e passa a linha no fim dos resultados | ❌ | continua no botão flutuante |
+| 6 | A refeição e o dia no cabeçalho — «Almoço · hoje» | ❌ | diz «Adicionar comida» |
+
+**Uma feita, duas a meio, três por fazer.**
+
+### O que a comparação apanhou, e a leitura do código não tinha apanhado
+
+**A linha 2 é um erro meu, e é de hoje.** A área 03 diz, em «o que é inútil», que o separador
+«Modelos» duplica a secção «As tuas refeições» do ecrã de abertura. Eu li isso como «há duas
+portas, fecha uma» e fechei **a secção**, ficando com o separador. O esboço mostra que a
+escolha do estudo é a outra: o ecrã de abertura tem *AS TUAS REFEIÇÕES* em primeiro lugar, e
+não há separador nenhum para elas — porque o ponto da área 03 inteira é «abrir no que tu
+comes», sem um toque pelo meio.
+
+Ficou registado como divergência deliberada, e não era: era eu a escolher a porta errada
+por ter lido só a queixa e não o desenho.
+
+**Não se corrige agora**, e a razão é a mesma que já vale para o resto: mexer na navegação
+uma terceira vez na mesma sessão, sem margem para a correr no aparelho de ponta a ponta, é
+como se apanhou o defeito da 2.17.0. Fica em cima da mesa, com a imagem ao lado.
+
+## Esboço 03 · secções 2 e 3
+
+**As cinco propostas da revisão da AI estão feitas** — campo de gramas escrevível, tocar no
+nome abre a troca, «+ acrescentar», «guardar também como refeição», e o aviso legal só na
+revisão. **A voz vai para o interpretador** e não para a pesquisa, que o esboço chama «o
+defeito mais caro da app».
+
+
+
 # O que fica em aberto, junto
 
 Cada linha precisa de autorização para virar trabalho (A1).
@@ -355,6 +424,7 @@ Cada linha precisa de autorização para virar trabalho (A1).
 |---|---|---|
 | **A cafeína e o flúor** — a premissa da decisão de 2.6.0 mudou: 5 215 e 538 alimentos no `food_nutrient.csv` que o oleoduto passou a ler | 2.6.0, medido outra vez a 2026-08-28 | só se o dono reabrir a decisão |
 | **Onde vivem os açúcares e os saturados** — só na coluna, e a `food_nutrient` tem zero linhas dos dois em 7 932 alimentos | bloco D, `estudo/dados/04` §3 | decisão com custo permanente: 81 usos, duas migrações, o mapeador da OFF |
+| **As refeições no ecrã de abertura** — o esboço 03 põe-nas em primeiro, e eu tirei-as a 2026-08-29 ao fechar a porta errada | esboço 03, visto lado a lado | reabrir: a secção com a lista toda, e o separador a sair |
 | **O sítio próprio das refeições guardadas** — alcançável do «Eu» e do diário, fora da pesquisa | 2.18.0, contra o esboço | adiado com razão: o `estudo/propostas/00-o-custo-de-mudar.md` não põe a área 05 nos trinta que defende, e é o item caro dela |
 | **O `FoodRow` com `Card` + `ListItem` do Material** — o último resto das duas linguagens de cartão | 2.3.0, `estudo/areas/20` | precisa de uma corrida no aparelho; é a lista mais usada da app |
 | **Os cinco separadores** — o esboço 20 propõe Hoje · Diário · Treino · Progresso · Mais | 2.3.0 | decisão do dono, não defeito |
