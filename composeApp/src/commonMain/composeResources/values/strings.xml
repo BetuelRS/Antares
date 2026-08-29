@@ -333,20 +333,15 @@
     <string name="search_title">Adicionar alimento</string>
     <string name="search_hint">Pesquisar alimento</string>
     <string name="search_tab_search">Tudo</string>
-    <string name="search_tab_refeicoes">Refeições</string>
     <string name="search_secao_recentes">Recentes</string>
-    <string name="search_secao_favoritos">Favoritos</string>
-    <string name="search_tab_recents">Recentes</string>
     <string name="search_tab_favorites">Favoritos</string>
     <string name="search_tab_mine">Meus</string>
     <string name="search_criar_este">Não encontraste? Criar «%1$s»</string>
     <string name="food_habitual">%1$d g habituais</string>
-    <string name="search_min_chars">Escreve pelo menos 2 letras para pesquisar.</string>
     <string name="search_sem_historico">Aqui vais ver o que comes mais vezes, o que comeste há pouco e o que marcares. Ainda não há nada — escreve o nome de um alimento para começar.</string>
     <string name="food_estimated_corrigir">Corrigir este alimento</string>
     <string name="search_empty_title">Sem alimentos</string>
     <string name="search_empty_subtitle">Tenta outro termo ou cria um alimento teu.</string>
-    <string name="food_create_cta">Criar alimento</string>
 
     <string name="food_portion_title">Porção</string>
     <string name="food_quantity">Quantidade (%1$s)</string>
@@ -463,7 +458,6 @@
     <string name="search_badge_pt">PT</string>
     <string name="search_section_online">Online (Open Food Facts)</string>
 
-    <string name="search_tab_recipes">Receitas</string>
     <string name="recipe_new">Nova receita</string>
     <string name="recipe_edit">Editar receita</string>
     <string name="recipe_name">Nome</string>
@@ -478,7 +472,6 @@
     <string name="recipe_log_by_servings">Registar por dose</string>
     <string name="recipe_metodo">Como se cozinhou?</string>
     <string name="recipe_metodo_hint">Opcional — com isto, as vitaminas que o lume destrói deixam de contar como se sobrevivessem.</string>
-    <string name="recipe_metodo_nenhum">Não vai ao lume</string>
     <string name="recipe_peso_sugerido">As tabelas prevêem %1$d g. Se pesaste, o teu peso ganha.</string>
     <string name="recipe_passos">Preparação</string>
     <string name="recipe_passos_vazio">Sem passos escritos. Uma receita funciona sem eles — os passos são para quando queres voltar a fazê-la igual.</string>
@@ -499,7 +492,6 @@
     <string name="recipe_per100">Por 100 g</string>
     <string name="recipe_empty_ingredients">Ainda sem ingredientes.</string>
     <string name="recipe_log">Registar receita</string>
-    <string name="recipe_ingredients">ingredientes</string>
 
     <string name="stat_title">Estatísticas nutricionais</string>
     <string name="stat_period_day">Dia</string>
@@ -693,7 +685,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_add_exercise">Adicionar exercício</string>
     <string name="session_add_set">+ Série</string>
     <string name="session_edit_set">Corrigir a série</string>
-    <string name="session_weight">kg</string>
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
     <string name="session_warmup">Aquecimento</string>
@@ -970,18 +961,15 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="demo_msg_error">Algo correu mal. Nada ficou a meio.</string>
 
     <string name="common_more">Mais opções</string>
-    <string name="search_tab_templates">Templates</string>
     <string name="templates_save_meal">Guardar como template</string>
     <string name="templates_name_hint">Nome do template</string>
     <string name="add_entry_meals">Refeição guardada</string>
     <string name="add_entry_meals_desc">Repetir uma refeição que já montaste, inteira ou a meio</string>
     <string name="templates_apply_meal">Aplicar refeição guardada</string>
-    <string name="modelo_multiplicador">Vezes</string>
     <string name="modelo_aplicar">Adicionar ao diário</string>
     <string name="modelo_aplicado">Refeição adicionada</string>
     <string name="templates_delete">Apagar refeição guardada</string>
     <string name="templates_empty_title">Sem templates ainda</string>
-    <string name="templates_empty_subtitle">Guarda uma refeição como template no menu «⋮» de cada refeição do diário.</string>
 
     <string name="celebration_title">Nova supernova!</string>
     <string name="celebration_streak_days">%1$d dias seguidos a registar</string>
@@ -1268,7 +1256,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_agora">Copiar agora</string>
     <string name="copia_a_correr">A copiar…</string>
     <string name="copia_falhou">Não foi possível escrever a cópia. Vê se há espaço no telemóvel.</string>
-    <string name="copia_feita">Cópia escrita: %1$s</string>
     <string name="copia_sem_permissao">Falta a permissão para escrever em Documentos. Sem ela a cópia automática não corre, e neste Android não há outra pasta que sobreviva a desinstalar a app.</string>
     <string name="copia_dar_permissao">Dar a permissão</string>
     <string name="copia_atrasada_hoje">A tua última cópia de segurança tem %1$s dias.</string>

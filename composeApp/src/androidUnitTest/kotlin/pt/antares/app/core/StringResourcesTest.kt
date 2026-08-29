@@ -14,6 +14,9 @@ class StringResourcesTest {
 
     private val stringEntry = Regex("""<string name="([^"]+)">(.*?)</string>""", RegexOption.DOT_MATCHES_ALL)
 
+    /** Chaves sem `Res.string.` que mesmo assim se justificam. Vazia hoje — ver o teste. */
+    private val orfasPermitidas = mapOf<String, String>()
+
     @Test
     fun `nenhuma string usa percentagem duplicada`() {
         val files = stringFiles()
@@ -149,6 +152,55 @@ class StringResourcesTest {
             emptyList(),
             offenders,
             "estes rótulos já trazem unidade e o ecrã junta-lhe outra",
+        )
+    }
+
+    /**
+     * Uma string sem quem a use é o resto de um ecrã que mudou de forma, e não dá erro nenhum:
+     * traduz-se, revê-se e viaja no APK para sempre. Treze delas sobreviveram às duas passagens
+     * da auditoria — os separadores antigos da pesquisa, o botão flutuante que deixou de criar,
+     * o campo de texto que virou chips — e só apareceram quando alguém as procurou de propósito.
+     *
+     * A décima terceira é a razão de o teste varrer **só o código da app**: o `session_weight`
+     * dizia «kg» em duro, o ecrã passou a usar o rótulo que conhece o sistema de unidades, e a
+     * chave sobreviveu porque um **teste** continuava a importá-la. Contar os testes como quem
+     * usa faria esta varredura passar por cima exactamente do caso que a justifica.
+     *
+     * A [orfasPermitidas] existe porque uma chave pode ser legítima sem estar num `Res.string.`;
+     * hoje está vazia, e isso é a medida de que a varredura ficou limpa.
+     */
+    @Test
+    fun `nenhuma string fica sem quem a use`() {
+        val chaves = stringEntry.findAll(File(resDir, "values/strings.xml").readText())
+            .map { it.groupValues[1] }
+            .toList()
+        assertTrue(chaves.isNotEmpty(), "não li chave nenhuma de $resDir/values/strings.xml")
+
+        val codigo = listOf("src/commonMain/kotlin", "src/androidMain/kotlin")
+            .map(::File)
+            .filter { it.exists() }
+            .flatMap { it.walkTopDown().filter { f -> f.isFile && f.extension == "kt" } }
+            .joinToString("\n") { it.readText() }
+        val usadas = Regex("""Res\.string\.(\w+)""").findAll(codigo)
+            .map { it.groupValues[1] }
+            .toSet()
+
+        val orfas = chaves.filter { it !in usadas && it !in orfasPermitidas }
+        assertEquals(
+            emptyList(),
+            orfas,
+            "chaves que ninguém usa. Cada uma é uma de duas coisas: uma string a apagar dos " +
+                "dois idiomas, ou uma excepção com a razão escrita neste teste:\n" +
+                orfas.joinToString("\n"),
+        )
+    }
+
+    @Test
+    fun `toda a excecao de string orfa traz a razao por escrito`() {
+        assertEquals(
+            emptyList(),
+            orfasPermitidas.filterValues { it.isBlank() }.keys.toList(),
+            "uma excepção sem razão é uma string esquecida com autorização",
         )
     }
 }

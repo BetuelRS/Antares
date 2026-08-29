@@ -31,7 +31,18 @@ se contou. O ganho de pureza não paga o risco.
 segunda diz de onde veio. Um MAJOR nunca se parte assim — quem perde uma coisa com que contava
 tem de o ler no primeiro número.
 
-Usada uma vez, na **2.5.1** (duas bases), por decisão do dono a 2026-08-22.
+Usada duas vezes:
+
+| | Quando | O que aconteceu |
+|---|---|---|
+| **2.5.1** | 2026-08-22 | a segunda metade foi aberta, medida e **fechada sem sair** — a excepção de numeração foi usada, o número não chegou a ser publicado |
+| **2.18.1** | 2026-08-28 | a segunda metade saiu, e **saiu no mesmo lançamento que a primeira** |
+
+**A segunda vez mostra o limite da excepção.** A 2.18.0 e a 2.18.1 foram para o mesmo APK: o
+`versionName` saltou de `2.17.0` para `2.18.1`, e não há etiqueta `v2.18.0`. **Partir uma
+versão é adiar a segunda metade, não renomear a primeira** — a B2 diz «a segunda entra a
+seguir». Quando as duas metades saem juntas, o que existiu foi uma versão só, e o número do
+meio é uma entrada de changelog sem artefacto por baixo.
 
 ## A fórmula do versionCode
 

@@ -333,20 +333,15 @@
     <string name="search_title">Add food</string>
     <string name="search_hint">Search food</string>
     <string name="search_tab_search">All</string>
-    <string name="search_tab_refeicoes">Meals</string>
     <string name="search_secao_recentes">Recently</string>
-    <string name="search_secao_favoritos">Favourites</string>
-    <string name="search_tab_recents">Recent</string>
     <string name="search_tab_favorites">Favorites</string>
     <string name="search_tab_mine">Mine</string>
     <string name="search_criar_este">Not there? Create %1$s</string>
     <string name="food_habitual">%1$d g usual</string>
-    <string name="search_min_chars">Type at least 2 letters to search.</string>
     <string name="search_sem_historico">This is where you'll see what you eat most, what you ate recently, and what you star. There's nothing yet — type a food name to get started.</string>
     <string name="food_estimated_corrigir">Correct this food</string>
     <string name="search_empty_title">No foods</string>
     <string name="search_empty_subtitle">Try another term or create your own food.</string>
-    <string name="food_create_cta">Create food</string>
 
     <string name="food_portion_title">Portion</string>
     <string name="food_quantity">Amount (%1$s)</string>
@@ -463,7 +458,6 @@
     <string name="search_badge_pt">PT</string>
     <string name="search_section_online">Online (Open Food Facts)</string>
 
-    <string name="search_tab_recipes">Recipes</string>
     <string name="recipe_new">New recipe</string>
     <string name="recipe_edit">Edit recipe</string>
     <string name="recipe_name">Name</string>
@@ -478,7 +472,6 @@
     <string name="recipe_log_by_servings">Log by serving</string>
     <string name="recipe_metodo">How was it cooked?</string>
     <string name="recipe_metodo_hint">Optional — with this, the vitamins heat destroys stop counting as if they had survived.</string>
-    <string name="recipe_metodo_nenhum">Not cooked</string>
     <string name="recipe_peso_sugerido">The tables predict %1$d g. If you weighed it, your weight wins.</string>
     <string name="recipe_passos">Method</string>
     <string name="recipe_passos_vazio">No steps written. A recipe works without them — steps are for when you want to make it the same way again.</string>
@@ -499,7 +492,6 @@
     <string name="recipe_per100">Per 100 g</string>
     <string name="recipe_empty_ingredients">No ingredients yet.</string>
     <string name="recipe_log">Log recipe</string>
-    <string name="recipe_ingredients">ingredients</string>
 
     <string name="stat_title">Nutrition stats</string>
     <string name="stat_period_day">Day</string>
@@ -692,7 +684,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_add_exercise">Add exercise</string>
     <string name="session_add_set">+ Set</string>
     <string name="session_edit_set">Edit set</string>
-    <string name="session_weight">kg</string>
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
     <string name="session_warmup">Warmup</string>
@@ -969,18 +960,15 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="demo_msg_error">Something went wrong. Nothing was left half-done.</string>
 
     <string name="common_more">More options</string>
-    <string name="search_tab_templates">Templates</string>
     <string name="templates_save_meal">Save as template</string>
     <string name="templates_name_hint">Template name</string>
     <string name="add_entry_meals">Saved meal</string>
     <string name="add_entry_meals_desc">Repeat a meal you already built, whole or half</string>
     <string name="templates_apply_meal">Apply a saved meal</string>
-    <string name="modelo_multiplicador">Times</string>
     <string name="modelo_aplicar">Add to diary</string>
     <string name="modelo_aplicado">Meal added</string>
     <string name="templates_delete">Delete saved meal</string>
     <string name="templates_empty_title">No templates yet</string>
-    <string name="templates_empty_subtitle">Save a meal as a template from the «⋮» menu on any diary meal.</string>
 
     <string name="celebration_title">New supernova!</string>
     <string name="celebration_streak_days">%1$d days logging in a row</string>
@@ -1267,7 +1255,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="copia_agora">Back up now</string>
     <string name="copia_a_correr">Backing up…</string>
     <string name="copia_falhou">The backup could not be written. Check that the phone has space.</string>
-    <string name="copia_feita">Backup written: %1$s</string>
     <string name="copia_sem_permissao">Permission to write to Documents is missing. Without it the automatic backup does not run, and on this Android version there is no other folder that survives uninstalling the app.</string>
     <string name="copia_dar_permissao">Grant permission</string>
     <string name="copia_atrasada_hoje">Your last backup is %1$s days old.</string>

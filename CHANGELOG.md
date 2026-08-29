@@ -123,6 +123,12 @@ soma dos ingredientes, e um passo é texto que quem cozinhou escreveu para si pr
 congelada de um dia que pode ter meses; o que lá está deixou de ser óbvio muito antes de
 alguém lhe voltar a tocar. Esquema da base: **v34**.
 
+*Esta versão **não teve APK próprio**: foi partida a meio (regra B2) e as duas metades saíram
+no mesmo lançamento, o da [2.18.1](#2181--2026-08-28). Não há etiqueta `v2.18.0`, e o
+changelog dentro da app apresenta as duas como uma entrada só. Fica em secção própria porque é
+onde o trabalho dela está descrito, e escrito aqui porque um número com data e sem artefacto é
+exactamente o género de coisa que este ficheiro existe para não deixar acontecer em silêncio.*
+
 ### Adicionado
 
 - **Ver antes de aplicar.** Um toque na linha abre a lista do que lá está, com as gramas e as

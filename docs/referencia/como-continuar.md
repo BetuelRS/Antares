@@ -22,12 +22,24 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 - **2.18.1 é a última publicada**, a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
   **Treze das 51 versões do plano feitas** — a 2.18.1 é uma metade partida, e não uma vaga
-  nova, como a 2.5.1. Árvore verde: 1633 testes Kotlin, 54 das ferramentas, 68 Deno,
-  detekt e lint limpos. Depois da releitura: **1638 testes Kotlin e 54 das ferramentas**.
-- **A auditoria com o estudo está feita**, a 2026-08-28, e ainda não saiu numa versão. O que
-  mudou está por publicar: ver o CHANGELOG e os registos de releitura no plano. **Uma das
-  correcções muda números já gravados** — o viés por sexo da fita métrica sobe 2,6 pontos a
-  massa gorda dos homens e desce 2,3 a das mulheres, e o basal acompanha.
+  nova, como a 2.5.1. Contado a 2026-08-29, depois das duas passagens: **1641 testes Kotlin,
+  54 das ferramentas, 68 Deno**, detekt e lint limpos, e o CI verde nos dois últimos commits
+  de `main`.
+- **A auditoria com o estudo está feita**, e foi em **duas passagens**. Nenhuma saiu ainda numa
+  versão — o que mudou está por publicar: ver o CHANGELOG e os registos de releitura no plano.
+  **Uma das correcções muda números já gravados** — o viés por sexo da fita métrica sobe 2,6
+  pontos a massa gorda dos homens e desce 2,3 a das mulheres, e o basal acompanha.
+  - **28 · a releitura**, documento a documento, contra o código.
+  - **29 · os esboços ao lado do emulador**, ecrã a ecrã. Apanhou o que a leitura do código não
+    apanhou, incluindo **um erro que era meu e do próprio dia**: fechei a secção «as tuas
+    refeições» do ecrã de abertura julgando cumprir a área 03, quando o esboço a põe em
+    primeiro lugar. As seis propostas da secção 1 do esboço 03 e o sítio próprio do esboço 05
+    ficaram feitos, e verificados a correr.
+- **O registo de publicação de sete versões estava em falta no plano**, da 2.7.0 à 2.18.1, e
+  foi escrito a 2026-08-29 a partir do `gh release` e do `git` — não da memória. Duas coisas
+  apareceram ao escrevê-lo: a **2.8.0 foi etiquetada com o CI vermelho** (um teste que comparava
+  relógios, corrigido depois), e a **2.18.0 nunca foi um APK** — as duas metades saíram no
+  mesmo lançamento.
 - **A 2.18.0 partiu-se em duas** (regra B2): as refeições guardadas na 2.18.0, os passos de
   preparação na 2.18.1. A segunda metade fica no terceiro número, e a razão está escrita em
   [`versionamento.md`](versionamento.md) — inserir um MINOR a meio deslocava as cem

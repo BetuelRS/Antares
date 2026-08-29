@@ -24,7 +24,6 @@ import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.session_add_set
 import pt.antares.app.generated.resources.session_reps
 import pt.antares.app.generated.resources.session_rest_skip
-import pt.antares.app.generated.resources.session_weight
 import pt.antares.app.testing.Fabricas
 import pt.antares.app.testing.FluxoUiHarness
 import kotlin.test.assertEquals
@@ -98,7 +97,6 @@ class TreinoSerieUiTest : FluxoUiHarness() {
 
         setContent {
             textos.ler(
-                Res.string.session_weight,
                 Res.string.session_reps,
                 Res.string.session_add_set,
                 Res.string.session_rest_skip,
