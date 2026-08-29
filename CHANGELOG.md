@@ -13,7 +13,62 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
-Nada por lançar.
+**A releitura com o estudo.** As treze versões que já saíram tinham sido construídas a partir
+das linhas-resumo do plano, sem um único documento do estudo aberto. Foram abertos todos os
+que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
+
+### Alterado
+
+- **As refeições guardadas passam a ser uma lista só**, ordenada por nome, com a origem
+  escrita na linha — «4 itens · 640 kcal · guardada do diário», ou «7 ingredientes · 512
+  kcal/dose · 4 doses». Eram duas secções com dois títulos, e duas secções obrigam a saber
+  como a refeição foi montada antes de a procurar, que não é a pergunta de quem a quer
+  registar.
+- **O multiplicador de uma refeição guardada passa a chips** — ×0,5 ×1 ×1,5 ×2. Era um campo
+  de texto, e o campo trazia atrás um filtro de algarismos, um tecto de caracteres e três
+  estados que não queriam dizer nada: vazio, zero e negativo.
+- **As refeições guardadas aparecem sempre**, e não só a quem chegou à pesquisa por uma
+  refeição do dia. Deixam também de aparecer em dois sítios ao mesmo tempo — havia cinco
+  numa secção e todas no separador, e era o separador a única forma de ver a sexta.
+- **O botão de criar diz o que vai criar**, e deixa de haver dois botões de criar no mesmo
+  ecrã.
+- **A basal calculada sem massa gorda passa a declarar a margem dela.** A app dizia «cerca de
+  1797 kcal, com 62 para cada lado» a quem tinha medido a cintura, e mostrava um número nu a
+  quem nunca mediu a massa gorda — que é a maioria, e é o caminho com mais margem. A fórmula
+  usada aí erra cerca de 10 % do basal.
+- **A percentagem de massa gorda medida à fita passa a ser corrigida do desvio por sexo.**
+  A fórmula das circunferências dá pouco aos homens e demais às mulheres, sempre na mesma
+  direção. **Isto muda números que já estavam no telemóvel**: sobe 2,6 pontos nos homens,
+  desce 2,3 nas mulheres, e o metabolismo basal acompanha.
+- **O interruptor das metas adaptativas diz o que se usa quando está desligado** — uma regra
+  fixa que ignora a adaptação do corpo e sobrestima a perda ao fim de alguns meses.
+- **O ritmo semanal no ecrã do progresso passa a usar a janela escolhida nas definições.** O
+  perfil de saúde já a usava e este não, e o mesmo número saía diferente nos dois sítios.
+- **O ecrã da cópia de segurança diz o que a cópia não leva** — a fotografia de um prato, que
+  dura sessenta dias no telemóvel e depois se apaga. A decisão era defensável e não estava
+  escrita em lado nenhum.
+- **A colher de sopa deixa de aparecer em alimentos que já têm porções nomeadas.** É uma
+  medida de volume aplicada a tudo: faz sentido no azeite e não no bife.
+
+### Adicionado
+
+- **Mudar o nome de uma refeição guardada, e tirar-lhe um item**, com desfazer. Até aqui só
+  se podia apagar, e um nome mal escolhido no dia em que se guardou durava para sempre.
+- **Editar uma receita a partir do ecrã dela**, onde se vê o que se vai mudar.
+- **O aviso «este valor é estimado» passa a levar a corrigir o alimento.** Dizia que o número
+  era estimado e deixava a pessoa com ele na mão.
+- **Aviso de peso final impossível em receitas sem família de confeção**, que são a maioria:
+  1 200 g de ingredientes aceitavam 50 g de peso final em silêncio, e os valores por 100 g
+  saíam vinte e quatro vezes errados.
+
+### Corrigido
+
+- **Fechar a folha da AI deixa de apagar o que se escreveu.** Cancelar guardava e fechar
+  apagava: um arrastão para baixo por engano custava a frase toda.
+- **A razão de o botão de confirmar da AI estar cinzento aparece ao lado dele**, e não no
+  topo do ecrã com a lista pelo meio.
+- **O estado vazio da pesquisa deixa de dizer «escreve pelo menos 2 letras»** a quem ainda
+  não registou nada. Descrevia o campo, e não o que faltava na lista.
 
 ---
 

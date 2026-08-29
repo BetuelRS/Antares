@@ -3,16 +3,21 @@
 Companheiro de [`a-divida-com-o-estudo.md`](a-divida-com-o-estudo.md). Aquele diz **o que
 abrir**; este diz **o que já se sabe que falta**.
 
-**Lê-se com uma desconfiança:** eu escrevi-o sem ter aberto a maior parte do estudo. Por isso
-está partido em duas metades que não se misturam.
+> **Este ficheiro foi escrito antes da auditoria e tinha erros.** A 2.6.0 e a 2.7.0 estavam
+> descritas como buracos e eram decisões do dono, registadas no plano — comparei o código
+> com o parágrafo da promessa de cada versão e nunca li o bloco «Respondidas a…» que está
+> uns parágrafos abaixo. Está corrigido, e a lição ficou escrita por baixo das duas.
+>
+> **A Parte B esvaziou-se a 2026-08-28**, quando a rota foi lida por inteiro. O que a
+> auditoria fechou está riscado daqui; o que ela abriu está na tabela do fim.
+
+**Lê-se com uma desconfiança**, e esta continua a valer: um número aqui reconta-se antes de
+se voltar a citar, e uma linha por ler nunca se cita como se fosse um achado.
 
 | | O que é | O que vale |
 |---|---|---|
-| **Parte A** | medido no código a 2026-08-28, com o comando ao lado | é verdade hoje |
+| **Parte A** | medido no código, com o comando ao lado | é verdade hoje |
 | **Parte B** | o que ainda não foi lido | é uma lista de trabalho, **não** um veredicto |
-
-Uma linha da Parte B nunca se cita como se fosse um achado. Enquanto o documento do estudo
-não for aberto, a única coisa honesta que se pode dizer é «não sei».
 
 ---
 
@@ -312,46 +317,64 @@ cumprida — o que não estava é eu saber que a estava a pôr.
 
 ---
 
-# Parte B — por ler
+# Parte B — vazia
 
-Nada aqui é um achado. É a lista dos documentos que decidem cada versão já publicada e que
-nunca foram abertos.
+Era a lista dos documentos que decidem cada versão já publicada e que nunca tinham sido
+abertos. **Ficou vazia a 2026-08-28.**
 
-**Encolheu a 2026-08-28.** Foram abertos, e saíram desta tabela:
-`estudo/propostas/00-o-custo-de-mudar.md`, `estudo/dados/02-perder-tudo.md`,
-`estudo/dados/04-as-fontes-de-dados.md`, `estudo/propostas/02-o-catalogo.md`,
-`estudo/areas/03-adicionar-comida.md`, `estudo/areas/05-receitas-e-modelos.md` e os esboços
-03 e 05.
+Foram lidos, e as divergências de cada um estão no registo da versão que lhes toca, dentro do
+`estudo/PLANO-DE-PRODUCAO.md`:
 
-| Versão | Por abrir |
-|---|---|
-| 2.0.3 · 2.0.4 | `estudo/transversal/02-robustez.md`, `estudo/motor/01-metabolismo-e-metas.md`, `estudo/motor/03-peso-tendencia-e-projecao.md`, `estudo/areas/16-perfil-corpo-e-metas.md` |
-| 2.1.0 · 2.2.0 | `estudo/dados/01-o-que-sai-do-telemovel.md`, `estudo/dados/03-sincronizacao-caseira.md`, `estudo/transversal/04-longevidade.md` |
-| 2.3.0 | `estudo/areas/20-navegacao-e-sistema-de-desenho.md` + esboço `20` |
-| 2.4.0 → 2.8.0 | esboço `22-catalogo` |
-| 2.17.0 | `estudo/areas/04-comida-por-ia.md`, `estudo/sistema/02-servidor-e-custo.md` |
+`estudo/propostas/00-o-custo-de-mudar.md` · `estudo/dados/01-o-que-sai-do-telemovel.md` ·
+`estudo/dados/02-perder-tudo.md` · `estudo/dados/03-sincronizacao-caseira.md` ·
+`estudo/dados/04-as-fontes-de-dados.md` · `estudo/propostas/02-o-catalogo.md` ·
+`estudo/areas/03-adicionar-comida.md` · `estudo/areas/04-comida-por-ia.md` ·
+`estudo/areas/05-receitas-e-modelos.md` · `estudo/areas/20-navegacao-e-sistema-de-desenho.md` ·
+`estudo/motor/01-metabolismo-e-metas.md` · `estudo/motor/03-peso-tendencia-e-projecao.md` ·
+`estudo/motor/04-corpo.md` · `estudo/sistema/02-servidor-e-custo.md` ·
+`estudo/transversal/02-robustez.md` · `estudo/transversal/04-longevidade.md` · e os esboços
+`03`, `05`, `20` e `22`.
+
+**Isto não quer dizer que o estudo esteja lido.** Ficam por abrir os documentos das áreas que
+a app ainda não tocou — treino, corrida, jejum, progresso, arranque —, e esses abrem-se
+quando as versões deles chegarem. A rota está em
+[`a-divida-com-o-estudo.md`](a-divida-com-o-estudo.md).
+
+**O `estudo/motor/04-corpo.md` não estava nesta tabela e devia estar.** A instrução da
+cintura por sexo foi encaminhada para o `estudo/areas/16-perfil-corpo-e-metas.md`, onde não
+está — a rota mandava-me para o documento errado, e foi só ao ler que apareceu. Uma rota
+também erra.
 
 ---
 
 # O que fica em aberto, junto
 
-Só o que está na Parte A. Cada linha precisa de autorização para virar trabalho (A1).
+Cada linha precisa de autorização para virar trabalho (A1).
 
 | O quê | Onde nasceu | Casa provável |
 |---|---|---|
 | **A cafeína e o flúor** — a premissa da decisão de 2.6.0 mudou: 5 215 e 538 alimentos no `food_nutrient.csv` que o oleoduto passou a ler | 2.6.0, medido outra vez a 2026-08-28 | só se o dono reabrir a decisão |
+| **Onde vivem os açúcares e os saturados** — só na coluna, e a `food_nutrient` tem zero linhas dos dois em 7 932 alimentos | bloco D, `estudo/dados/04` §3 | decisão com custo permanente: 81 usos, duas migrações, o mapeador da OFF |
 | **O sítio próprio das refeições guardadas** — alcançável do «Eu» e do diário, fora da pesquisa | 2.18.0, contra o esboço | adiado com razão: o `estudo/propostas/00-o-custo-de-mudar.md` não põe a área 05 nos trinta que defende, e é o item caro dela |
-| **A instrução da cintura por sexo** | 2.0.4, por verificar | ler `estudo/areas/16` antes de decidir se é dívida |
+| **O `FoodRow` com `Card` + `ListItem` do Material** — o último resto das duas linguagens de cartão | 2.3.0, `estudo/areas/20` | precisa de uma corrida no aparelho; é a lista mais usada da app |
+| **Os cinco separadores** — o esboço 20 propõe Hoje · Diário · Treino · Progresso · Mais | 2.3.0 | decisão do dono, não defeito |
+| **Descarregar as imagens dos exercícios** — o estudo chama-lhe «a única deste documento que eu faria já» | `estudo/transversal/04` | número próprio; resolve também o offline e a fuga a terceiros |
 | **2 909 alimentos em inglês** | 2.13.0 | trabalho de meses, na oficina |
 | **73,7 % do catálogo sem porção** | 2.14.0 | idem |
 | **111 exercícios que não se registam** | dez do estudo, #7 | 2.22.0, já no plano |
 | **A retenção do ciclo não sai do ecrã** | dez do estudo, #8 | 2.34.0, já no plano |
 | **Centro de treino 7 → 16** | dez do estudo, #9 | 2.20.0, já no plano |
-| **Imagens dos exercícios num repositório de terceiros** | dez do estudo, #10 | provavelmente 2.27.0 — confirmar com `estudo/areas/09-treino-biblioteca.md` |
-| **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data |
+| **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data — e envelheceu bem: hoje está menos errada do que quando foi adiada |
+| **O `food_cache` sem expiração, o custo invisível, o modelo fixado no código** | `estudo/sistema/02` | são do servidor, e o modelo fixado é o ponto fraco da longevidade |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e
 a regra A5 continua a valer: o que entra a meio é troca, não adição.
+
+### O que a auditoria fechou, e não está aqui
+
+A foto do prato fora da cópia (reaberta e decidida, com o silêncio corrigido) · «uma lista
+só» e a origem na linha · o multiplicador em chips · editar uma refeição guardada · a
+instrução da cintura por sexo, que afinal já estava feita e certa.
 
 ---
 

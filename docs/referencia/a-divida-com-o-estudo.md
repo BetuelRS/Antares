@@ -14,7 +14,13 @@ A `estudo/` tem **63 documentos**: 20 de área, 17 esboços visuais, 8 do motor,
 5 transversais, 4 de dados, 3 de propostas, 1 de ausências — mais o `LEIA-ME.md`, o
 `metodo.md` e o `PLANO-DE-PRODUCAO.md`.
 
-**Nunca abri nenhum deles**, tirando o plano. Nem um esboço, em nenhuma das treze versões.
+**Nunca tinha aberto nenhum deles**, tirando o plano. Nem um esboço, em nenhuma das treze
+versões.
+
+> **A dívida foi paga a 2026-08-28.** Os dezassete documentos que a rota manda abrir para o
+> que já saiu foram todos lidos, e o registo de cada versão no plano nomeia os que lhe tocam.
+> O que se segue continua a valer — é a rota para as **próximas** versões, e a regra que
+> impede isto de voltar a acontecer.
 
 A causa não é esquecimento, é desenho — meu:
 
@@ -131,25 +137,31 @@ A lista por versão, com o que foi medido separado do que ainda não foi lido, e
 [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md). Este guia diz o que abrir; esse diz o
 que falta.
 
-## A auditoria do que já saiu
+## A auditoria do que já saiu — **feita a 2026-08-28**
 
-Treze versões do plano saíram, mais a metade partida 2.18.1. **Nenhuma foi construída com o
-estudo aberto.** Isto é a lista de trabalho, não um veredicto: para cada uma, abrir os
-documentos e escrever o que divergiu — sem refazer nada antes de o dono ver a lista.
+Treze versões do plano saíram, mais a metade partida 2.18.1. **Nenhuma tinha sido construída
+com o estudo aberto.** A auditoria está feita: os documentos da rota foram todos abertos e o
+registo de cada versão no plano nomeia os que lhe tocam, com as divergências por baixo.
 
-**A ordem é a do custo de corrigir depois, e não a numérica.** Uma divergência de esquema ou
-de conceito fica mais cara a cada versão que passa por cima; uma divergência de ecrã custa o
-mesmo hoje e daqui a um ano.
-
-| # | Versão | Abrir | Comparar com |
+| # | Versão | Abertos | Estado |
 |---|---|---|---|
-| 1 | **2.18.0 · 2.18.1** | esboço `05`, `estudo/areas/05` | `FoodSearchScreen`, `RecipeEditScreen`, `MealTemplateRepository` — **as divergências já estão escritas acima**; falta o `estudo/areas/05` |
-| 2 | **2.16.0** | esboço `03`, `estudo/areas/03` | `FoodSearchScreen`, `FoodSearchViewModel` |
-| 3 | **2.17.0** | `estudo/areas/04-comida-por-ia.md` | `AiSheet`, `AiViewModel`, `AiRepository` |
-| 4 | **2.4.0 → 2.8.0** (bloco D) | `estudo/dados/04`, `estudo/propostas/02`, esboço `22` | `tools/catalogo/`, `FoodSeeder`, `RecipeCalc` |
-| 5 | **2.3.0** | esboço `20`, `estudo/areas/20` | `composeApp/src/commonMain/kotlin/pt/antares/app/core/designsystem/` |
-| 6 | **2.1.0 · 2.2.0** | `estudo/dados/01`, `estudo/dados/02`, `estudo/dados/03` | `composeApp/src/commonMain/kotlin/pt/antares/app/core/privacy/`, `DestinosScreen` |
-| 7 | **2.0.3 · 2.0.4** | `estudo/transversal/02`, `estudo/motor/01`, `estudo/motor/03` | `composeApp/src/commonMain/kotlin/pt/antares/app/core/calc/` |
+| 1 | **2.18.0 · 2.18.1** | esboço 05, `estudo/areas/05-receitas-e-modelos.md` | seis divergências, **cinco fechadas**; o sítio próprio fica em aberto |
+| 2 | **2.16.0** | esboço 03, `estudo/areas/03-adicionar-comida.md` | três já estavam fechadas, **quatro fechadas agora** |
+| 3 | **2.17.0** | `estudo/areas/04-comida-por-ia.md`, `estudo/sistema/02-servidor-e-custo.md` | **os três defeitos concretos fechados** |
+| 4 | **2.4.0 → 2.8.0** (bloco D) | `estudo/dados/04-as-fontes-de-dados.md`, `estudo/propostas/02-o-catalogo.md`, esboço 22 | quase tudo fechado; sobra meia §3, com teste-guarda e decisão do dono |
+| 5 | **2.3.0** | esboço 20, `estudo/areas/20-navegacao-e-sistema-de-desenho.md` | **fechada**; sobra o `FoodRow`, que precisa do aparelho |
+| 6 | **2.1.0 · 2.2.0** | `estudo/dados/01`, `estudo/dados/02`, `estudo/dados/03` | a foto do prato reaberta e decidida; o §4 do `estudo/dados/02-perder-tudo.md` está ultrapassado |
+| 7 | **2.0.3 · 2.0.4** | `estudo/transversal/02`, `estudo/motor/01`, `estudo/motor/03`, `estudo/motor/04` | **três correcções**, uma delas muda números já gravados |
+
+**O que a auditoria mudou no método**, e vale mais do que a lista: duas entradas do
+[`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md) estavam erradas — a 2.6.0 e a 2.7.0 — e
+erradas do mesmo modo. Comparei o código com o **parágrafo da promessa** de cada versão e
+nunca li o bloco **«Respondidas a…»** que está uns parágrafos abaixo, no mesmo ficheiro.
+Ambas eram decisões do dono, registadas, com a contagem à frente.
+
+> **Uma versão do plano tem duas partes: o que ela prometeu e o que ficou decidido.** Ler só
+> a primeira produz uma lista de buracos que não existem — e uma lista assim é pior do que
+> não haver lista nenhuma, porque manda trabalhar naquilo que já foi decidido não fazer.
 
 **Formato de cada entrada**, escrita por baixo da versão no plano:
 

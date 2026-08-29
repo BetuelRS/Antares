@@ -8,6 +8,10 @@
 > **Nasceu de um falhanço:** treze versões saíram construídas a partir das linhas-resumo do
 > plano, sem um único esboço aberto — e este ficheiro, que é o que se lê ao começar, não
 > mencionava o estudo em lado nenhum. A 2.18.0 divergiu do esboço dela no ponto principal.
+>
+> **A auditoria está feita, a 2026-08-28.** Os dezassete documentos da rota foram lidos e o
+> registo de cada versão no plano nomeia os que lhe tocam. A rota continua a valer para as
+> versões seguintes.
 
 Este ficheiro é o que se lê ao começar uma sessão nova. Substitui a mensagem que antes era
 reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia sem ninguém notar.
@@ -18,8 +22,12 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 - **2.18.1 é a última publicada**, a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
   **Treze das 51 versões do plano feitas** — a 2.18.1 é uma metade partida, e não uma vaga
-  nova, como a 2.5.1. Árvore verde: 1604 testes Kotlin, 52 das ferramentas, 68 Deno,
+  nova, como a 2.5.1. Árvore verde: 1633 testes Kotlin, 54 das ferramentas, 68 Deno,
   detekt e lint limpos.
+- **A auditoria com o estudo está feita**, a 2026-08-28, e ainda não saiu numa versão. O que
+  mudou está por publicar: ver o CHANGELOG e os registos de releitura no plano. **Uma das
+  correcções muda números já gravados** — o viés por sexo da fita métrica sobe 2,6 pontos a
+  massa gorda dos homens e desce 2,3 a das mulheres, e o basal acompanha.
 - **A 2.18.0 partiu-se em duas** (regra B2): as refeições guardadas na 2.18.0, os passos de
   preparação na 2.18.1. A segunda metade fica no terceiro número, e a razão está escrita em
   [`versionamento.md`](versionamento.md) — inserir um MINOR a meio deslocava as cem
