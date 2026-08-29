@@ -41,6 +41,7 @@ import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.rememberDesfazer
 import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.model.MealSlot
+import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.feature.templates.PreVisualizacaoDeModelo
 import pt.antares.app.feature.templates.rotuloDaEscala
 import pt.antares.app.generated.resources.Res
@@ -51,6 +52,7 @@ import pt.antares.app.generated.resources.common_kcal
 import pt.antares.app.generated.resources.common_save
 import pt.antares.app.generated.resources.modelo_aplicado
 import pt.antares.app.generated.resources.modelo_aplicar
+import pt.antares.app.generated.resources.modelo_aplicar_no
 import pt.antares.app.generated.resources.refeicao_item_removido
 import pt.antares.app.generated.resources.refeicao_nome
 import pt.antares.app.generated.resources.refeicao_renomear
@@ -167,8 +169,16 @@ internal fun FolhaDaRefeicaoGuardada(
                 }
             }
 
+            // **O botão diz onde é que a refeição cai.** É o desenho do esboço 05 e o mesmo
+            // princípio do cabeçalho da pesquisa. Sem refeição não há destino nenhum a
+            // nomear — é quem abriu isto para escolher um ingrediente —, e aí fica a frase
+            // antiga, que não promete um sítio.
             PrimaryButton(
-                text = stringResource(Res.string.modelo_aplicar),
+                text = if (slot != null) {
+                    stringResource(Res.string.modelo_aplicar_no, mealSlotLabel(slot).lowercase())
+                } else {
+                    stringResource(Res.string.modelo_aplicar)
+                },
                 onClick = {
                     // Sem dia e sem refeição não há para onde aplicar — é o caso de quem
                     // abriu a pesquisa para escolher um ingrediente, e não para registar.

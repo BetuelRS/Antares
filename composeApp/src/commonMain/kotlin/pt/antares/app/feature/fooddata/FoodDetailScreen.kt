@@ -1,7 +1,9 @@
 package pt.antares.app.feature.fooddata
 
 import androidx.compose.foundation.layout.Arrangement
+import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.nutrition.FoodProvenance
+import pt.antares.app.core.nutrition.IncertezaDaComida
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -40,7 +42,7 @@ import pt.antares.app.core.nutrition.MicroGap
 import pt.antares.app.core.nutrition.NutritionFactsCard
 import pt.antares.app.core.nutrition.provenanceRes
 import pt.antares.app.core.designsystem.macroInitials
-import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresHeroCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
@@ -88,31 +90,11 @@ fun FoodDetailScreen(
                 .padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-            ) {
-                Column(Modifier.weight(1f)) {
-                    Text(food.namePt.ifBlank { food.nameEn }, style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        "${food.kcal} ${stringResource(Res.string.common_kcal)} / 100 g",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                IconButton(onClick = viewModel::toggleFavorite) {
-                    Icon(
-                        if (state.favorito) Icons.Default.Star else Icons.Outlined.StarOutline,
-                        contentDescription = stringResource(Res.string.food_favorite),
-                        tint = if (state.favorito) {
-                            MaterialTheme.colorScheme.secondary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                    )
-                }
-            }
+            CabecaDoAlimento(
+                food = food,
+                favorito = state.favorito,
+                onFavorito = viewModel::toggleFavorite,
+            )
 
             if (!food.verified) {
                 Text(
@@ -151,7 +133,7 @@ fun FoodDetailScreen(
 
             AtalhosDePorcao(state = state, unit = unit, onPick = viewModel::setQuick)
 
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
+            AntaresHeroCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     "${state.previewKcal} ${stringResource(Res.string.common_kcal)}",
                     style = MaterialTheme.typography.headlineMedium,
@@ -194,6 +176,59 @@ fun FoodDetailScreen(
             )
         }
     }
+}
+
+
+/**
+ * O nome, o que ele custa por 100 g com a margem da origem, e a estrela.
+ *
+ * **A margem ao lado do numero** e o que o esboco 22 desenha: a app ja a propaga ao total
+ * do dia desde a 2.7.0, e faltava-lhe diz-la onde ela nasce — que e aqui, no ecra onde se
+ * escolhe o alimento e onde a diferenca entre uma tabela nacional e um palpite decide
+ * alguma coisa.
+ *
+ * A nota por baixo explica-a **uma vez**, e nao em cada linha de nutriente: a margem e
+ * declarada e nao medida, e dizer «±10 %» sem dizer de onde vem os dez seria trocar uma
+ * falsa precisao por outra.
+ */
+@Composable
+private fun CabecaDoAlimento(food: FoodEntity, favorito: Boolean, onFavorito: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                food.namePt.ifBlank { food.nameEn },
+                style = MaterialTheme.typography.titleLarge,
+            )
+            val margem = IncertezaDaComida.de(FoodProvenance.of(food.source, food.id))
+            Text(
+                "${food.kcal} ${stringResource(Res.string.common_kcal)} / 100 g" +
+                    "  ± ${(margem * CEM).roundToInt()}%",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        IconButton(onClick = onFavorito) {
+            Icon(
+                if (favorito) Icons.Default.Star else Icons.Outlined.StarOutline,
+                contentDescription = stringResource(Res.string.food_favorite),
+                tint = if (favorito) {
+                    MaterialTheme.colorScheme.secondary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+            )
+        }
+    }
+
+    Text(
+        stringResource(Res.string.food_margem_hint),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable
@@ -294,5 +329,8 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
 
 // A porção de referência das tabelas de composição, e a colher de sopa. Ficam em gramas
 // porque é assim que a app as guarda; o que muda com as unidades é o que se lê ao lado.
+/** Para passar a fracção da margem a percentagem, que é como ela se lê no ecrã. */
+private const val CEM = 100.0
+
 private const val PORCAO_BASE_G = 100.0
 private const val COLHER_DE_SOPA_G = 15.0

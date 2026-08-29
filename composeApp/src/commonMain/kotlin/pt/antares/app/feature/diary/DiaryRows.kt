@@ -53,12 +53,15 @@ import pt.antares.app.core.model.ExerciseOrigin
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.porcaoComUnidade
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresHeroCard
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.AntaresGhostCard
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.core.util.dayShort
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.core.nutrition.IncertezaDaComida
+import pt.antares.app.core.nutrition.provenanceResCurto
 import pt.antares.app.generated.resources.*
 import pt.antares.app.core.util.formatMinuteOfDay
 import androidx.compose.ui.unit.dp
@@ -466,7 +469,8 @@ private fun OQueNaoSeSabe(state: DiaryState, restante: Int) {
         )
     }
 
-    if (incerteza.fraccaoAdivinhada >= MUITO_ADIVINHADO) {
+    val muitoAdivinhado = incerteza.fraccaoAdivinhada >= MUITO_ADIVINHADO
+    if (muitoAdivinhado) {
         Text(
             stringResource(
                 Res.string.diary_muito_adivinhado,
@@ -475,6 +479,44 @@ private fun OQueNaoSeSabe(state: DiaryState, restante: Int) {
             style = MaterialTheme.typography.bodySmall,
             color = fraco,
             textAlign = TextAlign.Center,
+        )
+    }
+
+    // **A repartição aparece exactamente quando uma das duas frases apareceu**, e é o que a
+    // torna útil em vez de decorativa: dizer «±150 kcal» não sugere gesto nenhum, mas dizer
+    // que 120 dessas vêm dos 400 kcal que a AI adivinhou sugere um — pesar aquele prato.
+    //
+    // Fora desses dois casos não se mostra, pela mesma razão que a margem também não: uma
+    // lista que aparece todos os dias deixa de se ler em duas semanas.
+    if (incerteza.menorDoQueOErro(restante.toDouble()) || muitoAdivinhado) {
+        DeOndeVemAMargem(incerteza.porOrigem)
+    }
+}
+
+/**
+ * As origens do dia, da que mais margem traz para a que menos traz.
+ *
+ * A ordem é pela margem e não pelas calorias porque a pergunta é «o que é que eu mudo para
+ * saber melhor», e a resposta é sempre a primeira linha.
+ */
+@Composable
+private fun DeOndeVemAMargem(fatias: List<IncertezaDaComida.Fatia>) {
+    if (fatias.size < 2) return
+
+    val fraco = MaterialTheme.colorScheme.onSurfaceVariant
+    val kcal = stringResource(Res.string.common_kcal)
+
+    Text(
+        stringResource(Res.string.diary_margem_de_onde),
+        style = MaterialTheme.typography.labelMedium,
+        color = fraco,
+    )
+    for (fatia in fatias) {
+        Text(
+            stringResource(provenanceResCurto(fatia.origem)) +
+                " · ${fatia.kcal.roundToInt()} $kcal · ±${fatia.maisOuMenos.roundToInt()}",
+            style = MaterialTheme.typography.bodySmall,
+            color = fraco,
         )
     }
 }
@@ -494,7 +536,7 @@ private const val CEM = 100.0
  */
 @Composable
 internal fun DaySummaryCard(state: DiaryState) {
-    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+    AntaresHeroCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,

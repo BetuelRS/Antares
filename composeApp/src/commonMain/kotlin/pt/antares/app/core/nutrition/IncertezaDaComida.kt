@@ -64,13 +64,29 @@ object IncertezaDaComida {
     data class Parcela(val foodId: String, val origem: FoodProvenance, val kcal: Double)
 
     /**
+     * Quanto é que cada origem trouxe ao dia, e quanta margem trouxe com ela.
+     *
+     * **É isto que torna a margem acionável**, e é o argumento do esboço 22: um dia com
+     * ±150 kcal não diz o que fazer, mas «120 dessas vêm dos 400 kcal que a AI adivinhou»
+     * diz — pesar aquele prato reduz a margem a metade, e nenhum outro gesto a reduz tanto.
+     */
+    data class Fatia(val origem: FoodProvenance, val kcal: Double, val maisOuMenos: Double)
+
+    /**
      * O que a app pode dizer sobre um dia inteiro.
      *
      * O [fraccaoAdivinhada] é a parte das calorias que veio de estimativas — de fotografia,
      * de texto, ou de alimentos escritos à mão. É a diferença entre um dia de que se pode
      * falar e um dia em que se andou a adivinhar, e nenhum intervalo sozinho a mostra.
      */
-    data class Dia(val kcal: Double, val maisOuMenos: Double, val fraccaoAdivinhada: Double) {
+    data class Dia(
+        val kcal: Double,
+        val maisOuMenos: Double,
+        val fraccaoAdivinhada: Double,
+
+        /** Da que mais margem traz para a que menos traz. Vazia num dia sem registos. */
+        val porOrigem: List<Fatia> = emptyList(),
+    ) {
 
         val percentagem: Double get() = if (kcal > 0) maisOuMenos / kcal else 0.0
 
@@ -114,6 +130,31 @@ object IncertezaDaComida {
             kcal = kcal,
             maisOuMenos = sqrt(variancia),
             fraccaoAdivinhada = adivinhadas / kcal,
+            porOrigem = porOrigem(porAlimento),
         )
     }
+
+    /**
+     * A mesma quadratura, um degrau acima: dentro da origem cada alimento continua a ser
+     * independente dos outros, e é por isso que somar as fatias em quadratura devolve
+     * exactamente a margem do dia — o `IncertezaDaComidaTest` cobra-o.
+     *
+     * Fazê-lo de outra maneira — somar as margens a direito dentro da origem — daria um
+     * total maior do que o que está escrito por cima da lista, e duas contas do mesmo facto
+     * no mesmo ecrã é o defeito a que a 2.6.0 dedicou uma versão inteira noutro sítio.
+     */
+    private fun porOrigem(porAlimento: Map<String, List<Parcela>>): List<Fatia> = porAlimento.values
+        .groupBy { doMesmoAlimento -> doMesmoAlimento.first().origem }
+        .map { (origem, alimentos) ->
+            val variancia = alimentos.sumOf { doMesmoAlimento ->
+                val erro = doMesmoAlimento.sumOf { it.kcal } * de(origem)
+                erro * erro
+            }
+            Fatia(
+                origem = origem,
+                kcal = alimentos.sumOf { doMesmoAlimento -> doMesmoAlimento.sumOf { it.kcal } },
+                maisOuMenos = sqrt(variancia),
+            )
+        }
+        .sortedByDescending { it.maisOuMenos }
 }

@@ -22,13 +22,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.macroInitials
-import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresHeroCard
 import androidx.compose.foundation.layout.Row
 import pt.antares.app.core.nutrition.MicroGap
 import pt.antares.app.core.nutrition.NutritionFactsCard
@@ -37,6 +38,7 @@ import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.model.MealSlot
+import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
 import kotlin.math.roundToInt
@@ -135,7 +137,7 @@ fun RecipeDetailScreen(
                 }
             }
 
-            AntaresCard(modifier = Modifier.fillMaxWidth()) {
+            AntaresHeroCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     "${state.previewKcal} ${stringResource(Res.string.common_kcal)}",
                     style = MaterialTheme.typography.headlineMedium,
@@ -177,12 +179,47 @@ fun RecipeDetailScreen(
                 }
             }
 
-            PrimaryButton(
-                text = stringResource(Res.string.common_save),
-                onClick = { viewModel.save(slot, epochDay) },
-                enabled = state.quantityGrams != null,
-                modifier = Modifier.fillMaxWidth(),
+            BotaoDeRegistar(
+                state = state,
+                slot = slot,
+                onRegistar = { viewModel.save(slot, epochDay) },
             )
         }
     }
+}
+
+/**
+ * **«Registar 1 dose no almoço»** — o botão diz quanto e onde, como o esboço 05 o desenha.
+ *
+ * Dizia «Guardar», que é o que ele faz e não o que acontece: quem chega aqui vindo do diário
+ * escolheu a refeição dois ecrãs atrás, e a partir daí a app nunca mais lha confirmou.
+ *
+ * A contagem em doses só entra quando o campo conta doses **e** o que lá está é um número
+ * inteiro. Meia dose escrita como «1,5» não cabe num plural, e arredondá-la para «1 dose» era
+ * o botão a prometer outra quantidade da que vai gravar.
+ */
+@Composable
+private fun BotaoDeRegistar(state: RecipePortionState, slot: MealSlot, onRegistar: () -> Unit) {
+    val doses = state.quantityText.replace(',', '.').toDoubleOrNull()
+    val dosesInteiras = doses?.takeIf { state.byServings && it == it.toInt().toDouble() }
+    val refeicao = mealSlotLabel(slot).lowercase()
+
+    PrimaryButton(
+        text = if (dosesInteiras != null) {
+            stringResource(
+                Res.string.modelo_aplicar_doses_no,
+                pluralStringResource(
+                    Res.plurals.refeicao_doses,
+                    dosesInteiras.toInt(),
+                    dosesInteiras.toInt(),
+                ),
+                refeicao,
+            )
+        } else {
+            stringResource(Res.string.modelo_aplicar_no, refeicao)
+        },
+        onClick = onRegistar,
+        enabled = state.quantityGrams != null,
+        modifier = Modifier.fillMaxWidth(),
+    )
 }

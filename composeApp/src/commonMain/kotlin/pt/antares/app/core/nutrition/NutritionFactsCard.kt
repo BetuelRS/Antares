@@ -323,6 +323,28 @@ fun provenanceRes(p: FoodProvenance, hasMicros: Boolean): StringResource? = when
     FoodProvenance.UNKNOWN -> null
 }
 
+/**
+ * O mesmo, em duas ou três palavras, para caber numa lista.
+ *
+ * O rótulo comprido explica a origem a quem está a olhar para **um** alimento. A repartição
+ * da margem do dia mostra três ou quatro origens seguidas, e ali «CIQUAL 2025 · ANSES
+ * (França)» empurra o número para fora do ecrã sem dizer mais nada de útil — a pergunta que
+ * essa lista responde é qual delas traz a margem, e não qual é a edição da tabela.
+ *
+ * Ao contrário do comprido, este nunca é nulo: uma fatia sem nome era uma linha com um número
+ * e nada que o explicasse.
+ */
+fun provenanceResCurto(p: FoodProvenance): StringResource = when (p) {
+    FoodProvenance.CURATED -> Res.string.origem_curta_curated
+    FoodProvenance.TCA -> Res.string.origem_curta_tca
+    FoodProvenance.CIQUAL -> Res.string.origem_curta_ciqual
+    FoodProvenance.USDA -> Res.string.origem_curta_usda
+    FoodProvenance.OFF -> Res.string.origem_curta_off
+    FoodProvenance.AI -> Res.string.origem_curta_ai
+    FoodProvenance.USER -> Res.string.origem_curta_user
+    FoodProvenance.UNKNOWN -> Res.string.origem_curta_unknown
+}
+
 // O sal mostra-se ao lado do sódio porque é o que vem nos rótulos e o que as pessoas
 // reconhecem. O fator é a razão entre as massas moleculares do cloreto de sódio e do sódio.
 private const val SALT_PER_SODIUM = 2.5

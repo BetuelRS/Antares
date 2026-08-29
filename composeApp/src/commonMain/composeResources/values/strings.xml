@@ -331,7 +331,7 @@
     <string name="meal_snack">Lanche</string>
 
     <string name="search_title">Adicionar alimento</string>
-    <string name="search_hint">Pesquisar alimento</string>
+    <string name="search_hint">Procurar ou descrever</string>
     <string name="search_tab_search">Tudo</string>
     <string name="search_secao_recentes">Recentes</string>
     <string name="search_tab_favorites">Favoritos</string>
@@ -351,6 +351,7 @@
     <string name="food_salt">%1$s g de sal</string>
     <string name="food_minha_porcao">a tua %1$s</string>
     <string name="food_serving">Porção</string>
+    <string name="food_margem_hint">A margem vem da origem destes números: uma tabela nacional publica a média de umas quantas amostras, um rótulo tem tolerâncias legais, e uma estimativa é um palpite. É declarada, e não medida por nós.</string>
     <string name="food_estimated_hint">Valores aproximados por 100 g — podes editar para os corrigir.</string>
     <string name="food_tbsp">Colher (15 g)</string>
 
@@ -369,6 +370,15 @@
     <string name="rich_empty">Nenhum alimento do catálogo traz este nutriente em quantidade que conte.</string>
     <string name="log_open_food">Ver o alimento e de onde vêm estes números</string>
     <string name="log_origin_label">Como registaste</string>
+    <string name="diary_margem_de_onde">De onde vem a margem</string>
+    <string name="origem_curta_tca">Tabela do INSA</string>
+    <string name="origem_curta_ciqual">Tabela da CIQUAL</string>
+    <string name="origem_curta_usda">Tabela do USDA</string>
+    <string name="origem_curta_off">Rótulo de embalagem</string>
+    <string name="origem_curta_ai">Estimativa da AI</string>
+    <string name="origem_curta_curated">Escrito à mão</string>
+    <string name="origem_curta_user">Criado por ti</string>
+    <string name="origem_curta_unknown">Sem origem declarada</string>
     <string name="nutrition_source_label">Origem dos dados</string>
     <string name="nutrition_states_title">Procurados e não encontrados</string>
     <string name="nutrition_state_traces">vestígios</string>
@@ -818,6 +828,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="ai_review_title">Confere antes de guardar</string>
     <string name="ai_review_hint">Os valores são um rascunho. Ajusta as gramas ou remove o que não comeste.</string>
     <string name="ai_confirm">Adicionar ao diário</string>
+    <string name="ai_confirm_no">Registar no %1$s</string>
     <string name="ai_total">Total: %1$d kcal</string>
     <string name="ai_source_estimated">Estimado</string>
     <string name="ai_check">Confere este</string>
@@ -967,6 +978,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="add_entry_meals_desc">Repetir uma refeição que já montaste, inteira ou a meio</string>
     <string name="templates_apply_meal">Aplicar refeição guardada</string>
     <string name="modelo_aplicar">Adicionar ao diário</string>
+    <string name="modelo_aplicar_no">Registar no %1$s</string>
+    <string name="modelo_aplicar_doses_no">Registar %1$s no %2$s</string>
     <string name="modelo_aplicado">Refeição adicionada</string>
     <string name="templates_delete">Apagar refeição guardada</string>
     <string name="templates_empty_title">Sem templates ainda</string>

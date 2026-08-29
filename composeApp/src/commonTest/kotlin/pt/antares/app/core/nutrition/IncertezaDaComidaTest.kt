@@ -111,6 +111,62 @@ class IncertezaDaComidaTest {
         assertFalse(vazio.menorDoQueOErro(100.0), "sem comida não há nada que o erro esconda")
     }
 
+    /**
+     * A repartição é o que torna a margem acionável — é o argumento do esboço 22. Por isso a
+     * ordem é pela **margem** e não pelas calorias: o que interessa saber é qual é o gesto
+     * que a encolhe mais, e não qual foi a maior refeição.
+     */
+    @Test
+    fun `a reparticao por origem ordena pela margem e nao pelas calorias`() {
+        val dia = IncertezaDaComida.doDia(
+            listOf(
+                parcela("arroz", FoodProvenance.TCA, 1000.0),
+                parcela("prato", FoodProvenance.AI, 400.0),
+            ),
+        )
+
+        assertEquals(
+            listOf(FoodProvenance.AI, FoodProvenance.TCA),
+            dia.porOrigem.map { it.origem },
+            "a estimativa traz 120 de margem e a tabela 100 — vem primeiro com menos calorias",
+        )
+        assertPerto(400.0, dia.porOrigem.first().kcal)
+        assertPerto(400.0 * IncertezaDaComida.ADIVINHADO, dia.porOrigem.first().maisOuMenos)
+    }
+
+    /**
+     * Somar as fatias em quadratura tem de devolver o número que está escrito por cima
+     * delas. Duas contas do mesmo facto no mesmo ecrã é o defeito a que a 2.6.0 dedicou uma
+     * versão inteira noutro sítio.
+     */
+    @Test
+    fun `as fatias recompoem a margem e as calorias do dia`() {
+        val parcelas = listOf(
+            parcela("arroz", FoodProvenance.TCA, 300.0),
+            parcela("arroz", FoodProvenance.TCA, 150.0),
+            parcela("iogurte", FoodProvenance.CIQUAL, 120.0),
+            parcela("bolacha", FoodProvenance.OFF, 210.0),
+            parcela("prato", FoodProvenance.AI, 90.0),
+        )
+        val dia = IncertezaDaComida.doDia(parcelas)
+
+        assertPerto(dia.kcal, dia.porOrigem.sumOf { it.kcal })
+        assertPerto(
+            dia.maisOuMenos,
+            kotlin.math.sqrt(dia.porOrigem.sumOf { it.maisOuMenos * it.maisOuMenos }),
+        )
+        assertEquals(
+            parcelas.map { it.origem }.toSet(),
+            dia.porOrigem.map { it.origem }.toSet(),
+            "nenhuma origem registada pode desaparecer da repartição",
+        )
+    }
+
+    @Test
+    fun `um dia vazio nao reparte nada`() {
+        assertTrue(IncertezaDaComida.doDia(emptyList()).porOrigem.isEmpty())
+    }
+
     private fun assertPerto(esperado: Double, obtido: Double) {
         assertTrue(abs(esperado - obtido) < TOLERANCIA, "esperava $esperado, veio $obtido")
     }

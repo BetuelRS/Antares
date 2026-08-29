@@ -42,6 +42,7 @@ import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.model.MealSlot
+import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.core.util.AppError
 import pt.antares.app.core.util.rememberImagePicker
 import pt.antares.app.generated.resources.Res
@@ -53,7 +54,7 @@ import pt.antares.app.generated.resources.ai_analyzing
 import pt.antares.app.generated.resources.ai_camera
 import pt.antares.app.generated.resources.ai_cancel
 import pt.antares.app.generated.resources.ai_check
-import pt.antares.app.generated.resources.ai_confirm
+import pt.antares.app.generated.resources.ai_confirm_no
 import pt.antares.app.generated.resources.ai_disclaimer
 import pt.antares.app.generated.resources.ai_error_generic
 import pt.antares.app.generated.resources.ai_error_offline
@@ -144,6 +145,7 @@ fun AiFoodSheet(
 
                 AiPhase.REVIEW -> ReviewStep(
                     state = state,
+                    refeicao = mealSlot,
                     accoes = AccoesDaRevisao(
                         onGramsTexto = viewModel::onGramsText,
                         onRemove = viewModel::removeItem,
@@ -263,7 +265,7 @@ private data class AccoesDaRevisao(
 )
 
 @Composable
-private fun ReviewStep(state: AiState, accoes: AccoesDaRevisao) {
+private fun ReviewStep(state: AiState, refeicao: MealSlot, accoes: AccoesDaRevisao) {
     if (state.notFood) {
         Text(stringResource(Res.string.ai_not_food), style = MaterialTheme.typography.bodyLarge)
         return
@@ -335,8 +337,12 @@ private fun ReviewStep(state: AiState, accoes: AccoesDaRevisao) {
         )
     }
 
+    // **O botão diz onde é que isto cai** — «Registar no almoço». É o mesmo princípio do
+    // cabeçalho da pesquisa, e o esboço 03 desenha-o assim: quem chega aqui por um atalho da
+    // barra rápida não escolheu a refeição em ecrã nenhum, e o botão é o último sítio onde
+    // ela ainda se vê antes de sete registos entrarem no dia.
     PrimaryButton(
-        text = stringResource(Res.string.ai_confirm),
+        text = stringResource(Res.string.ai_confirm_no, mealSlotLabel(refeicao).lowercase()),
         onClick = accoes.onConfirm,
         modifier = Modifier.fillMaxWidth(),
         enabled = state.canConfirm,

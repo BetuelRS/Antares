@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -55,7 +57,6 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.feature.ai.AiFoodSheet
 import pt.antares.app.feature.ai.AiMode
-import pt.antares.app.generated.resources.ai_describe
 import pt.antares.app.generated.resources.ai_photo
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -66,6 +67,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.database.entities.FoodEntity
+import pt.antares.app.core.util.rememberVoiceInput
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.LinhaDaLista
@@ -193,52 +195,22 @@ fun FoodSearchScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            CampoDeProcura(
+            ProcuraComAtalhos(
                 texto = state.query,
                 onTexto = viewModel::setQuery,
                 onLerCodigo = onScan.takeIf { !pickMode },
+                slot = aiSlot.takeIf { !pickMode },
+                epochDay = aiEpochDay,
+                modo = aiMode,
+                onModo = { aiMode = it },
+                ditadoInicial = initialQuery.takeIf { initialMode == "DESCRIBE" }.orEmpty(),
             )
-
-            if (!pickMode && aiSlot != null && aiEpochDay != null) {
-                AtalhosDaIa(
-                    modo = aiMode,
-                    slot = aiSlot,
-                    epochDay = aiEpochDay,
-                    textoInicial = initialQuery.takeIf { initialMode == "DESCRIBE" }.orEmpty(),
-                    onModo = { aiMode = it },
-                )
-            }
 
             if (state.tab == SearchTab.TUDO) {
                 ChipsDeSugestao(suggestions, onFoodSelected)
             }
 
-            // Os três do esboço 03: Tudo · Favoritos · Meus. As refeições guardadas não
-            // têm separador — são a primeira secção do «Tudo», que é onde o esboço as põe.
-            val tabs = listOf(
-                SearchTab.TUDO to Res.string.search_tab_search,
-                SearchTab.FAVORITOS to Res.string.search_tab_favorites,
-                SearchTab.MEUS to Res.string.search_tab_mine,
-            )
-
-            ScrollableTabRow(
-                selectedTabIndex = tabs.indexOfFirst { it.first == state.tab }.coerceAtLeast(0),
-                edgePadding = Spacing.sm,
-            ) {
-                tabs.forEach { (tab, label) ->
-                    Tab(
-                        selected = state.tab == tab,
-                        onClick = { viewModel.setTab(tab) },
-                        text = {
-                            Text(
-                                stringResource(label),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                    )
-                }
-            }
+            SeparadoresDaPesquisa(state.tab, viewModel::setTab)
 
             CorpoDoSeparador(
                 state = state,
@@ -347,60 +319,144 @@ private fun BotaoFlutuante(
     }
 }
 
+/**
+ * Os tres separadores do esboco 03: **Tudo · Favoritos · Meus**.
+ *
+ * As refeicoes guardadas nao tem separador — sao a primeira seccao do «Tudo», que e onde o
+ * esboco as poe. Ja tiveram um, e sai-lo custou a seccao de abertura: fechei a porta errada
+ * das duas que a area 03 dizia serem uma a mais.
+ */
 @Composable
-private fun AtalhosDaIa(
-    modo: AiMode?,
-    slot: MealSlot,
-    epochDay: Long,
+private fun SeparadoresDaPesquisa(activo: SearchTab, onSeparador: (SearchTab) -> Unit) {
+    val tabs = listOf(
+        SearchTab.TUDO to Res.string.search_tab_search,
+        SearchTab.FAVORITOS to Res.string.search_tab_favorites,
+        SearchTab.MEUS to Res.string.search_tab_mine,
+    )
 
-    // O que se ditou, quando se chegou aqui pelo microfone. Vazio em todos os outros casos.
-    textoInicial: String,
-    onModo: (AiMode?) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Spacing.lg, vertical = Spacing.sm),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+    ScrollableTabRow(
+        selectedTabIndex = tabs.indexOfFirst { it.first == activo }.coerceAtLeast(0),
+        edgePadding = Spacing.sm,
     ) {
-        SecondaryButton(
-            text = "✨ " + stringResource(Res.string.ai_describe),
-            onClick = { onModo(AiMode.TEXT) },
-            modifier = Modifier.weight(1f),
-        )
-        SecondaryButton(
-            text = "📷 " + stringResource(Res.string.ai_photo),
-            onClick = { onModo(AiMode.PHOTO) },
-            modifier = Modifier.weight(1f),
-        )
+        tabs.forEach { (tab, label) ->
+            Tab(
+                selected = activo == tab,
+                onClick = { onSeparador(tab) },
+                text = {
+                    Text(
+                        stringResource(label),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+            )
+        }
     }
+}
 
-    modo?.let { m ->
+/**
+ * O campo de procura com os tres atalhos dentro, e a folha que eles abrem.
+ *
+ * Vive numa peca propria porque a decisao — ha para onde mandar o que a AI devolve? — e a
+ * mesma para os tres, e espalhada pelo ecra fazia dele um no de condicoes. Sem refeicao e
+ * sem dia nao ha destino: e quem abriu a procura para escolher um ingrediente, e ai o
+ * microfone e a camara nao levam a lado nenhum.
+ */
+@Composable
+private fun ProcuraComAtalhos(
+    texto: String,
+    onTexto: (String) -> Unit,
+    onLerCodigo: (() -> Unit)?,
+    slot: MealSlot?,
+    epochDay: Long?,
+    modo: AiMode?,
+    onModo: (AiMode?) -> Unit,
+    ditadoInicial: String,
+) {
+    // O que o microfone ouviu, a espera da folha. Nao entra na caixa de procura pela mesma
+    // razao da 2.17.0: uma frase de refeicao entregue a uma pesquisa de catalogo nao
+    // encontra nada, e ve-la escrita no campo por tras da folha diria o contrario.
+    var ditado by remember { mutableStateOf(ditadoInicial) }
+    val comDestino = slot != null && epochDay != null
+
+    CampoDeProcura(
+        texto = texto,
+        onTexto = onTexto,
+        onLerCodigo = onLerCodigo,
+        onIa = if (comDestino) {
+            { escolhido, ouvido -> ditado = ouvido; onModo(escolhido) }
+        } else {
+            null
+        },
+    )
+
+    if (slot != null && epochDay != null && modo != null) {
         AiFoodSheet(
-            mode = m,
+            mode = modo,
             mealSlot = slot,
             epochDay = epochDay,
-            initialText = textoInicial,
-            onDismiss = { onModo(null) },
+            initialText = ditado,
+            onDismiss = { ditado = ""; onModo(null) },
         )
     }
 }
 
+/**
+ * O campo de procura, com as três outras maneiras de dizer o que se comeu ao lado.
+ *
+ * **O rótulo diz «procurar ou descrever»** porque o campo passou a servir as duas coisas: o
+ * que se escreve procura no catálogo, o que se dita vai para o interpretador. Chamar-lhe
+ * «pesquisar alimento» com um microfone ao lado era prometer uma pesquisa a quem vai dizer
+ * «dois ovos e uma torrada».
+ *
+ * A voz não vai para a pesquisa — é a correção que a 2.17.0 fez na barra rápida, e este
+ * campo nasce já do lado certo. Os três ícones só existem a registar num dia: sem saber onde
+ * pôr o resultado, descrever um prato não leva a lado nenhum.
+ */
 @Composable
-private fun CampoDeProcura(texto: String, onTexto: (String) -> Unit, onLerCodigo: (() -> Unit)?) {
+private fun CampoDeProcura(
+    texto: String,
+    onTexto: (String) -> Unit,
+    onLerCodigo: (() -> Unit)?,
+
+    // Nulo quando nao ha para onde mandar o resultado. Um microfone que abre uma folha sem
+    // destino e um botao que nao faz nada, e isso e pior do que nao haver botao.
+    onIa: ((AiMode, String) -> Unit)?,
+) {
+    val voz = rememberVoiceInput { ouvido -> onIa?.invoke(AiMode.TEXT, ouvido) }
+    val pedido = stringResource(Res.string.quick_log_voice_prompt)
+
     OutlinedTextField(
         value = texto,
         onValueChange = onTexto,
         label = { Text(stringResource(Res.string.search_hint)) },
         // Decorativo: a lupa repete o rótulo do campo de pesquisa.
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-        trailingIcon = onLerCodigo?.let { ler ->
-            {
-                IconButton(onClick = ler) {
-                    Icon(
-                        Icons.Default.QrCodeScanner,
-                        contentDescription = stringResource(Res.string.search_scan),
-                    )
+        trailingIcon = {
+            Row {
+                if (onIa != null && voz.available) {
+                    IconButton(onClick = { voz.start(pedido) }) {
+                        Icon(
+                            Icons.Default.Mic,
+                            contentDescription = stringResource(Res.string.quick_log_voice),
+                        )
+                    }
+                }
+                if (onIa != null) {
+                    IconButton(onClick = { onIa(AiMode.PHOTO, "") }) {
+                        Icon(
+                            Icons.Default.PhotoCamera,
+                            contentDescription = stringResource(Res.string.ai_photo),
+                        )
+                    }
+                }
+                if (onLerCodigo != null) {
+                    IconButton(onClick = onLerCodigo) {
+                        Icon(
+                            Icons.Default.QrCodeScanner,
+                            contentDescription = stringResource(Res.string.search_scan),
+                        )
+                    }
                 }
             }
         },

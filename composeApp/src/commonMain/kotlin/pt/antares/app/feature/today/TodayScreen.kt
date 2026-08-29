@@ -57,6 +57,7 @@ import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.GrelhaDeCartoes
 import pt.antares.app.core.designsystem.components.AntaresCard
+import pt.antares.app.core.designsystem.components.AntaresHeroCard
 import pt.antares.app.feature.coach.CoachTeaserCard
 import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.PrimaryButton
@@ -217,7 +218,7 @@ fun TodayScreen(
  */
 @Composable
 private fun CartaoDaMeta(targets: Targets, state: TodayState, onAddMeal: () -> Unit) {
-    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+    AntaresHeroCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,

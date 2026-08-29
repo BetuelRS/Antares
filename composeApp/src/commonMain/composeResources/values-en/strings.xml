@@ -331,7 +331,7 @@
     <string name="meal_snack">Snack</string>
 
     <string name="search_title">Add food</string>
-    <string name="search_hint">Search food</string>
+    <string name="search_hint">Search or describe</string>
     <string name="search_tab_search">All</string>
     <string name="search_secao_recentes">Recently</string>
     <string name="search_tab_favorites">Favorites</string>
@@ -351,6 +351,7 @@
     <string name="food_salt">%1$s g salt</string>
     <string name="food_minha_porcao">your %1$s</string>
     <string name="food_serving">Serving</string>
+    <string name="food_margem_hint">The margin comes from where these numbers came from: a national table publishes the average of a handful of samples, a label has legal tolerances, and an estimate is a guess. It is declared, not measured by us.</string>
     <string name="food_estimated_hint">Approximate values per 100 g — you can edit them to correct.</string>
     <string name="food_tbsp">Tbsp (15 g)</string>
 
@@ -369,6 +370,15 @@
     <string name="rich_empty">No food in the catalogue carries this nutrient in a meaningful amount.</string>
     <string name="log_open_food">See the food and where these numbers come from</string>
     <string name="log_origin_label">How you logged it</string>
+    <string name="diary_margem_de_onde">Where the margin comes from</string>
+    <string name="origem_curta_tca">INSA table</string>
+    <string name="origem_curta_ciqual">CIQUAL table</string>
+    <string name="origem_curta_usda">USDA table</string>
+    <string name="origem_curta_off">Package label</string>
+    <string name="origem_curta_ai">AI estimate</string>
+    <string name="origem_curta_curated">Written by hand</string>
+    <string name="origem_curta_user">Created by you</string>
+    <string name="origem_curta_unknown">No declared source</string>
     <string name="nutrition_source_label">Data source</string>
     <string name="nutrition_states_title">Looked for, not found</string>
     <string name="nutrition_state_traces">traces</string>
@@ -817,6 +827,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="ai_review_title">Check before saving</string>
     <string name="ai_review_hint">These values are a draft. Adjust the grams or remove what you didn't eat.</string>
     <string name="ai_confirm">Add to diary</string>
+    <string name="ai_confirm_no">Log to %1$s</string>
     <string name="ai_total">Total: %1$d kcal</string>
     <string name="ai_source_estimated">Estimated</string>
     <string name="ai_check">Check this one</string>
@@ -966,6 +977,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="add_entry_meals_desc">Repeat a meal you already built, whole or half</string>
     <string name="templates_apply_meal">Apply a saved meal</string>
     <string name="modelo_aplicar">Add to diary</string>
+    <string name="modelo_aplicar_no">Log to %1$s</string>
+    <string name="modelo_aplicar_doses_no">Log %1$s to %2$s</string>
     <string name="modelo_aplicado">Meal added</string>
     <string name="templates_delete">Delete saved meal</string>
     <string name="templates_empty_title">No templates yet</string>

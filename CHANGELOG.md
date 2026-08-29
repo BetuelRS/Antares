@@ -17,7 +17,24 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 das linhas-resumo do plano, sem um único documento do estudo aberto. Foram abertos todos os
 que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
 
+*Em três passagens: a leitura de cada documento contra o código, os esboços abertos ao lado do
+emulador ecrã a ecrã, e — a terceira — os dezassete esboços comparados um a um com o que a app
+faz hoje, incluindo os das áreas que ainda não têm versão.*
+
 ### Alterado
+
+- **O microfone, a câmara e o leitor de códigos passam a viver dentro do campo de procura**, e
+  o campo diz o que faz: «Procurar ou descrever». Desaparecem os dois botões «Descrever» e
+  «Foto» que estavam por baixo dele — com o emoji dentro da etiqueta, que um leitor de ecrã lê
+  como palavra e não como ícone, e a duplicar a câmara que a barra de registo rápido já tinha.
+- **Os botões dizem onde é que o registo vai cair.** «Registar no almoço» em vez de «Adicionar
+  ao diário», e «Registar 2 doses no jantar» numa receita que se divide em doses. Quem chega à
+  revisão da AI por um atalho escolheu a refeição dois ecrãs atrás, e a app nunca mais lha
+  confirmava.
+- **O cartão da meta do dia, o resumo do diário e as calorias de um alimento ou de uma receita
+  ganham a forma de destaque dos esboços** — um véu da cor da app a esvair-se para o fundo do
+  cartão, com o contorno da mesma cor. É a única superfície com gradiente, e é de propósito:
+  um destaque que aparece três vezes no mesmo ecrã deixa de destacar.
 - **Os separadores da pesquisa passam a Tudo · Favoritos · Meus**, como o esboço 03 os
   desenha. Os favoritos ganham separador próprio; as refeições guardadas deixam de ter um e
   passam a ser a **primeira secção do «Tudo»** — a app abre no que se come, sem um toque pelo
@@ -62,6 +79,16 @@ que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
   medida de volume aplicada a tudo: faz sentido no azeite e não no bife.
 
 ### Adicionado
+
+- **A ficha de um alimento diz de quanto é o «cerca de» dos números dele** — «130 kcal / 100 g
+  ± 10 %» — e explica de onde vem a margem: uma tabela nacional publica a média de umas quantas
+  amostras, um rótulo tem tolerâncias legais, e uma estimativa é um palpite. A app já levava
+  essa margem até ao total do dia; faltava dizê-la onde ela nasce, que é onde se escolhe o
+  alimento.
+- **O diário reparte a margem do dia pelas origens**, da que mais traz para a que menos traz.
+  «±150 kcal» não sugere gesto nenhum; saber que 120 dessas vêm dos 400 kcal que a AI adivinhou
+  sugere um — pesar aquele prato. Aparece nos mesmos dois casos em que a margem já aparecia, e
+  não todos os dias.
 - **«As minhas refeições» é um ecrã**, alcançável do «Eu» e do diário, com um «+» para montar
   uma nova e uma caixa para procurar entre elas.
 
