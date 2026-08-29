@@ -353,6 +353,13 @@ teste-guarda a exigir que sejam a mesma. Ver [`tools/README.md`](../../tools/REA
   se limpa com `--rerun-tasks`. Ver o passo 7 de [`lancar-uma-versao.md`](../guias/lancar-uma-versao.md).
 - **Verificar sempre a partir de uma instalação limpa do APK de lançamento.** Foi aí, e só aí,
   que apareceram dois dos três defeitos da 2.1.0.
+- **O CI não tem a pasta `estudo/`, e há um teste que a atravessa.** O
+  `DocumentationHonestyTest` verifica que a documentação não cita ficheiros que não existem, e
+  o estudo está fora do git: as citações dele estão na lista de excepções. **Uma ligação
+  relativa — `](../../estudo/…)` — escapava a essa lista**, porque a comparação era feita
+  contra o texto citado e não contra o caminho resolvido. Resultado: passava na máquina onde o
+  estudo existe e falhava no CI, onde não existe. Para simular o CI: mover a pasta `estudo`
+  para fora, correr o teste, e repô-la.
 - **O motor SQLite empacotado não carrega na máquina virtual dos testes.** Uma pergunta sobre
   o comportamento do Room com o motor definido não se responde em teste unitário nesta
   máquina — responde-se no emulador.

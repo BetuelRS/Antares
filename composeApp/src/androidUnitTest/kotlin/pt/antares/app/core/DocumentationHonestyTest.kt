@@ -104,6 +104,42 @@ class DocumentationHonestyTest {
         }
     }
 
+    /**
+     * O caminho como se lê a partir da raiz do repositório, com barras normais.
+     *
+     * **A lista de excepções compara-se contra isto e não contra o texto citado.** Uma
+     * ligação de markdown é relativa ao documento que a escreve, e a rota do estudo escreve
+     * `../../estudo/…` de dentro de `docs/referencia/`: isso não começa por `estudo/`,
+     * escapava à excepção, e o teste exigia o estudo numa máquina que só clonou o
+     * repositório. **Foi o que pôs o CI vermelho a 2026-08-28** — passava cá, onde o estudo
+     * existe, e falhava lá, onde não existe.
+     */
+    private fun desdeARaiz(base: File, caminho: String): String =
+        File(base, caminho).normalize().path
+            .removePrefix(raiz.normalize().path)
+            .removePrefix(File.separator)
+            .replace('\\', '/')
+
+    /**
+     * A excepção tem de valer para uma ligação relativa, e não só para um caminho da raiz.
+     *
+     * **Este teste existe porque o de cima passou cá e falhou no CI.** A rota do estudo vive
+     * em `docs/referencia/` e escreve `../../estudo/…`; isso não começa por `estudo/`, e a
+     * comparação era feita contra o texto citado. Aqui, onde o estudo existe no disco, nada
+     * estalava; no CI, onde ele não existe, o teste exigia-o.
+     *
+     * Não toca no disco de propósito: é a regra da comparação que se guarda, e ela tem de
+     * valer esteja o estudo presente ou não.
+     */
+    @Test
+    fun `a excepcao vale para uma ligacao relativa`() {
+        val emDocs = File(raiz, "docs/referencia")
+
+        assertEquals("estudo/dados/02.md", desdeARaiz(emDocs, "../../estudo/dados/02.md"))
+        assertEquals("estudo", desdeARaiz(raiz, "estudo/"))
+        assertEquals("docs/README.md", desdeARaiz(raiz, "docs/README.md"))
+    }
+
     @Test
     fun `nenhum documento cita um ficheiro que nao existe`() {
         val faltam = mutableListOf<String>()
@@ -118,7 +154,12 @@ class DocumentationHonestyTest {
                 ligacaoRelativa.findAll(texto).map { it.groupValues[1] to doc.parentFile }
 
             for ((caminho, base) in citados.distinctBy { it.first }) {
-                if (foraDoRepositorio.any { caminho.startsWith(it) }) continue
+                val relativo = desdeARaiz(base, caminho)
+                // `it` traz a barra final porque é um diretório; o `relativo` perde-a ao
+                // normalizar, e por isso a própria pasta compara-se sem ela.
+                if (foraDoRepositorio.any { relativo == it.trimEnd('/') || relativo.startsWith(it) }) {
+                    continue
+                }
                 if (!File(base, caminho).exists()) {
                     faltam += "${doc.name} cita `$caminho`"
                 }
