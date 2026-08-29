@@ -416,6 +416,53 @@ defeito mais caro da app».
 
 
 
+---
+
+# Segunda passagem: seguir o esboço à risca — 2026-08-29
+
+A comparação de cima acusou seis pontos por fazer, e um erro meu. Foram todos feitos, e
+verificados a correr no emulador. A prova está em **Antares-provas**, com o «depois» ao lado
+do «antes».
+
+## Esboço 03 · secção 1, as seis propostas
+
+| # | O que o esboço pede | Estado |
+|---|---|:--:|
+| 1 | Três separadores — **Tudo · Favoritos · Meus** | ✅ eram *Procurar · Meus · Refeições* |
+| 2 | Abrir nas **tuas refeições**, no que comes mais, nos recentes — por essa ordem | ✅ |
+| 3 | A porção habitual na linha — «180 g habituais» | ✅ mostra «300 g usual» a partir de três registos |
+| 4 | Miniaturas onde a Open Food Facts as tem | ✅ já estava |
+| 5 | Criar alimento sai do botão flutuante e passa a linha no fim, com o nome escrito | ✅ «Not there? Create queijo» |
+| 6 | A refeição e o dia no cabeçalho | ✅ «Lunch · today» |
+
+**As seis.** O botão flutuante deixou de existir para criar — só regista o que está marcado,
+que é a acção frequente. Era ele a oferecer a mais rara no sítio mais visível, e o estudo
+apanhou-o.
+
+## Esboço 05 · o sítio próprio
+
+| O esboço pede | Estado |
+|---|:--:|
+| «As minhas refeições» como ecrã, alcançável do «Eu» e do diário | ✅ entrada nova no «Eu»; do diário chega-se pelo «Saved meal» |
+| Cabeçalho com seta de voltar e **＋** | ✅ |
+| Caixa de procura dentro da lista | ✅ filtra por nome |
+| A lista, com a origem escrita na linha e a seta | ✅ |
+
+**A lista aparece nos dois sítios, e não é a duplicação que o estudo condena.** Dentro do
+«Tudo» é para registar depressa o que já se montou; no ecrã próprio é para tratar delas —
+mudar o nome, apagar, montar uma nova. O esboço 03 desenha o primeiro e o 05 desenha o
+segundo, e os dois estão certos.
+
+## O que fica de fora, e é uma coisa só
+
+**A miniatura quadrada em cada linha.** O desenho do esboço põe um quadrado à esquerda de
+todas as linhas; a legenda numerada dele diz «miniaturas **onde a Open Food Facts as tem**».
+Segui a legenda: o catálogo que a app traz não tem fotografia de nada, e um quadrado vazio em
+sete mil linhas é ruído, não informação. **É a única coisa em que o desenho e a sua própria
+nota não dizem o mesmo**, e fica escrito aqui para ser decidido em vez de esquecido.
+
+
+
 # O que fica em aberto, junto
 
 Cada linha precisa de autorização para virar trabalho (A1).
@@ -424,8 +471,6 @@ Cada linha precisa de autorização para virar trabalho (A1).
 |---|---|---|
 | **A cafeína e o flúor** — a premissa da decisão de 2.6.0 mudou: 5 215 e 538 alimentos no `food_nutrient.csv` que o oleoduto passou a ler | 2.6.0, medido outra vez a 2026-08-28 | só se o dono reabrir a decisão |
 | **Onde vivem os açúcares e os saturados** — só na coluna, e a `food_nutrient` tem zero linhas dos dois em 7 932 alimentos | bloco D, `estudo/dados/04` §3 | decisão com custo permanente: 81 usos, duas migrações, o mapeador da OFF |
-| **As refeições no ecrã de abertura** — o esboço 03 põe-nas em primeiro, e eu tirei-as a 2026-08-29 ao fechar a porta errada | esboço 03, visto lado a lado | reabrir: a secção com a lista toda, e o separador a sair |
-| **O sítio próprio das refeições guardadas** — alcançável do «Eu» e do diário, fora da pesquisa | 2.18.0, contra o esboço | adiado com razão: o `estudo/propostas/00-o-custo-de-mudar.md` não põe a área 05 nos trinta que defende, e é o item caro dela |
 | **O `FoodRow` com `Card` + `ListItem` do Material** — o último resto das duas linguagens de cartão | 2.3.0, `estudo/areas/20` | precisa de uma corrida no aparelho; é a lista mais usada da app |
 | **Os cinco separadores** — o esboço 20 propõe Hoje · Diário · Treino · Progresso · Mais | 2.3.0 | decisão do dono, não defeito |
 | **Descarregar as imagens dos exercícios** — o estudo chama-lhe «a única deste documento que eu faria já» | `estudo/transversal/04` | número próprio; resolve também o offline e a fuga a terceiros |

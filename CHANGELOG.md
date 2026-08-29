@@ -18,6 +18,17 @@ das linhas-resumo do plano, sem um único documento do estudo aberto. Foram aber
 que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
 
 ### Alterado
+- **Os separadores da pesquisa passam a Tudo · Favoritos · Meus**, como o esboço 03 os
+  desenha. Os favoritos ganham separador próprio; as refeições guardadas deixam de ter um e
+  passam a ser a **primeira secção do «Tudo»** — a app abre no que se come, sem um toque pelo
+  meio.
+- **A linha de um alimento mostra a porção habitual** — «300 g habituais» — a partir de três
+  registos. É o número com que esta pessoa regista este alimento, e ganha à porção da tabela.
+- **O cabeçalho diz onde é que o registo vai cair** — «Almoço · hoje» em vez de «Adicionar
+  alimento».
+- **Criar um alimento sai do botão flutuante** e passa a linha no fim dos resultados, já com
+  o nome escrito: «Não encontraste? Criar «queijo»». O botão mais visível do ecrã estava a
+  oferecer a acção mais rara.
 
 - **As refeições guardadas passam a ser uma lista só**, ordenada por nome, com a origem
   escrita na linha — «4 itens · 640 kcal · guardada do diário», ou «7 ingredientes · 512
@@ -51,6 +62,8 @@ que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
   medida de volume aplicada a tudo: faz sentido no azeite e não no bife.
 
 ### Adicionado
+- **«As minhas refeições» é um ecrã**, alcançável do «Eu» e do diário, com um «+» para montar
+  uma nova e uma caixa para procurar entre elas.
 
 - **Mudar o nome de uma refeição guardada, e tirar-lhe um item**, com desfazer. Até aqui só
   se podia apagar, e um nome mal escolhido no dia em que se guardou durava para sempre.

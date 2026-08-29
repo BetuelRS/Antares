@@ -63,7 +63,7 @@ class FoodSearchMergeTest : ViewModelHarness() {
 
     private fun viewModel(off: OffRepository) = FoodSearchViewModel(
         repository = FoodRepository(
-            db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), dispatcher,
+            db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), db.foodLogDao(), dispatcher,
         ),
         offRepository = off,
         recipeRepository = RecipeRepository(

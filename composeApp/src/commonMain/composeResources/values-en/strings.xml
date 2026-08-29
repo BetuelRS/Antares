@@ -332,13 +332,15 @@
 
     <string name="search_title">Add food</string>
     <string name="search_hint">Search food</string>
-    <string name="search_tab_search">Search</string>
+    <string name="search_tab_search">All</string>
     <string name="search_tab_refeicoes">Meals</string>
     <string name="search_secao_recentes">Recently</string>
     <string name="search_secao_favoritos">Favourites</string>
     <string name="search_tab_recents">Recent</string>
     <string name="search_tab_favorites">Favorites</string>
     <string name="search_tab_mine">Mine</string>
+    <string name="search_criar_este">Not there? Create %1$s</string>
+    <string name="food_habitual">%1$d g usual</string>
     <string name="search_min_chars">Type at least 2 letters to search.</string>
     <string name="search_sem_historico">This is where you'll see what you eat most, what you ate recently, and what you star. There's nothing yet — type a food name to get started.</string>
     <string name="food_estimated_corrigir">Correct this food</string>
@@ -1199,12 +1201,13 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="quick_log_voice_prompt">Say what you ate</string>
     <string name="diary_again">Again, like %1$s</string>
     <string name="search_your_meals">Your meals</string>
+    <string name="refeicoes_procurar">Search</string>
     <string name="refeicao_do_diario">saved from the diary</string>
     <string name="refeicao_kcal_dose">%1$d kcal/serving</string>
     <string name="refeicao_renomear">Rename</string>
     <string name="refeicao_nome">Name</string>
     <string name="refeicao_item_removido">%1$s was taken out.</string>
-    <string name="search_your_foods">Your foods</string>
+    <string name="search_your_foods">What you eat most</string>
     <string name="add_entry_quick">Calories only</string>
     <string name="add_entry_quick_desc">For when logging properly is not going to happen. One number and move on.</string>
     <string name="quick_add_title">Calories only</string>

@@ -59,6 +59,7 @@ class CodigosPorCriarTest : ViewModelHarness() {
                 db.foodMarkDao(),
                 db.foodNutrientDao(),
                 db.searchMissDao(),
+                db.foodLogDao(),
                 dispatcher,
             ),
             offRepository = offSemProdutos(),

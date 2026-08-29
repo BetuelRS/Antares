@@ -11,6 +11,7 @@ import pt.antares.app.core.database.entities.FoodEntity
 import pt.antares.app.core.database.entities.FoodMarkEntity
 import pt.antares.app.core.model.FoodSource
 import pt.antares.app.core.util.FtsQuery
+import pt.antares.app.core.calc.UsualPortion
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.core.util.todayEpochDay
@@ -27,6 +28,7 @@ class FoodRepository(
     private val markDao: FoodMarkDao,
     private val nutrientDao: FoodNutrientDao,
     private val searchMissDao: SearchMissDao,
+    private val foodLogDao: pt.antares.app.core.database.daos.FoodLogDao,
     private val io: CoroutineDispatcher,
 ) {
     private fun now() = Clock.System.now().toEpochMilliseconds()
@@ -67,6 +69,27 @@ class FoodRepository(
 
     fun observeMostLogged(limit: Int = 20, janelaDias: Long = 90): Flow<List<FoodEntity>> =
         foodDao.observeMostLogged(sinceEpochDay = todayEpochDay() - janelaDias, limit = limit)
+
+    /**
+     * A porção habitual de cada um destes alimentos, numa consulta só.
+     *
+     * O esboço 03 põe-na na linha — «180 g habituais» — para se poder registar sem abrir o
+     * ecrã da porção. Vinte linhas na lista dariam vinte leituras se cada uma perguntasse
+     * por si; aqui é uma leitura e um agrupamento em memória.
+     *
+     * Um alimento com menos de três registos não entra: o [UsualPortion] recusa-se a chamar
+     * hábito a duas vezes, e a linha fica como estava.
+     */
+    suspend fun porcoesHabituais(foodIds: List<String>): Map<String, Double> =
+        withContext(io) {
+            if (foodIds.isEmpty()) return@withContext emptyMap()
+            foodLogDao.recentAmountsOf(foodIds)
+                .groupBy { it.foodId }
+                .mapNotNull { (id, linhas) ->
+                    UsualPortion.of(linhas.map { it.gramas })?.let { id to it }
+                }
+                .toMap()
+        }
 
     suspend fun byId(id: String): FoodEntity? = withContext(io) { foodDao.byId(id) }
 

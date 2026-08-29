@@ -332,13 +332,15 @@
 
     <string name="search_title">Adicionar alimento</string>
     <string name="search_hint">Pesquisar alimento</string>
-    <string name="search_tab_search">Procurar</string>
+    <string name="search_tab_search">Tudo</string>
     <string name="search_tab_refeicoes">Refeições</string>
-    <string name="search_secao_recentes">Há pouco</string>
+    <string name="search_secao_recentes">Recentes</string>
     <string name="search_secao_favoritos">Favoritos</string>
     <string name="search_tab_recents">Recentes</string>
     <string name="search_tab_favorites">Favoritos</string>
     <string name="search_tab_mine">Meus</string>
+    <string name="search_criar_este">Não encontraste? Criar «%1$s»</string>
+    <string name="food_habitual">%1$d g habituais</string>
     <string name="search_min_chars">Escreve pelo menos 2 letras para pesquisar.</string>
     <string name="search_sem_historico">Aqui vais ver o que comes mais vezes, o que comeste há pouco e o que marcares. Ainda não há nada — escreve o nome de um alimento para começar.</string>
     <string name="food_estimated_corrigir">Corrigir este alimento</string>
@@ -1200,12 +1202,13 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="quick_log_voice_prompt">Diz o que comeste</string>
     <string name="diary_again">Outra vez, como %1$s</string>
     <string name="search_your_meals">As tuas refeições</string>
+    <string name="refeicoes_procurar">Procurar</string>
     <string name="refeicao_do_diario">guardada do diário</string>
     <string name="refeicao_kcal_dose">%1$d kcal/dose</string>
     <string name="refeicao_renomear">Mudar o nome</string>
     <string name="refeicao_nome">Nome</string>
     <string name="refeicao_item_removido">%1$s saiu da refeição.</string>
-    <string name="search_your_foods">Os teus alimentos</string>
+    <string name="search_your_foods">O que comes mais</string>
     <string name="add_entry_quick">Só as calorias</string>
     <string name="add_entry_quick_desc">Quando não dá para registar com detalhe. Um número e segue.</string>
     <string name="quick_add_title">Só as calorias</string>

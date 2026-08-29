@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -27,18 +28,20 @@ import pt.antares.app.feature.templates.PreVisualizacaoDeModelo
 /**
  * Os separadores da pesquisa. Eram seis.
  *
- * **Nada saiu — mudou de sítio.** Os recentes e os favoritos sobem para dentro do [SEARCH],
- * que já abria nos mais registados e agora abre nos três; as receitas e os modelos juntam-se
- * em [REFEICOES], que é o mesmo par que a 2.18.0 vai unificar por dentro.
+ * **São os três do esboço 03: Tudo, Favoritos, Meus.** O [TUDO] abre no que interessa — as
+ * refeições guardadas, o que se come mais, os recentes — e só passa a resultados de pesquisa
+ * quando se escreve. As receitas e os modelos vivem lá dentro como secção, e não num
+ * separador próprio: um separador para eles é um toque antes de se ver o que lá está, e o
+ * ponto desta área inteira é abrir no que se come.
  *
  * Seis separadores numa fila que rola é uma escolha entre seis antes de escrever a primeira
  * letra, e quatro deles respondiam à mesma pergunta: «o que é que eu já comi?».
  */
-enum class SearchTab { SEARCH, MINE, REFEICOES }
+enum class SearchTab { TUDO, FAVORITOS, MEUS }
 
 data class FoodSearchState(
     val query: String = "",
-    val tab: SearchTab = SearchTab.SEARCH,
+    val tab: SearchTab = SearchTab.TUDO,
     val results: List<FoodEntity> = emptyList(),
     val searching: Boolean = false,
 
@@ -130,6 +133,18 @@ class FoodSearchViewModel(
 
     val mostLogged: StateFlow<List<FoodEntity>> = repository.observeMostLogged(limit = 20)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /**
+     * A porção habitual de cada alimento que a lista mostra, para a linha a poder dizer.
+     *
+     * Deriva do [mostLogged] e não é pedida pelo ecrã: a lista muda quando o histórico
+     * muda, e as porções habituais mudam com ela — mantê-las em dois sítios era ter duas
+     * respostas para a mesma pergunta.
+     */
+    val porcoesHabituais: StateFlow<Map<String, Double>> =
+        combine(mostLogged, recents) { top, rec -> (top + rec).map { it.id }.distinct() }
+            .map { repository.porcoesHabituais(it) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
 
     /**
      * As sugestões que aparecem enquanto se escreve. Saem só do que a pessoa já usou, em

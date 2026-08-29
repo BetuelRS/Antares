@@ -31,7 +31,7 @@ class FoodEditDuplicadosTest : ViewModelHarness() {
 
     private fun viewModel() = FoodEditViewModel(
         repository = FoodRepository(
-            db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), dispatcher,
+            db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), db.foodLogDao(), dispatcher,
         ),
         ai = AiRepository(
             client = NenhumaIa,

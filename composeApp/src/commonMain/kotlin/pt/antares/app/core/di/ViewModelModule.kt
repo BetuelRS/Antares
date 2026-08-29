@@ -69,6 +69,7 @@ val viewModelModule = module {
 
     viewModel { DiaryViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { FoodSearchViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { pt.antares.app.feature.templates.MinhasRefeicoesViewModel(get(), get()) }
     viewModel { FoodDetailViewModel(get(), get(), get(), get(), get()) }
     viewModel { FoodEditViewModel(get(), get()) }
 

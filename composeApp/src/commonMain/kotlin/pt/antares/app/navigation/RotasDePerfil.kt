@@ -29,6 +29,7 @@ internal fun NavGraphBuilder.rotasDePerfil(navController: NavHostController) {
             onPhotosClick = { navController.navigate(Route.ProgressPhotos) },
             onStatsClick = { navController.navigate(Route.NutritionStats) },
             onRichInClick = { navController.navigate(Route.RichIn()) },
+            onRefeicoesClick = { navController.navigate(Route.MinhasRefeicoes) },
             onCoachClick = { navController.navigate(Route.CoachHistory) },
         )
     }

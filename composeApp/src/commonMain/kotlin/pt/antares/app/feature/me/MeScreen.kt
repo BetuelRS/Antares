@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -43,6 +44,8 @@ fun MeScreen(
     onPhotosClick: () -> Unit,
     onStatsClick: () -> Unit,
     onRichInClick: () -> Unit,
+    // O esboço 05 pede as refeições guardadas alcançáveis daqui e do diário.
+    onRefeicoesClick: () -> Unit,
     onCoachClick: () -> Unit,
 ) {
     AntaresScreen(
@@ -71,6 +74,7 @@ fun MeScreen(
         SectionHeader(title = stringResource(Res.string.more_group_body))
         MeItem(Res.string.more_profile_goals, Icons.Default.Person, onProfileClick)
 
+        MeItem(Res.string.search_your_meals, Icons.Default.Restaurant, onRefeicoesClick)
         MeItem(Res.string.more_nutrition_stats, Icons.Default.BarChart, onStatsClick)
         MeItem(Res.string.rich_title, Icons.Default.Search, onRichInClick)
         MeItem(Res.string.coach_history_title, Icons.Default.AutoAwesome, onCoachClick)

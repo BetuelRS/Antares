@@ -43,6 +43,7 @@ class FoodDaosTest {
         db.foodMarkDao(),
         db.foodNutrientDao(),
         db.searchMissDao(),
+        db.foodLogDao(),
         Dispatchers.Default,
     )
 

@@ -10,10 +10,10 @@ import kotlin.test.assertTrue
  * Seis separadores numa fila que rola é uma escolha entre seis antes de escrever a primeira
  * letra, e quatro deles respondiam à mesma pergunta: «o que é que eu já comi?».
  *
- * **O que este teste protege é que nada se perdeu.** Um separador a menos não é uma coisa
- * arrumada se a lista que ele mostrava deixou de existir — é comida escondida. Os recentes e
- * os favoritos passam a viver dentro do «Procurar» com a caixa vazia, e as receitas e os
- * modelos partilham o «Refeições».
+ * **São os três do esboço 03: Tudo · Favoritos · Meus.** O que este teste protege é que nada
+ * se perdeu. Um separador a menos não é uma coisa arrumada se a lista que ele mostrava
+ * deixou de existir — é comida escondida. As refeições guardadas, os mais registados e os
+ * recentes passam a ser secções do «Tudo», por essa ordem.
  */
 class SeparadoresDaPesquisaTest {
 
@@ -25,9 +25,9 @@ class SeparadoresDaPesquisaTest {
     @Test
     fun `os tres respondem a perguntas diferentes`() {
         assertEquals(
-            listOf(SearchTab.SEARCH, SearchTab.MINE, SearchTab.REFEICOES),
+            listOf(SearchTab.TUDO, SearchTab.FAVORITOS, SearchTab.MEUS),
             SearchTab.entries.toList(),
-            "a ordem é a da frequência: procurar é diário, criar é raro",
+            "a ordem é a do esboço 03, e a da frequência: tudo é diário, criar é raro",
         )
     }
 
@@ -39,7 +39,7 @@ class SeparadoresDaPesquisaTest {
      */
     @Test
     fun `abre no procurar`() {
-        assertEquals(SearchTab.SEARCH, FoodSearchState().tab)
+        assertEquals(SearchTab.TUDO, FoodSearchState().tab)
     }
 
     /**
@@ -52,7 +52,8 @@ class SeparadoresDaPesquisaTest {
     @Test
     fun `os separadores antigos nao ficaram para tras`() {
         val nomes = SearchTab.entries.map { it.name }
-        for (antigo in listOf("RECENTS", "FAVORITES", "RECIPES", "TEMPLATES")) {
+        // O «REFEICOES» juntou-se à lista: era separador e passou a secção do «Tudo».
+        for (antigo in listOf("RECENTS", "FAVORITES", "RECIPES", "TEMPLATES", "REFEICOES")) {
             assertTrue(antigo !in nomes, "«$antigo» continua no tipo depois de sair do ecrã")
         }
     }
@@ -66,5 +67,25 @@ class SeparadoresDaPesquisaTest {
         assertTrue(s.grupos.isEmpty())
         assertTrue(s.selected.isEmpty())
         assertTrue(s.estadosAbertos.isEmpty())
+    }
+
+    /**
+     * O «Tudo» abre nas refeições guardadas, e não nos alimentos.
+     *
+     * É a proposta 2 do esboço 03, e a ordem dele: AS TUAS REFEIÇÕES · O QUE COMES MAIS ·
+     * RECENTES. **Já esteve ao contrário**: as refeições saíram do ecrã de abertura a
+     * 2026-08-29, quando fechei a porta errada de duas que o estudo dizia serem uma a mais.
+     * O que ficou fechado foi a secção, e o estudo mandava fechar o separador.
+     */
+    @Test
+    fun `o tudo e o primeiro separador`() {
+        assertEquals(SearchTab.TUDO, SearchTab.entries.first())
+    }
+
+    /** O separador do meio é o dos favoritos, e não o dos alimentos criados. */
+    @Test
+    fun `os favoritos ganharam separador proprio`() {
+        assertTrue(SearchTab.FAVORITOS in SearchTab.entries)
+        assertEquals(1, SearchTab.entries.indexOf(SearchTab.FAVORITOS))
     }
 }

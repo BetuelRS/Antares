@@ -19,7 +19,7 @@ object MovimentoDasRotas {
         "AppMenu", "ProgressPhotos", "Cycle", "ProfileSettings", "HealthProfile",
         "BodyCompositionEdit", "ShowMaths", "MeasurementHistory", "DietBreak", "Settings",
         "Admin", "WeightHistory", "FoodSearch", "FoodDetail", "FoodEdit", "RecipeEdit",
-        "RecipeDetail", "NutritionStats", "RichIn", "Attributions", "About", "Backup",
+        "RecipeDetail", "MinhasRefeicoes", "NutritionStats", "RichIn", "Attributions", "About", "Backup",
         "Destinos", "CrashLog", "AddExercise", "ExerciseLibrary", "ExerciseDetail",
         "ExerciseCreate", "RoutineEdit", "WorkoutHistory", "WorkoutDetail", "WorkoutStats",
         "WorkoutSchedule", "FastingHistory", "RunHistory", "RunDetail", "CoachHistory",

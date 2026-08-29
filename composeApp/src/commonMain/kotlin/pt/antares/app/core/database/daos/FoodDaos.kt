@@ -14,6 +14,9 @@ import pt.antares.app.core.database.entities.FoodMarkEntity
 import pt.antares.app.core.database.entities.WaterLogEntity
 import pt.antares.app.core.model.MealSlot
 
+/** Uma quantidade registada, com o alimento a que pertence. Só para o [FoodLogDao.recentAmountsOf]. */
+data class QuantidadeDeAlimento(val foodId: String, val gramas: Double)
+
 data class DayTotals(
     val kcal: Int,
     val proteinG: Double,
@@ -317,6 +320,25 @@ interface FoodLogDao {
         """,
     )
     suspend fun recentAmounts(foodId: String, limit: Int = 12): List<Double>
+
+    /**
+     * As quantidades recentes de **vários** alimentos, numa consulta só.
+     *
+     * A linha da lista mostra a porção habitual — «180 g habituais», como o esboço 03 a
+     * desenha —, e a lista mostra vinte alimentos de uma vez. Uma chamada ao
+     * [recentAmounts] por linha era o padrão que enche a base de leituras enquanto ela rola.
+     *
+     * Vem por ordem do mais recente dentro de cada alimento, que é o que o
+     * `UsualPortion.of` pressupõe para desempatar a favor do hábito de agora.
+     */
+    @Query(
+        """
+        SELECT foodId AS foodId, quantityGrams AS gramas FROM food_log
+        WHERE deleted = 0 AND foodId IN (:foodIds)
+        ORDER BY foodId, epochDay DESC, updatedAt DESC
+        """,
+    )
+    suspend fun recentAmountsOf(foodIds: List<String>): List<QuantidadeDeAlimento>
 
     @Query(
         """

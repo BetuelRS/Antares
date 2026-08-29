@@ -114,6 +114,10 @@ sealed interface Route {
     @Serializable
     data object About : Route
 
+    /** As refeições guardadas, num sítio que é delas — proposta 5 do esboço 05. */
+    @Serializable
+    data object MinhasRefeicoes : Route
+
     @Serializable
     data object Backup : Route
 

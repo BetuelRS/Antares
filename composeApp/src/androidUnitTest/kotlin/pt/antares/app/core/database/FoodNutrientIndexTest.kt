@@ -125,6 +125,7 @@ class FoodNutrientIndexTest {
             db.foodMarkDao(),
             db.foodNutrientDao(),
             db.searchMissDao(),
+            db.foodLogDao(),
             Dispatchers.Default,
         )
 

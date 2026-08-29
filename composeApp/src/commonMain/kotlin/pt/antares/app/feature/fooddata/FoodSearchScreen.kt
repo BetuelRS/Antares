@@ -164,27 +164,26 @@ fun FoodSearchScreen(
     }
 
     AntaresScaffold(
-        topBar = { AntaresTopBar(title = stringResource(Res.string.search_title), onBack = onBack) },
+        // **O cabeçalho diz onde é que isto vai cair** — «Almoço · hoje». É a proposta 6 do
+        // esboço 03: quem chega aqui por três caminhos diferentes precisa de saber a que
+        // refeição e a que dia o registo se vai colar, e «Adicionar alimento» não diz.
+        topBar = {
+            AntaresTopBar(
+                title = tituloDaPesquisa(aiSlot, aiEpochDay),
+                onBack = onBack,
+            )
+        },
         floatingActionButton = {
+            // **O botão flutuante deixou de criar**, e é a proposta 5 do esboço 03: «criar
+            // alimento sai do botão flutuante e passa a linha no fim, já com o nome
+            // escrito». O botão mais visível do ecrã estava a oferecer a acção mais rara —
+            // quem chega aqui quer registar, não criar.
             BotaoFlutuante(
                 marcados = marcados,
-                podeCriar = !pickMode,
-                // No separador das refeições, criar quer dizer montar uma receita. Havia
-                // aqui dois botões de criar ao mesmo tempo — este e um de largura toda no
-                // topo da lista —, e a área 05 do estudo apanhou-o como inútil. Ficou o
-                // botão que já lá estava, a fazer o que o separador aberto pede.
-                naRefeicoes = state.tab == SearchTab.REFEICOES,
                 onRegistar = if (aiSlot != null && aiEpochDay != null) {
                     { viewModel.logSelected(aiSlot, aiEpochDay) }
                 } else {
                     null
-                },
-                onCriar = {
-                    if (state.tab == SearchTab.REFEICOES) {
-                        onNewRecipe()
-                    } else {
-                        onCreateCustom(state.query.trim())
-                    }
                 },
             )
         },
@@ -210,17 +209,17 @@ fun FoodSearchScreen(
                 )
             }
 
-            if (state.tab == SearchTab.SEARCH) {
+            if (state.tab == SearchTab.TUDO) {
                 ChipsDeSugestao(suggestions, onFoodSelected)
             }
 
-            // Três, e não seis. O «Refeições» só existe fora do modo de escolha: escolher
-            // uma receita para dentro de outra receita não é uma coisa que se faça.
-            val tabs = buildList {
-                add(SearchTab.SEARCH to Res.string.search_tab_search)
-                add(SearchTab.MINE to Res.string.search_tab_mine)
-                if (!pickMode) add(SearchTab.REFEICOES to Res.string.search_tab_refeicoes)
-            }
+            // Os três do esboço 03: Tudo · Favoritos · Meus. As refeições guardadas não
+            // têm separador — são a primeira secção do «Tudo», que é onde o esboço as põe.
+            val tabs = listOf(
+                SearchTab.TUDO to Res.string.search_tab_search,
+                SearchTab.FAVORITOS to Res.string.search_tab_favorites,
+                SearchTab.MEUS to Res.string.search_tab_mine,
+            )
 
             ScrollableTabRow(
                 selectedTabIndex = tabs.indexOfFirst { it.first == state.tab }.coerceAtLeast(0),
@@ -245,6 +244,8 @@ fun FoodSearchScreen(
                 state = state,
                 viewModel = viewModel,
                 multiSelect = multiSelect,
+                pickMode = pickMode,
+                onCreateCustom = onCreateCustom,
                 onFoodSelected = onFoodSelected,
                 navegacao = NavegacaoDaPesquisa(onRecipeSelected, onEditRecipe, onNewRecipe),
             )
@@ -308,18 +309,32 @@ private fun aoAbrirCom(
         // Vem do menu de uma refeição do diário, que é onde a vontade de repetir uma
         // refeição guardada nasce — e não a três toques de distância, dentro de «adicionar
         // comida».
-        "MEALS" -> onSeparador(SearchTab.REFEICOES)
+        "MEALS" -> onSeparador(SearchTab.TUDO)
         else -> Unit
+    }
+}
+
+/**
+ * «Almoço · hoje», ou «Adicionar alimento» quando não se sabe onde é que aquilo vai cair.
+ *
+ * O dia só se escreve quando é hoje. Um «29 de agosto» ao lado da refeição é ruído no caso
+ * comum — e o caso comum é registar no próprio dia.
+ */
+@Composable
+private fun tituloDaPesquisa(slot: MealSlot?, epochDay: Long?): String {
+    if (slot == null) return stringResource(Res.string.search_title)
+    val refeicao = mealSlotLabel(slot)
+    return if (epochDay == pt.antares.app.core.util.todayEpochDay()) {
+        "$refeicao · " + stringResource(Res.string.diary_today).lowercase()
+    } else {
+        refeicao
     }
 }
 
 @Composable
 private fun BotaoFlutuante(
     marcados: Int,
-    podeCriar: Boolean,
-    naRefeicoes: Boolean,
     onRegistar: (() -> Unit)?,
-    onCriar: () -> Unit,
 ) {
     if (marcados > 0 && onRegistar != null) {
         ExtendedFloatingActionButton(
@@ -329,22 +344,6 @@ private fun BotaoFlutuante(
             text = { Text(stringResource(Res.string.search_log_selected, marcados)) },
         )
         return
-    }
-    if (podeCriar) {
-        ExtendedFloatingActionButton(
-            onClick = onCriar,
-            // Decorativo: o botão traz o texto ao lado do ícone.
-            icon = { Icon(Icons.Default.Add, contentDescription = null) },
-            // O botão diz o que vai criar. O mesmo desenho a fazer duas coisas sem mudar de
-            // palavra era pior do que os dois botões que substitui.
-            text = {
-                Text(
-                    stringResource(
-                        if (naRefeicoes) Res.string.recipe_new else Res.string.food_create_cta,
-                    ),
-                )
-            },
-        )
     }
 }
 
@@ -461,6 +460,8 @@ private fun CorpoDoSeparador(
     state: FoodSearchState,
     viewModel: FoodSearchViewModel,
     multiSelect: Boolean,
+    pickMode: Boolean,
+    onCreateCustom: (String) -> Unit,
     onFoodSelected: (String) -> Unit,
     navegacao: NavegacaoDaPesquisa,
 ) {
@@ -475,26 +476,33 @@ private fun CorpoDoSeparador(
     val myFoods by viewModel.myFoods.collectAsState()
     val recipes by viewModel.recipes.collectAsState()
     val templates by viewModel.templates.collectAsState()
+    val habituais by viewModel.porcoesHabituais.collectAsState()
 
         when (state.tab) {
-            SearchTab.SEARCH -> if (state.query.length < 2) {
+            SearchTab.TUDO -> if (state.query.length < 2) {
 
-                // Com a caixa vazia, as três respostas a «o que é que eu já comi?» —
-                // que era o que quatro separadores diziam, cada um no seu sítio.
-                //
-                // As refeições guardadas **não** estão aqui, e é de propósito. Estavam, e
-                // só cinco delas — o que fazia do separador a única forma de ver a sexta.
-                // A área 03 do estudo apanha isso em «o que é inútil»: duas portas mal
-                // feitas em vez de uma boa. Ficou a que mostra todas.
+                // Com a caixa vazia, as três secções do esboço 03, por esta ordem: as tuas
+                // refeições, o que comes mais, os recentes. **As refeições vêm primeiro** —
+                // são a resposta mais rápida a «o que é que eu vou comer», e o esboço
+                // desenha-as no topo. Já estiveram aqui e saíram por engano meu, ao fechar
+                // a porta errada de duas que o estudo dizia serem uma a mais.
                 YourStuff(
                     favoritos = state.favoritos,
                     foods = mostLogged,
                     recentes = recents,
-                    marcados = favorites,
                     selectable = multiSelect,
                     selectedIds = state.selected,
                     onToggle = viewModel::toggleSelect,
                     onFood = { onFoodSelected(it.id) },
+                    habituais = habituais,
+                    refeicoes = if (pickMode) emptyList() else juntarRefeicoes(templates, recipes),
+                    onRefeicao = { refeicao ->
+                        when (refeicao) {
+                            is RefeicaoGuardada.DoDiario -> viewModel.verModelo(refeicao.resumo)
+                            is RefeicaoGuardada.DeIngredientes ->
+                                onRecipeSelected(refeicao.resumo.recipe.id)
+                        }
+                    },
                 )
             } else {
                 SearchResults(
@@ -504,44 +512,63 @@ private fun CorpoDoSeparador(
                     onLocal = { onFoodSelected(it.id) },
                     onOnline = viewModel::selectOnline,
                     onEstados = viewModel::alternarEstados,
+                    onCriar = { onCreateCustom(state.query.trim()) },
                 )
             }
-            // As refeições guardadas aparecem sempre, e não só a quem chegou aqui por uma
-            // refeição do diário. Escondê-las sem slot deixava-as sem forma nenhuma de se
-            // verem — nem para saber o que lá está, nem para mudar o nome ou apagar.
-            SearchTab.REFEICOES -> RefeicoesTab(
-                recipes = recipes,
-                templates = templates,
-                onSelect = onRecipeSelected,
-                onApply = { resumo -> viewModel.verModelo(resumo) },
+
+            // Os favoritos passam a separador próprio, como o esboço os desenha. Eram uma
+            // secção do «Tudo», e uma secção que se percorre depois de duas outras não é o
+            // sítio de quem marcou uma coisa precisamente para lhe voltar depressa.
+            SearchTab.FAVORITOS -> ListaDeAlimentos(
+                lista = favorites,
+                state = state,
+                multiSelect = multiSelect,
+                viewModel = viewModel,
+                onFoodSelected = onFoodSelected,
             )
-            SearchTab.MINE -> {
-                val list = myFoods
-                if (list.isEmpty()) {
-                    EmptyState(
-                        title = stringResource(Res.string.search_empty_title),
-                        subtitle = stringResource(Res.string.search_empty_subtitle),
-                    )
-                } else {
-                    ListaAdaptavel(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = SEM_MARGEM,
-                        espaco = 0.dp,
-                    ) {
-                        items(list, key = { it.id }) { food ->
-                            FoodRow(
-                                food = food,
-                                favorito = food.id in state.favoritos,
-                                selectable = multiSelect,
-                                selected = food.id in state.selected,
-                                onToggle = { viewModel.toggleSelect(food.id) },
-                                onClick = { onFoodSelected(food.id) },
-                            )
-                        }
-                    }
-                }
-            }
+
+            SearchTab.MEUS -> ListaDeAlimentos(
+                lista = myFoods,
+                state = state,
+                multiSelect = multiSelect,
+                viewModel = viewModel,
+                onFoodSelected = onFoodSelected,
+            )
         }
+}
+
+/** Uma lista de alimentos e nada mais. Os dois separadores da direita são a mesma coisa. */
+@Composable
+private fun ListaDeAlimentos(
+    lista: List<FoodEntity>,
+    state: FoodSearchState,
+    multiSelect: Boolean,
+    viewModel: FoodSearchViewModel,
+    onFoodSelected: (String) -> Unit,
+) {
+    if (lista.isEmpty()) {
+        EmptyState(
+            title = stringResource(Res.string.search_empty_title),
+            subtitle = stringResource(Res.string.search_empty_subtitle),
+        )
+        return
+    }
+    ListaAdaptavel(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = SEM_MARGEM,
+        espaco = 0.dp,
+    ) {
+        items(lista, key = { it.id }) { food ->
+            FoodRow(
+                food = food,
+                favorito = food.id in state.favoritos,
+                selectable = multiSelect,
+                selected = food.id in state.selected,
+                onToggle = { viewModel.toggleSelect(food.id) },
+                onClick = { onFoodSelected(food.id) },
+            )
+        }
+    }
 }
 @Composable
 private fun YourStuff(
@@ -551,12 +578,19 @@ private fun YourStuff(
     selectedIds: Set<String>,
     onToggle: (String) -> Unit,
     onFood: (FoodEntity) -> Unit,
+    habituais: Map<String, Double> = emptyMap(),
+
+    // As refeições já montadas, e vêm **primeiro**. É onde o esboço 03 as põe, e a razão
+    // está no título dele: abrir no que se come. Quem já guardou o almoço de sempre não
+    // quer procurá-lo — quer vê-lo.
+    refeicoes: List<RefeicaoGuardada> = emptyList(),
+    onRefeicao: (RefeicaoGuardada) -> Unit = {},
+
     // Os que eram separadores próprios. Chegam aqui como listas porque a pergunta que
     // respondem é a mesma, e separá-las obrigava a escolher entre elas antes de escrever.
     recentes: List<FoodEntity> = emptyList(),
-    marcados: List<FoodEntity> = emptyList(),
 ) {
-    val vazio = listOf(foods, recentes, marcados).all { it.isEmpty() }
+    val vazio = listOf(foods, recentes).all { it.isEmpty() } && refeicoes.isEmpty()
     if (vazio) {
         // Descreve o estado da lista, e não o campo de procura. A frase antiga — «escreve
         // pelo menos 2 letras» — aparecia a quem ainda não tinha registado nada, mesmo com
@@ -566,6 +600,18 @@ private fun YourStuff(
         return
     }
     ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
+        if (refeicoes.isNotEmpty()) {
+            linhaInteira {
+                SectionHeader(
+                    title = stringResource(Res.string.search_your_meals),
+                    modifier = Modifier.padding(Spacing.sm),
+                )
+            }
+            items(refeicoes, key = { it.chave }) { refeicao ->
+                LinhaDaRefeicao(refeicao) { onRefeicao(refeicao) }
+            }
+        }
+
         if (foods.isNotEmpty()) {
             linhaInteira {
                 SectionHeader(
@@ -581,12 +627,11 @@ private fun YourStuff(
                     selected = food.id in selectedIds,
                     onToggle = { onToggle(food.id) },
                     onClick = { onFood(food) },
+                    habitualG = habituais[food.id],
                 )
             }
         }
 
-        // Os recentes e os favoritos, que eram dois separadores. A ordem é a de quem procura
-        // sem saber o que quer: o que come sempre, o que comeu há pouco, o que marcou.
         secaoDeAlimentos(
             titulo = Res.string.search_secao_recentes,
             // Sem repetir o que já está nos mais registados: a mesma linha duas vezes no
@@ -598,18 +643,7 @@ private fun YourStuff(
             selectedIds = selectedIds,
             onToggle = onToggle,
             onFood = onFood,
-        )
-        secaoDeAlimentos(
-            titulo = Res.string.search_secao_favoritos,
-            alimentos = marcados.filterNot { m ->
-                foods.any { it.id == m.id } || recentes.any { it.id == m.id }
-            },
-            prefixo = "fav",
-            favoritos = favoritos,
-            selectable = selectable,
-            selectedIds = selectedIds,
-            onToggle = onToggle,
-            onFood = onFood,
+            habituais = habituais,
         )
     }
 }
@@ -629,6 +663,7 @@ private fun androidx.compose.foundation.lazy.grid.LazyGridScope.secaoDeAlimentos
     selectedIds: Set<String>,
     onToggle: (String) -> Unit,
     onFood: (FoodEntity) -> Unit,
+    habituais: Map<String, Double> = emptyMap(),
 ) {
     if (alimentos.isEmpty()) return
     linhaInteira {
@@ -642,6 +677,7 @@ private fun androidx.compose.foundation.lazy.grid.LazyGridScope.secaoDeAlimentos
             selected = food.id in selectedIds,
             onToggle = { onToggle(food.id) },
             onClick = { onFood(food) },
+            habitualG = habituais[food.id],
         )
     }
 }
@@ -654,6 +690,10 @@ private fun SearchResults(
     onLocal: (FoodEntity) -> Unit,
     onOnline: (FoodEntity) -> Unit,
     onEstados: (String) -> Unit,
+
+    // Criar o alimento que não se encontrou. Vive no fim da lista e não num botão
+    // flutuante: é a proposta 5 do esboço 03, e leva o nome já escrito.
+    onCriar: () -> Unit,
 ) {
     val nothing = state.results.isEmpty() && state.onlineResults.isEmpty() &&
         !state.searching && !state.searchingOnline
@@ -735,108 +775,46 @@ private fun SearchResults(
                 )
             }
         }
-    }
-}
 
-/**
- * As refeições já montadas, **numa lista só**.
- *
- * A 2.16.0 pôs receitas e modelos no mesmo separador; a 2.18.0 juntou-os por dentro; e
- * ficaram na mesma duas secções com dois títulos, que é o que o esboço da área 05 diz para
- * não fazer. Duas secções continuam a obrigar a saber a diferença antes de procurar — e a
- * diferença é como a refeição foi montada, que não é a pergunta de quem a quer registar.
- *
- * Agora é uma lista por ordem de nome, e **a origem está escrita na linha**. A escolha que
- * o utilizador tinha de fazer antes de olhar passou a informação que ele lê ao olhar.
- *
- * As acções vivem lá dentro — a receita no ecrã dela, a refeição guardada na folha de
- * pré-visualização. Uma lista onde cada linha traz um botão diferente conforme a origem
- * seria a mesma divisão outra vez, desenhada de outra maneira.
- */
-@Composable
-private fun RefeicoesTab(
-    recipes: List<RecipeSummary>,
-    templates: List<pt.antares.app.feature.templates.ModeloComResumo>,
-    onSelect: (String) -> Unit,
-    onApply: (pt.antares.app.feature.templates.ModeloComResumo) -> Unit,
-) {
-    val refeicoes = juntarRefeicoes(templates, recipes)
-
-    ListaAdaptavel(modifier = Modifier.fillMaxSize(), contentPadding = SEM_MARGEM, espaco = 0.dp) {
-        if (refeicoes.isEmpty()) {
-            linhaInteira { EmptyState(title = stringResource(Res.string.templates_empty_title)) }
-        }
-
-        items(refeicoes, key = { it.chave }) { refeicao ->
-            LinhaDaLista(
-                // Uma receita pode não ter nome: a linha dela nasce no instante em que se
-                // abre a folha de ingredientes ou a de passos, porque eles precisam de um
-                // pai onde se agarrar — e quem recua sem escrever nada deixa-a lá. Apanhado
-                // no aparelho a 2026-08-28, onde aparecia uma linha em branco com uma seta.
-                //
-                // Mostra-se com um nome em vez de se esconder, pela mesma razão que um
-                // modelo vazio aparece na lista: o que não se vê não se apaga.
-                titulo = refeicao.nome.ifBlank { stringResource(Res.string.recipe_sem_nome) },
-                subtitulo = subtituloDaRefeicao(refeicao),
-                // Abre em vez de agir. Aplicar escreve no diário, e um toque numa lista não
-                // pode ser a última coisa que acontece antes de sete registos entrarem no
-                // dia — mudar o nome e apagar ficam lá dentro, onde se vê o que se apaga.
-                onClick = {
-                    when (refeicao) {
-                        is RefeicaoGuardada.DoDiario -> onApply(refeicao.resumo)
-                        is RefeicaoGuardada.DeIngredientes -> onSelect(refeicao.resumo.recipe.id)
-                    }
-                },
-                aoLado = {
-                    Icon(
-                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        // Decorativo: a linha inteira é o alvo, e a seta só diz que ela abre.
-                        contentDescription = null,
-                    )
-                },
-                modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+        // «Não encontraste? Criar «arroz basmati»» — no fim da lista, com o nome já
+        // escrito. É a proposta 5 do esboço 03: quem chega ao fim dos resultados sem
+        // encontrar é quem quer criar, e é aí que a oferta chega na hora certa.
+        linhaInteira {
+            SecondaryButton(
+                text = stringResource(Res.string.search_criar_este, state.query.trim()),
+                onClick = onCriar,
+                modifier = Modifier.fillMaxWidth().padding(Spacing.lg),
             )
         }
     }
 }
 
+
 /**
- * O que a linha diz sobre uma refeição sem a abrir — **incluindo de onde ela veio**.
- *
- * Com as duas origens na mesma lista, a origem passa a ser conteúdo da linha e não o sítio
- * onde ela está. A guardada do diário di-lo por extenso; a montada de ingredientes di-lo
- * pelas palavras que usa, «ingredientes» e «doses», que a outra nunca tem.
+ * Uma refeição já montada, como o esboço 05 desenha a linha: nome, o que lá está dentro, e
+ * uma seta a dizer que abre.
  */
 @Composable
-private fun subtituloDaRefeicao(refeicao: RefeicaoGuardada): String = when (refeicao) {
-    is RefeicaoGuardada.DoDiario -> {
-        val r = refeicao.resumo
-        pluralStringResource(Res.plurals.modelo_itens, r.itens, r.itens) +
-            " · ${r.kcal} ${stringResource(Res.string.common_kcal)}" +
-            " · ${stringResource(Res.string.refeicao_do_diario)}"
-    }
-
-    is RefeicaoGuardada.DeIngredientes -> {
-        val r = refeicao.resumo
-        val doses = r.recipe.servings?.takeIf { it > 0 }
-        val ingredientes = pluralStringResource(
-            Res.plurals.refeicao_ingredientes,
-            r.ingredientCount,
-            r.ingredientCount,
-        )
-        // Com doses definidas, as calorias que interessam são as de uma dose: é a
-        // quantidade que se regista. Sem elas, o por-100-g é o único número honesto.
-        if (doses != null) {
-            ingredientes +
-                " · ${stringResource(Res.string.refeicao_kcal_dose, r.nutrition.totalKcal / doses)}" +
-                " · ${pluralStringResource(Res.plurals.refeicao_doses, doses, doses)}"
-        } else {
-            ingredientes +
-                " · ${r.nutrition.kcalPer100} ${stringResource(Res.string.common_kcal)}" +
-                " / 100 ${stringResource(Res.string.common_grams_short)}"
-        }
-    }
+private fun LinhaDaRefeicao(refeicao: RefeicaoGuardada, onClick: () -> Unit) {
+    LinhaDaLista(
+        // Uma receita pode não ter nome: a linha dela nasce no instante em que se abre a
+        // folha de ingredientes ou a de passos, porque eles precisam de um pai onde se
+        // agarrar — e quem recua sem escrever nada deixa-a lá.
+        titulo = refeicao.nome.ifBlank { stringResource(Res.string.recipe_sem_nome) },
+        subtitulo = subtituloDaRefeicao(refeicao),
+        onClick = onClick,
+        aoLado = {
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                // Decorativo: a linha inteira é o alvo, e a seta só diz que ela abre.
+                contentDescription = null,
+            )
+        },
+        modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+    )
 }
+
+
 
 @Composable
 private fun FoodRow(
@@ -853,6 +831,10 @@ private fun FoodRow(
     onEstados: () -> Unit = {},
     // Uma linha que e o estado de outra recua, para se ler como pertencendo a de cima.
     recuado: Boolean = false,
+
+    // O que a pessoa costuma registar deste alimento. Nulo em quase todos: são precisos
+    // três registos para o [UsualPortion] chamar hábito a alguma coisa.
+    habitualG: Double? = null,
     onClick: () -> Unit,
 ) {
     Card(
@@ -898,7 +880,13 @@ private fun FoodRow(
                 // catálogo — não para a maioria, como o plano dizia — e nos outros a linha
                 // fica como estava, a dizer 100 g. Uma linha que às vezes tem duas coisas e
                 // às vezes uma é pior do que uma que tem sempre a mesma forma.
-                val porcao = food.servingGrams?.let { gramas ->
+                // **O habitual ganha à porção da fonte**, e é a proposta 3 do esboço 03:
+                // «180 g habituais» é o número com que esta pessoa regista este alimento,
+                // e a porção da tabela é o número com que o mundo o regista. Onde os dois
+                // existem, mostra-se o dela.
+                val porcao = habitualG?.let { gramas ->
+                    " · " + stringResource(Res.string.food_habitual, gramas.roundToInt())
+                } ?: food.servingGrams?.let { gramas ->
                     val nome = food.servingName ?: stringResource(Res.string.food_serving)
                     " · $nome ${gramas.roundToInt()} ${stringResource(Res.string.common_grams_short)}"
                 }.orEmpty()

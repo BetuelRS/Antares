@@ -9,6 +9,8 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.feature.fooddata.FoodSearchScreen
 import pt.antares.app.feature.recipe.RecipeDetailScreen
 import pt.antares.app.feature.recipe.RecipeEditScreen
+import pt.antares.app.feature.templates.MinhasRefeicoesScreen
+import pt.antares.app.core.util.todayEpochDay
 
 /**
  * Receitas: criar, escolher ingredientes e ver o resultado.
@@ -22,6 +24,15 @@ internal fun NavGraphBuilder.rotasDeReceitas(navController: NavHostController) {
         RecipeEditScreen(
             recipeId = route.recipeId,
             onDone = { navController.popBackStack() },
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable<Route.MinhasRefeicoes> {
+        MinhasRefeicoesScreen(
+            onAbrirReceita = { id ->
+                navController.navigate(Route.RecipeDetail(id, MealSlot.LUNCH.name, todayEpochDay()))
+            },
+            onNovaReceita = { navController.navigate(Route.RecipeEdit()) },
             onBack = { navController.popBackStack() },
         )
     }
