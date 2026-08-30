@@ -20,26 +20,29 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.19.0 está construída e por lançar**, a 2026-08-30. Esquema da base **v37**, catálogo
-  **v6**. «O exercício avulso»: duração escrevível com atalhos, recentes, corrigir um registo
-  do diário, e a hora a que a atividade começou. **Falta o passo de lançamento** — etiqueta,
-  release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`, e o CI verde (D4).
-  A release seguinte **tem de levar os dois ficheiros outra vez**: uma que não os traga apaga
-  o caminho do botão «Procurar».
+- **2.19.0 é a última publicada**, a 2026-08-30. Esquema da base **v37**, catálogo **v6**.
+  «O exercício avulso»: duração escrevível com atalhos, recentes, corrigir um registo do
+  diário, e a hora a que a atividade começou. Tag `v2.19.0`, commit `94f9505`, release com os
+  quatro APKs mais o `catalogo.json` e o `manifesto.json`. 1668 testes Kotlin, 58 das
+  ferramentas, 68 Deno, detekt e lint limpos. Verificada a correr **de instalação limpa da
+  2.18.2 e actualizada por cima**. **A release seguinte tem de levar os dois ficheiros outra
+  vez**: uma que não os traga apaga o caminho do botão «Procurar».
 - **A medição C1 da 2.19.0 fez-se a 2026-08-30, e não estava feita antes.** Este ficheiro
   dizia que estava escrita no plano; **o cabeçalho `## 2.19.0` tinha desaparecido do plano** e
   o corpo da versão estava colado ao fim da 2.18.2, sem título. Reposto. **Três premissas
   caíram** — o id da atividade já era gravado, o «−5 sem mínimo» não existia, e o catálogo tem
   90 atividades e não ~150. E uma quarta: **a intensidade já está no catálogo**, dentro do
   nome, com cinco ritmos na corrida e cinco velocidades na bicicleta.
-- **2.18.2 foi a última publicada**, a 2026-08-30. Esquema da base **v36**, catálogo **v6**.
+- **2.18.2 saiu antes dela**, no mesmo dia. Esquema da base **v36**, catálogo **v6**.
   Leva a auditoria com o estudo inteira — as três passagens — mais a origem por nutriente, a
   margem na ficha do alimento, a repartição da margem do dia, e a paleta. Tag `v2.18.2`,
   release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`. Verificada a correr
   de **instalação limpa** com o APK de lançamento. **Muda números já gravados:** o viés por
   sexo da fita métrica.
 - A **próxima do plano é a 2.20.0**, «O centro de treino», com o esboço `06-treino-centro`
-  obrigatório.
+  obrigatório. Entretanto entraram três acrescentos ao plano, com perguntas de abertura
+  escritas: a **2.19.1** (o ruído do ecrã de exercício), a **2.49.0** (favoritos) e a
+  **2.50.0** (importação de saúde em fundo).
 - *O que se segue é o estado até à 2.18.1, e fica por ser o que explica como se chegou aqui.*
 - **2.18.1 foi publicada** a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
   **Treze das 51 versões do plano feitas** — a 2.18.1 é uma metade partida, e não uma vaga
