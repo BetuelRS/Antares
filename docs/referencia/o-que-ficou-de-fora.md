@@ -463,6 +463,36 @@ nota não dizem o mesmo**, e fica escrito aqui para ser decidido em vez de esque
 
 
 
+---
+
+# Terceira passagem: o esboço ao lado da app — 2026-08-30
+
+As duas primeiras compararam o esboço com o **código**, e a segunda com o ecrã a olho. Esta
+pôs os dois lado a lado numa página — `estudo/comparacao/index.html` —, com o desenho do
+esboço à esquerda e a captura à direita, e um veredicto por proposta numerada.
+
+**A página não cita o esboço: usa o HTML dele.** O desenho é tirado do ficheiro original e
+desenhado com a mesma folha de estilo, e por isso não pode divergir do que o esboço diz. Uma
+tabela escrita à mão envelhece sozinha; esta não.
+
+**44 propostas conferidas:** 30 batem, 6 batem com desvio escrito, 1 não se faz com a razão
+escrita, e 7 são de versões que ainda não abriram — o Hoje e o Diário, onde só o cartão de
+destaque entrou.
+
+## O que esta passagem apanhou, e as outras duas não
+
+**A colher de sopa ainda aparece num sólido sem porção nomeada.** A área 03 põe-na em «o que
+é inútil» com o argumento «15 g de azeite faz sentido, 15 g de bife não». A correcção da
+2.16.0 escondeu-a onde há porção nomeada — e o «Frango inteiro sem pele, cru» não tem
+nenhuma, por isso continua a oferecer uma colher de sopa de frango cru.
+
+**A regra resolve metade do que o estudo pede.** Prendê-la aos líquidos resolve a outra
+metade e tira-a à farinha, ao açúcar e ao arroz cru, que são sólidos mas medem-se à colher.
+**É decisão do dono**, e não se corrige por iniciativa minha (A1).
+
+*As duas leituras anteriores não a viam porque as duas olhavam para a regra escrita no
+código — e a regra está cumprida. O que falha é a regra, não o código.*
+
 # O que fica em aberto, junto
 
 Cada linha precisa de autorização para virar trabalho (A1).
@@ -481,6 +511,8 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **Centro de treino 7 → 16** | dez do estudo, #9 | 2.20.0, já no plano |
 | **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data — e envelheceu bem: hoje está menos errada do que quando foi adiada |
 | **O `food_cache` sem expiração, o custo invisível, o modelo fixado no código** | `estudo/sistema/02` | são do servidor, e o modelo fixado é o ponto fraco da longevidade |
+| **A colher de sopa num sólido sem porção nomeada** — o frango cru oferece uma | área 03, terceira passagem a 2026-08-30 | prendê-la aos líquidos resolve, e tira-a à farinha e ao açúcar. Decisão do dono |
+| **A confiança e o intervalo publicado por alimento** — «confiança A · 124–136» | esboço 22, terceira passagem | **não se faz**: nenhuma das três fontes o publica de forma que o oleoduto traga, e inventá-lo é o contrário do que este catálogo faz |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e
 a regra A5 continua a valer: o que entra a meio é troca, não adição.
