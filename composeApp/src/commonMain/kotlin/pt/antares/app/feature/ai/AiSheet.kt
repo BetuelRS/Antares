@@ -488,6 +488,9 @@ private fun ItemRow(
                     label = { Text(stringResource(Res.string.ai_grams)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    // Fixa porque o campo é uma coluna de uma lista: com largura livre cada
+                    // linha media o seu número e as gramas ficavam em degraus, uma por linha.
+                    // Cabe a 200 % — quatro algarismos é tudo o que aqui entra.
                     modifier = Modifier.width(GRAMAS_LARGURA),
                 )
 

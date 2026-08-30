@@ -296,22 +296,46 @@ internal fun LogRow(
     }
 }
 
+/**
+ * Uma atividade do dia.
+ *
+ * Só as escritas à mão se abrem para corrigir: uma linha de treino ou de corrida é o
+ * reflexo de uma sessão que tem dono, e mudá-la aqui desalinhava-a dessa sessão sem nada
+ * o dizer; uma da Health Connect traz calorias medidas por um relógio, que mudar a duração
+ * invalidaria. Todas se apagam, e o apagar tem desfazer.
+ */
 @Composable
-internal fun ExerciseRow(entry: ExerciseLogEntity, onDelete: () -> Unit) {
+internal fun ExerciseRow(entry: ExerciseLogEntity, onEdit: (() -> Unit)?, onDelete: () -> Unit) {
+    val editarLabel = stringResource(Res.string.exercise_edit)
+
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(Modifier.weight(1f)) {
+            Column(
+                Modifier
+                    .weight(1f)
+                    .then(
+                        if (onEdit == null) Modifier
+                        else Modifier
+                            .clickable(onClick = onEdit)
+                            .semantics { contentDescription = editarLabel },
+                    ),
+            ) {
 
                 val label = entry.label.ifBlank {
                     if (entry.origin == ExerciseOrigin.WORKOUT) stringResource(Res.string.exercise_workout_label) else ""
                 }
                 Text(label, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
+                // A hora só aparece quando existe, como na linha da comida: os registos
+                // anteriores à v37 não a têm, e escrever «sem hora» em todos eles seria
+                // encher o histórico com uma ausência.
+                val hora = entry.startedAtMin?.let { " · ${formatMinuteOfDay(it)}" }.orEmpty()
                 Text(
-                    "${entry.durationMin} ${stringResource(Res.string.exercise_min)} · ${entry.kcal} ${stringResource(Res.string.common_kcal)}",
+                    "${entry.durationMin} ${stringResource(Res.string.exercise_min)}" +
+                        " · ${entry.kcal} ${stringResource(Res.string.common_kcal)}$hora",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

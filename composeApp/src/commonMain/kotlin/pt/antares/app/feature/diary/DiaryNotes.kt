@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import pt.antares.app.core.database.entities.ExerciseLogEntity
+import pt.antares.app.core.model.ExerciseOrigin
 import pt.antares.app.core.designsystem.success
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -107,6 +108,7 @@ internal fun LazyListScope.exerciseSection(
     entries: List<ExerciseLogEntity>,
     kcal: Int,
     onAdd: () -> Unit,
+    onEdit: (ExerciseLogEntity) -> Unit,
     onDelete: (String) -> Unit,
     onRestore: (String) -> Unit,
 ) {
@@ -148,6 +150,7 @@ internal fun LazyListScope.exerciseSection(
         val apagar = rememberApagarComDesfazer()
         ExerciseRow(
             entry = entry,
+            onEdit = if (entry.origin == ExerciseOrigin.MANUAL) ({ onEdit(entry) }) else null,
             onDelete = { apagar({ onDelete(entry.id) }, { onRestore(entry.id) }) },
         )
     }

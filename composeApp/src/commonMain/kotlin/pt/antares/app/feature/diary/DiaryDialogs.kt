@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,6 +45,11 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import pt.antares.app.core.util.MINUTES_PER_HOUR
 import pt.antares.app.core.util.formatMinuteOfDay
+import pt.antares.app.core.database.entities.ExerciseLogEntity
+import pt.antares.app.core.util.currentMinuteOfDay
+import pt.antares.app.feature.exercise.CampoDeDuracao
+import pt.antares.app.feature.exercise.ExerciseRepository
+import kotlin.math.roundToInt
 
 /**
  * Os diálogos do diário. Vivem à parte do ecrã porque nenhum deles precisa de saber que
@@ -168,7 +175,7 @@ internal fun SaveTemplateDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun EditLogDialog(
     log: FoodLogEntity,
@@ -216,26 +223,24 @@ internal fun EditLogDialog(
                     )
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        hora?.let {
-                            "${stringResource(Res.string.diary_eaten_at)} ${formatMinuteOfDay(it)}"
-                        } ?: stringResource(Res.string.diary_eaten_at_unknown),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Row {
-                        if (hora != null) {
-                            TextButton(onClick = { hora = null }) {
-                                Text(stringResource(Res.string.diary_eaten_at_clear))
-                            }
+                // A mesma forma que rebentou no diálogo do exercício, e com os mesmos dois
+                // rótulos ingleses: a hora e os dois botões numa `Row` com `SpaceBetween`.
+                // Lá o terceiro texto era espremido até se ler na vertical. Aqui a hora tem
+                // linha própria e os botões vão numa fila que quebra.
+                Text(
+                    hora?.let {
+                        "${stringResource(Res.string.diary_eaten_at)} ${formatMinuteOfDay(it)}"
+                    } ?: stringResource(Res.string.diary_eaten_at_unknown),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                FlowRow(modifier = Modifier.fillMaxWidth()) {
+                    if (hora != null) {
+                        TextButton(onClick = { hora = null }) {
+                            Text(stringResource(Res.string.diary_eaten_at_clear))
                         }
-                        TextButton(onClick = { relogioAberto = true }) {
-                            Text(stringResource(Res.string.diary_eaten_at_set))
-                        }
+                    }
+                    TextButton(onClick = { relogioAberto = true }) {
+                        Text(stringResource(Res.string.diary_eaten_at_set))
                     }
                 }
                 Text(
@@ -269,6 +274,121 @@ internal fun EditLogDialog(
         AlertDialog(
             onDismissRequest = { relogioAberto = false },
             title = { Text(stringResource(Res.string.diary_eaten_at)) },
+            text = { TimePicker(state = estado) },
+            confirmButton = {
+                PrimaryButton(
+                    text = stringResource(Res.string.common_save),
+                    onClick = {
+                        hora = estado.hour * MINUTES_PER_HOUR + estado.minute
+                        relogioAberto = false
+                    },
+                )
+            },
+            dismissButton = {
+                SecondaryButton(
+                    text = stringResource(Res.string.common_cancel),
+                    onClick = { relogioAberto = false },
+                )
+            },
+        )
+    }
+}
+
+/**
+ * Corrigir um exercício escrito à mão: a duração e a hora a que começou.
+ *
+ * **As calorias escalam com a duração** em vez de voltarem ao `MetCalc` com o peso de hoje.
+ * A fórmula é linear na duração, portanto a escala dá o mesmo número que ela daria — mas
+ * com o peso do dia em que se registou. Mexer só na hora deixa-as quietas, que é a mesma
+ * regra do instantâneo do MET na entidade: um dia fechado não muda porque outra coisa mudou.
+ */
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+internal fun EditExerciseDialog(
+    entry: ExerciseLogEntity,
+    onSave: (Int, Int?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var duracao by remember { mutableStateOf(entry.durationMin.coerceAtLeast(1)) }
+    var hora by remember { mutableStateOf(entry.startedAtMin) }
+    var relogioAberto by remember { mutableStateOf(false) }
+
+    // O mesmo cálculo que o repositório grava, para o número no diálogo ser o que fica
+    // gravado e não uma aproximação dele.
+    val previewKcal = if (entry.durationMin > 0) {
+        (entry.kcal.toDouble() * duracao / entry.durationMin).roundToInt()
+    } else {
+        entry.kcal
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(entry.label, maxLines = 2) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                CampoDeDuracao(
+                    durationMin = duracao,
+                    onDuration = { duracao = it },
+                    onStep = { passo ->
+                        duracao = (duracao + passo).coerceIn(1, ExerciseRepository.MAX_DURATION_MIN)
+                    },
+                )
+                Text(
+                    "$previewKcal ${stringResource(Res.string.common_kcal)}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+
+                // A hora numa linha e os botões noutra, em fila que quebra. Com os três lado
+                // a lado — hora, «tirar», «pôr» — o último era espremido até ficar uma coluna
+                // de uma letra por linha, e a 200 % de escala de letra os dois botões
+                // sozinhos ainda não cabiam. Visto no emulador: nenhum teste mede larguras.
+                Text(
+                    hora?.let {
+                        "${stringResource(Res.string.exercise_started_at)} ${formatMinuteOfDay(it)}"
+                    } ?: stringResource(Res.string.exercise_started_at_unknown),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                FlowRow(modifier = Modifier.fillMaxWidth()) {
+                    if (hora != null) {
+                        TextButton(onClick = { hora = null }) {
+                            Text(stringResource(Res.string.exercise_started_at_clear))
+                        }
+                    }
+                    TextButton(onClick = { relogioAberto = true }) {
+                        Text(stringResource(Res.string.exercise_started_at_set))
+                    }
+                }
+                Text(
+                    stringResource(Res.string.exercise_started_at_help),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+        confirmButton = {
+            PrimaryButton(
+                text = stringResource(Res.string.common_save),
+                onClick = { onSave(duracao, hora) },
+            )
+        },
+        dismissButton = {
+            SecondaryButton(text = stringResource(Res.string.common_cancel), onClick = onDismiss)
+        },
+    )
+
+    if (relogioAberto) {
+        // Sem hora nenhuma abre na hora a que se está: quem vai pôr a hora de um treino
+        // costuma fazê-lo logo a seguir, e a meia-noite não é palpite nenhum.
+        val inicial = hora ?: currentMinuteOfDay()
+        val estado = rememberTimePickerState(
+            initialHour = inicial / MINUTES_PER_HOUR,
+            initialMinute = inicial % MINUTES_PER_HOUR,
+            is24Hour = true,
+        )
+        AlertDialog(
+            onDismissRequest = { relogioAberto = false },
+            title = { Text(stringResource(Res.string.exercise_started_at)) },
             text = { TimePicker(state = estado) },
             confirmButton = {
                 PrimaryButton(
@@ -331,6 +451,7 @@ internal fun EscolherRefeicaoDialog(onEscolha: (MealSlot) -> Unit, onDismiss: ()
 @Stable
 internal class DiarySheets {
     var editLog by mutableStateOf<FoodLogEntity?>(null)
+    var editExercise by mutableStateOf<ExerciseLogEntity?>(null)
     var detailLog by mutableStateOf<FoodLogEntity?>(null)
     var detailMeal by mutableStateOf<MealSlot?>(null)
     var saveTemplateSlot by mutableStateOf<MealSlot?>(null)
@@ -470,6 +591,17 @@ internal fun DiaryDialogHost(
                 folhas.editLog = null
             },
             onDismiss = { folhas.editLog = null },
+        )
+    }
+
+    folhas.editExercise?.let { entry ->
+        EditExerciseDialog(
+            entry = entry,
+            onSave = { duracao, hora ->
+                viewModel.updateExercise(entry.id, duracao, hora)
+                folhas.editExercise = null
+            },
+            onDismiss = { folhas.editExercise = null },
         )
     }
 }

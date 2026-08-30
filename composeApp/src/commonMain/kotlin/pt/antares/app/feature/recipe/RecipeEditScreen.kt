@@ -421,6 +421,9 @@ private fun LinhaDeIngrediente(
             label = { Text(stringResource(portionUnitLabel(unidades, liquid = false))) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            // Fixa para as gramas dos ingredientes alinharem em coluna, linha a linha. Divide
+            // a linha com o nome do ingrediente, que tem `weight` e encolhe primeiro — a
+            // 200 % é o nome que quebra, e não este campo que sai do ecrã.
             modifier = Modifier.width(96.dp),
         )
         IconButton(

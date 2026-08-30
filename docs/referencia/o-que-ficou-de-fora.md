@@ -276,6 +276,32 @@ mesma semana.
   é o documento de área que decide.
 - A fotografia do prato ficou fora da cópia de segurança. Ver a 2.1.0 acima.
 
+## 2.19.0 · O exercício avulso
+
+**Construída com o estudo aberto**, e por isso esta entrada é curta: o que ficou de fora
+ficou por decisão, não por omissão. Ver as respostas de abertura no plano.
+
+- **A intensidade não entrou** — não porque não valha, mas porque **já lá está**: 21 dos 90
+  nomes do `seed_mets.csv` trazem o ritmo ou a velocidade entre parênteses, e a corrida e a
+  bicicleta têm cinco graus cada. O «talvez» da área 13 fica respondido com «não».
+- **A importação automática do Health Connect não entrou.** Continua onde o
+  `estudo/sistema/04-integracoes.md` a põe — «baixo · sim» —, e pede número próprio.
+- **Três premissas do plano caíram na medição C1**, e estão escritas lá com o sítio no
+  código: o id da atividade já era gravado, o «−5 sem mínimo» não existia, e o catálogo tem
+  90 atividades e não as ~150 que o cabeçalho da área 13 diz. **A área 13 continua a dizer
+  ~150** — é um número do estudo, e o estudo não se reescreve a partir do código.
+- **O que a área 13 propõe e continua aberto:** o chip «Todas», que está sempre lá por ser o
+  estado por omissão, e o `MET 7,0` em cada linha da lista, que o documento diz ser ruído
+  fora do detalhe. Nenhum dos dois estava no conteúdo desta versão — **ganharam a 2.19.1**, e
+  os favoritos e a importação de saúde em fundo ganharam a 2.49.0 e a 2.50.0.
+- **Uma proposta do estudo que se mediu e não se aguenta.** O `estudo/transversal/03-acessibilidade.md` §4 pede *«testes
+  a 200 % de escala de letra (Robolectric com `fontScale`) — custo baixo, vale sim»*.
+  Escreveu-se, e **passa também sobre o código partido**: o Robolectric mede o texto «15» a
+  três pixels, e sem fontes a sério nada transborda. Provado a repor a forma partida de
+  propósito. O que entrou no lugar foi a exigência da razão escrita ao lado de cada largura
+  fixa, no mesmo molde do `contentDescription = null`. **Medir a sério pede um teste
+  instrumentado**, e a app não tem `androidTest` nenhum: seria o primeiro.
+
 ## 2.18.0 · 2.18.1 · As minhas refeições
 
 **A única versão onde li o estudo — depois de a lançar.** Do esboço

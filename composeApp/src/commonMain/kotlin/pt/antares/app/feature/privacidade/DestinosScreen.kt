@@ -94,6 +94,9 @@ private fun LinhaComRotulo(rotulo: StringResource, valor: StringResource) {
             stringResource(rotulo),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            // Fixa para os rótulos das linhas alinharem uns com os outros — é o que faz isto
+            // ler-se como tabela sem ser uma. O texto quebra para baixo em vez de esticar, e
+            // por isso aguenta letra grande: o que cresce é a altura da linha.
             modifier = Modifier.width(LARGURA_DO_ROTULO),
         )
         Text(

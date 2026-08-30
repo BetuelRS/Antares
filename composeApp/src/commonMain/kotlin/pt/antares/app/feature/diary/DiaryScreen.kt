@@ -175,6 +175,7 @@ fun DiaryScreen(
             entries = state.exerciseEntries,
             kcal = state.exerciseKcal,
             onAdd = { onAddExercise(state.epochDay) },
+            onEdit = { folhas.editExercise = it },
             onDelete = viewModel::deleteExercise,
             onRestore = viewModel::restoreExercise,
         )

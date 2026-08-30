@@ -258,6 +258,9 @@ class DiaryViewModel(
 
     fun restoreExercise(id: String) = viewModelScope.launch { exerciseRepository.restore(id) }
 
+    fun updateExercise(id: String, durationMin: Int, startedAtMin: Int?) =
+        viewModelScope.launch { exerciseRepository.updateManual(id, durationMin, startedAtMin) }
+
     fun deleteLog(logId: String) = viewModelScope.launch { diaryRepository.delete(logId) }
 
     fun restoreLog(logId: String) = viewModelScope.launch { diaryRepository.restore(logId) }

@@ -17,6 +17,7 @@ import pt.antares.app.core.model.ExerciseOrigin
 import pt.antares.app.core.model.SessionStatus
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.epochMillisToMinuteOfDay
 import pt.antares.app.core.util.toEpochDay
 
 class WorkoutSessionRepository(
@@ -125,6 +126,7 @@ class WorkoutSessionRepository(
                 // O dia é o do início e não o do fim: um treino que atravessa a meia-noite
                 // pertence ao dia em que se começou a treinar.
                 epochDay = epochMillisToLocalDate(s.startedAt).toEpochDay(),
+                startedAtMin = epochMillisToMinuteOfDay(s.startedAt),
                 origin = ExerciseOrigin.WORKOUT,
                 label = label,
                 metId = null,

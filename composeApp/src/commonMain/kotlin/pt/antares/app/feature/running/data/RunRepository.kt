@@ -13,6 +13,7 @@ import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.model.ExerciseOrigin
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.epochMillisToMinuteOfDay
 import pt.antares.app.core.util.toEpochDay
 import pt.antares.app.feature.running.domain.ActivityType
 import pt.antares.app.feature.running.domain.PolylineCodec
@@ -86,6 +87,7 @@ class RunRepository(
                 ExerciseLogEntity(
                     id = Ids.newUuid(),
                     epochDay = epochMillisToLocalDate(now - metrics.elapsedMs).toEpochDay(),
+                    startedAtMin = epochMillisToMinuteOfDay(now - metrics.elapsedMs),
                     origin = ExerciseOrigin.RUN,
                     label = name,
                     metId = null,

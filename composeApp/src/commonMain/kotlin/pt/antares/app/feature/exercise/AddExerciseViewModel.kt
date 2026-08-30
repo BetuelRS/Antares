@@ -25,6 +25,10 @@ data class AddExerciseState(
     val category: String? = null,
     val categories: List<String> = emptyList(),
     val results: List<MetActivity> = emptyList(),
+
+    // As últimas atividades registadas, a mais recente primeiro.
+    val recentes: List<MetActivity> = emptyList(),
+
     val selected: MetActivity? = null,
     val durationMin: Int = 30,
     val weightKg: Double = 70.0,
@@ -34,6 +38,15 @@ data class AddExerciseState(
 ) {
     val previewKcal: Int get() = selected?.let { MetCalc.kcal(it.met, weightKg, durationMin) } ?: 0
     val canSave: Boolean get() = selected != null && durationMin > 0
+
+    /**
+     * Os recentes só se mostram antes de se procurar.
+     *
+     * Com uma palavra escrita ou uma categoria escolhida, quem está no ecrã já disse o que
+     * quer — e uma secção de atalhos por cima de uma lista filtrada é a resposta a outra
+     * pergunta.
+     */
+    val mostrarRecentes: Boolean get() = recentes.isNotEmpty() && query.isBlank() && category == null
 }
 
 data class AiExerciseState(
@@ -61,8 +74,19 @@ class AddExerciseViewModel(
         viewModelScope.launch {
             val loaded = repository.loadCatalog()
             catalog = loaded
+
+            // Um id que já não existe na tabela cai aqui em silêncio, e é o que se quer: a
+            // tabela vem com a app e pode encolher entre versões, mas um registo antigo que
+            // a nomeie continua no diário.
+            val recentes = repository.recentMetIds().mapNotNull(loaded::byId)
+
             _state.update {
-                it.copy(loading = false, categories = loaded.categories(), results = loaded.activities)
+                it.copy(
+                    loading = false,
+                    categories = loaded.categories(),
+                    results = loaded.activities,
+                    recentes = recentes,
+                )
             }
         }
 
@@ -83,7 +107,9 @@ class AddExerciseViewModel(
 
     fun select(activity: MetActivity) = _state.update { it.copy(selected = activity) }
 
-    fun setDuration(min: Int) = _state.update { it.copy(durationMin = min.coerceIn(1, 600)) }
+    fun setDuration(min: Int) =
+        _state.update { it.copy(durationMin = min.coerceIn(1, ExerciseRepository.MAX_DURATION_MIN)) }
+
     fun changeDuration(delta: Int) = setDuration(_state.value.durationMin + delta)
 
     fun save(epochDay: Long) {

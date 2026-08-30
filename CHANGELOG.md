@@ -13,6 +13,50 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.19.0] — 2026-08-30
+
+**O exercício avulso.** O ecrã de registar uma atividade era correcto e mal servido pelos seus
+próprios controlos: a duração só andava de cinco em cinco — uma aula de cinquenta minutos custava
+dez toques, e um treino de vinte e dois não se registava de todo —, quem faz padel três vezes por
+semana escrevia «padel» três vezes por semana, e um registo errado só se corrigia apagando e
+refazendo a procura toda.
+
+Esquema da base: **v37**. Catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **A duração escreve-se.** Um campo de texto no lugar do contador, com o `−`/`+` de cinco a
+  ficar como acessório e quatro atalhos — 15 · 30 · 45 · 60. É o mesmo controlo no ecrã de
+  registar e no de corrigir, porque dois controlos de duração com regras diferentes é a forma de
+  eles divergirem.
+- **As atividades recentes à cabeça da lista**, sem repetições e da mais recente para a mais
+  antiga, enquanto a caixa de procura está vazia e não há categoria escolhida.
+- **Tocar num exercício do diário abre-o para corrigir**, como já acontecia com a comida. Só os
+  escritos à mão: uma linha de treino ou de corrida é o reflexo de uma sessão que tem dono, e uma
+  da Health Connect traz calorias medidas por um relógio.
+- **Um exercício passa a guardar a hora a que começou**, e a linha do diário mostra-a. As quatro
+  origens já a sabiam e deitavam-na fora: a corrida tem o instante do arranque, o treino tem o
+  início da sessão, a Health Connect tem o da sessão importada, e o registo à mão tem o relógio.
+  Num dia que não é hoje o registo nasce sem hora — que é o que ele honestamente é.
+
+### Corrigido
+
+- **As duas descrições de acessibilidade que estavam escritas no código** — `"-5"` e `"+5"` —
+  passam a recursos, e passam a dizer de quê: «Menos 5 minutos». Eram as duas únicas de toda a
+  app, e agora há um teste-guarda que as impede de voltar: o TalkBack anunciava «menos cinco»
+  em português e em inglês, sem dizer de quê.
+- **Os controlos da duração deixam de ter largura fixa**, e cabem com a letra no tamanho
+  máximo do sistema. A 200 % o botão de somar minutos saía do ecrã, o atalho «60» partia-se em
+  dois algarismos e o botão de pôr a hora lia-se na vertical, uma letra por linha.
+- **O mesmo no diálogo de corrigir uma refeição**, que tinha a mesma forma e, em inglês, os
+  mesmos dois rótulos. A hora passa a ter linha própria e os botões vão por baixo.
+
+### Nota
+
+- **A intensidade não entrou, e não é esquecimento:** a tabela de METs já a traz, como linha
+  própria. A corrida tem cinco ritmos e a bicicleta cinco velocidades. Um cursor de intensidade
+  ao lado seria uma segunda maneira de dizer a mesma coisa, e sem árbitro entre as duas.
+
 ## [2.18.2] — 2026-08-30
 
 **A releitura com o estudo.** As treze versões que já saíram tinham sido construídas a partir

@@ -23,9 +23,36 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.18.2"
+    const val CURRENT = "2.19.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.19.0",
+            title = "Registar exercício deixa de andar de cinco em cinco",
+            titleEn = "Logging exercise stops moving five minutes at a time",
+            highlights = listOf(
+                "**A duração escreve-se**, com atalhos de 15, 30, 45 e 60 minutos. Uma aula " +
+                    "de 50 minutos custava dez toques, e um treino de 22 não se registava",
+                "**As atividades que fazes mais aparecem em cima**, antes de procurares",
+                "**Tocar num exercício do diário abre-o para corrigir** a duração e a hora, " +
+                    "como já acontecia com a comida",
+                "**Um exercício passa a guardar a hora a que começou** — a corrida, o treino " +
+                    "e o que vem do Health Connect trazem-na de origem",
+                "**Os botões de mais e menos passam a dizer de quê** a quem usa leitor de " +
+                    "ecrã: diziam «menos cinco», sem dizer cinco de quê",
+            ),
+            highlightsEn = listOf(
+                "**Duration is typed**, with 15, 30, 45 and 60 minute shortcuts. A 50 minute " +
+                    "class took ten taps, and a 22 minute workout could not be logged at all",
+                "**The activities you do most show up on top**, before you search",
+                "**Tapping an exercise in the diary opens it** so you can fix the duration " +
+                    "and the time, the way food already worked",
+                "**An exercise now keeps the time it started** — runs, workouts and anything " +
+                    "from Health Connect bring it along",
+                "**The plus and minus buttons now say what of** to screen readers: they said " +
+                    "\"minus five\", without saying five of what",
+            ),
+        ),
         AppVersion(
             name = "2.18.2",
             title = "A app passa a dizer de onde vêm os números",
@@ -330,35 +357,6 @@ object AppChangelog {
                     "and auto-pause you picked",
                 "The first backup is no longer empty, and replacing your data no longer " +
                     "accepts a backup without a single record",
-            ),
-        ),
-        AppVersion(
-            name = "2.1.0",
-            title = "A cópia de segurança deixa de depender de ti",
-            titleEn = "The backup stops depending on you",
-            highlights = listOf(
-                "A app guarda sozinha uma cópia dos teus dados em **Documentos/Antares**, " +
-                    "de três em três dias, e mantém as cinco últimas. A pasta fica fora da " +
-                    "app: continua lá se desinstalares",
-                "Um cartão diz há quantos dias foi a última cópia, no menu e — quando passa " +
-                    "de uma semana — no Hoje",
-                "A cópia deixou de ir para a Google. Era uma cópia que ninguém via, que " +
-                    "dependia de estares com sessão iniciada, e que não levava as fotos",
-                "Antes de importar, a app diz o que está no ficheiro: a data, a versão que " +
-                    "o escreveu e quantos registos traz de cada tipo",
-                "Limpar as pesquisas falhadas passa a pedir confirmação",
-            ),
-            highlightsEn = listOf(
-                "The app keeps a backup of your data in **Documents/Antares** on its own, " +
-                    "every three days, keeping the last five. The folder sits outside the " +
-                    "app: it stays there if you uninstall",
-                "A card says how many days ago the last backup was, in the menu and — once " +
-                    "it passes a week — on Today",
-                "Backups no longer go to Google. That was a backup nobody could see, that " +
-                    "depended on being signed in, and that left the photos out",
-                "Before importing, the app says what is in the file: the date, the version " +
-                    "that wrote it, and how many records of each kind it brings",
-                "Clearing the failed searches now asks for confirmation",
             ),
         ),
     )

@@ -12,13 +12,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -121,6 +116,30 @@ fun AddExerciseScreen(
                 contentPadding = PaddingValues(),
                 espaco = Spacing.xs,
             ) {
+                // À cabeça da lista e não por cima da caixa de procura: num catálogo de 90
+                // linhas o campo é a acção principal, e empurrá-lo para baixo custava mais
+                // do que os recentes poupam.
+                if (state.mostrarRecentes) {
+                    linhaInteira(key = "recentes-titulo") {
+                        Text(
+                            stringResource(Res.string.exercise_recent),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = Spacing.xs),
+                        )
+                    }
+                    items(state.recentes, key = { "recente-${it.id}" }) { activity ->
+                        ActivityRow(
+                            activity = activity,
+                            selected = state.selected?.id == activity.id,
+                            onClick = { viewModel.select(activity) },
+                        )
+                    }
+                    linhaInteira(key = "recentes-fim") {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.xs))
+                    }
+                }
+
                 if (state.results.isEmpty()) {
                     linhaInteira {
                         // O catálogo de METs é fixo e vem com a app: uma procura sem
@@ -144,40 +163,44 @@ fun AddExerciseScreen(
             }
 
             if (state.selected != null) {
-                AntaresCard(modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Text(stringResource(Res.string.exercise_duration), style = MaterialTheme.typography.bodyLarge)
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { viewModel.changeDuration(-5) }) {
-                                Icon(Icons.Default.Remove, contentDescription = "-5")
-                            }
-                            Text(
-                                "${state.durationMin} ${stringResource(Res.string.exercise_min)}",
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            IconButton(onClick = { viewModel.changeDuration(5) }) {
-                                Icon(Icons.Default.Add, contentDescription = "+5")
-                            }
-                        }
-                    }
-                    Text(
-                        "${stringResource(Res.string.exercise_burned)}: ${state.previewKcal} ${stringResource(Res.string.common_kcal)}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    PrimaryButton(
-                        text = stringResource(Res.string.exercise_save),
-                        onClick = { viewModel.save(epochDay) },
-                        enabled = state.canSave,
-                        modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
-                    )
-                }
+                CartaoDeRegisto(
+                    state = state,
+                    onDuration = viewModel::setDuration,
+                    onStep = viewModel::changeDuration,
+                    onSave = { viewModel.save(epochDay) },
+                )
             }
         }
+    }
+}
+
+/**
+ * O que se vai registar: a duração, as calorias que ela dá, e o botão.
+ *
+ * As calorias mudam com a duração **antes** de se gravar seja o que for — o mesmo padrão da
+ * ficha do alimento, e a razão de o ecrã não precisar de uma pré-visualização à parte.
+ */
+@Composable
+private fun CartaoDeRegisto(
+    state: AddExerciseState,
+    onDuration: (Int) -> Unit,
+    onStep: (Int) -> Unit,
+    onSave: () -> Unit,
+) {
+    AntaresCard(modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm)) {
+        CampoDeDuracao(durationMin = state.durationMin, onDuration = onDuration, onStep = onStep)
+        Text(
+            "${stringResource(Res.string.exercise_burned)}: ${state.previewKcal} " +
+                stringResource(Res.string.common_kcal),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        PrimaryButton(
+            text = stringResource(Res.string.exercise_save),
+            onClick = onSave,
+            enabled = state.canSave,
+            modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
+        )
     }
 }
 

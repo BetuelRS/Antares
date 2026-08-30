@@ -594,6 +594,15 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exercise_cat_sports">Desportos</string>
     <string name="exercise_cat_cardio">Cardio</string>
     <string name="exercise_cat_daily">Diárias</string>
+    <string name="exercise_recent">Recentes</string>
+    <string name="exercise_edit">Corrigir exercício</string>
+    <string name="exercise_duration_less">Menos %1$d minutos</string>
+    <string name="exercise_duration_more">Mais %1$d minutos</string>
+    <string name="exercise_started_at">Começou às</string>
+    <string name="exercise_started_at_unknown">Sem hora</string>
+    <string name="exercise_started_at_set">Pôr a hora</string>
+    <string name="exercise_started_at_clear">Tirar a hora</string>
+    <string name="exercise_started_at_help">A hora é a do início, e fica guardada para se poder ver a que horas costumas treinar.</string>
 
     <string name="settings_section_exercise">Exercício</string>
     <string name="settings_addback">O exercício soma ao orçamento</string>

@@ -127,6 +127,73 @@ class AccessibilityTest {
         )
     }
 
+    /**
+     * Uma descrição escrita no código não se traduz e não se revê: o leitor de ecrã anuncia
+     * a mesma palavra nos dois idiomas.
+     *
+     * Havia duas — `"-5"` e `"+5"`, no ecrã de registar exercício —, e os outros quatro
+     * testes deixavam-nas passar por olharem só para o `null` e para a ausência. O TalkBack
+     * dizia «menos cinco», sem dizer de quê.
+     */
+    @Test
+    fun `nenhuma descricao de conteudo esta escrita no codigo`() {
+        val padrao = Regex("""contentDescription\s*=\s*"""")
+        val literais = mutableListOf<String>()
+
+        for (ficheiro in fontes()) {
+            ficheiro.readText().split("\n").forEachIndexed { i, linha ->
+                if (padrao.containsMatchIn(linha)) literais += "${ficheiro.name}:${i + 1}"
+            }
+        }
+
+        assertTrue(
+            literais.isEmpty(),
+            "descrições escritas no código — tira-as para `strings.xml`, senão o TalkBack " +
+                "anuncia a mesma palavra nos dois idiomas:\n" + literais.joinToString("\n"),
+        )
+    }
+
+    /**
+     * Uma largura fixa é uma aposta sobre quanto espaço o texto vai ocupar, e quem escolhe o
+     * tamanho da letra é quem usa a app — não quem a escreve.
+     *
+     * O `estudo/transversal/03-acessibilidade.md` §3.1 nomeia o caso: *«três campos de largura
+     * fixa lado a lado — a 200 % os rótulos não cabem»*. Aconteceu na 2.19.0, três vezes na
+     * mesma linha: um botão fora do ecrã, um atalho partido ao meio, e outro a ler-se na
+     * vertical. Nenhum dos 1667 testes o via.
+     *
+     * **Tentou-se medir isto a correr, e não dá:** um teste de Robolectric com `fontScale = 2`
+     * passa na mesma sobre o código partido, porque o Robolectric mede o texto «15» a três
+     * pixels — sem fontes a sério nada transborda. Provado a repor a forma partida de
+     * propósito.
+     *
+     * Fica então a mesma forma do `contentDescription = null`: **não se proíbe, exige-se a
+     * razão escrita**. Um `Spacer` não conta — mede um vão, não segura texto.
+     */
+    @Test
+    fun `uma largura fixa tem de dizer porque e que e fixa`() {
+        val semRazao = mutableListOf<String>()
+
+        for (ficheiro in fontes()) {
+            val linhas = ficheiro.readText().split("\n")
+            linhas.forEachIndexed { i, linha ->
+                if (!linha.contains(".width(") || linha.contains("Spacer(")) return@forEachIndexed
+
+                val acima = linhas.subList((i - LINHAS_DE_RAZAO).coerceAtLeast(0), i)
+                if (acima.none { it.trimStart().startsWith("//") }) {
+                    semRazao += "${ficheiro.name}:${i + 1}"
+                }
+            }
+        }
+
+        assertTrue(
+            semRazao.isEmpty(),
+            "larguras fixas sem razão escrita. Diz porque é que aquela largura é fixa — e se " +
+                "for uma que ainda não aguenta letra grande, diz isso e diz de quem é:\n" +
+                semRazao.joinToString("\n"),
+        )
+    }
+
     private companion object {
         // A razão cabe em três linhas de comentário; mais do que isso já é outra coisa.
         const val LINHAS_DE_RAZAO = 3

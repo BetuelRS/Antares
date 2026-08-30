@@ -138,7 +138,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 36,
+    version = 37,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -206,6 +206,12 @@ interface DbInfoDao {
         // que nao veio da fonte do alimento. Nulo — que e o que fica em toda a base ate o
         // catalogo v6 entrar — quer dizer o que a app ja assumia: todos vieram de la.
         AutoMigration(from = 35, to = 36),
+
+        // A v37 acrescenta `exercise_log.startedAtMin`, anulavel: a que horas a atividade
+        // comecou. Nulo — que e o que fica em todos os registos anteriores — quer dizer
+        // que a hora nao se sabe, e a linha do diario continua a nao a mostrar, tal como
+        // ja faz com os registos de comida sem hora.
+        AutoMigration(from = 36, to = 37),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)

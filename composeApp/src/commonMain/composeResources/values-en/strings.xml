@@ -593,6 +593,15 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exercise_cat_sports">Sports</string>
     <string name="exercise_cat_cardio">Cardio</string>
     <string name="exercise_cat_daily">Daily</string>
+    <string name="exercise_recent">Recent</string>
+    <string name="exercise_edit">Edit exercise</string>
+    <string name="exercise_duration_less">%1$d minutes less</string>
+    <string name="exercise_duration_more">%1$d minutes more</string>
+    <string name="exercise_started_at">Started at</string>
+    <string name="exercise_started_at_unknown">No time</string>
+    <string name="exercise_started_at_set">Set the time</string>
+    <string name="exercise_started_at_clear">Remove the time</string>
+    <string name="exercise_started_at_help">This is the start time, and it is kept so you can see when you usually train.</string>
 
     <string name="settings_section_exercise">Exercise</string>
     <string name="settings_addback">Exercise adds to your budget</string>

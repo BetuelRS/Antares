@@ -8,6 +8,7 @@ import pt.antares.app.core.database.entities.WeightLogEntity
 import pt.antares.app.core.model.ExerciseOrigin
 import pt.antares.app.core.model.WeightSource
 import pt.antares.app.core.util.Ids
+import pt.antares.app.core.util.epochMillisToMinuteOfDay
 
 data class HealthImport(
     val weights: Int = 0,
@@ -184,6 +185,7 @@ class HealthRepository(
                 ExerciseLogEntity(
                     id = newId(),
                     epochDay = epochDayOf(s.startMs),
+                    startedAtMin = epochMillisToMinuteOfDay(s.startMs),
                     origin = ExerciseOrigin.HEALTH_CONNECT,
                     label = s.title?.takeIf { it.isNotBlank() } ?: s.activity,
                     metId = null,

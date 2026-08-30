@@ -302,6 +302,8 @@ private fun CorrigirSerieDialog(
                         singleLine = true,
                         isError = pesoMau,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        // Fixa, e **não aguenta letra grande** — o mesmo caso do `NewSetRow`
+                        // aqui em baixo. Fica para a 2.21.0, que é quem mexe nesta sessão.
                         modifier = Modifier.width(112.dp),
                     )
                     OutlinedTextField(
@@ -311,6 +313,7 @@ private fun CorrigirSerieDialog(
                         singleLine = true,
                         isError = repsMau,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        // Idem: par do campo de cima, e cai com ele.
                         modifier = Modifier.width(96.dp),
                     )
                 }
@@ -440,6 +443,12 @@ private fun NewSetRow(
             singleLine = true,
             isError = pesoMau,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            // **Estas três larguras são o caso que o estudo nomeia**, com estes números:
+            // `transversal/03-acessibilidade.md` §3.1 diz «três campos de largura fixa — 96,
+            // 80 e 72 dp — lado a lado; a 200 % os rótulos não cabem». Continua verdade. Não
+            // se corrigiu aqui porque esta linha é da sessão de treino, e a sessão é a 2.21.0
+            // — a mesma forma foi corrigida no campo de duração do exercício, na 2.19.0, e a
+            // receita está lá: rótulo em linha própria, campo com `weight`, e `FlowRow`.
             modifier = Modifier.width(96.dp),
         )
         OutlinedTextField(
@@ -449,6 +458,7 @@ private fun NewSetRow(
             singleLine = true,
             isError = repsMau,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            // O segundo dos três de cima.
             modifier = Modifier.width(80.dp),
         )
         OutlinedTextField(
@@ -458,6 +468,7 @@ private fun NewSetRow(
             singleLine = true,
             isError = rpeMau,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            // E o terceiro. É este que sai do ecrã primeiro.
             modifier = Modifier.width(72.dp),
         )
         val podeGravar = SetLimits.isSetValid(w, r, rp)

@@ -40,6 +40,20 @@ interface ExerciseLogDao {
     @Query("SELECT refId FROM exercise_log WHERE origin = 'HEALTH_CONNECT' AND refId IS NOT NULL")
     suspend fun importedRefs(): List<String>
 
+    /**
+     * As atividades usadas há menos tempo, a mais recente primeiro e sem repetições.
+     *
+     * Agrupa por `metId` e ordena pelo `MAX(updatedAt)` do grupo: quem faz padel três vezes
+     * por semana quer o padel uma vez no topo, e não três vezes seguidas. As linhas de
+     * treino, de corrida e da Health Connect ficam de fora sozinhas — todas têm `metId`
+     * nulo, porque nenhuma saiu da tabela de METs.
+     */
+    @Query(
+        "SELECT metId FROM exercise_log WHERE deleted = 0 AND metId IS NOT NULL " +
+            "GROUP BY metId ORDER BY MAX(updatedAt) DESC LIMIT :limite",
+    )
+    suspend fun recentMetIds(limite: Int): List<String>
+
     @Query("SELECT * FROM exercise_log WHERE deleted = 0")
     suspend fun exportRows(): List<ExerciseLogEntity>
 }

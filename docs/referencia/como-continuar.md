@@ -20,14 +20,26 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.18.2 é a última publicada**, a 2026-08-30. Esquema da base **v36**, catálogo **v6**.
+- **2.19.0 está construída e por lançar**, a 2026-08-30. Esquema da base **v37**, catálogo
+  **v6**. «O exercício avulso»: duração escrevível com atalhos, recentes, corrigir um registo
+  do diário, e a hora a que a atividade começou. **Falta o passo de lançamento** — etiqueta,
+  release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`, e o CI verde (D4).
+  A release seguinte **tem de levar os dois ficheiros outra vez**: uma que não os traga apaga
+  o caminho do botão «Procurar».
+- **A medição C1 da 2.19.0 fez-se a 2026-08-30, e não estava feita antes.** Este ficheiro
+  dizia que estava escrita no plano; **o cabeçalho `## 2.19.0` tinha desaparecido do plano** e
+  o corpo da versão estava colado ao fim da 2.18.2, sem título. Reposto. **Três premissas
+  caíram** — o id da atividade já era gravado, o «−5 sem mínimo» não existia, e o catálogo tem
+  90 atividades e não ~150. E uma quarta: **a intensidade já está no catálogo**, dentro do
+  nome, com cinco ritmos na corrida e cinco velocidades na bicicleta.
+- **2.18.2 foi a última publicada**, a 2026-08-30. Esquema da base **v36**, catálogo **v6**.
   Leva a auditoria com o estudo inteira — as três passagens — mais a origem por nutriente, a
   margem na ficha do alimento, a repartição da margem do dia, e a paleta. Tag `v2.18.2`,
   release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`. Verificada a correr
   de **instalação limpa** com o APK de lançamento. **Muda números já gravados:** o viés por
   sexo da fita métrica.
-- A **próxima é a 2.19.0**, «O exercício avulso». A medição C1 já está feita e está no plano:
-  duas premissas caíram — o id da atividade já é gravado, e o «−5 sem mínimo» não existe.
+- A **próxima do plano é a 2.20.0**, «O centro de treino», com o esboço `06-treino-centro`
+  obrigatório.
 - *O que se segue é o estado até à 2.18.1, e fica por ser o que explica como se chegou aqui.*
 - **2.18.1 foi publicada** a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
   **Treze das 51 versões do plano feitas** — a 2.18.1 é uma metade partida, e não uma vaga
@@ -101,8 +113,54 @@ premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que a corrida no aparelho mostrou
 
-**Da releitura com o estudo** (emulador Android 16, x86_64, instalação limpa). Foi a corrida
-que mais rendeu até hoje: **quatro defeitos, e nenhum deles visto por 1 638 testes.**
+**Da 2.19.0, o exercício avulso** (emulador Android 16, x86_64), em **duas passagens: a 100 %
+de escala de letra e a 200 %**, que é a definição que o `estudo/transversal/03` §3.1 nomeia e
+que nada testava. **Quatro defeitos, e nenhum dos 1667 testes via um único** — porque nenhum
+deles é um número errado: são larguras.
+
+1. **A 100 %: «Set the time» ficava numa coluna de uma letra por linha.** Com a hora posta, o
+   diálogo punha três textos na mesma linha — a hora, «Remove the time» e «Set the time» — e o
+   terceiro era espremido até se ler na vertical. Só em inglês, e só depois de pôr a hora.
+2. **A 200 %: o `+` da duração saía do ecrã.** Rótulo, `−`, campo de 132 dp e `+` numa linha
+   só. O documento diz exactamente isto do `NewSetRow`, e eu tinha acabado de escrever a mesma
+   forma.
+3. **A 200 %: o atalho «60» partia-se em dois algarismos**, um por linha.
+4. **A 200 %: «Set the time» voltava à vertical**, com a correcção 1 já feita.
+
+**A correcção tira as larguras fixas em vez de as afinar**: rótulo em linha própria, campo com
+`weight(1f)`, e os atalhos e os botões da hora em `FlowRow` — que já era vocabulário da app.
+Verificado outra vez nas duas escalas. O `EditLogDialog` da comida, que tinha a mesma forma e
+os mesmos dois rótulos ingleses, foi corrigido a seguir por decisão do dono.
+
+**E uma proposta do estudo caiu ao ser medida.** O `estudo/transversal/03-acessibilidade.md` pede um guarda de
+Robolectric com `fontScale`. Escreveu-se, e ele **passa também sobre o código partido** — o
+Robolectric mede o texto «15» a três pixels, e sem fontes a sério nada transborda. No lugar
+dele ficou a exigência da razão escrita ao lado de cada largura fixa, no molde do
+`contentDescription = null`: visto a falhar sobre os oito sítios que havia, **cinco deles o
+`NewSetRow` que o estudo nomeia**. Medir a sério pede um teste instrumentado, e a app não tem
+`androidTest` nenhum.
+
+**O que a corrida confirmou:** a migração **v36 → v37 com o dia intacto**, feita a instalar a
+2.18.2 de lançamento, registar 30 min · 400 kcal, e actualizar por cima — o registo ficou lá e
+**sem hora**, que é o que ele honestamente é · o campo escrevível, com **22 minutos a dar 293
+kcal**, que é o treino que a área 13 diz não se conseguir registar · os atalhos, com o 45 a
+levar 400 kcal a 600 · a secção «Recent» à cabeça da lista · o relógio a abrir na hora a que
+se está · a linha a dizer **«45 min · 600 kcal · 07:25»**, com o orçamento a subir de 2963
+para 3163 · o treino de força a chegar ao diário como **«Full Body A · 2 min · 11 kcal ·
+07:31»**, com a hora do **início** da sessão · e a linha do treino a **não** abrir ao toque.
+
+**O que a corrida não conseguiu provar:** a hora de uma corrida com GPS e a de uma sessão
+importada da Health Connect — o emulador não tem percurso nem outra app a publicar sessões. As
+duas escrevem-se na mesma linha que o treino de força escreve, e essa está vista a funcionar.
+
+**E mostrou dois defeitos que não são desta versão**, escritos no plano por baixo da 2.19.0: a
+caixa de notificações do sistema à entrada da sessão de treino, e o `EditLogDialog` da comida,
+que tem a mesma forma que aqui se corrigiu — em inglês, com os mesmos dois rótulos.
+
+### Da releitura com o estudo, na 2.18.2
+
+Emulador Android 16, x86_64, instalação limpa. Foi a corrida que mais rendeu até hoje:
+**quatro defeitos, e nenhum deles visto por 1 638 testes.**
 
 1. **Uma string mostrava a barra invertida no ecrã.** O estado vazio da pesquisa dizia, em
    inglês, «This is where you\'ll see what you eat most». O Compose Resources **não desfaz o

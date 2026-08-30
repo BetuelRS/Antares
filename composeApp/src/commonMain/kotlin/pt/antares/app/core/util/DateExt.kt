@@ -101,3 +101,13 @@ fun weekStartEpochDay(epochDay: Long): Long {
 
 fun epochMillisToLocalDate(ms: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
     Instant.fromEpochMilliseconds(ms).toLocalDateTime(timeZone).date
+
+/**
+ * O minuto do dia daquele instante, no fuso do telemóvel.
+ *
+ * É o par do [epochMillisToLocalDate]: quem guarda um instante e quer a linha do diário
+ * precisa dos dois, e separá-los evita converter o mesmo instante duas vezes por engano.
+ */
+fun epochMillisToMinuteOfDay(ms: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): Int =
+    Instant.fromEpochMilliseconds(ms).toLocalDateTime(timeZone)
+        .let { it.hour * MINUTES_PER_HOUR + it.minute }
