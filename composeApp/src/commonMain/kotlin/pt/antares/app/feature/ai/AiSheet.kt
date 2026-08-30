@@ -2,6 +2,7 @@ package pt.antares.app.feature.ai
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -59,6 +60,8 @@ import pt.antares.app.generated.resources.ai_disclaimer
 import pt.antares.app.generated.resources.ai_error_generic
 import pt.antares.app.generated.resources.ai_error_offline
 import pt.antares.app.generated.resources.ai_gallery
+import pt.antares.app.generated.resources.ai_menos_dez
+import pt.antares.app.generated.resources.ai_mais_dez
 import pt.antares.app.generated.resources.ai_grams
 import pt.antares.app.generated.resources.ai_hint
 import pt.antares.app.generated.resources.ai_meal_name_hint
@@ -428,6 +431,35 @@ private fun GuardarComoRefeicao(
     }
 }
 
+/**
+ * Os dois botões de dez em dez, ao lado do campo.
+ *
+ * Trabalham sobre o **texto** e não sobre o número gravado: é o campo que manda, e um botão
+ * que escrevesse noutro sítio deixava os dois a discordar enquanto alguém escrevia. Um campo
+ * vazio ou com letras trata-se como zero — o `+10` de nada é dez, e é o que a pessoa espera
+ * de um botão que só sabe somar.
+ *
+ * Nunca desce abaixo de zero: um alimento com gramas negativas não é uma correcção, é um
+ * defeito à espera de ir para o diário.
+ */
+@Composable
+private fun AjusteDeDez(gramasTexto: String, onGramsTexto: (String) -> Unit) {
+    fun mover(passo: Int) {
+        val actual = gramasTexto.replace(',', '.').toDoubleOrNull() ?: 0.0
+        val novo = (actual + passo).coerceAtLeast(0.0)
+        onGramsTexto(if (novo % 1.0 == 0.0) novo.toInt().toString() else novo.toString())
+    }
+
+    TextButton(onClick = { mover(-PASSO_G) }, contentPadding = PaddingValues(horizontal = Spacing.sm)) {
+        Text(stringResource(Res.string.ai_menos_dez))
+    }
+    TextButton(onClick = { mover(PASSO_G) }, contentPadding = PaddingValues(horizontal = Spacing.sm)) {
+        Text(stringResource(Res.string.ai_mais_dez))
+    }
+}
+
+private const val PASSO_G = 10
+
 @Composable
 private fun ItemRow(
     item: AiFoodItem,
@@ -458,6 +490,14 @@ private fun ItemRow(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.width(GRAMAS_LARGURA),
                 )
+
+                // **A outra metade, e faltava.** O esboço 03 escreve «campo de gramas
+                // escrevível, com os ±10 **como acessório**» — o campo substitui a régua para
+                // saltos grandes, e os dois botões continuam a servir o ajuste de uma mão, que
+                // é como esta folha se usa. Tirá-los foi longe de mais na correcção da 2.17.0,
+                // e só se viu ao pôr o desenho ao lado do ecrã.
+                AjusteDeDez(gramasTexto, onGramsTexto)
+
                 Text(
                     "${item.kcal} kcal",
                     style = MaterialTheme.typography.bodyMedium,

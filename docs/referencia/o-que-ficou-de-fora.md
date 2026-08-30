@@ -486,12 +486,22 @@ destaque entrou.
 2.16.0 escondeu-a onde há porção nomeada — e o «Frango inteiro sem pele, cru» não tem
 nenhuma, por isso continua a oferecer uma colher de sopa de frango cru.
 
-**A regra resolve metade do que o estudo pede.** Prendê-la aos líquidos resolve a outra
-metade e tira-a à farinha, ao açúcar e ao arroz cru, que são sólidos mas medem-se à colher.
-**É decisão do dono**, e não se corrige por iniciativa minha (A1).
+**A regra resolvia metade do que o estudo pede, e passou a resolver as duas.** É agora *ser
+líquido* — a pergunta que a colher faz. Custa a farinha e o açúcar, que são sólidos e se
+medem à colher, e esses ganham-na no dia em que alguém lhes escrever uma porção nomeada, que
+é o sítio certo para ela. A regra saiu do ecrã para uma função com teste-guarda, porque já
+tinha sido corrigida duas vezes.
 
 *As duas leituras anteriores não a viam porque as duas olhavam para a regra escrita no
-código — e a regra está cumprida. O que falha é a regra, não o código.*
+código — e a regra estava cumprida. O que falhava era a regra, não o código.*
+
+## E uma regressão da 2.17.0, apanhada pela mesma via
+
+**Os ±10 da revisão da AI tinham desaparecido.** O esboço 03 escreve «campo de gramas
+escrevível, **com os ±10 como acessório**»: o campo substitui a régua para saltos grandes, e
+os botões continuam a servir o ajuste de uma mão, que é como aquela folha se usa. A 2.17.0
+pôs o campo e tirou os botões — foi longe de mais na correcção. **Repostos**, a trabalhar
+sobre o texto do campo para os dois nunca discordarem.
 
 # O que fica em aberto, junto
 
@@ -511,7 +521,6 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **Centro de treino 7 → 16** | dez do estudo, #9 | 2.20.0, já no plano |
 | **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data — e envelheceu bem: hoje está menos errada do que quando foi adiada |
 | **O `food_cache` sem expiração, o custo invisível, o modelo fixado no código** | `estudo/sistema/02` | são do servidor, e o modelo fixado é o ponto fraco da longevidade |
-| **A colher de sopa num sólido sem porção nomeada** — o frango cru oferece uma | área 03, terceira passagem a 2026-08-30 | prendê-la aos líquidos resolve, e tira-a à farinha e ao açúcar. Decisão do dono |
 | **A confiança e o intervalo publicado por alimento** — «confiança A · 124–136» | esboço 22, terceira passagem | **não se faz**: nenhuma das três fontes o publica de forma que o oleoduto traga, e inventá-lo é o contrário do que este catálogo faz |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e

@@ -13,9 +13,11 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.18.2] — 2026-08-30
+
 **A releitura com o estudo.** As treze versões que já saíram tinham sido construídas a partir
 das linhas-resumo do plano, sem um único documento do estudo aberto. Foram abertos todos os
-que a rota manda, e o que se segue é o que divergiu. Sem esquema novo.
+que a rota manda, e o que se segue é o que divergiu.
 
 *Em três passagens: a leitura de cada documento contra o código, os esboços abertos ao lado do
 emulador ecrã a ecrã, e — a terceira — os dezassete esboços comparados um a um com o que a app
@@ -37,6 +39,20 @@ Esquema da base: **v36**, catálogo **v6**.
   ganham a forma de destaque dos esboços** — um véu da cor da app a esvair-se para o fundo do
   cartão, com o contorno da mesma cor. É a única superfície com gradiente, e é de propósito:
   um destaque que aparece três vezes no mesmo ecrã deixa de destacar.
+- **A app passa a ter a cor que sempre disse ter.** Os cartões eram cinzento-lavanda porque o
+  tema nomeava nove cores e deixava as outras trinta ao sistema — e as que ficavam por dizer
+  são as que mais se vêem. Passam a ser o quase-preto azulado da paleta, o texto passa a
+  branco quente, o contorno deixa de ser cinzento neutro, e cada cor de destaque ganha o seu
+  próprio fundo. Por trás de tudo entra o ar dos esboços: dois brilhos muito fracos, um
+  quente e um âmbar, sobre o preto mais fundo.
+- **O selo que diz que um alimento foi medido em Portugal deixa de ser vermelho.** Nesta app o
+  vermelho quer dizer «isto faz alguma coisa», e um selo de origem não é uma acção.
+- **Os ±10 voltam à revisão da AI**, ao lado do campo de gramas. A versão que tornou o campo
+  escrivível tirou-os, e eles são o que serve o ajuste de uma mão — que é como aquela folha se
+  usa. O campo continua a ser o que resolve ir de 30 g para 180 g.
+- **A colher de sopa passa a aparecer só nos líquidos.** Antes escondia-se onde o alimento já
+  tinha uma porção nomeada, e por isso um frango cru — que não tem nenhuma — continuava a
+  oferecer uma colher de sopa de frango cru.
 - **Os separadores da pesquisa passam a Tudo · Favoritos · Meus**, como o esboço 03 os
   desenha. Os favoritos ganham separador próprio; as refeições guardadas deixam de ter um e
   passam a ser a **primeira secção do «Tudo»** — a app abre no que se come, sem um toque pelo

@@ -832,6 +832,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="ai_source_estimated">Estimated</string>
     <string name="ai_check">Check this one</string>
     <string name="ai_remove">Remove</string>
+    <string name="ai_menos_dez">−10</string>
+    <string name="ai_mais_dez">+10</string>
     <string name="ai_grams">Grams</string>
     <string name="ai_swap">Swap</string>
     <string name="ai_swap_title">Swap for another food</string>

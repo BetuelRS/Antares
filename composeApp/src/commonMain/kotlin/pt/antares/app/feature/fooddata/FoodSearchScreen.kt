@@ -1008,9 +1008,14 @@ private fun FoodRow(
 
 @Composable
 private fun SourceBadge(label: String) {
+    // **Terciária e não primária.** O selo diz de onde vem o alimento, e nesta app a cor
+    // primária quer dizer «isto faz alguma coisa» — o anel, o botão de registar, o que está
+    // por decidir. Com os contentores dos acentos a ganharem véu próprio, um selo em
+    // primária passou a ler-se como um botão, e vê-se numa captura: o «PT» ficou vermelho ao
+    // lado do nome do alimento. O verde-azulado é o que a app já usa para informação.
     Surface(
-        color = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
         shape = MaterialTheme.shapes.small,
     ) {
         Text(

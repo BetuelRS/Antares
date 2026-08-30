@@ -23,9 +23,54 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.18.1"
+    const val CURRENT = "2.18.2"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.18.2",
+            title = "A app passa a dizer de onde vêm os números",
+            titleEn = "The app starts saying where its numbers come from",
+            highlights = listOf(
+                "**Cada nutriente diz de onde veio**, quando não veio de onde veio o " +
+                    "alimento: um alimento medido em Portugal pode levar o iodo da tabela " +
+                    "francesa, e a app dizia uma origem só",
+                "**A ficha de um alimento diz de quanto é o «cerca de»** dos números dele — " +
+                    "uma tabela publica a média de umas amostras, um rótulo tem tolerâncias, " +
+                    "uma estimativa é um palpite",
+                "**O dia reparte a margem pelas origens.** Saber que 120 das 150 kcal de " +
+                    "margem vêm do prato que a AI adivinhou diz o que fazer; «±150» não diz",
+                "**A procura abre em Tudo · Favoritos · Meus**, com as tuas refeições em " +
+                    "primeiro, a tua porção habitual na linha, e o microfone e a câmara " +
+                    "dentro do campo",
+                "**Os botões dizem onde é que o registo cai** — «Registar no almoço», " +
+                    "«Registar 2 doses no jantar»",
+                "**«As minhas refeições» é um ecrã**, alcançável do «Eu» e do diário",
+                "**A app ganhou a cor que sempre disse ter**: cartões quase pretos em vez de " +
+                    "cinzentos, texto branco quente, e um ar por trás de tudo",
+                "**A massa gorda medida à fita é corrigida do desvio por sexo** — isto muda " +
+                    "números que já estavam no telemóvel, e o basal acompanha",
+            ),
+            highlightsEn = listOf(
+                "**Every nutrient says where it came from**, when it did not come from where " +
+                    "the food did: a food measured in Portugal can carry its iodine from the " +
+                    "French table, and the app used to name a single source",
+                "**A food now says how wide its \"about\" is** — a table publishes the average " +
+                    "of a handful of samples, a label has legal tolerances, an estimate is a " +
+                    "guess",
+                "**The day splits its margin by source.** Knowing that 120 of the 150 kcal of " +
+                    "margin come from the plate the AI guessed tells you what to do; \"±150\" " +
+                    "does not",
+                "**Search opens in All · Favourites · Mine**, with your meals first, your " +
+                    "usual portion on the row, and the mic and camera inside the field",
+                "**Buttons say where the entry lands** — \"Log to lunch\", \"Log 2 servings " +
+                    "to dinner\"",
+                "**\"Your meals\" is a screen**, reachable from \"Me\" and from the diary",
+                "**The app got the colour it always said it had**: near-black cards instead " +
+                    "of grey, warm white text, and air behind everything",
+                "**Body fat measured with a tape is corrected for the bias by sex** — this " +
+                    "changes numbers already on your phone, and your basal metabolism follows",
+            ),
+        ),
         AppVersion(
             name = "2.18.1",
             title = "As refeições guardadas, e a preparação",
@@ -314,41 +359,6 @@ object AppChangelog {
                 "Before importing, the app says what is in the file: the date, the version " +
                     "that wrote it, and how many records of each kind it brings",
                 "Clearing the failed searches now asks for confirmation",
-            ),
-        ),
-        AppVersion(
-            name = "2.0.4",
-            title = "Nove coisas que a app dizia e não eram verdade",
-            titleEn = "Nine things the app said that were not true",
-            highlights = listOf(
-                "A janela da tendência e a meta de massa gorda escolhiam-se, gravavam-se, e " +
-                    "nada as lia: agora a janela governa mesmo a conta, e a meta aparece ao " +
-                    "lado da medida a que se compara",
-                "A instrução de medir a cintura era igual para os dois sexos, e a fórmula " +
-                    "pede sítios diferentes — o umbigo no homem, o ponto mais estreito na " +
-                    "mulher. O pescoço ganhou a instrução que nunca teve",
-                "Tocar num micronutriente que está a 34 % não levava a lado nenhum, e o ecrã " +
-                    "dos alimentos ricos nele já existia",
-                "O desnível da corrida era medido e gravado, e faltava no resumo — e no " +
-                    "detalhe vinha em metros a quem usa pés",
-                "O interruptor das metas adaptativas estava em dois ecrãs, o relógio do jejum " +
-                    "redesenhava-se sessenta vezes por minuto para mudar uma, e a " +
-                    "administração estava à vista de quem só queria mudar o tema",
-            ),
-            highlightsEn = listOf(
-                "The trend window and the body-fat goal were chosen, saved, and read by " +
-                    "nothing: the window now drives the calculation, and the goal shows next " +
-                    "to the measurement it compares against",
-                "The waist measuring instruction was the same for both sexes, and the formula " +
-                    "asks for different places — the navel for men, the narrowest point for " +
-                    "women. The neck got the instruction it never had",
-                "Tapping a micronutrient sitting at 34% led nowhere, and the screen listing " +
-                    "foods rich in it already existed",
-                "Run elevation was measured and saved, and missing from the summary — and the " +
-                    "detail screen showed metres to people using feet",
-                "The adaptive-targets switch lived on two screens, the fasting clock redrew " +
-                    "sixty times a minute to change once, and admin sat in plain sight of " +
-                    "anyone who just wanted to change the theme",
             ),
         ),
     )

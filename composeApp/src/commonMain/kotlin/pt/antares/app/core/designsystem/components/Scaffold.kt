@@ -15,6 +15,12 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -44,14 +50,69 @@ fun AntaresScaffold(
         // O `imePadding` está aqui e não em cada ecrã: é o que faz o conteúdo subir com o
         // teclado em vez de ficar escondido por baixo dele. O `KeyboardInsetsTest` falha se
         // um ecrã com campos de texto usar outro scaffold que não este.
-        modifier = modifier.imePadding(),
+        modifier = modifier.imePadding().atmosfera(),
         topBar = topBar,
         bottomBar = bottomBar,
         snackbarHost = snackbarHost,
         floatingActionButton = floatingActionButton,
+
+        // Transparente para a atmosfera se ver. O andaime pintava por cima dela com o fundo
+        // opaco, e o brilho ficava escondido debaixo do próprio ecrã.
+        //
+        // **A tinta tem de vir escrita a seguir**, e isso não é detalhe: o `Scaffold` deriva
+        // a cor do conteúdo da cor do contentor, e de uma cor transparente não se deriva
+        // nenhuma. Sem esta linha o número grande do dia saía preto sobre preto — o que
+        // aconteceu, e só se viu no aparelho.
+        containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         content = content,
     )
 }
+
+/**
+ * O ar por trás de todos os ecrãs: dois brilhos muito fracos sobre o preto mais fundo da
+ * paleta — a primária em cima à esquerda, o âmbar em cima à direita.
+ *
+ * **É o fundo dos próprios esboços**, e é a diferença entre um preto chapado e um preto com
+ * profundidade. Nos esboços ele vive na página à volta do telemóvel desenhado; aqui não há
+ * página à volta — a app é a superfície toda —, e por isso entra atrás dela.
+ *
+ * As opacidades são as do `estilo.css` e não umas escolhidas agora: 10 % e 7 %. Acima disso
+ * deixa de ser atmosfera e passa a ser uma cor, e uma cor no fundo de todos os ecrãs compete
+ * com a única coisa que nesta app tem direito a cor forte — o que a pessoa tem de decidir.
+ */
+private fun Modifier.atmosfera(): Modifier = composed {
+    val ground = MaterialTheme.colorScheme.surfaceContainerLowest
+    val quente = MaterialTheme.colorScheme.primary
+    val morno = MaterialTheme.colorScheme.secondary
+
+    drawBehind {
+        drawRect(ground)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(quente.copy(alpha = BRILHO_QUENTE), Color.Transparent),
+                center = Offset(size.width * 0.15f, -size.height * 0.02f),
+                radius = size.width * RAIO,
+            ),
+            radius = size.width * RAIO,
+            center = Offset(size.width * 0.15f, -size.height * 0.02f),
+        )
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(morno.copy(alpha = BRILHO_MORNO), Color.Transparent),
+                center = Offset(size.width * 0.92f, size.height * 0.04f),
+                radius = size.width * RAIO_MORNO,
+            ),
+            radius = size.width * RAIO_MORNO,
+            center = Offset(size.width * 0.92f, size.height * 0.04f),
+        )
+    }
+}
+
+private const val BRILHO_QUENTE = 0.10f
+private const val BRILHO_MORNO = 0.07f
+private const val RAIO = 1.1f
+private const val RAIO_MORNO = 0.9f
 
 /**
  * Um ecrã inteiro: andaime, rolagem, largura de leitura e margem, por omissão.
@@ -128,6 +189,13 @@ fun AntaresTopBar(
             }
         },
         actions = actions,
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
+
+        // Transparente, para a atmosfera atravessar a barra em vez de bater nela. É onde o
+        // brilho é mais forte — nasce em cima —, e uma faixa opaca no topo cortava-o
+        // exactamente onde ele existe.
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Color.Transparent,
+            scrolledContainerColor = Color.Transparent,
+        ),
     )
 }

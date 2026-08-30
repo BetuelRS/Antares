@@ -310,17 +310,21 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
                 label = { Text("${porcao.nome} ($quanto $unit)") },
             )
         }
-        // A colher de sopa só onde a app não tem melhor.
+        // A colher de sopa **só nos líquidos**, e só onde a app não tem melhor.
         //
-        // Aparecia em tudo, e a área 03 do estudo apanhou-a em «o que é inútil»: é uma
-        // unidade de volume aplicada a todos os alimentos — 15 g de azeite faz sentido,
-        // 15 g de bife não. Onde há porções nomeadas, elas vieram de uma fonte que mediu
-        // este alimento, e uma colher genérica por baixo delas é ruído a competir com dado.
+        // A área 03 apanhou-a em «o que é inútil» com um argumento de duas metades: é uma
+        // unidade de volume aplicada a todos os alimentos — «15 g de azeite faz sentido,
+        // 15 g de bife não». A primeira correção escondeu-a onde há porções nomeadas, e isso
+        // resolveu a metade do arroz; a do bife ficou por resolver, porque um frango cru não
+        // tem porção nomeada nenhuma e continuava a receber uma colher de sopa de frango.
         //
-        // **As porções nomeadas vêm de dois sítios**, e a primeira versão disto só olhava
-        // para um: a `porcoesExtra`, e não a porção do próprio alimento. No aparelho, o
-        // «Arroz carreteiro» mostrava «porção (300 g)» e a colher ao lado.
-        if (state.porcoesExtra.isEmpty() && food.servingGrams == null) {
+        // **O que decide é ser líquido**, que é a pergunta que a colher faz. Custa a farinha
+        // e o açúcar, que são sólidos e se medem à colher — e esses ganham a colher no dia em
+        // que alguém lhes escrever uma porção nomeada, que é o sítio certo para ela.
+        //
+        // As porções nomeadas vêm de **dois** sítios, e a primeira versão só olhava para um:
+        // a `porcoesExtra`, e não a porção do próprio alimento.
+        if (mostraColherDeSopa(food.isLiquid, state.porcoesExtra.isEmpty(), food.servingGrams)) {
             AssistChip(
                 onClick = { onPick(COLHER_DE_SOPA_G) },
                 label = { Text(stringResource(Res.string.food_tbsp)) },
@@ -331,6 +335,19 @@ private fun AtalhosDePorcao(state: PortionState, unit: String, onPick: (Double) 
 
 // A porção de referência das tabelas de composição, e a colher de sopa. Ficam em gramas
 // porque é assim que a app as guarda; o que muda com as unidades é o que se lê ao lado.
+/**
+ * Se a colher de sopa entra nos atalhos de porção deste alimento.
+ *
+ * Função à parte do ecrã por ser uma **regra e não um desenho**: nasceu de uma queixa do
+ * estudo, foi corrigida a meio uma vez, e a segunda metade só apareceu com o alimento no
+ * ecrã ao lado do esboço. Uma regra assim tem de se poder ver a falhar num teste.
+ */
+internal fun mostraColherDeSopa(
+    liquido: Boolean,
+    semPorcoesExtra: Boolean,
+    porcaoDaFonteG: Double?,
+): Boolean = liquido && semPorcoesExtra && porcaoDaFonteG == null
+
 /** Para passar a fracção da margem a percentagem, que é como ela se lê no ecrã. */
 private const val CEM = 100.0
 
