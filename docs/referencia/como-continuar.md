@@ -20,7 +20,16 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.18.1 é a última publicada**, a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
+- **2.18.2 é a última publicada**, a 2026-08-30. Esquema da base **v36**, catálogo **v6**.
+  Leva a auditoria com o estudo inteira — as três passagens — mais a origem por nutriente, a
+  margem na ficha do alimento, a repartição da margem do dia, e a paleta. Tag `v2.18.2`,
+  release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`. Verificada a correr
+  de **instalação limpa** com o APK de lançamento. **Muda números já gravados:** o viés por
+  sexo da fita métrica.
+- A **próxima é a 2.19.0**, «O exercício avulso». A medição C1 já está feita e está no plano:
+  duas premissas caíram — o id da atividade já é gravado, e o «−5 sem mínimo» não existe.
+- *O que se segue é o estado até à 2.18.1, e fica por ser o que explica como se chegou aqui.*
+- **2.18.1 foi publicada** a 2026-08-28. Esquema da base **v35**, catálogo **v5**.
   **Treze das 51 versões do plano feitas** — a 2.18.1 é uma metade partida, e não uma vaga
   nova, como a 2.5.1. Contado a 2026-08-29, depois das duas passagens: **1641 testes Kotlin,
   54 das ferramentas, 68 Deno**, detekt e lint limpos, e o CI verde nos dois últimos commits
@@ -47,8 +56,6 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 - **Volta-se a fazer versão a versão**, por decisão do dono a 2026-08-27. O bloco D foi a
   excepção e não o modelo: as corridas existiram porque a cerimónia por versão era um terço
   do trabalho num bloco de doze, e o bloco E tem quatro.
-- **A próxima é a 2.19.0**, «O exercício avulso» — dois serões. Abre com as perguntas dela,
-  que estão escritas no plano.
 - **O bloco D está fechado a sério.** A 2.7.0 levou-o quase todo e deixou seis promessas por
   cumprir; a 2.8.0 fecha-as. Nenhuma delas rebentava nada — davam números errados em
   silêncio, e só apareceram ao reler o plano promessa a promessa contra o código.
