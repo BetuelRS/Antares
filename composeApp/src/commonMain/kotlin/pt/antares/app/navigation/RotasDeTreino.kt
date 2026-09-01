@@ -42,11 +42,13 @@ internal fun NavGraphBuilder.rotasDeTreino(navController: NavHostController) {
         WorkoutScreen(
             onLibrary = { navController.navigate(Route.ExerciseLibrary()) },
             onRoutine = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
+            onStartRoutine = { routineId -> navController.navigate(Route.WorkoutSession(routineId)) },
             onStartEmpty = { navController.navigate(Route.WorkoutSession()) },
             onResume = { navController.navigate(Route.WorkoutSession()) },
             onHistory = { navController.navigate(Route.WorkoutHistory) },
             onStats = { navController.navigate(Route.WorkoutStats) },
             onSchedule = { navController.navigate(Route.WorkoutSchedule) },
+            onWorkout = { sessionId -> navController.navigate(Route.WorkoutDetail(sessionId)) },
         )
     }
     composable<Route.WorkoutSchedule> {

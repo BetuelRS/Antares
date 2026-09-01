@@ -1,0 +1,148 @@
+package pt.antares.app.feature.workout
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.runComposeUiTest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import pt.antares.app.core.database.entities.RoutineEntity
+import pt.antares.app.core.database.entities.WorkoutSessionEntity
+import pt.antares.app.core.model.SessionStatus
+import pt.antares.app.feature.workout.data.RoutineRepository
+import pt.antares.app.feature.workout.data.WorkoutHubRepository
+import pt.antares.app.feature.workout.ui.WorkoutHubViewModel
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.workout_hub_start
+import pt.antares.app.generated.resources.workout_hub_start_named
+import pt.antares.app.testing.FluxoUiHarness
+import kotlin.test.Test
+
+/**
+ * O centro de treino, tocado como se toca.
+ *
+ * Existe por causa de um defeito que nenhum teste de estado via: o `startOrResume` devolve a
+ * sessão que já está aberta e **ignora a rotina que se lhe pede**. Com um treino a decorrer,
+ * um ▶ ao lado de uma rotina levaria ao treino errado — sem erro, sem aviso, e com o nome da
+ * rotina certa escrito ao lado.
+ *
+ * É a mesma família de defeito da 2.17.0, onde um componente aceitava um `onClick` e o
+ * deitava fora: não muda estado nenhum, e por isso só se vê a compor o ecrã.
+ *
+ * **A afirmação é sobre a descrição do ▶, e não sobre a palavra «Começar»:** essa é substring
+ * de «Começar um treino vazio», que está sempre no ecrã — um teste escrito assim passava com
+ * o código partido, e passou, enquanto se escrevia este.
+ */
+@OptIn(ExperimentalTestApi::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class, qualifiers = "w411dp-h891dp")
+class CentroDeTreinoUiTest : FluxoUiHarness() {
+
+    private fun viewModel() = WorkoutHubViewModel(
+        routineRepository = RoutineRepository(
+            db.routineDao(),
+            db.exerciseLibraryDao(),
+            db.routineScheduleDao(),
+            io,
+        ),
+        hubRepository = WorkoutHubRepository(
+            routineDao = db.routineDao(),
+            sessionDao = db.workoutSessionDao(),
+            setDao = db.workoutSetDao(),
+            scheduleDao = db.routineScheduleDao(),
+            exerciseDao = db.exerciseLibraryDao(),
+        ),
+    )
+
+    private fun rotina(id: String, nome: String) = runBlocking {
+        db.routineDao().upsertRoutine(
+            RoutineEntity(id = id, name = nome, note = null, position = 0, updatedAt = 1L),
+        )
+    }
+
+    private fun sessao(id: String, status: SessionStatus, fim: Long?) = runBlocking {
+        db.workoutSessionDao().upsertSession(
+            WorkoutSessionEntity(
+                id = id,
+                startedAt = 1_000L,
+                endedAt = fim,
+                routineId = "r",
+                note = null,
+                status = status,
+                updatedAt = 1_000L,
+            ),
+        )
+    }
+
+    /**
+     * O ViewModel é criado **fora da composição** e espera-se que carregue **antes** de
+     * compor: criá-lo lá dentro dava um ViewModel novo a cada recomposição, e o relógio do
+     * teste de interface não deixa o trabalho da base chegar depois.
+     */
+    private fun carregado(): WorkoutHubViewModel = viewModel().also { vm ->
+        runBlocking { vm.state.first { it.carregado } }
+    }
+
+    @Composable
+    private fun ecra(vm: WorkoutHubViewModel, textos: Textos) {
+        WorkoutScreen(
+            onLibrary = {},
+            onRoutine = {},
+            onStartRoutine = {},
+            onStartEmpty = {},
+            onResume = {},
+            onHistory = {},
+            onStats = {},
+            onSchedule = {},
+            onWorkout = {},
+            viewModel = vm,
+        )
+        textos.ler(Res.string.workout_hub_start)
+        textos.lerFormatado(Res.string.workout_hub_start_named, NOME)
+    }
+
+    @Test
+    fun `com um treino a decorrer o ecra oferece retomar e nao comecar uma rotina`() = runComposeUiTest {
+        arrancaKoin()
+        rotina("r", NOME)
+        sessao("activa", SessionStatus.ACTIVE, fim = null)
+
+        val textos = Textos()
+        val vm = carregado()
+        setContent { ecra(vm, textos) }
+        waitForIdle()
+
+        // Primeiro a presença: sem ela, um ecrã que não desenhasse nada passava neste teste.
+        onNodeWithText(NOME).assertExists()
+
+        // O cartão de destaque não está lá: é o botão «Começar» dele que levaria ao treino
+        // errado. E «Começar» sozinho não serve de afirmação — é substring de «Começar um
+        // treino vazio», que está sempre no ecrã.
+        onNodeWithContentDescription(textos[Res.string.workout_hub_start_named])
+            .assertDoesNotExist()
+        onNodeWithText(textos[Res.string.workout_hub_start]).assertDoesNotExist()
+    }
+
+    @Test
+    fun `sem treino a decorrer a rotina pode comecar-se da lista`() = runComposeUiTest {
+        arrancaKoin()
+        rotina("r", NOME)
+        sessao("feito", SessionStatus.DONE, fim = 2_000L)
+
+        val textos = Textos()
+        val vm = carregado()
+        setContent { ecra(vm, textos) }
+        waitForIdle()
+
+        onNodeWithContentDescription(textos[Res.string.workout_hub_start_named]).assertExists()
+        onNodeWithText(textos[Res.string.workout_hub_start]).assertExists()
+    }
+
+    private companion object {
+        const val NOME = "Full Body A"
+    }
+}

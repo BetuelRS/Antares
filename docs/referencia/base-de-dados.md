@@ -1,7 +1,11 @@
 # Base de dados
 
-Room, no telemóvel e mais lado nenhum. Esquema na **versão 26**, com **30 tabelas** e **25
+Room, no telemóvel e mais lado nenhum. Esquema na **versão 37**, com **31 tabelas** e **39
 migrações automáticas**.
+
+> **Este cabeçalho esteve onze versões de esquema atrasado** — dizia v26, 30 tabelas e 25
+> migrações — e nada o apanhou: o `DocumentationHonestyTest` verifica caminhos e a versão da
+> app, não afirmações. Contado a 2026-08-31 no `AntaresDb.kt` e em `composeApp/schemas/`.
 
 Os esquemas exportados estão em `composeApp/schemas/`, um ficheiro JSON por versão. São eles que
 permitem ao Room gerar as migrações e aos testes verificá-las.
@@ -46,6 +50,20 @@ que a app foi construída.
 | 24 | | **remove** `dirty` de 23 tabelas |
 | 25 | | `recipe.servings` — quantas doses rende a receita |
 | 26 | | **remove** `user_profile.energyUnit` |
+| 27 | `food_marca` | |
+| 28 | | **remove** `sodiumMg` e `fiberG`: passam a viver só no vocabulário |
+| 29 | | `familia` — a família de confeção do alimento |
+| 30 | | `porcoesJson` |
+| 31 | | `metodo` — como o prato foi cozinhado |
+| 32 | | `densidade` |
+| 33 | | `imagemUrl` |
+| 34 | | `photoPath` — a fotografia do prato |
+| 35 | `recipe_step` | `texto`, `posicao` — os passos de preparação |
+| 36 | | `microsOrigemJson` — a origem por nutriente |
+| 37 | | `startedAtMin` — a que horas o exercício começou |
+
+*Da v27 à v37 esta tabela foi reconstruída a 2026-08-31 comparando os esquemas exportados uns
+com os outros, e não a partir do `CHANGELOG.md`: é o que a v27 tem e a v26 não, linha a linha.*
 
 **Três destas não são acrescentos, e todas pela mesma razão: descreviam algo que a app não
 faz.** O `sync_meta` guardava estado de sincronização e a `dirty` marcava linhas por enviar; a

@@ -28,6 +28,12 @@ data class SessionVolumeRow(val sessionId: String, val volume: Double)
 
 data class SessionExerciseRow(val sessionId: String, val exerciseId: String)
 
+data class RoutineItemCountRow(val routineId: String, val total: Int)
+
+data class RoutineLastDoneRow(val routineId: String, val startedAt: Long)
+
+data class SessionSetCountRow(val sessionId: String, val total: Int)
+
 data class ExerciseSetRow(val exerciseId: String, val weightKg: Double, val reps: Int)
 
 @Dao
@@ -76,6 +82,21 @@ interface RoutineDao {
 
     @Query("SELECT COUNT(*) FROM routine WHERE deleted = 0")
     suspend fun countRoutines(): Int
+
+    /**
+     * Quantos exercícios tem cada rotina, todas de uma vez. Uma consulta por rotina fazia sete
+     * idas à base para desenhar uma lista de sete linhas, e o número delas só cresce.
+     *
+     * Rotinas sem exercícios não aparecem aqui — não têm linha na `routine_item` para o
+     * `GROUP BY` agrupar —, e quem lê trata a ausência como zero.
+     */
+    @Query(
+        """
+        SELECT routineId AS routineId, COUNT(*) AS total
+        FROM routine_item WHERE deleted = 0 GROUP BY routineId
+        """,
+    )
+    fun observeItemCounts(): Flow<List<RoutineItemCountRow>>
 
     @Query("SELECT * FROM routine WHERE deleted = 0")
     suspend fun exportRows(): List<RoutineEntity>
@@ -128,6 +149,20 @@ interface WorkoutSessionDao {
             "AND startedAt BETWEEN :fromMs AND :toMs",
     )
     suspend fun sessionsBetween(fromMs: Long, toMs: Long): List<WorkoutSessionEntity>
+
+    /**
+     * A última vez que cada rotina foi treinada. Um treino livre tem `routineId` nulo e fica
+     * de fora: não é a última vez de rotina nenhuma.
+     */
+    @Query(
+        """
+        SELECT routineId AS routineId, MAX(startedAt) AS startedAt
+        FROM workout_session
+        WHERE status = 'DONE' AND deleted = 0 AND routineId IS NOT NULL
+        GROUP BY routineId
+        """,
+    )
+    fun observeLastDoneByRoutine(): Flow<List<RoutineLastDoneRow>>
 
     @Query("SELECT * FROM workout_session WHERE deleted = 0")
     suspend fun exportRows(): List<WorkoutSessionEntity>
@@ -259,6 +294,21 @@ interface WorkoutSetDao {
         """,
     )
     suspend fun volumeBetween(fromMs: Long, toMs: Long): Double
+
+    /**
+     * Quantas séries de trabalho teve cada treino. É o quarto dado da linha do histórico, e
+     * conta-se em SQL pela mesma razão que o volume: uma consulta por treino não escala.
+     */
+    @Query(
+        """
+        SELECT s.sessionId AS sessionId, COUNT(*) AS total
+        FROM workout_set s
+        JOIN workout_session ws ON s.sessionId = ws.id
+        WHERE ws.status = 'DONE' AND ws.deleted = 0 AND s.deleted = 0 AND s.isWarmup = 0
+        GROUP BY s.sessionId
+        """,
+    )
+    fun observeSetCounts(): Flow<List<SessionSetCountRow>>
 
     @Query(
         """

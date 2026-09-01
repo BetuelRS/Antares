@@ -150,6 +150,16 @@ abstract class FluxoUiHarness {
             recursos.forEach { lidos[it] = stringResource(it) }
         }
 
+        /**
+         * O mesmo, para um texto com argumentos. Existe porque metade das frases da app leva
+         * um número ou um nome lá dentro, e escrevê-las à mão no teste é o que faz um teste
+         * passar a falhar quando alguém corrige uma vírgula.
+         */
+        @Composable
+        fun lerFormatado(recurso: StringResource, vararg args: Any) {
+            lidos[recurso] = stringResource(recurso, *args)
+        }
+
         operator fun get(recurso: StringResource): String =
             lidos[recurso] ?: error("texto não foi lido dentro do setContent")
     }

@@ -23,9 +23,45 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.19.0"
+    const val CURRENT = "2.20.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.20.0",
+            title = "O separador do treino passa a dizer alguma coisa",
+            titleEn = "The workout tab starts telling you something",
+            highlights = listOf(
+                "**O treino de hoje em primeiro**, vindo do teu plano da semana — e um " +
+                    "toque para o começar. Antes eram três toques e um percorrer até ao fundo",
+                "**Sem plano, o cartão mostra a última rotina que fizeste.** Sem plano e sem " +
+                    "histórico, leva-te a marcar a semana em vez de escolher uma por ti",
+                "**A semana em sete pontos**, com o volume e as séries que já lá vão",
+                "**Cada rotina diz quantos exercícios tem e quando foi feita**, e tem um ▶ " +
+                    "que a começa. Tocar no nome continua a abrir o editor",
+                "**Os últimos treinos passam a ter quatro dados** — rotina, data, duração e " +
+                    "séries. Tinham dois, e dois treinos diferentes ficavam iguais",
+                "**Com um treino a decorrer, o ecrã diz há quanto tempo** e oferece retomá-lo " +
+                    "— e mais nada: começar outro levava ao que já estava aberto",
+                "A biblioteca, as estatísticas, o histórico e o plano da semana passam para " +
+                    "o menu do canto: eram cinco botões cinzentos a ocupar metade do ecrã",
+            ),
+            highlightsEn = listOf(
+                "**Today's workout comes first**, from your weekly plan — and one tap starts " +
+                    "it. It used to be three taps and a scroll to the bottom",
+                "**With no plan, the card shows the last routine you did.** With no plan and " +
+                    "no history it takes you to plan the week instead of picking one for you",
+                "**The week as seven dots**, with the volume and sets so far",
+                "**Every routine says how many exercises it has and when you last did it**, " +
+                    "and has a ▶ that starts it. Tapping the name still opens the editor",
+                "**Recent workouts now carry four facts** — routine, date, duration and " +
+                    "sets. They carried two, and two different workouts looked identical",
+                "**With a workout running, the screen says how long it has been going** and " +
+                    "offers to resume it — and nothing else: starting another took you to " +
+                    "the one already open",
+                "The library, statistics, history and weekly plan move into the corner menu: " +
+                    "they were five grey buttons taking up half the screen",
+            ),
+        ),
         AppVersion(
             name = "2.19.0",
             title = "Registar exercício deixa de andar de cinco em cinco",
@@ -327,37 +363,7 @@ object AppChangelog {
                     "nothing stretches past what reads well",
             ),
         ),
-        AppVersion(
-            name = "2.2.0",
-            title = "A app diz o que sai daqui, e deixa-te cortar",
-            titleEn = "The app says what leaves, and lets you cut it",
-            highlights = listOf(
-                "Um ecrã novo, no menu, com **tudo o que sai do telemóvel** e quando: a " +
-                    "pesquisa de alimentos, a análise por foto, o mapa das corridas, as " +
-                    "imagens dos exercícios — e a cópia de segurança, à parte, porque essa " +
-                    "não sai para a Internet",
-                "A app avisa **antes** de a primeira procura sair, e não depois. Recusar ali " +
-                    "desliga a pesquisa em linha",
-                "Interruptor para desligar a pesquisa em linha e a leitura de códigos de " +
-                    "barras. Desligada, a app di-lo em vez de fingir que não há resultados",
-                "A corrida passa a sugerir um nome — «Corrida da manhã» — e a lembrar-se do " +
-                    "tipo de atividade e da auto-pausa que escolheste",
-                "A primeira cópia de segurança já não sai vazia, e substituir os dados deixa " +
-                    "de aceitar uma cópia sem um único registo",
-            ),
-            highlightsEn = listOf(
-                "A new screen, in the menu, with **everything that leaves the phone** and " +
-                    "when: food search, photo analysis, the run map, exercise images — and " +
-                    "the backup, kept apart, because that one goes nowhere on the internet",
-                "The app warns **before** the first search leaves, not after. Declining " +
-                    "there turns online search off",
-                "A switch to turn off online search and barcode lookups. With it off, the " +
-                    "app says so instead of pretending there are no results",
-                "Runs now suggest a name — «Morning run» — and remember the activity type " +
-                    "and auto-pause you picked",
-                "The first backup is no longer empty, and replacing your data no longer " +
-                    "accepts a backup without a single record",
-            ),
-        ),
+        // A 2.2.0 saiu daqui ao entrar a 2.20.0: a lista tem tecto de doze e o
+        // `AppChangelogTest` cobra-o. O histórico completo é trabalho do `CHANGELOG.md`.
     )
 }

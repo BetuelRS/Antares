@@ -1,7 +1,9 @@
 # Regras de trabalho
 
-As trinta regras que governam a produção da Antares. Escolhidas item a item
-pelo dono a **2026-08-18**, antes de a produção começar.
+As trinta e uma regras que governam a produção da Antares. Trinta foram escolhidas item a
+item pelo dono a **2026-08-18**, antes de a produção começar; a **D7** entrou a
+**2026-08-31**, também por decisão dele, depois de a 2.20.0 mostrar que uma passagem só não
+chega.
 
 Cada uma diz **quem a verifica**, porque uma regra que ninguém verifica é
 decoração:
@@ -67,6 +69,7 @@ decoração:
 | **D4** | **CI verde antes de fechar a versão.** Verificar no GitHub, não só a suite local. Esteve vermelho meses sem ninguém saber. | por automatizar |
 | **D5** | **Migração de esquema exige um teste com dados reais.** Nenhuma migração entra sem um teste que a corra sobre uma base cheia. | teste |
 | **D6** | **Varrer antes de publicar, não depois.** Antes de etiquetar: os testes-guarda novos estão documentados? Os números que os documentos citam ainda são verdade? Os comandos dos guias ainda são os que o CI corre? **Um defeito que pertence a esta versão e fica por corrigir não passa a pertencer à seguinte.** | eu |
+| **D7** | **Nenhuma versão fecha com uma passagem só.** Acabado o trabalho, fazem-se **duas revisões separadas**, e são separadas porque procuram coisas diferentes: a primeira **caça defeitos** — lê-se o que se escreveu à procura do que está errado, não do que está feito; a segunda **confere com o estudo e com o esboço**, proposta a proposta, e diz o que ficou de fora e porquê. **Lêem-se os ficheiros, não a memória do que se escreveu neles.** Uma versão revista uma vez é uma versão por rever. | eu |
 
 ---
 
@@ -105,10 +108,10 @@ estado de uma execução no GitHub, que um teste local não consegue consultar s
 
 ## Porquê tantas
 
-Trinta é muito, e o risco é conhecido: uma lista longa lê-se uma vez e nunca
+Trinta e uma é muito, e o risco é conhecido: uma lista longa lê-se uma vez e nunca
 mais. A defesa é a coluna da direita.
 
-Este repositório já provou qual é o filtro. Há **66 testes-guarda** documentados em
+Este repositório já provou qual é o filtro. Há **67 testes-guarda** documentados em
 [Testes-guarda](testes-guarda.md), e foram eles — não os documentos — que fizeram
 as decisões sobreviver a meses de trabalho. As regras marcadas **teste** cuidam-se
 sozinhas. As marcadas **tu** são decisões, e por isso não podem ser automatizadas.

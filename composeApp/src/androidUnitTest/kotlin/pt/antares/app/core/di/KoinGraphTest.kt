@@ -60,5 +60,6 @@ class KoinGraphTest : KoinTest {
         "CoachRepository" to { get<pt.antares.app.core.coach.CoachRepository>() },
         "ExerciseRepository" to { get<pt.antares.app.feature.exercise.ExerciseRepository>() },
         "NutritionStatsRepository" to { get<pt.antares.app.feature.stats.NutritionStatsRepository>() },
+        "WorkoutHubRepository" to { get<pt.antares.app.feature.workout.data.WorkoutHubRepository>() },
     )
 }

@@ -13,6 +13,52 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.20.0] — 2026-09-02
+
+**O centro de treino.** O separador do treino era o único dos cinco que não mostrava um
+número: cinco botões cinzentos iguais e uma lista de nomes. Passa a responder à pergunta que
+se faz ao abri-lo — *treino o quê hoje, e como é que começo?*
+
+**Nenhum dado desta versão é novo.** Todos já eram calculados noutro sítio da app e nunca
+chegavam aqui. Esquema da base inalterado, **v37**; catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **O treino de hoje, em destaque, com um botão que o começa.** Vem do plano da semana, que
+  já existia e que nenhum ecrã de treino lia — o cartão do «Hoje» sabia dizer o nome da
+  rotina do dia e este não. Começar a rotina de hoje custava três toques e um percorrer até
+  ao fundo do editor.
+- **Sem plano para hoje, o cartão mostra a última rotina treinada**, com a data. Sem plano e
+  **sem histórico** — que é o estado de quem acabou de instalar a app — leva a marcar a
+  semana, em vez de escolher uma rotina por conta própria: a app semeia sete, e nenhuma
+  delas é mais de quem a usa do que as outras.
+- **A semana em sete pontos**, de segunda a domingo, com o volume e as séries. É o mesmo
+  desenho que o relatório do treinador já usava, e agora é o mesmo componente.
+- **Cada rotina diz quantos exercícios tem e quando foi feita pela última vez**, e ganha um
+  ▶ que a começa. Tocar no nome continua a abrir o editor: são duas acções, e por isso dois
+  alvos.
+- **Os últimos treinos, com quatro dados** — rotina, data, duração e séries. A linha do
+  histórico tinha data e volume, e dois treinos completamente diferentes ficavam iguais.
+
+### Alterado
+
+- **A biblioteca, o histórico, as estatísticas e o plano da semana passam para o menu do
+  canto.** Eram quatro botões de largura toda, visitam-se uma vez por mês, e ocupavam metade
+  do ecrã.
+- **Com um treino a decorrer, o ecrã oferece retomá-lo e mais nada** — e diz há quanto tempo
+  ele dura: «Retomar o treino · 12 min». Os botões de começar desaparecem enquanto ele durar:
+  quem os tocasse ia parar ao treino aberto e não à rotina que escolheu, porque a app só
+  permite um treino de cada vez — o botão dizia o contrário do que fazia.
+- **Criar uma rotina passa a ser um «＋» ao lado de «As minhas rotinas»**, e não um botão no
+  fim da lista, que com sete rotinas ficava fora do ecrã. O treino vazio fica sozinho no fim,
+  que é onde a acção mais rara pertence — era a terceira coisa do ecrã.
+
+### Corrigido
+
+- **Os sete quadrados da semana eram invisíveis.** No relatório do treinador também: eram
+  pintados com uma cor que, desde a paleta da 2.18.2, é a mesma do cartão onde vivem. Uma
+  semana sem dias marcados ficava a ser sete letras sozinhas. Nenhum teste vê cor.
+
 ## [2.19.0] — 2026-08-30
 
 **O exercício avulso.** O ecrã de registar uma atividade era correcto e mal servido pelos seus

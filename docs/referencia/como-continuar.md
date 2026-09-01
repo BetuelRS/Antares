@@ -20,7 +20,27 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.19.0 é a última publicada**, a 2026-08-30. Esquema da base **v37**, catálogo **v6**.
+- **2.20.0 é a última fechada**, a 2026-09-02. Esquema da base **v37**, catálogo **v6** —
+  **nenhum dos dois mexeu**. «O centro de treino»: o separador que não mostrava um único
+  número passa a mostrar o treino de hoje, a semana, as rotinas com ▶ e os últimos treinos.
+  **Nenhum dado é novo** — todos já eram calculados noutro sítio e não chegavam ali. 1680
+  testes Kotlin, 58 das ferramentas, 68 Deno, detekt e lint limpos. Verificada a correr nos
+  **três estados** do cartão de destaque, incluindo o do primeiro arranque, com `pm clear` e
+  o arranque refeito.
+- **A D7 nasceu nesta versão, e é a primeira a fechar com ela:** duas revisões separadas.
+  A primeira apanhou **seis defeitos** que os 1677 testes verdes não viam — entre eles um
+  comentário que prometia o que o ecrã não fazia, e um nome tocável com vinte dp de alvo. A
+  segunda conferiu as seis propostas do esboço 06 uma a uma: quatro batem, uma corrigiu-se a
+  favor do esboço, e **duas divergem de propósito** — o botão «Histórico» fica no menu, porque
+  tirá-lo deixava o ecrã de histórico sem caminho nenhum.
+- **A próxima do plano é a barra**, e ainda não tem número: a resposta do dono à terceira
+  pergunta da 2.20.0 foi que a **Corrida sai da barra e entra o Progresso**. Isso partiu a
+  versão em duas (B2) e a segunda metade **abre com uma decisão de numeração** — se for MAIOR
+  é a 3.0.0 e os grupos passam a 4.0.0; se for MENOR pelo precedente da 2.1.0, é a 2.21.0 e o
+  plano não se desloca. **Não se abre sem essa resposta.** A 2.21.0 do plano é «a sessão:
+  corrigir e cronometrar».
+- *O que se segue é o estado até à 2.19.0, e fica por ser o que explica como se chegou aqui.*
+- **2.19.0 foi publicada**, a 2026-08-30. Esquema da base **v37**, catálogo **v6**.
   «O exercício avulso»: duração escrevível com atalhos, recentes, corrigir um registo do
   diário, e a hora a que a atividade começou. Tag `v2.19.0`, commit `94f9505`, release com os
   quatro APKs mais o `catalogo.json` e o `manifesto.json`. 1668 testes Kotlin, 58 das
@@ -115,6 +135,26 @@ o nome trocado não rebenta, não dá erro, e custa uma versão a corrigir.
 premissas do plano erradas, e as cinco apareceram a medir — não a ler.
 
 ## O que a corrida no aparelho mostrou
+
+**Da 2.20.0, o centro de treino** (emulador Android 16, x86_64). **Quatro defeitos, e nenhum
+dos 1677 testes via um único** — dois eram plurais, um era uma cor, e o quarto era um botão
+que fazia outra coisa:
+
+1. **«1 DAYS AGO».** O cartão contava dias e não tinha plural. O contador desapareceu em vez
+   de ganhar um plural: passou a levar o dia, e o formatador da app já diz «ontem».
+2. **Os sete quadrados da semana eram invisíveis** — pintados com o `surfaceVariant`, que
+   desde a paleta da 2.18.2 é a própria cor do cartão. **Também no relatório do treinador**,
+   desde essa versão. **Nenhum teste vê cor.**
+3. **«1 sets».** O mesmo defeito de plural, no meu código, com a app já a ter plurais.
+4. **Com um treino a decorrer, o ecrã oferecia «Começar».** O `startOrResume` devolve a
+   sessão aberta e ignora a rotina que se lhe pede — o botão dizia «Começar Full Body A» e
+   levava ao treino que já corria. É a família de defeito da 2.17.0, e ficou como teste-guarda
+   de interface.
+
+**O que a corrida confirmou:** o ▶ a abrir a rotina certa num toque · os três estados do
+cartão de destaque, o terceiro verificado de instalação limpa · a semana ISO a dizer «0» na
+segunda-feira seguinte a um treino de domingo · «Retomar o treino · 1 min» · e os ▶ a
+desaparecerem enquanto há treino aberto.
 
 **Da 2.19.0, o exercício avulso** (emulador Android 16, x86_64), em **duas passagens: a 100 %
 de escala de letra e a 200 %**, que é a definição que o `estudo/transversal/03` §3.1 nomeia e
@@ -348,7 +388,7 @@ Duas, e nenhuma delas aparece na app. Estão documentadas em
 ## As regras
 
 
-[`regras.md`](regras.md) é a fonte única. São 30, em grupos A a F, e cada uma diz quem a
+[`regras.md`](regras.md) é a fonte única. São 31, em grupos A a F, e cada uma diz quem a
 verifica. As que mais mandam no dia a dia:
 
 | | |
@@ -363,6 +403,7 @@ verifica. As que mais mandam no dia a dia:
 | **D1** | o que conta é o relatório de testes, não a última linha do Gradle. |
 | **D3** | correr a app, não só os testes. |
 | **D6** | varrer **antes** de publicar, não depois. |
+| **D7** | **duas revisões por versão, e separadas**: uma a caçar defeitos, outra a conferir com o estudo e com o esboço. Lendo os ficheiros, não a memória deles. |
 
 **Nomes de classes e ficheiros são substantivos, não frases.** Regra do dono, dada depois de
 um ecrã se ter chamado `OQueSaiDaquiScreen`. Português nos nomes é aceite; frases não.

@@ -17,6 +17,7 @@ import pt.antares.app.feature.workout.data.RoutineRepository
 import pt.antares.app.feature.workout.data.RoutineTemplateSeeder
 import pt.antares.app.feature.workout.data.SessionPickBus
 import pt.antares.app.feature.workout.data.WorkoutHistoryRepository
+import pt.antares.app.feature.workout.data.WorkoutHubRepository
 import pt.antares.app.feature.workout.data.WorkoutSessionRepository
 import pt.antares.app.core.demo.DemoDataWriter
 import pt.antares.app.feature.profile.data.BodyMeasurementRepository
@@ -81,5 +82,6 @@ val repositoryModule = module {
     single { RoutineTemplateSeeder(get(), get(), get(IoDispatcher)) }
     single { WorkoutSessionRepository(get(), get(), get(), get(), get(), get(IoDispatcher)) }
     single { WorkoutHistoryRepository(get(), get(), get(), get(IoDispatcher)) }
+    single { WorkoutHubRepository(get(), get(), get(), get(), get()) }
     single { SessionPickBus() }
 }

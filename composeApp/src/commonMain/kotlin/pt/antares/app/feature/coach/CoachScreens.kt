@@ -1,10 +1,5 @@
 package pt.antares.app.feature.coach
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +32,7 @@ import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.EmptyState
 import pt.antares.app.core.designsystem.components.PrimaryButton
+import pt.antares.app.core.designsystem.components.SemanaEmPontos
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.util.dayShort
 import pt.antares.app.core.util.epochDayToLocalDate
@@ -168,9 +164,10 @@ fun CoachReportScreen(
                     if (report.aggregate != null) {
                         item { NumbersCard(report) }
                         item {
-                            SemanaAVista(
+                            SemanaEmPontos(
                                 inicioEpochDay = report.aggregate.weekStartEpochDay,
-                                diasComRegisto = report.aggregate.diasComRegisto,
+                                diasMarcados = report.aggregate.diasComRegisto,
+                                titulo = stringResource(Res.string.coach_week_at_a_glance),
                             )
                         }
                     }
@@ -500,48 +497,5 @@ private fun porqueMuda(pedido: Double?, real: Double?): String? {
     )
 }
 
-/**
- * A semana à vista: sete quadrados, um por dia, cheios nos que têm registo.
- *
- * O relatório dizia «registaste 5 de 7 dias» e mais nada. Cinco dias seguidos e cinco dias
- * alternados são semanas diferentes, e o número não os distingue — a forma distingue.
- */
-@Composable
-private fun SemanaAVista(inicioEpochDay: Long, diasComRegisto: List<Long>) {
-    val marcado = MaterialTheme.colorScheme.primary
-    val vazio = MaterialTheme.colorScheme.surfaceVariant
-    Column {
-        Text(
-            stringResource(Res.string.coach_week_at_a_glance),
-            style = MaterialTheme.typography.titleSmall,
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
-        ) {
-            for (i in 0 until DIAS_DA_SEMANA) {
-                val dia = inicioEpochDay + i
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(
-                        Modifier
-                            .size(CELULA_DP.dp)
-                            .clip(RoundedCornerShape(CANTO_DP.dp))
-                            .background(if (dia in diasComRegisto) marcado else vazio),
-                    )
-                    Text(
-                        dayShort(dia).take(INICIAL_DO_DIA),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-        }
-    }
-}
-
-private const val DIAS_DA_SEMANA = 7
-private const val CELULA_DP = 28
-private const val CANTO_DP = 4
-
-// Só a primeira letra: sete nomes de dia inteiros não cabem na largura de um telemóvel.
-private const val INICIAL_DO_DIA = 1
+// A semana à vista mudou-se para o `SemanaEmPontos`, no sistema de desenho: o centro de
+// treino mostra a mesma coisa, e duas cópias divergiam à primeira correcção.

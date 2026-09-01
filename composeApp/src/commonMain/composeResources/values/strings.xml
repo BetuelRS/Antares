@@ -614,7 +614,24 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_start_empty">Iniciar treino vazio</string>
     <string name="workout_hub_no_routines">Ainda não tens rotinas. Cria uma para começar.</string>
     <string name="workout_hub_new_routine">Nova rotina</string>
-    <string name="workout_hub_resume">Retomar treino em curso</string>
+    <string name="workout_hub_more">Mais opções de treino</string>
+    <string name="workout_hub_resume_running">Retomar o treino · %1$s</string>
+    <string name="workout_hub_from_plan">HOJE · DO TEU PLANO</string>
+    <string name="workout_hub_last_done">A ÚLTIMA QUE FIZESTE · %1$s</string>
+    <string name="workout_hub_start">Começar</string>
+    <string name="workout_hub_start_named">Começar %1$s</string>
+    <string name="workout_hub_minutes">%1$d min</string>
+    <string name="workout_hub_last_duration">~%1$d min da última vez</string>
+    <string name="workout_hub_week">Esta semana</string>
+    <string name="workout_hub_week_summary">%1$s de volume · %2$s</string>
+    <string name="workout_hub_week_none">Ainda não treinaste esta semana.</string>
+    <string name="workout_hub_no_plan_title">Ainda não treinaste</string>
+    <string name="workout_hub_no_plan_body">Marca as rotinas pelos dias e o treino de hoje passa a aparecer aqui.</string>
+    <string name="workout_hub_no_plan_action">Marcar a semana</string>
+    <string name="workout_hub_routine_never">ainda não a fizeste</string>
+    <string name="workout_hub_recent">Últimos treinos</string>
+    <string name="workout_hub_free_workout">Treino livre</string>
+    <string name="workout_hub_workout_line">%1$s · %2$s · %3$s</string>
 
     <string name="exlib_title">Exercícios</string>
     <string name="exlib_search_hint">Procurar exercício</string>
@@ -930,7 +947,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="adaptive_keep">Manter</string>
     <string name="adaptive_disclaimer">Cálculo automático a partir dos teus dados. Não é aconselhamento médico.</string>
     <string name="settings_adaptive_title">Metas adaptativas</string>
-    <string name="settings_adaptive_desc">Sugerir uma meta nova todas as semanas, com base no progresso real.</string>
+    <string name="settings_adaptive_desc">Sugerir uma meta nova todas as semanas, com base no progresso real.</string>
     <string name="settings_adaptive_desc_off">Desligado: a meta fica fixa na conta de partida, que assume 7 700 kcal por cada quilo. Essa regra ignora a adaptação do corpo e sobrestima a perda ao fim de alguns meses — ligar isto mede o teu gasto real e corrige a meta com ele.</string>
 
     <string name="admin_title">Admin</string>

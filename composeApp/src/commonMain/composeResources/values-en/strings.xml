@@ -613,7 +613,24 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_start_empty">Start empty workout</string>
     <string name="workout_hub_no_routines">No routines yet. Create one to get started.</string>
     <string name="workout_hub_new_routine">New routine</string>
-    <string name="workout_hub_resume">Resume ongoing workout</string>
+    <string name="workout_hub_more">More workout options</string>
+    <string name="workout_hub_resume_running">Resume workout · %1$s</string>
+    <string name="workout_hub_from_plan">TODAY · FROM YOUR PLAN</string>
+    <string name="workout_hub_last_done">THE LAST ONE YOU DID · %1$s</string>
+    <string name="workout_hub_start">Start</string>
+    <string name="workout_hub_start_named">Start %1$s</string>
+    <string name="workout_hub_minutes">%1$d min</string>
+    <string name="workout_hub_last_duration">~%1$d min last time</string>
+    <string name="workout_hub_week">This week</string>
+    <string name="workout_hub_week_summary">%1$s of volume · %2$s</string>
+    <string name="workout_hub_week_none">No workouts this week yet.</string>
+    <string name="workout_hub_no_plan_title">You haven't trained yet</string>
+    <string name="workout_hub_no_plan_body">Assign routines to days and today's workout will show up here.</string>
+    <string name="workout_hub_no_plan_action">Plan the week</string>
+    <string name="workout_hub_routine_never">not done yet</string>
+    <string name="workout_hub_recent">Recent workouts</string>
+    <string name="workout_hub_free_workout">Free workout</string>
+    <string name="workout_hub_workout_line">%1$s · %2$s · %3$s</string>
 
     <string name="exlib_title">Exercises</string>
     <string name="exlib_search_hint">Search exercise</string>
@@ -929,7 +946,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="adaptive_keep">Keep</string>
     <string name="adaptive_disclaimer">Calculated automatically from your data. Not medical advice.</string>
     <string name="settings_adaptive_title">Adaptive targets</string>
-    <string name="settings_adaptive_desc">Suggest a new target every week, based on real progress.</string>
+    <string name="settings_adaptive_desc">Suggest a new target every week, based on real progress.</string>
     <string name="settings_adaptive_desc_off">Off: the target stays fixed at the starting calculation, which assumes 7,700 kcal per kilo. That rule ignores metabolic adaptation and overestimates loss after a few months — turning this on measures your real expenditure and corrects the target with it.</string>
 
     <string name="admin_title">Admin</string>

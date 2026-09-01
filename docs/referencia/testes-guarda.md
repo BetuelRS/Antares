@@ -71,6 +71,7 @@ Quando um destes falha, a pergunta certa não é como o fazer passar. É *que de
 | `ListaAdaptavelUiTest` | uma lista voltar a ser uma coluna só num tablet, ou um cabeçalho ficar encavalitado ao lado do primeiro resultado | trocaste a `ListaAdaptavel` por uma `LazyColumn`, ou um `linhaInteira` por um `item` |
 | `GrelhaDeCartoesUiTest` | os cartões do Hoje voltarem a empilhar-se numa coluna com meio ecrã vazio ao lado | a grelha deixou de alternar entre as duas colunas |
 | `LarguraDeLeituraUiTest` | um formulário esticar-se por 1200 dp, ou ficar encostado a um lado em vez de ao meio | falta o `larguraDeLeitura()` num ecrã novo, ou a cadeia de modificadores perdeu o `wrapContentWidth` |
+| `CentroDeTreinoUiTest` | um botão de começar um treino aparecer no centro de treino **enquanto há um a decorrer** | o `startOrResume` devolve a sessão aberta e **ignora a rotina que se lhe pede**: o ▶ ao lado de «Puxar B» levava ao treino que já estava a decorrer, com o nome certo escrito ao lado e sem erro nenhum. É a família de defeito da 2.17.0 — não muda estado, e por isso só se vê a compor o ecrã. **A afirmação é sobre a descrição do ▶ e não sobre a palavra «Começar»**: essa é substring de «Começar um treino vazio», que está sempre lá, e um teste escrito assim passa com o código partido — passou, enquanto este se escrevia |
 | `ListaEDetalheUiTest` | o detalhe deixar de abrir ao lado numa janela larga, ou tentar abrir ao lado num telemóvel | o `cabeDetalheAoLado` deixou de olhar ao modo de esquema |
 
 ## Onde estão
