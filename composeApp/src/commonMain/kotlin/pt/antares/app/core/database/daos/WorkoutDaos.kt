@@ -6,6 +6,7 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import pt.antares.app.core.database.entities.RoutineEntity
 import pt.antares.app.core.database.entities.RoutineItemEntity
+import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.SessionStatus
@@ -229,6 +230,21 @@ interface WorkoutSetDao {
 
     @Query(
         """
+        SELECT s.exerciseId AS exerciseId, s.weightKg AS weightKg, s.reps AS reps
+        FROM workout_set s
+        JOIN workout_session ws ON s.sessionId = ws.id
+        WHERE s.deleted = 0 AND s.isWarmup = 0
+          AND ws.status = 'DONE' AND ws.deleted = 0 AND ws.id != :excludeSessionId
+        """,
+    )
+    // O mesmo que o `doneSetsForExercise`, mas para o treino inteiro de uma vez. O ecrã da
+    // sessão precisa do recorde anterior de **cada** exercício a cada série que se grava:
+    // uma consulta por exercício eram seis idas à base por toque, e a 2.20.0 já tinha
+    // aprendido isso na lista de rotinas.
+    suspend fun previousWorkingSets(excludeSessionId: String): List<ExerciseSetRow>
+
+    @Query(
+        """
         SELECT ws.id AS sessionId, ws.startedAt AS startedAt,
                COALESCE(SUM(s.weightKg * s.reps), 0) AS volume,
                COALESCE(MAX(s.weightKg), 0) AS topWeight
@@ -322,4 +338,24 @@ interface WorkoutSetDao {
 
     @Query("SELECT * FROM workout_set WHERE deleted = 0")
     suspend fun exportRows(): List<WorkoutSetEntity>
+}
+
+@Dao
+interface SessionExerciseNoteDao {
+
+    @Upsert
+    suspend fun upsert(nota: SessionExerciseNoteEntity)
+
+    // Observa a sessão inteira e não uma nota de cada vez: o ecrã mostra os exercícios
+    // todos, e uma consulta por exercício era uma ida à base por linha da lista.
+    @Query("SELECT * FROM session_exercise_note WHERE sessionId = :sessionId AND deleted = 0")
+    fun observeForSession(sessionId: String): Flow<List<SessionExerciseNoteEntity>>
+
+    // Apagar de verdade e não marcar: uma nota vazia é uma nota que não existe, e guardar
+    // a lápide de um texto que a pessoa apagou não serve nada — não há o que sincronizar.
+    @Query("DELETE FROM session_exercise_note WHERE sessionId = :sessionId AND exerciseId = :exerciseId")
+    suspend fun delete(sessionId: String, exerciseId: String)
+
+    @Query("SELECT * FROM session_exercise_note WHERE deleted = 0")
+    suspend fun exportRows(): List<SessionExerciseNoteEntity>
 }

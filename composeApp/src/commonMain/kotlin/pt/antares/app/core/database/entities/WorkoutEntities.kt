@@ -143,3 +143,27 @@ data class WorkoutSetEntity(
     val updatedAt: Long,
     val deleted: Boolean = false,
 )
+
+@Serializable
+@Entity(
+    tableName = "session_exercise_note",
+    primaryKeys = ["sessionId", "exerciseId"],
+    indices = [Index("sessionId")],
+)
+/**
+ * A nota de um exercício **neste treino**: «ombro a doer», «máquina 2 ocupada».
+ *
+ * Não vive na rotina de propósito. A [RoutineItemEntity] diz de si própria que é o plano e
+ * que *«o que se fez de facto está no `workout_set`»* — uma nota do dia escrita na rotina
+ * mudava o plano de todas as semanas seguintes por causa de um ombro de terça-feira.
+ *
+ * A chave é o par sessão-exercício, e não um id gerado: há uma nota por exercício em cada
+ * treino, e um `upsert` sobre a mesma chave é o que faz reescrevê-la em vez de a duplicar.
+ */
+data class SessionExerciseNoteEntity(
+    val sessionId: String,
+    val exerciseId: String,
+    val note: String,
+    val updatedAt: Long,
+    val deleted: Boolean = false,
+)

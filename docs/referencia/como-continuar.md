@@ -20,7 +20,21 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.20.1 é a última fechada**, a 2026-09-02. Esquema da base **v37**, catálogo **v6** —
+- **2.21.0 é a última fechada**, a 2026-09-02. Esquema da base **v37 → v38** — uma tabela
+  nova, a `session_exercise_note`, por migração automática. Catálogo **v6**, inalterado.
+  «A sessão: corrigir e cronometrar»: relógio do treino na barra, calculadora de discos,
+  fluxo de teclado peso→reps→gravar, RPE fora da linha de registo, notas por exercício,
+  1RM estimado à vista e recorde dito no momento. 1701 testes Kotlin, 58 das ferramentas,
+  68 Deno, detekt e lint limpos. Verificada **actualizada por cima da 2.20.1 com dados lá
+  dentro**, que é o que prova a migração.
+- **Três das dez propostas da área 08 já estavam feitas** quando a medição C1 as foi ver —
+  editar uma série, o `roundToInt` do pré-preenchimento e os índices repetidos. O plano
+  descrevia-as como por fazer. Medir antes de abrir a versão foi o que evitou refazê-las.
+- **As três perguntas de abertura foram respondidas por mim**, com o dono ausente e com essa
+  delegação dada por ele: discos fixos que mudam com as unidades · RPE no «⋯» da série, sem
+  interruptor · notas da sessão e não da rotina. As razões estão no registo da versão.
+- *O que se segue é o estado até à 2.20.1.*
+- **2.20.1**, a 2026-09-02. Esquema da base **v37**, catálogo **v6** —
   **nenhum dos dois mexeu**. «A barra»: passa a `Hoje · Diário · Treino · Progresso · Mais`. A
   corrida sai da navegação principal e vai viver dentro do treino, o progresso ganha
   separador próprio, e o «Eu» junta-se ao menu da app em «Mais». 1686 testes Kotlin, 58 das
@@ -48,10 +62,9 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   segunda conferiu as seis propostas do esboço 06 uma a uma: quatro batem, uma corrigiu-se a
   favor do esboço, e **duas divergem de propósito** — o botão «Histórico» fica no menu, porque
   tirá-lo deixava o ecrã de histórico sem caminho nenhum.
-- **A próxima do plano é a 2.21.0**, «a sessão: corrigir e cronometrar» — relógio da sessão
-  na barra, calculadora de discos, fluxo de teclado peso→reps→gravar, RPE recolhido, notas por
-  exercício, 1RM estimado e o aviso de recorde na hora. As perguntas de abertura dela estão
-  escritas no plano. **Nada começa sem a resposta do dono (A1).**
+- **A próxima do plano é a 2.22.0**, «Peso do corpo» — os 111 exercícios do catálogo que
+  hoje **não se conseguem registar**, porque a série exige um peso e uma flexão não tem.
+  É conceito novo, e o plano marca-a como **MENOR ou MAIOR** consoante a resposta.
 - *O que se segue é o estado até à 2.19.0, e fica por ser o que explica como se chegou aqui.*
 - **2.19.0 foi publicada**, a 2026-08-30. Esquema da base **v37**, catálogo **v6**.
   «O exercício avulso»: duração escrevível com atalhos, recentes, corrigir um registo do

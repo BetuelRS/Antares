@@ -723,7 +723,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_discard">Discard</string>
     <string name="session_discard_confirm">Discard this workout? Sets won't count.</string>
     <string name="session_add_exercise">Add exercise</string>
-    <string name="session_add_set">+ Set</string>
     <string name="session_edit_set">Edit set</string>
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
@@ -732,6 +731,19 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_reps_out_of_range">Reps between 1 and %1$s.</string>
     <string name="session_rpe_out_of_range">RPE runs from 1 to 10.</string>
     <string name="session_sets_progress">%1$d/%2$d</string>
+    <string name="session_clock">Workout time: %1$s</string>
+    <string name="session_save_set">Save set</string>
+    <string name="session_set_menu">More options for this set</string>
+    <string name="session_rpe_clear">Clear the RPE</string>
+    <string name="session_one_rm">Est. 1RM %1$s</string>
+    <string name="session_pr_now">Personal record</string>
+    <string name="session_plates">%1$s per side · %2$s bar</string>
+    <string name="session_plates_bar_only">Bar only</string>
+    <string name="session_plates_approx">%1$s per side · %2$s bar · %3$s short</string>
+    <string name="session_plates_too_light">Lighter than the bar</string>
+    <string name="session_note_add">Add a note</string>
+    <string name="session_note_hint">What happened on this exercise today</string>
+    <string name="session_note_label">Note</string>
     <string name="ai_items_empty">You removed everything. Go back to write it again, or close.</string>
     <string name="exercise_search_empty">Nothing by that name in the activity table. Try a simpler word — "running" instead of "trail running".</string>
     <string name="session_no_exercises">No exercises. Add the first one.</string>

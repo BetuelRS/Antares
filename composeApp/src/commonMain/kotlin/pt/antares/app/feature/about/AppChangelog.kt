@@ -23,9 +23,43 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.20.1"
+    const val CURRENT = "2.21.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.21.0",
+            title = "A sessão de treino deixa de pedir tantos toques",
+            titleEn = "The workout session stops asking for so many taps",
+            highlights = listOf(
+                "**O relógio do treino na barra**, ao segundo. A duração só se sabia no fim",
+                "**A calculadora de discos**: que discos pôr de cada lado, por baixo do peso. " +
+                    "Em libras são discos de libras, e não os métricos convertidos",
+                "**O teclado salta de peso para repetições e grava** — eram dois toques por " +
+                    "série só para mudar de campo",
+                "**O RPE sai da linha e passa para o menu da série.** Era um campo permanente " +
+                    "para um número que a maioria não escreve",
+                "**Notas por exercício**, do treino de hoje e não da rotina",
+                "**O 1RM estimado à vista**, já com as séries de hoje dentro, e o **recorde " +
+                    "dito no momento** em que acontece",
+                "O título passa a ser o nome da rotina, e o chip de supersérie deixa de " +
+                    "fingir que é tocável",
+            ),
+            highlightsEn = listOf(
+                "**The workout clock in the top bar**, to the second. You only knew the " +
+                    "duration at the end",
+                "**The plate calculator**: what to load on each side, under the weight. In " +
+                    "pounds it uses pound plates, not converted metric ones",
+                "**The keyboard jumps from weight to reps and saves** — it was two taps per " +
+                    "set just to change field",
+                "**RPE leaves the row and moves into the set's menu.** It was a permanent " +
+                    "field for a number most people never fill in",
+                "**Notes per exercise**, belonging to today's workout and not to the routine",
+                "**The estimated 1RM in sight**, today's sets included, and the **record " +
+                    "announced the moment** it happens",
+                "The title becomes the routine's name, and the superset chip stops pretending " +
+                    "to be tappable",
+            ),
+        ),
         AppVersion(
             name = "2.20.1",
             title = "A barra de baixo muda, e a corrida passa para o treino",
@@ -344,27 +378,8 @@ object AppChangelog {
                 "The backup now says which catalogue version made it, before you import it",
             ),
         ),
-        AppVersion(
-            name = "2.4.0",
-            title = "O catálogo passa a ser reconstruível",
-            titleEn = "The catalogue can be rebuilt",
-            highlights = listOf(
-                "**Dezasseis alimentos que faltavam** — sumo de arando, puré de castanha, " +
-                    "tomate comprido, cavala marinada e seis salsichas",
-                "Uma receita já não pode perder um ingrediente quando o catálogo é " +
-                    "atualizado",
-                "Os teus favoritos, os recentes e as porções que guardaste sobrevivem à " +
-                    "atualização do catálogo",
-            ),
-            highlightsEn = listOf(
-                "**Sixteen foods that were missing** — cranberry juice, chestnut purée, " +
-                    "long tomato, marinated mackerel and six sausages",
-                "A recipe can no longer lose an ingredient when the catalogue updates",
-                "Your favourites, recents and saved portions survive a catalogue update",
-            ),
-        ),
-        // A 2.2.0 e a 2.3.0 saíram daqui ao entrarem a 2.20.0 e a 2.20.1: a lista tem
-        // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
-        // `CHANGELOG.md`, que não tem tecto nenhum.
+        // A 2.2.0, a 2.3.0 e a 2.4.0 saíram daqui ao entrarem a 2.20.0, a 2.20.1 e a
+        // 2.21.0: a lista tem tecto de doze e o `AppChangelogTest` cobra-o. O histórico
+        // completo é trabalho do `CHANGELOG.md`, que não tem tecto nenhum.
     )
 }

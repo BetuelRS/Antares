@@ -51,7 +51,9 @@ import pt.antares.app.core.database.entities.RoutineItemEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
 import pt.antares.app.core.database.daos.RoutineScheduleDao
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
+import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
+import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.FastingProtocolEntity
 import pt.antares.app.core.database.daos.FastingProtocolDao
@@ -187,6 +189,14 @@ val privacyModule = module {
                     WorkoutSetEntity.serializer(),
                     restore = { linhas -> linhas.forEach { get<WorkoutSetDao>().upsertSet(it) } },
                 ) { get<WorkoutSetDao>().exportRows() },
+
+                // A nota de um exercício neste treino. Tabela própria desde a v38: a nota
+                // do dia não vive na rotina, que é o plano.
+                ExportSource(
+                    "session_exercise_note",
+                    SessionExerciseNoteEntity.serializer(),
+                    restore = { linhas -> linhas.forEach { get<SessionExerciseNoteDao>().upsert(it) } },
+                ) { get<SessionExerciseNoteDao>().exportRows() },
                 ExportSource(
                     "fasting_protocol",
                     FastingProtocolEntity.serializer(),

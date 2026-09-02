@@ -4,13 +4,19 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import kotlinx.coroutines.flow.map
+import pt.antares.app.core.calc.ExercisePr
 import pt.antares.app.core.calc.MetCalc
+import pt.antares.app.core.calc.PrDetector
+import pt.antares.app.core.calc.SetEntry
 import pt.antares.app.core.database.daos.ExerciseLogDao
 import pt.antares.app.core.database.daos.RoutineDao
+import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WeightLogDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.ExerciseLogEntity
+import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.ExerciseOrigin
@@ -26,6 +32,7 @@ class WorkoutSessionRepository(
     private val exerciseLogDao: ExerciseLogDao,
     private val weightLogDao: WeightLogDao,
     private val routineDao: RoutineDao,
+    private val notaDao: SessionExerciseNoteDao,
     private val io: CoroutineDispatcher,
 ) {
     private fun now() = Clock.System.now().toEpochMilliseconds()
@@ -97,6 +104,41 @@ class WorkoutSessionRepository(
 
     suspend fun doneSetsForExercise(exerciseId: String, excludeSessionId: String): List<WorkoutSetEntity> =
         withContext(io) { setDao.doneSetsForExercise(exerciseId, excludeSessionId) }
+
+    /** O melhor de sempre de cada exercício, fora deste treino. Uma consulta, não uma por linha. */
+    suspend fun previousBests(excludeSessionId: String): Map<String, ExercisePr> =
+        withContext(io) {
+            setDao.previousWorkingSets(excludeSessionId)
+                .groupBy { it.exerciseId }
+                .mapValues { (_, linhas) ->
+                    PrDetector.best(linhas.map { SetEntry(it.weightKg, it.reps, isWarmup = false) })
+                }
+                .filterValues { it != null }
+                .mapValues { (_, pr) -> pr!! }
+        }
+
+    fun observeNotes(sessionId: String): Flow<Map<String, String>> =
+        notaDao.observeForSession(sessionId).map { linhas -> linhas.associate { it.exerciseId to it.note } }
+
+    /**
+     * Uma nota em branco apaga-se em vez de se gravar vazia: uma linha que existe para dizer
+     * que não há nada é uma linha a mais na cópia de segurança e no ecrã.
+     */
+    suspend fun saveNote(sessionId: String, exerciseId: String, nota: String) = withContext(io) {
+        val limpa = nota.trim()
+        if (limpa.isEmpty()) {
+            notaDao.delete(sessionId, exerciseId)
+        } else {
+            notaDao.upsert(
+                SessionExerciseNoteEntity(
+                    sessionId = sessionId,
+                    exerciseId = exerciseId,
+                    note = limpa,
+                    updatedAt = now(),
+                ),
+            )
+        }
+    }
 
     /**
      * Fecha o treino e, se ele valeu alguma coisa, gera a linha de calorias do dia. São

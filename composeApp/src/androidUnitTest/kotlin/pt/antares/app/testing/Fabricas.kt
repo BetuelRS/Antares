@@ -57,6 +57,7 @@ object Fabricas {
             db.exerciseLogDao(),
             db.weightLogDao(),
             db.routineDao(),
+            db.sessionExerciseNoteDao(),
             io,
         )
 

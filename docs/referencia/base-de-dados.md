@@ -1,11 +1,13 @@
 # Base de dados
 
-Room, no telemóvel e mais lado nenhum. Esquema na **versão 37**, com **31 tabelas** e **39
-migrações automáticas**.
+Room, no telemóvel e mais lado nenhum. Esquema na **versão 38**, com **32 tabelas**, **35
+migrações automáticas** e **duas escritas à mão** — a 26→27 e a 27→28.
 
 > **Este cabeçalho esteve onze versões de esquema atrasado** — dizia v26, 30 tabelas e 25
 > migrações — e nada o apanhou: o `DocumentationHonestyTest` verifica caminhos e a versão da
-> app, não afirmações. Contado a 2026-08-31 no `AntaresDb.kt` e em `composeApp/schemas/`.
+> app, não afirmações. Corrigido a 2026-08-31, e **corrigido outra vez a 2026-09-02**: dizia
+> 39 migrações automáticas e são 35, porque as duas escritas à mão vinham somadas às outras e
+> a cadeia salta do 25→26 para o 28→29. Contado no `AntaresDb.kt` e em `composeApp/schemas/`.
 
 Os esquemas exportados estão em `composeApp/schemas/`, um ficheiro JSON por versão. São eles que
 permitem ao Room gerar as migrações e aos testes verificá-las.
@@ -14,8 +16,9 @@ permitem ao Room gerar as migrações e aos testes verificá-las.
 
 **Uma coluna nova nasce anulável ou com valor por omissão.**
 
-Todas as migrações são automáticas. Uma coluna obrigatória sem omissão obriga a escrever a
-migração à mão, e sem ela a app rebenta ao abrir em cima de dados antigos.
+Quase todas as migrações são automáticas — as duas excepções estão em `Migracao26Para27.kt` e
+`Migracao27Para28.kt`. Uma coluna obrigatória sem omissão obriga a escrever a migração à
+mão, e sem ela a app rebenta ao abrir em cima de dados antigos.
 
 ## Como o esquema cresceu
 
@@ -61,6 +64,7 @@ que a app foi construída.
 | 35 | `recipe_step` | `texto`, `posicao` — os passos de preparação |
 | 36 | | `microsOrigemJson` — a origem por nutriente |
 | 37 | | `startedAtMin` — a que horas o exercício começou |
+| 38 | `session_exercise_note` | `note` — a nota de um exercício **neste** treino |
 
 *Da v27 à v37 esta tabela foi reconstruída a 2026-08-31 comparando os esquemas exportados uns
 com os outros, e não a partir do `CHANGELOG.md`: é o que a v27 tem e a v26 não, linha a linha.*

@@ -2,6 +2,8 @@ package pt.antares.app.feature.workout.ui
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -50,6 +52,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         db.exerciseLogDao(),
         db.weightLogDao(),
         db.routineDao(),
+        db.sessionExerciseNoteDao(),
         dispatcher,
     )
 
@@ -216,7 +219,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val inicial = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
-        vm.logSet(inicial.exercises.single(), weightKg = 100.0, reps = 5, rpe = null, warmup = false)
+        vm.logSet(inicial.exercises.single(), weightKg = 100.0, reps = 5, warmup = false)
         advanceUntilIdle()
 
         val depois = vm.state.value
@@ -303,7 +306,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val inicial = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
-        vm.logSet(inicial.exercises.single(), weightKg = 90.0, reps = 5, rpe = null, warmup = false)
+        vm.logSet(inicial.exercises.single(), weightKg = 90.0, reps = 5, warmup = false)
         advanceUntilIdle()
 
         assertTrue(
@@ -322,7 +325,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
-        vm.logSet(estado.exercises.single(), weightKg = 100.0, reps = 5, rpe = null, warmup = false)
+        vm.logSet(estado.exercises.single(), weightKg = 100.0, reps = 5, warmup = false)
 
         assertEquals(listOf(180), alerts.agendados)
         assertEquals(180, vm.restRemaining.value)
@@ -338,7 +341,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
-        vm.logSet(estado.exercises.single(), weightKg = 40.0, reps = 10, rpe = null, warmup = true)
+        vm.logSet(estado.exercises.single(), weightKg = 40.0, reps = 10, warmup = true)
 
         assertTrue(alerts.agendados.isEmpty(), "o aquecimento agendou descanso")
         assertEquals(null, vm.restRemaining.value)
@@ -354,7 +357,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
-        vm.logSet(estado.exercises.single(), weightKg = 60.0, reps = 8, rpe = null, warmup = false)
+        vm.logSet(estado.exercises.single(), weightKg = 60.0, reps = 8, warmup = false)
 
         assertTrue(alerts.agendados.isEmpty(), "a supersérie mandou descansar pelo meio")
     }
@@ -392,7 +395,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val primeira = vm.state.first { !it.loading && it.exercises.size == 2 }
-        vm.logSet(primeira.exercises.first { it.exerciseId == "agachamento" }, 100.0, 5, null, false)
+        vm.logSet(primeira.exercises.first { it.exerciseId == "agachamento" }, 100.0, 5, false)
         advanceUntilIdle()
 
         // Esperar pelo estado com a série já lá dentro, e não ler o último valor: sem
@@ -400,7 +403,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         val meio = vm.state.first { e -> e.exercises.any { it.exerciseId == "agachamento" && it.setsDone == 1 } }
         assertEquals("agachamento", meio.currentExerciseId, "saltou com uma série a meio do plano")
 
-        vm.logSet(meio.exercises.first { it.exerciseId == "agachamento" }, 100.0, 5, null, false)
+        vm.logSet(meio.exercises.first { it.exerciseId == "agachamento" }, 100.0, 5, false)
         advanceUntilIdle()
 
         val fim = vm.state.first { e -> e.exercises.any { it.exerciseId == "agachamento" && it.setsDone == 2 } }
@@ -427,7 +430,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
 
         val escolhido = vm.state.first { it.currentExerciseId == "supino" }
 
-        vm.logSet(escolhido.exercises.first { it.exerciseId == "supino" }, 60.0, 8, null, false)
+        vm.logSet(escolhido.exercises.first { it.exerciseId == "supino" }, 60.0, 8, false)
         advanceUntilIdle()
 
         val depois = vm.state.first { e -> e.exercises.any { it.exerciseId == "supino" && it.setsDone == 1 } }
@@ -453,7 +456,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val estado = vm.state.first { !it.loading && it.exercises.size == 2 }
-        vm.logSet(estado.exercises.first { it.exerciseId == "agachamento" }, 40.0, 10, null, warmup = true)
+        vm.logSet(estado.exercises.first { it.exerciseId == "agachamento" }, 40.0, 10, warmup = true)
         advanceUntilIdle()
 
         val depois = vm.state.first { e -> e.exercises.any { it.exerciseId == "agachamento" && it.sets.size == 1 } }
@@ -495,10 +498,213 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         advanceUntilIdle()
 
         val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
-        vm.logSet(estado.exercises.single(), weightKg = 100.0, reps = 5, rpe = null, warmup = false)
+        vm.logSet(estado.exercises.single(), weightKg = 100.0, reps = 5, warmup = false)
         vm.skipRest()
 
         assertEquals(null, vm.restRemaining.value)
         assertEquals(1, alerts.cancelamentos, "o alarme do sistema ficou a tocar sozinho")
+    }
+    /**
+     * Prende o `state` a um coletor durante o teste inteiro.
+     *
+     * Sem isto, o `SharingStarted.WhileSubscribed(5_000)` larga o upstream assim que o
+     * `first { }` do teste devolve e o `advanceUntilIdle` passa os cinco segundos de tempo
+     * virtual — e a partir daí o `state.value` fica **parado no último valor**. A primeira
+     * mudança aparece, a segunda não, e o teste passa a afirmar sobre um estado velho. Foi
+     * assim que estes três nasceram vermelhos.
+     */
+    private fun TestScope.mantemVivo(vm: WorkoutSessionViewModel) {
+        backgroundScope.launch { vm.state.collect { } }
+    }
+
+    /**
+     * **A decisão de abertura da 2.21.0, e a que custa uma tabela.** «Ombro a doer» é do dia,
+     * e a `RoutineItemEntity` diz de si própria que é o plano — *«o que se fez de facto está
+     * no `workout_set`»*. Uma nota do dia escrita na rotina mudava a instrução de todas as
+     * semanas seguintes por causa de um ombro de terça-feira.
+     */
+    @Test
+    fun `a nota e do treino de hoje e nao da rotina`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertItem(item("r1", "supino", 0))
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+
+        vm.saveNote("supino", "ombro direito sensível")
+        advanceUntilIdle()
+
+        assertEquals("ombro direito sensível", vm.state.value.exercises.single().nota)
+
+        // Presa ao treino, e não ao exercício da rotina: é o par sessão-exercício que a
+        // identifica. Que a `RoutineItemEntity` não tem sítio nenhum onde a guardar é uma
+        // verdade do compilador, e por isso não se afirma aqui — afirma-se onde ela ficou.
+        val nota = db.sessionExerciseNoteDao().exportRows().single()
+        assertEquals(vm.state.value.sessionId, nota.sessionId)
+        assertEquals("supino", nota.exerciseId)
+    }
+
+    @Test
+    fun `um treino novo comeca sem a nota do anterior`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertItem(item("r1", "supino", 0))
+
+        val primeiro = viewModel()
+        mantemVivo(primeiro)
+        primeiro.ensureStarted("r1")
+        advanceUntilIdle()
+        primeiro.state.first { !it.loading && it.exercises.isNotEmpty() }
+        primeiro.saveNote("supino", "máquina 2 ocupada")
+        advanceUntilIdle()
+        primeiro.finish()
+        advanceUntilIdle()
+
+        val segundo = viewModel()
+        mantemVivo(segundo)
+        segundo.ensureStarted("r1")
+        advanceUntilIdle()
+        val estado = segundo.state.first { !it.loading && it.exercises.isNotEmpty() }
+
+        assertEquals("", estado.exercises.single().nota, "a nota de terça apareceu na quinta")
+    }
+
+    /** Uma linha que existe para dizer que não há nada é uma linha a mais na cópia. */
+    @Test
+    fun `apagar o texto da nota apaga a linha`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertItem(item("r1", "supino", 0))
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+
+        vm.saveNote("supino", "qualquer coisa")
+        advanceUntilIdle()
+        vm.saveNote("supino", "   ")
+        advanceUntilIdle()
+
+        assertEquals("", vm.state.value.exercises.single().nota)
+        assertTrue(
+            db.sessionExerciseNoteDao().exportRows().isEmpty(),
+            "ficou uma nota em branco guardada",
+        )
+    }
+
+    /**
+     * O recorde no momento em que acontece, e não só no resumo do fim. O que ele compara é o
+     * **melhor de sempre**, e não o do treino anterior — é o `PrDetector` que a app já usava
+     * no resumo, chamado no sítio onde a série se escreve.
+     */
+    @Test
+    fun `o recorde aparece na serie que o bate, e nao antes`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertItem(item("r1", "supino", 0))
+        sessaoAntiga("antiga", "supino", listOf(100.0 to 5))
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        val antes = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+        assertTrue(!antes.exercises.single().recordeHoje, "recorde antes de haver série nenhuma")
+
+        vm.logSet(antes.exercises.single(), weightKg = 90.0, reps = 5, warmup = false)
+        advanceUntilIdle()
+        assertTrue(
+            !vm.state.value.exercises.single().recordeHoje,
+            "90 kg × 5 não bate 100 kg × 5, e o ecrã disse que sim",
+        )
+
+        vm.logSet(vm.state.value.exercises.single(), weightKg = 105.0, reps = 5, warmup = false)
+        advanceUntilIdle()
+        assertTrue(vm.state.value.exercises.single().recordeHoje, "105 kg × 5 é recorde e não foi dito")
+    }
+
+    /**
+     * O 1RM à vista leva o de hoje dentro. É o número com que se decide o peso da série
+     * seguinte, e essa decisão toma-se depois da série que se acabou de fazer.
+     */
+    @Test
+    fun `o 1RM estimado sobe com a serie que se acaba de gravar`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertItem(item("r1", "supino", 0))
+        sessaoAntiga("antiga", "supino", listOf(100.0 to 5))
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        val antes = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+        // Epley: 100 × (1 + 5/30) = 116,67
+        assertEquals(116.67, antes.exercises.single().melhorOneRmKg!!, 0.01)
+
+        vm.logSet(antes.exercises.single(), weightKg = 110.0, reps = 5, warmup = false)
+        advanceUntilIdle()
+
+        // 110 × (1 + 5/30) = 128,33
+        assertEquals(128.33, vm.state.value.exercises.single().melhorOneRmKg!!, 0.01)
+    }
+
+    /**
+     * O RPE deixou de ser um campo na linha de registo e passou a escrever-se depois. Uma
+     * série nasce sem ele, e escrevê-lo não mexe no peso nem nas repetições — que é o que
+     * distingue esta correção da do [WorkoutSessionViewModel.updateSet].
+     */
+    @Test
+    fun `o RPE escreve-se depois da serie estar gravada`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertItem(item("r1", "supino", 0))
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+        vm.logSet(estado.exercises.single(), weightKg = 60.0, reps = 8, warmup = false)
+        advanceUntilIdle()
+
+        val serie = vm.state.value.exercises.single().sets.single()
+        assertEquals(null, serie.rpe, "a série nasceu com um RPE que ninguém escreveu")
+
+        vm.updateRpe(serie, 8.0)
+        advanceUntilIdle()
+
+        val corrigida = vm.state.value.exercises.single().sets.single()
+        assertEquals(8.0, corrigida.rpe)
+        assertEquals(60.0, corrigida.weightKg, "escrever o RPE mexeu no peso")
+        assertEquals(8, corrigida.reps, "escrever o RPE mexeu nas repetições")
+    }
+
+    /** O relógio da barra conta a partir do que ficou gravado, e não de quando o ecrã abriu. */
+    @Test
+    fun `o estado leva o instante em que o treino comecou e o nome da rotina`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar A", null, 0, 0L))
+        db.routineDao().upsertItem(item("r1", "supino", 0))
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+
+        assertNotNull(estado.startedAt, "sem o instante de início não há relógio nenhum")
+        assertEquals(
+            estado.startedAt,
+            db.workoutSessionDao().exportRows().single().startedAt,
+            "o relógio contava de um instante que não é o do treino",
+        )
+        assertEquals("Empurrar A", estado.routineName)
     }
 }

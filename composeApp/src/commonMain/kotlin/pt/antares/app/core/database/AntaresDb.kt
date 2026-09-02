@@ -39,6 +39,7 @@ import pt.antares.app.core.database.daos.TrackPointDao
 import pt.antares.app.core.database.daos.RoutineScheduleDao
 import pt.antares.app.core.database.daos.UserProfileDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
+import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.daos.WaterLogDao
 import pt.antares.app.core.database.daos.WeightLogDao
@@ -72,6 +73,7 @@ import pt.antares.app.core.database.entities.WaterLogEntity
 import pt.antares.app.core.database.entities.WeightLogEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
+import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 
 /**
@@ -124,6 +126,7 @@ interface DbInfoDao {
         RoutineItemEntity::class,
         WorkoutSessionEntity::class,
         WorkoutSetEntity::class,
+        SessionExerciseNoteEntity::class,
         RoutineScheduleEntity::class,
         FastingProtocolEntity::class,
         FastingSessionEntity::class,
@@ -138,7 +141,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 37,
+    version = 38,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -199,7 +202,7 @@ interface DbInfoDao {
 
         // A v35 acrescenta a tabela `recipe_step`. Quem atualiza fica com as receitas
         // exactamente como estavam — uma receita sem passos e uma receita com zero passos
-        // sao a mesma coisa, e nenhuma conta muda por causa disto.
+        // são a mesma coisa, e nenhuma conta muda por causa disto.
         AutoMigration(from = 34, to = 35),
 
         // A v36 acrescenta `foods.microsOrigemJson`, anulavel: de onde veio cada nutriente
@@ -212,6 +215,11 @@ interface DbInfoDao {
         // que a hora nao se sabe, e a linha do diario continua a nao a mostrar, tal como
         // ja faz com os registos de comida sem hora.
         AutoMigration(from = 36, to = 37),
+
+        // A v38 acrescenta a tabela `session_exercise_note`. Quem actualiza fica com os
+        // treinos exactamente como estavam: um treino sem notas e um treino com zero notas
+        // são a mesma coisa, e nenhuma conta muda por causa disto.
+        AutoMigration(from = 37, to = 38),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)
@@ -284,6 +292,7 @@ abstract class AntaresDb : RoomDatabase() {
     abstract fun routineDao(): RoutineDao
     abstract fun workoutSessionDao(): WorkoutSessionDao
     abstract fun workoutSetDao(): WorkoutSetDao
+    abstract fun sessionExerciseNoteDao(): SessionExerciseNoteDao
     abstract fun routineScheduleDao(): RoutineScheduleDao
     abstract fun fastingProtocolDao(): FastingProtocolDao
     abstract fun fastingSessionDao(): FastingSessionDao

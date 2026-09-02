@@ -13,6 +13,52 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.21.0] — 2026-09-02
+
+**A sessão de treino.** É o ecrã mais usado da área de treino e o mais crítico — usa-se com
+uma mão, suado, entre séries —, e era o que pedia mais toques por série. Ganha relógio,
+calculadora de discos, fluxo de teclado e notas.
+
+**Esquema da base: v37 → v38**, uma tabela nova para as notas. Catálogo inalterado, **v6**.
+A actualização é indolor: um treino sem notas e um treino com zero notas são a mesma coisa.
+
+### Adicionado
+
+- **O relógio do treino na barra do topo**, ao segundo. A duração só se sabia no resumo, no
+  fim. Conta a partir do instante gravado no treino, e não de quando o ecrã abriu: quem sai
+  da app para atender uma chamada volta e encontra o tempo certo.
+- **O título passa a ser o nome da rotina** — «Empurrar A» em vez de «Treino». Quem está a
+  meio de um treino já sabe que está num treino.
+- **A calculadora de discos**, por baixo do campo do peso: *«20 + 1,25 por lado · barra de
+  20 kg»*. Em libras são os discos de libras — 45, 35, 25, 10, 5 e 2,5, com a barra de 45 —,
+  e não os métricos convertidos: um disco de 45 lb não é um disco de 20 kg, e ninguém tem um
+  disco de «44,1». Quando o peso não se consegue montar, **diz quanto falta** em vez de
+  arredondar em silêncio.
+- **O 1RM estimado à vista**, ao lado do alvo do exercício, e já com as séries de hoje
+  dentro. É o número com que se decide o peso da série seguinte, e essa decisão toma-se aqui.
+- **O recorde é dito no momento em que acontece**, e não só no resumo do fim.
+- **Notas por exercício**, escritas no treino a que pertencem: «ombro direito sensível»,
+  «máquina 2 ocupada». São do dia e não da rotina — a instrução permanente de um exercício é
+  outra coisa, e um ombro de terça-feira não muda o plano de todas as semanas seguintes.
+
+### Alterado
+
+- **O teclado salta sozinho de peso para repetições e grava.** Eram dois toques por série só
+  para mudar de campo; numa sessão de vinte séries, quarenta toques.
+- **O botão de gravar passa a ter o nome da acção** — «Gravar série» —, em vez de um ✓ de
+  40 dp. Era o alvo mais tocado do ecrã e o mais pequeno.
+- **O RPE sai da linha de registo** e passa para o menu «⋯» de cada série. Era um terceiro
+  campo permanente para um número que a maioria não escreve, e roubava largura ao peso e às
+  repetições. Continua a gravar-se, e as séries que já o têm mostram-no.
+- **Os campos do peso e das repetições deixam de ter largura fixa.** Eram 96, 80 e 72 dp lado
+  a lado, e com a letra a 200 % os rótulos não cabiam. Agora dividem a linha e quebram-na
+  quando é preciso.
+
+### Corrigido
+
+- **O chip de supersérie deixa de fingir que é tocável.** Tinha uma acção vazia: parecia um
+  botão, respondia ao toque, e não fazia nada. Passa a ser o que sempre foi — uma etiqueta.
+
 ## [2.20.1] — 2026-09-02
 
 **A barra de baixo.** Cinco separadores permanentes, e um deles era a corrida — uma coisa que

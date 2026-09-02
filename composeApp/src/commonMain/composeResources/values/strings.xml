@@ -724,7 +724,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_discard">Descartar</string>
     <string name="session_discard_confirm">Descartar este treino? Os sets não contam.</string>
     <string name="session_add_exercise">Adicionar exercício</string>
-    <string name="session_add_set">+ Série</string>
     <string name="session_edit_set">Corrigir a série</string>
     <string name="session_reps">reps</string>
     <string name="session_rpe">RPE</string>
@@ -733,6 +732,19 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_reps_out_of_range">Repetições entre 1 e %1$s.</string>
     <string name="session_rpe_out_of_range">RPE vai de 1 a 10.</string>
     <string name="session_sets_progress">%1$d/%2$d</string>
+    <string name="session_clock">Tempo do treino: %1$s</string>
+    <string name="session_save_set">Gravar série</string>
+    <string name="session_set_menu">Mais opções desta série</string>
+    <string name="session_rpe_clear">Tirar o RPE</string>
+    <string name="session_one_rm">1RM est. %1$s</string>
+    <string name="session_pr_now">Recorde</string>
+    <string name="session_plates">%1$s por lado · barra de %2$s</string>
+    <string name="session_plates_bar_only">Só a barra</string>
+    <string name="session_plates_approx">%1$s por lado · barra de %2$s · faltam %3$s</string>
+    <string name="session_plates_too_light">Menos do que a barra</string>
+    <string name="session_note_add">Acrescentar uma nota</string>
+    <string name="session_note_hint">O que aconteceu hoje neste exercício</string>
+    <string name="session_note_label">Nota</string>
     <string name="ai_items_empty">Tiraste tudo da lista. Volta atrás para escrever outra vez, ou fecha.</string>
     <string name="exercise_search_empty">Nada com esse nome na tabela de atividades. Tenta uma palavra mais simples — «corrida» em vez de «corrida de trail».</string>
     <string name="session_no_exercises">Sem exercícios. Adiciona o primeiro.</string>

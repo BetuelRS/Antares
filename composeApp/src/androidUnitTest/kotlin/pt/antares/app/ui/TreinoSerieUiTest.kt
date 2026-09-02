@@ -21,7 +21,7 @@ import pt.antares.app.feature.workout.data.SessionPickBus
 import pt.antares.app.feature.workout.ui.WorkoutSessionScreen
 import pt.antares.app.feature.workout.ui.WorkoutSessionViewModel
 import pt.antares.app.generated.resources.Res
-import pt.antares.app.generated.resources.session_add_set
+import pt.antares.app.generated.resources.session_save_set
 import pt.antares.app.generated.resources.session_reps
 import pt.antares.app.generated.resources.session_rest_skip
 import pt.antares.app.testing.Fabricas
@@ -98,7 +98,7 @@ class TreinoSerieUiTest : FluxoUiHarness() {
         setContent {
             textos.ler(
                 Res.string.session_reps,
-                Res.string.session_add_set,
+                Res.string.session_save_set,
                 Res.string.session_rest_skip,
             )
             WorkoutSessionScreen(
@@ -120,7 +120,9 @@ class TreinoSerieUiTest : FluxoUiHarness() {
         campos[0].performTextInput("60")
         campos[1].performTextInput("8")
         waitForIdle()
-        onNodeWithContentDescription(textos[Res.string.session_add_set]).performClick()
+        // Por texto e não por descrição: desde a 2.21.0 o botão tem o nome da acção
+        // escrito. Era um ✓ de 40 dp: o alvo mais tocado do ecrã, e o mais pequeno.
+        onNodeWithText(textos[Res.string.session_save_set]).performClick()
 
         // O descanso é uma contagem: o que interessa não é o número, que muda enquanto se
         // olha, mas o botão de o saltar — que só existe com o descanso a andar.
@@ -143,7 +145,9 @@ class TreinoSerieUiTest : FluxoUiHarness() {
         const val DESCANSO_SEG = 90
 
         // Peso, repetições e RPE, por esta ordem, na linha de gravar a série.
-        const val CAMPOS_DA_SERIE = 3
+        // Dois, e não três: o RPE saiu da linha de registo na 2.21.0 e passou para o menu
+        // da série. Sobram o peso e as repetições, que são os que se escrevem sempre.
+        const val CAMPOS_DA_SERIE = 2
 
         // Uma escrita na base em memória não demora nada; isto é o teto antes de desistir.
         const val ESPERA_MS = 5_000L

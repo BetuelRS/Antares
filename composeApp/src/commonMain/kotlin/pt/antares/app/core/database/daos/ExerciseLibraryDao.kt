@@ -6,7 +6,19 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import pt.antares.app.core.database.entities.ExerciseEntity
 
-data class ExerciseNameRow(val id: String, val nameEn: String, val namePt: String)
+/**
+ * O nome de um exercício e o material que ele pede.
+ *
+ * O `equipment` entrou na 2.21.0 e não é nome nenhum: a calculadora de discos só faz sentido
+ * numa barra, e sem esta coluna ela oferecia discos a quem está a fazer halteres. Vai aqui e
+ * não numa segunda consulta porque esta já é feita por linha da lista.
+ */
+data class ExerciseNameRow(
+    val id: String,
+    val nameEn: String,
+    val namePt: String,
+    val equipment: String?,
+)
 
 @Dao
 interface ExerciseLibraryDao {
@@ -23,7 +35,7 @@ interface ExerciseLibraryDao {
     @Query("SELECT * FROM exercise WHERE id = :id AND deleted = 0")
     suspend fun byId(id: String): ExerciseEntity?
 
-    @Query("SELECT id, nameEn, namePt FROM exercise WHERE id IN (:ids)")
+    @Query("SELECT id, nameEn, namePt, equipment FROM exercise WHERE id IN (:ids)")
     suspend fun namesByIds(ids: List<String>): List<ExerciseNameRow>
 
     @Query("SELECT * FROM exercise WHERE deleted = 0 ORDER BY nameEn COLLATE NOCASE")
