@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+import pt.antares.app.core.database.entities.ExerciseLoadEntity
 import pt.antares.app.core.database.entities.RoutineEntity
 import pt.antares.app.core.database.entities.RoutineItemEntity
 import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
@@ -358,4 +359,24 @@ interface SessionExerciseNoteDao {
 
     @Query("SELECT * FROM session_exercise_note WHERE deleted = 0")
     suspend fun exportRows(): List<SessionExerciseNoteEntity>
+}
+
+@Dao
+interface ExerciseLoadDao {
+
+    @Upsert
+    suspend fun upsert(carga: ExerciseLoadEntity)
+
+    // Apagar de verdade: a ausência de linha é que quer dizer «100 %», e uma lápide aqui
+    // seria uma terceira maneira de dizer a mesma coisa.
+    @Query("DELETE FROM exercise_load WHERE exerciseId = :exerciseId")
+    suspend fun delete(exerciseId: String)
+
+    // Todas de uma vez: o ecrã da sessão tem vários exercícios abertos ao mesmo tempo, e uma
+    // consulta por linha da lista é o custo que a 2.20.0 já tinha tirado das rotinas.
+    @Query("SELECT * FROM exercise_load WHERE deleted = 0")
+    fun observeAll(): Flow<List<ExerciseLoadEntity>>
+
+    @Query("SELECT * FROM exercise_load WHERE deleted = 0")
+    suspend fun exportRows(): List<ExerciseLoadEntity>
 }

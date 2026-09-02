@@ -39,6 +39,7 @@ import pt.antares.app.core.database.daos.TrackPointDao
 import pt.antares.app.core.database.daos.RoutineScheduleDao
 import pt.antares.app.core.database.daos.UserProfileDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
+import pt.antares.app.core.database.daos.ExerciseLoadDao
 import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.daos.WaterLogDao
@@ -73,6 +74,7 @@ import pt.antares.app.core.database.entities.WaterLogEntity
 import pt.antares.app.core.database.entities.WeightLogEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
+import pt.antares.app.core.database.entities.ExerciseLoadEntity
 import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 
@@ -127,6 +129,7 @@ interface DbInfoDao {
         WorkoutSessionEntity::class,
         WorkoutSetEntity::class,
         SessionExerciseNoteEntity::class,
+        ExerciseLoadEntity::class,
         RoutineScheduleEntity::class,
         FastingProtocolEntity::class,
         FastingSessionEntity::class,
@@ -141,7 +144,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 38,
+    version = 39,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -220,6 +223,12 @@ interface DbInfoDao {
         // treinos exactamente como estavam: um treino sem notas e um treino com zero notas
         // são a mesma coisa, e nenhuma conta muda por causa disto.
         AutoMigration(from = 37, to = 38),
+
+        // A v39 acrescenta a tabela `exercise_load` e a coluna `workout_set.bodyweightKg`,
+        // anulável. Nulo — que é o que fica em todas as séries já gravadas — quer dizer que
+        // nenhuma parte daquela carga veio do corpo, que é o que era verdade antes. Nenhum
+        // número muda, e por isso a versão é MENOR.
+        AutoMigration(from = 38, to = 39),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)
@@ -293,6 +302,7 @@ abstract class AntaresDb : RoomDatabase() {
     abstract fun workoutSessionDao(): WorkoutSessionDao
     abstract fun workoutSetDao(): WorkoutSetDao
     abstract fun sessionExerciseNoteDao(): SessionExerciseNoteDao
+    abstract fun exerciseLoadDao(): ExerciseLoadDao
     abstract fun routineScheduleDao(): RoutineScheduleDao
     abstract fun fastingProtocolDao(): FastingProtocolDao
     abstract fun fastingSessionDao(): FastingSessionDao

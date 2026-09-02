@@ -80,7 +80,9 @@ val repositoryModule = module {
     single { ExerciseLibraryRepository(get(), get(), get(IoDispatcher)) }
     single { RoutineRepository(get(), get(), get(), get(IoDispatcher)) }
     single { RoutineTemplateSeeder(get(), get(), get(IoDispatcher)) }
-    single { WorkoutSessionRepository(get(), get(), get(), get(), get(), get(), get(IoDispatcher)) }
+    single {
+        WorkoutSessionRepository(get(), get(), get(), get(), get(), get(), get(), get(IoDispatcher))
+    }
     single { WorkoutHistoryRepository(get(), get(), get(), get(IoDispatcher)) }
     single { WorkoutHubRepository(get(), get(), get(), get(), get(), get()) }
     single { SessionPickBus() }

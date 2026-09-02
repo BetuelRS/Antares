@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.calc.CargaDoCorpo
 import pt.antares.app.core.calc.PlateMath
 import pt.antares.app.core.calc.SetLimits
 import pt.antares.app.core.designsystem.larguraDeLeitura
@@ -162,14 +164,16 @@ fun WorkoutSessionScreen(
             items(state.exercises, key = { it.exerciseId }) { ex ->
                 if (ex.exerciseId == state.currentExerciseId) {
                     ExerciseBlock(
+                        pesoDoCorpoKg = state.pesoDoCorpoKg,
                         ex = ex,
-                        onLog = { w, r, warm -> viewModel.logSet(ex, w, r, warm) },
+                        onLog = { w, r, warm, corpo -> viewModel.logSet(ex, w, r, warm, corpo) },
                         onDeleteSet = { id ->
                             apagar({ viewModel.deleteSet(id) }, { viewModel.restoreSet(id) })
                         },
                         onEditSet = { set, peso, reps -> viewModel.updateSet(set, peso, reps) },
                         onRpe = { set, valor -> viewModel.updateRpe(set, valor) },
                         onNote = { texto -> viewModel.saveNote(ex.exerciseId, texto) },
+                        onPercentagem = { pct -> viewModel.savePercentagem(ex.exerciseId, pct) },
                     )
                 } else {
                     ExerciseRecolhido(ex = ex, onSelect = { viewModel.select(ex.exerciseId) })
@@ -218,11 +222,13 @@ fun WorkoutSessionScreen(
 @Composable
 private fun ExerciseBlock(
     ex: SessionExerciseUi,
-    onLog: (Double, Int, Boolean) -> Unit,
+    pesoDoCorpoKg: Double?,
+    onLog: (Double, Int, Boolean, Double?) -> Unit,
     onDeleteSet: (String) -> Unit,
     onEditSet: (WorkoutSetEntity, Double, Int) -> Unit,
     onRpe: (WorkoutSetEntity, Double?) -> Unit,
     onNote: (String) -> Unit,
+    onPercentagem: (Int) -> Unit,
 ) {
     var warmup by remember(ex.exerciseId) { mutableStateOf(false) }
     val unidades = rememberUnitSystem()
@@ -238,33 +244,7 @@ private fun ExerciseBlock(
             if (ex.recordeHoje) EtiquetaDoRecorde()
             ex.supersetGroup?.let { EtiquetaDeSuperserie(it) }
         }
-        // O aquecimento partilha a linha do alvo em vez de ocupar uma só para ele: era uma
-        // linha inteira por exercício, num ecrã onde o que interessa é a série a seguir.
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                buildString {
-                    append("${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s")
-                    // O 1RM ao lado do alvo, e não num ecrã à parte: é o número com que se
-                    // decide o peso da série a seguir, e decide-se aqui.
-                    ex.melhorOneRmKg?.let { append(" · ") }
-                },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            ex.melhorOneRmKg?.let {
-                Text(
-                    stringResource(Res.string.session_one_rm, loadWithUnit(it, unidades)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
-            } ?: Spacer(Modifier.weight(1f))
-            FilterChip(
-                selected = warmup,
-                onClick = { warmup = !warmup },
-                label = { Text(stringResource(Res.string.session_warmup)) },
-            )
-        }
+        LinhaDoAlvo(ex = ex, unidades = unidades, warmup = warmup, onWarmup = { warmup = !warmup })
 
         ex.sets.forEachIndexed { i, set ->
             Row(
@@ -278,6 +258,15 @@ private fun ExerciseBlock(
                 Text(
                     "${loadWithUnit(set.weightKg, unidades)} × ${set.reps} " +
                         stringResource(Res.string.session_reps) +
+                        // Dizer de onde veio a carga: sem isto, uma flexão aparecia como uma
+                        // série de 78 kg e ninguém sabia que os 78 eram a própria pessoa.
+                        (
+                            if (set.bodyweightKg != null) {
+                                " · ${stringResource(Res.string.session_set_bodyweight)}"
+                            } else {
+                                ""
+                            }
+                            ) +
                         (if (set.isWarmup) " · ${stringResource(Res.string.session_warmup)}" else ""),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium,
@@ -302,13 +291,23 @@ private fun ExerciseBlock(
 
         SeriesFantasma(ex, unidades)
 
-        NewSetRow(
-            prefill = ex.ghost.getOrNull(ex.setsDone),
-            warmup = warmup,
-            unidades = unidades,
-            comBarra = ex.equipamento == EQUIPAMENTO_BARRA,
-            onLog = onLog,
-        )
+        if (ex.dePesoDoCorpo) {
+            LinhaDoPesoDoCorpo(
+                ex = ex,
+                pesoDoCorpoKg = pesoDoCorpoKg,
+                unidades = unidades,
+                onLog = onLog,
+                onPercentagem = onPercentagem,
+            )
+        } else {
+            NewSetRow(
+                prefill = ex.ghost.getOrNull(ex.setsDone),
+                warmup = warmup,
+                unidades = unidades,
+                comBarra = ex.equipamento == EQUIPAMENTO_BARRA,
+                onLog = { peso, reps, aquecimento -> onLog(peso, reps, aquecimento, null) },
+            )
+        }
 
         NotaDoExercicio(nota = ex.nota, onClick = { aEscreverNota = true })
     }
@@ -349,7 +348,52 @@ private fun ExerciseBlock(
 }
 
 /**
+ * O alvo do exercício, o 1RM estimado e o interruptor de aquecimento, numa linha só.
+ *
+ * O aquecimento partilha a linha em vez de ocupar uma para ele: era uma linha inteira por
+ * exercício, num ecrã onde o que interessa é a série a seguir. E o 1RM fica ao lado do alvo,
+ * e não num ecrã à parte, porque é o número com que se decide o peso da série seguinte — e
+ * essa decisão toma-se aqui.
+ */
+@Composable
+private fun LinhaDoAlvo(
+    ex: SessionExerciseUi,
+    unidades: UnitSystem,
+    warmup: Boolean,
+    onWarmup: () -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            "${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s" +
+                (if (ex.melhorOneRmKg != null) " · " else ""),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        ex.melhorOneRmKg?.let {
+            Text(
+                stringResource(Res.string.session_one_rm, loadWithUnit(it, unidades)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+        } ?: Spacer(Modifier.weight(1f))
+
+        // O aquecimento não aparece nos exercícios de peso do corpo: a linha deles não tem
+        // campo de peso para aquecer com menos, e um interruptor que só muda uma marca no
+        // histórico é ruído no ecrã mais apertado da app.
+        if (!ex.dePesoDoCorpo) {
+            FilterChip(
+                selected = warmup,
+                onClick = onWarmup,
+                label = { Text(stringResource(Res.string.session_warmup)) },
+            )
+        }
+    }
+}
+
+/**
  * O relógio do treino, na barra do topo.
+
  *
  * Ao segundo e não ao minuto: entre séries olha-se para ele a contar, e um número que muda de
  * minuto a minuto parece parado. A conta é feita a partir do instante de início gravado na
@@ -829,6 +873,224 @@ private fun LinhaDosDiscos(pesoNoEcra: Double?, unidades: UnitSystem) {
         texto,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+/**
+ * A linha de registo de um exercício de **peso do corpo**.
+ *
+ * Cento e onze exercícios do catálogo não se conseguiam registar: a validação exige um peso
+ * maior do que zero, e uma flexão não tem peso para escrever. Aqui o campo do peso passa a
+ * ser a **carga extra** — o que está no cinto, ou nada — e o corpo entra por baixo.
+ *
+ * Sem peso registado no perfil não se inventa nenhum: diz-se que falta, e o botão não grava.
+ * Um `70` de recurso seria um número que a pessoa nunca escreveu a entrar no volume, no 1RM e
+ * nos recordes dela.
+ */
+@Composable
+private fun LinhaDoPesoDoCorpo(
+    ex: SessionExerciseUi,
+    pesoDoCorpoKg: Double?,
+    unidades: UnitSystem,
+    onLog: (Double, Int, Boolean, Double?) -> Unit,
+    onPercentagem: (Int) -> Unit,
+) {
+    val virgula = virgulaDecimal()
+    val paraKg = { valor: Double ->
+        if (unidades == UnitSystem.IMPERIAL) UnitConversions.lbToKg(valor) else valor
+    }
+
+    var extra by remember(ex.exerciseId) { mutableStateOf("") }
+    var reps by remember(ex.exerciseId) { mutableStateOf("") }
+    var aEscolherPercentagem by remember(ex.exerciseId) { mutableStateOf(false) }
+
+    val extraKg = if (extra.isBlank()) 0.0 else extra.replace(',', '.').toDoubleOrNull()?.let(paraKg)
+    val r = reps.toIntOrNull()
+    val carga = CargaDoCorpo.calcular(pesoDoCorpoKg, ex.percentagemDoCorpo, extraKg ?: 0.0)
+
+    val extraMau = extra.isNotBlank() && (extraKg == null || !SetLimits.isWeightValid(extraKg))
+    val repsMau = reps.isNotBlank() && (r == null || !SetLimits.isRepsValid(r))
+    val podeGravar = carga != null && extraKg != null && !extraMau &&
+        SetLimits.isSetValid(carga.totalKg, r, null)
+
+    val teclado = LocalSoftwareKeyboardController.current
+    val repsFocus = remember { FocusRequester() }
+
+    ContaDoCorpo(
+        carga = carga,
+        percentagem = ex.percentagemDoCorpo,
+        unidades = unidades,
+        onEditar = { aEscolherPercentagem = true },
+    )
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        OutlinedTextField(
+            value = extra,
+            onValueChange = { extra = it.filter { c -> c.isDigit() || c == '.' || c == ',' }.take(6) },
+            label = { Text(stringResource(Res.string.session_added_load)) },
+            singleLine = true,
+            isError = extraMau,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = ImeAction.Next,
+            ),
+            keyboardActions = KeyboardActions(onNext = { repsFocus.requestFocus() }),
+            modifier = Modifier.weight(1f),
+        )
+        OutlinedTextField(
+            value = reps,
+            onValueChange = { reps = it.filter(Char::isDigit).take(3) },
+            label = { Text(stringResource(Res.string.session_reps)) },
+            singleLine = true,
+            isError = repsMau,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (podeGravar) {
+                        teclado?.hide()
+                        onLog(carga!!.totalKg, r!!, false, carga.doCorpoKg)
+                        extra = ""
+                    }
+                },
+            ),
+            modifier = Modifier.weight(1f).focusRequester(repsFocus),
+        )
+    }
+
+    TotalDoCorpo(carga = carga, extraKg = extraKg ?: 0.0, unidades = unidades)
+
+    PrimaryButton(
+        text = stringResource(Res.string.session_save_set),
+        enabled = podeGravar,
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+            teclado?.hide()
+            onLog(carga!!.totalKg, r!!, false, carga.doCorpoKg)
+            extra = ""
+        },
+    )
+
+    ErroDaSerie(pesoMau = extraMau, repsMau = repsMau, rpeMau = false, unidades = unidades)
+
+    if (aEscolherPercentagem) {
+        PercentagemDialog(
+            atual = ex.percentagemDoCorpo,
+            onDismiss = { aEscolherPercentagem = false },
+            onConfirm = {
+                onPercentagem(it)
+                aEscolherPercentagem = false
+            },
+        )
+    }
+}
+
+/**
+ * A conta à vista: o peso, a percentagem quando não é 100 %, e o resultado.
+ *
+ * É o mesmo princípio da meta do dia — a app mostra a soma em vez de a apresentar feita. Sem
+ * esta linha, a série de uma flexão aparecia com um número que ninguém escreveu.
+ */
+@Composable
+private fun ContaDoCorpo(
+    carga: CargaDoCorpo.Carga?,
+    percentagem: Int,
+    unidades: UnitSystem,
+    onEditar: () -> Unit,
+) {
+    if (carga == null) {
+        Text(
+            stringResource(Res.string.session_bodyweight_none),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.error,
+        )
+        return
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onEditar),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            if (percentagem == CargaDoCorpo.PERCENTAGEM_POR_OMISSAO) {
+                stringResource(Res.string.session_bodyweight_line, loadWithUnit(carga.doCorpoKg, unidades))
+            } else {
+                stringResource(
+                    Res.string.session_bodyweight_pct,
+                    percentagem,
+                    loadWithUnit(carga.doCorpoKg, unidades),
+                )
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f),
+        )
+        Icon(
+            Icons.Default.Tune,
+            // Decorativo: a linha inteira é o alvo e o texto ao lado diz o que ela abre.
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+/** O total só se diz quando há alguma coisa a somar: sem carga extra, já foi dito acima. */
+@Composable
+private fun TotalDoCorpo(carga: CargaDoCorpo.Carga?, extraKg: Double, unidades: UnitSystem) {
+    if (carga == null || extraKg <= 0.0) return
+    Text(
+        stringResource(Res.string.session_bodyweight_total, loadWithUnit(carga.totalKg, unidades)),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+/**
+ * Quanto do peso do corpo conta neste exercício.
+
+ *
+ * **A app não propõe um valor.** O `motor/05` fala de «cerca de 65 % numa flexão», e é uma
+ * aproximação sem fonte no repositório — escrevê-la aqui era dá-la por medida. O que fica é
+ * a explicação de para que serve o número, e quem o escreve é quem faz o movimento.
+ */
+@Composable
+private fun PercentagemDialog(atual: Int, onDismiss: () -> Unit, onConfirm: (Int) -> Unit) {
+    var texto by remember { mutableStateOf(atual.toString()) }
+    val valor = texto.toIntOrNull()
+    val mau = valor == null || valor !in 1..CargaDoCorpo.PERCENTAGEM_MAXIMA
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.session_bodyweight_percent)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                Text(
+                    stringResource(Res.string.session_bodyweight_percent_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                OutlinedTextField(
+                    value = texto,
+                    onValueChange = { texto = it.filter(Char::isDigit).take(3) },
+                    label = { Text("%") },
+                    singleLine = true,
+                    isError = mau,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+            }
+        },
+        confirmButton = {
+            PrimaryButton(
+                text = stringResource(Res.string.common_save),
+                enabled = !mau,
+                onClick = { onConfirm(valor!!) },
+            )
+        },
+        dismissButton = { SecondaryButton(text = stringResource(Res.string.common_cancel), onClick = onDismiss) },
     )
 }
 

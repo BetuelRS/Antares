@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
+import pt.antares.app.core.calc.CargaDoCorpo
 import pt.antares.app.core.calc.ExercisePr
 import pt.antares.app.core.calc.PrDetector
 import pt.antares.app.core.calc.SetEntry
@@ -39,6 +40,10 @@ data class SessionExerciseUi(
     val sets: List<WorkoutSetEntity>,
     /** O material do exercício. Só numa barra é que a calculadora de discos diz alguma coisa. */
     val equipamento: String? = null,
+    /** Verdade nos 111 exercícios `body only`: a carga vem do corpo e não de um campo. */
+    val dePesoDoCorpo: Boolean = false,
+    /** Que percentagem do corpo conta neste exercício. 100 por omissão. */
+    val percentagemDoCorpo: Int = CargaDoCorpo.PERCENTAGEM_POR_OMISSAO,
     /** A nota deste exercício neste treino. Vazia quando não há nenhuma. */
     val nota: String = "",
     /** O melhor 1RM estimado de sempre, em kg. Nulo quando nenhuma série o permite estimar. */
@@ -64,6 +69,7 @@ private data class FontesDaSessao(
     val extras: List<String>,
     val escolhido: String?,
     val notas: Map<String, String>,
+    val percentagens: Map<String, Int>,
 )
 
 data class SessionUiState(
@@ -73,6 +79,11 @@ data class SessionUiState(
     val startedAt: Long? = null,
     /** O nome da rotina, que passa a ser o título. Nulo num treino livre. */
     val routineName: String? = null,
+    /**
+     * O peso mais recente que a pessoa registou. **Nulo quando nunca registou nenhum**, e aí
+     * os exercícios de peso do corpo dizem-no em vez de inventarem um número.
+     */
+    val pesoDoCorpoKg: Double? = null,
     val exercises: List<SessionExerciseUi> = emptyList(),
     /** O exercício que ocupa o ecrã. Os outros ficam recolhidos, com nome e progresso. */
     val currentExerciseId: String? = null,
@@ -116,10 +127,11 @@ class WorkoutSessionViewModel(
                     addedExtras,
                     picked,
                     repository.observeNotes(session.id),
-                ) { sets, extras, escolhido, notas ->
-                    FontesDaSessao(sets, extras, escolhido, notas)
+                    repository.observePercentagens(),
+                ) { sets, extras, escolhido, notas, percentagens ->
+                    FontesDaSessao(sets, extras, escolhido, notas, percentagens)
                 }
-                    .mapLatest { f -> buildState(session, f.sets, f.extras, f.escolhido, f.notas) }
+                    .mapLatest { f -> buildState(session, f) }
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SessionUiState(loading = true))
@@ -130,13 +142,14 @@ class WorkoutSessionViewModel(
      */
     private suspend fun buildState(
         session: WorkoutSessionEntity,
-        sets: List<WorkoutSetEntity>,
-        extras: List<String>,
-        escolhido: String?,
-        notas: Map<String, String>,
+        fontes: FontesDaSessao,
     ): SessionUiState {
         val sessionId = session.id
         val routineId = session.routineId
+        val sets = fontes.sets
+        val extras = fontes.extras
+        val escolhido = fontes.escolhido
+        val notas = fontes.notas
 
         // `LinkedHashSet` porque a ordem é o plano e as repetições têm de desaparecer: um
         // exercício da rotina que já tem séries não pode aparecer duas vezes. A ordem de
@@ -174,6 +187,8 @@ class WorkoutSessionViewModel(
                 ghost = repository.ghostSets(exId, sessionId),
                 sets = setsByEx[exId].orEmpty().sortedBy { it.setIndex },
                 equipamento = equipamentos[exId],
+                dePesoDoCorpo = CargaDoCorpo.eDePesoDoCorpo(equipamentos[exId]),
+                percentagemDoCorpo = fontes.percentagens[exId] ?: CargaDoCorpo.PERCENTAGEM_POR_OMISSAO,
                 nota = notas[exId].orEmpty(),
                 // O melhor de sempre, já com o de hoje dentro: é o número que interessa a
                 // quem está a decidir o peso da série seguinte, e não o de antes de começar.
@@ -194,6 +209,7 @@ class WorkoutSessionViewModel(
             loading = false,
             sessionId = sessionId,
             startedAt = session.startedAt,
+            pesoDoCorpoKg = repository.pesoDoCorpoKg(),
             routineName = routineId?.let { routineDao.routineById(it)?.name },
             exercises = exercises,
             currentExerciseId = current,
@@ -261,7 +277,13 @@ class WorkoutSessionViewModel(
      * pelo menu da serie, com o [updateRpe]. Um parametro que so recebe `null` era um
      * parametro a dizer que ainda ha um campo, e nao ha.
      */
-    fun logSet(exercise: SessionExerciseUi, weightKg: Double, reps: Int, warmup: Boolean) {
+    fun logSet(
+        exercise: SessionExerciseUi,
+        weightKg: Double,
+        reps: Int,
+        warmup: Boolean,
+        bodyweightKg: Double? = null,
+    ) {
         val sessionId = state.value.sessionId ?: return
         viewModelScope.launch {
             repository.putSet(
@@ -277,6 +299,7 @@ class WorkoutSessionViewModel(
                 reps = reps,
                 rpe = null,
                 isWarmup = warmup,
+                bodyweightKg = bodyweightKg,
             )
         }
 
@@ -302,6 +325,11 @@ class WorkoutSessionViewModel(
                 reps = reps,
                 rpe = set.rpe,
                 isWarmup = set.isWarmup,
+                // Corrigir o peso não apaga a memória de que parte dele era o corpo — **a não
+                // ser que ela deixe de caber**. Uma série corrigida para 40 kg com 78 vindos
+                // do corpo não é um facto sobre coisa nenhuma; nesse caso o que fica é o
+                // total, sem a repartição, que é o que a app sabe.
+                bodyweightKg = set.bodyweightKg?.takeIf { it <= weightKg },
             )
         }
     }
@@ -325,11 +353,17 @@ class WorkoutSessionViewModel(
                 reps = set.reps,
                 rpe = rpe,
                 isWarmup = set.isWarmup,
+                bodyweightKg = set.bodyweightKg,
             )
         }
     }
 
+    fun savePercentagem(exerciseId: String, percentagem: Int) {
+        viewModelScope.launch { repository.guardarPercentagem(exerciseId, percentagem) }
+    }
+
     fun saveNote(exerciseId: String, nota: String) {
+
         val id = state.value.sessionId ?: return
         viewModelScope.launch { repository.saveNote(id, exerciseId, nota) }
     }

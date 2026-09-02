@@ -49,8 +49,14 @@ class WorkoutHistoryRepositoryTest {
         db.workoutSessionDao().upsertSession(
             WorkoutSessionEntity("A", 1_000, 1_000 + 1_800_000, null, null, SessionStatus.DONE, 1L),
         )
-        db.workoutSetDao().upsertSet(WorkoutSetEntity("a1", "A", "bench", 0, 100.0, 5, null, false, 1L))
-        db.workoutSetDao().upsertSet(WorkoutSetEntity("a2", "A", "bench", 1, 60.0, 10, null, true, 1L))
+        db.workoutSetDao().upsertSet(
+            WorkoutSetEntity("a1", "A", "bench", 0, 100.0, reps = 5, rpe = null, updatedAt = 1L),
+        )
+        db.workoutSetDao().upsertSet(
+            WorkoutSetEntity(
+                "a2", "A", "bench", 1, 60.0, reps = 10, rpe = null, isWarmup = true, updatedAt = 1L,
+            ),
+        )
     }
 
     @Test

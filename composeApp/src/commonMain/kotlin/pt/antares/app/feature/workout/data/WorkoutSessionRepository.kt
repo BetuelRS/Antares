@@ -5,16 +5,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.coroutines.flow.map
+import pt.antares.app.core.calc.CargaDoCorpo
 import pt.antares.app.core.calc.ExercisePr
 import pt.antares.app.core.calc.MetCalc
 import pt.antares.app.core.calc.PrDetector
 import pt.antares.app.core.calc.SetEntry
 import pt.antares.app.core.database.daos.ExerciseLogDao
+import pt.antares.app.core.database.daos.ExerciseLoadDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WeightLogDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
+import pt.antares.app.core.database.entities.ExerciseLoadEntity
 import pt.antares.app.core.database.entities.ExerciseLogEntity
 import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
@@ -33,6 +36,7 @@ class WorkoutSessionRepository(
     private val weightLogDao: WeightLogDao,
     private val routineDao: RoutineDao,
     private val notaDao: SessionExerciseNoteDao,
+    private val cargaDao: ExerciseLoadDao,
     private val io: CoroutineDispatcher,
 ) {
     private fun now() = Clock.System.now().toEpochMilliseconds()
@@ -79,6 +83,7 @@ class WorkoutSessionRepository(
         reps: Int,
         rpe: Double?,
         isWarmup: Boolean,
+        bodyweightKg: Double? = null,
     ) = withContext(io) {
         setDao.upsertSet(
             WorkoutSetEntity(
@@ -87,6 +92,7 @@ class WorkoutSessionRepository(
                 exerciseId = exerciseId,
                 setIndex = setIndex,
                 weightKg = weightKg,
+                bodyweightKg = bodyweightKg,
                 reps = reps,
                 rpe = rpe,
                 isWarmup = isWarmup,
@@ -117,7 +123,28 @@ class WorkoutSessionRepository(
                 .mapValues { (_, pr) -> pr!! }
         }
 
+    /** O peso mais recente que a pessoa registou. Nulo quando ainda não registou nenhum. */
+    suspend fun pesoDoCorpoKg(): Double? = withContext(io) { weightLogDao.latest()?.weightKg }
+
+    /** A percentagem escolhida por exercício. O que não está aqui vale 100 %. */
+    fun observePercentagens(): Flow<Map<String, Int>> =
+        cargaDao.observeAll().map { linhas -> linhas.associate { it.exerciseId to it.bodyweightPercent } }
+
+    /**
+     * Voltar aos 100 % **apaga a linha** em vez de a gravar com o valor por omissão: a
+     * ausência já quer dizer isso, e uma linha a dizer o que a ausência diz é uma linha a
+     * mais na cópia de segurança e mais uma coisa para manter de acordo.
+     */
+    suspend fun guardarPercentagem(exerciseId: String, percentagem: Int) = withContext(io) {
+        if (percentagem == CargaDoCorpo.PERCENTAGEM_POR_OMISSAO) {
+            cargaDao.delete(exerciseId)
+        } else {
+            cargaDao.upsert(ExerciseLoadEntity(exerciseId, percentagem, now()))
+        }
+    }
+
     fun observeNotes(sessionId: String): Flow<Map<String, String>> =
+
         notaDao.observeForSession(sessionId).map { linhas -> linhas.associate { it.exerciseId to it.note } }
 
     /**

@@ -13,6 +13,43 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.22.0] — 2026-09-02
+
+**Os exercícios de peso do corpo.** Cento e onze exercícios do catálogo da app — flexões,
+dominadas, fundos, prancha, agachamento livre — **não se conseguiam registar de todo**: a
+série exige um peso maior do que zero, e uma flexão não tem peso para escrever. Quem
+escrevesse `1` para contornar o botão cinzento ficava com um «recorde» de 1,4 kg naquele
+exercício e com o mapa de volume envenenado.
+
+**Esquema da base: v38 → v39.** Nenhuma série já gravada muda — a coluna nova nasce vazia, e
+vazia quer dizer o que era verdade antes: nada daquela carga veio do corpo. Catálogo
+inalterado, **v6**.
+
+### Adicionado
+
+- **Uma flexão regista-se.** Nos exercícios marcados como sendo de peso do corpo, o campo do
+  peso passa a ser a **carga extra** — o que está no cinto, ou nada — e o teu peso entra por
+  baixo. A série conta para o volume, para o 1RM e para os recordes como qualquer outra.
+- **A conta fica à vista**, como no resto da app: *«O teu peso: 78 kg»*, e com carga extra,
+  *«88 kg no total»*. Nada aparece sem se ver de onde veio.
+- **Podes dizer quanto do teu peso conta em cada exercício.** Uma flexão levanta menos do que
+  uma dominada, e o número é teu: começa nos 100 % e mudas onde quiseres. **A app não propõe
+  uma percentagem** — os «cerca de 65 %» que se leem por aí são uma aproximação, e este não é
+  um número que ela possa medir por ti.
+- **Carga extra para quem usa cinto**, somada por cima do corpo.
+
+### Alterado
+
+- **A linha do histórico diz «peso do corpo»** quando a carga veio de lá. Sem isso, uma flexão
+  aparecia como uma série de 78 kg e ninguém sabia que os 78 eram a própria pessoa.
+- **O interruptor de aquecimento não aparece nestes exercícios**: não há campo de peso para
+  aquecer com menos, e era mais uma coisa no ecrã mais apertado da app.
+
+### Corrigido
+
+- **Sem peso registado, a app diz que falta** em vez de assumir um. Um peso de recurso seria
+  um número que nunca escreveste a entrar no teu volume e nos teus recordes.
+
 ## [2.21.0] — 2026-09-02
 
 **A sessão de treino.** É o ecrã mais usado da área de treino e o mais crítico — usa-se com

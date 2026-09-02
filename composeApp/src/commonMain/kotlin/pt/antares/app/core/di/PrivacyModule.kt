@@ -51,8 +51,10 @@ import pt.antares.app.core.database.entities.RoutineItemEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
 import pt.antares.app.core.database.daos.RoutineScheduleDao
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
+import pt.antares.app.core.database.entities.ExerciseLoadEntity
 import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
+import pt.antares.app.core.database.daos.ExerciseLoadDao
 import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.FastingProtocolEntity
@@ -197,6 +199,14 @@ val privacyModule = module {
                     SessionExerciseNoteEntity.serializer(),
                     restore = { linhas -> linhas.forEach { get<SessionExerciseNoteDao>().upsert(it) } },
                 ) { get<SessionExerciseNoteDao>().exportRows() },
+
+                // A percentagem do peso do corpo por exercício. É escolha da pessoa, e por
+                // isso vai na cópia — ficar de fora era perdê-la na primeira restauração.
+                ExportSource(
+                    "exercise_load",
+                    ExerciseLoadEntity.serializer(),
+                    restore = { linhas -> linhas.forEach { get<ExerciseLoadDao>().upsert(it) } },
+                ) { get<ExerciseLoadDao>().exportRows() },
                 ExportSource(
                     "fasting_protocol",
                     FastingProtocolEntity.serializer(),

@@ -23,9 +23,37 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.21.0"
+    const val CURRENT = "2.22.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.22.0",
+            title = "Uma flexão passa a poder registar-se",
+            titleEn = "A push-up can finally be logged",
+            highlights = listOf(
+                "**Cento e onze exercícios do catálogo não se conseguiam registar** — flexões, " +
+                    "dominadas, fundos, prancha. A série exigia um peso, e uma flexão não tem " +
+                    "peso para escrever",
+                "**O teu peso entra como carga**, e a conta fica à vista: «O teu peso: 78 kg»",
+                "**Carga extra para quem usa cinto**, somada por cima",
+                "**Dizes quanto do teu peso conta em cada exercício.** Uma flexão levanta menos " +
+                    "do que uma dominada — e o número é teu, porque não é um número que a app " +
+                    "possa medir por ti",
+                "Sem peso registado, a app diz que falta em vez de assumir um",
+            ),
+            highlightsEn = listOf(
+                "**A hundred and eleven exercises in the catalogue could not be logged** — " +
+                    "push-ups, pull-ups, dips, planks. A set required a weight, and a push-up " +
+                    "has no weight to type",
+                "**Your weight becomes the load**, and the sum is in plain sight: " +
+                    "«Your weight: 78 kg»",
+                "**Added load for anyone using a belt**, on top of your weight",
+                "**You say how much of your weight counts on each exercise.** A push-up lifts " +
+                    "less than a pull-up — and the number is yours, because it is not one the " +
+                    "app can measure for you",
+                "With no weight logged, the app says so instead of assuming one",
+            ),
+        ),
         AppVersion(
             name = "2.21.0",
             title = "A sessão de treino deixa de pedir tantos toques",
@@ -362,24 +390,8 @@ object AppChangelog {
                     "depending on the screen",
             ),
         ),
-        AppVersion(
-            name = "2.5.0",
-            title = "Os teus favoritos passam a ir na cópia",
-            titleEn = "Your favourites now travel in the backup",
-            highlights = listOf(
-                "**Os favoritos, os recentes e as porções que guardaste passam a ir na " +
-                    "cópia de segurança.** Não iam, e restaurar uma cópia apagava-os",
-                "A cópia diz agora com que versão do catálogo foi feita, antes de a " +
-                    "importares",
-            ),
-            highlightsEn = listOf(
-                "**Your favourites, recents and saved portions now travel in the backup.** " +
-                    "They did not, and restoring a backup wiped them",
-                "The backup now says which catalogue version made it, before you import it",
-            ),
-        ),
-        // A 2.2.0, a 2.3.0 e a 2.4.0 saíram daqui ao entrarem a 2.20.0, a 2.20.1 e a
-        // 2.21.0: a lista tem tecto de doze e o `AppChangelogTest` cobra-o. O histórico
-        // completo é trabalho do `CHANGELOG.md`, que não tem tecto nenhum.
+        // Da 2.2.0 à 2.5.0 saíram daqui à medida que entraram as versoes novas: a lista tem
+        // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
+        // `CHANGELOG.md`, que não tem tecto nenhum.
     )
 }

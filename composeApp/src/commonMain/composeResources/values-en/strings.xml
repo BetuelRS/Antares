@@ -744,6 +744,14 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_note_add">Add a note</string>
     <string name="session_note_hint">What happened on this exercise today</string>
     <string name="session_note_label">Note</string>
+    <string name="session_added_load">added load</string>
+    <string name="session_bodyweight_line">Your weight: %1$s</string>
+    <string name="session_bodyweight_pct">Your weight × %1$d % = %2$s</string>
+    <string name="session_bodyweight_total">%1$s in total</string>
+    <string name="session_bodyweight_none">Log your weight to count these exercises</string>
+    <string name="session_bodyweight_percent">How much of your weight counts</string>
+    <string name="session_bodyweight_percent_hint">A push-up lifts less than a pull-up. 100 % is your whole weight.</string>
+    <string name="session_set_bodyweight">bodyweight</string>
     <string name="ai_items_empty">You removed everything. Go back to write it again, or close.</string>
     <string name="exercise_search_empty">Nothing by that name in the activity table. Try a simpler word — "running" instead of "trail running".</string>
     <string name="session_no_exercises">No exercises. Add the first one.</string>

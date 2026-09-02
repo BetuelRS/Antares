@@ -745,6 +745,14 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_note_add">Acrescentar uma nota</string>
     <string name="session_note_hint">O que aconteceu hoje neste exercício</string>
     <string name="session_note_label">Nota</string>
+    <string name="session_added_load">carga extra</string>
+    <string name="session_bodyweight_line">O teu peso: %1$s</string>
+    <string name="session_bodyweight_pct">O teu peso × %1$d % = %2$s</string>
+    <string name="session_bodyweight_total">%1$s no total</string>
+    <string name="session_bodyweight_none">Regista o teu peso para contar estes exercícios</string>
+    <string name="session_bodyweight_percent">Quanto do teu peso conta</string>
+    <string name="session_bodyweight_percent_hint">Uma flexão levanta menos do que uma dominada. 100 % é o peso todo.</string>
+    <string name="session_set_bodyweight">peso do corpo</string>
     <string name="ai_items_empty">Tiraste tudo da lista. Volta atrás para escrever outra vez, ou fecha.</string>
     <string name="exercise_search_empty">Nada com esse nome na tabela de atividades. Tenta uma palavra mais simples — «corrida» em vez de «corrida de trail».</string>
     <string name="session_no_exercises">Sem exercícios. Adiciona o primeiro.</string>

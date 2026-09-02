@@ -134,7 +134,15 @@ data class WorkoutSetEntity(
     // nenhuma e as séries têm de saber a que exercício pertencem.
     val exerciseId: String,
     val setIndex: Int,
+    // A carga total da série, em quilos, como sempre foi. **Não muda de significado com o
+    // peso do corpo**: numa dominada com cinto, o total é o corpo mais o cinto, e é esse
+    // número que o volume, o 1RM e os recordes leem — nenhum deles precisa de saber de onde
+    // ele veio. A `propostas/00` avisa que dois significados de `weightKg` seriam para
+    // sempre; é por isso que ele só tem um.
     val weightKg: Double,
+    // Quanto da carga veio do corpo. Nulo quer dizer «nenhum», que é o que era verdade em
+    // toda a base antes da v39 — e continua a ser em cada série de barra ou de haltere.
+    val bodyweightKg: Double? = null,
     val reps: Int,
     // Esforço percebido, de 1 a 10. Opcional: quase ninguém o preenche todas as séries.
     val rpe: Double?,
@@ -164,6 +172,27 @@ data class SessionExerciseNoteEntity(
     val sessionId: String,
     val exerciseId: String,
     val note: String,
+    val updatedAt: Long,
+    val deleted: Boolean = false,
+)
+
+@Serializable
+@Entity(tableName = "exercise_load")
+/**
+ * Quanto do peso do corpo conta como carga **neste** exercício, escolhido pela pessoa.
+ *
+ * Tabela própria e não coluna na `exercise` pela razão que a [FoodMarkEntity] já pagou uma
+ * vez: o que é da pessoa não vive dentro de uma linha de catálogo. O catálogo de exercícios
+ * ainda não é substituído, mas o dos alimentos é, e a lição custou os favoritos de quem
+ * restaurou uma cópia.
+ *
+ * Por omissão não há linha nenhuma, e a ausência quer dizer **100 %** — o peso todo. Quem
+ * puser uma flexão a 65 % ganha uma linha; quem nunca mexer nisto não ganha nenhuma.
+ */
+data class ExerciseLoadEntity(
+    @PrimaryKey val exerciseId: String,
+    // Percentagem inteira: meias percentagens numa estimativa destas são precisão a fingir.
+    val bodyweightPercent: Int,
     val updatedAt: Long,
     val deleted: Boolean = false,
 )

@@ -13,8 +13,12 @@ import pt.antares.app.core.database.entities.ExerciseEntity
 import pt.antares.app.core.database.entities.RoutineEntity
 import pt.antares.app.core.database.entities.RoutineItemEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
+import pt.antares.app.core.database.entities.WeightLogEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.SessionStatus
+import pt.antares.app.core.calc.CargaDoCorpo
+import pt.antares.app.core.calc.SetEntry
+import pt.antares.app.core.calc.VolumeCalc
 import pt.antares.app.feature.workout.WorkoutAlerts
 import pt.antares.app.feature.workout.data.SessionPickBus
 import pt.antares.app.feature.workout.data.WorkoutSessionRepository
@@ -53,6 +57,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         db.weightLogDao(),
         db.routineDao(),
         db.sessionExerciseNoteDao(),
+        db.exerciseLoadDao(),
         dispatcher,
     )
 
@@ -64,7 +69,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         pickBus = bus,
     )
 
-    private suspend fun exercicio(id: String, pt: String = "", en: String = id) {
+    private suspend fun exercicio(id: String, pt: String = "", en: String = id, equipamento: String? = null) {
         db.exerciseLibraryDao().upsert(
             ExerciseEntity(
                 id = id,
@@ -74,7 +79,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
                 category = "strength",
                 force = null,
                 mechanic = null,
-                equipment = null,
+                equipment = equipamento,
                 level = "beginner",
                 primaryMuscles = "[]",
                 secondaryMuscles = "[]",

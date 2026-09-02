@@ -31,6 +31,7 @@ val daoModule = module {
     single { get<AntaresDb>().workoutSessionDao() }
     single { get<AntaresDb>().workoutSetDao() }
     single { get<AntaresDb>().sessionExerciseNoteDao() }
+    single { get<AntaresDb>().exerciseLoadDao() }
     single { get<AntaresDb>().routineScheduleDao() }
     single { get<AntaresDb>().fastingProtocolDao() }
     single { get<AntaresDb>().fastingSessionDao() }

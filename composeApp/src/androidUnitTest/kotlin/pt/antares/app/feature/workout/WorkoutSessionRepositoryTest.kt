@@ -32,7 +32,7 @@ class WorkoutSessionRepositoryTest {
             .build()
         repo = WorkoutSessionRepository(
             db.workoutSessionDao(), db.workoutSetDao(), db.exerciseLogDao(),
-            db.weightLogDao(), db.routineDao(), db.sessionExerciseNoteDao(),
+            db.weightLogDao(), db.routineDao(), db.sessionExerciseNoteDao(), db.exerciseLoadDao(),
             Dispatchers.Default,
         )
     }
