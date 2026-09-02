@@ -70,7 +70,49 @@ class RoutineRepository(
         id
     }
 
+    /**
+     * Copia a rotina inteira, com os exercícios, os alvos e os grupos de supersérie.
+     *
+     * **Não copia o calendário.** «Empurrar A (cópia)» não passa a ocupar os mesmos dias da
+     * original: duplicar é para partir de uma base, e não para ficar com duas rotinas a
+     * disputar a terça-feira. Quem a quiser no horário põe-na lá.
+     */
+    suspend fun duplicateRoutine(routineId: String, novoNome: String): String? = withContext(io) {
+        val original = routineDao.routineById(routineId) ?: return@withContext null
+        val itens = routineDao.itemsOf(routineId).sortedBy { it.position }
+        val t = now()
+        val novoId = Ids.newUuid()
+        routineDao.upsertRoutine(
+            original.copy(
+                id = novoId,
+                name = novoNome,
+                position = routineDao.countRoutines(),
+                updatedAt = t,
+            ),
+        )
+        routineDao.upsertItems(
+            itens.mapIndexed { i, item ->
+                item.copy(id = Ids.newUuid(), routineId = novoId, position = i, updatedAt = t)
+            },
+        )
+        novoId
+    }
+
+    /**
+     * Põe os exercícios pela ordem que a lista traz. É o que o arrastar-para-reordenar grava
+     * quando o dedo levanta: uma só escrita, e não uma troca por cada posição percorrida.
+     */
+    suspend fun reorderItems(ordem: List<String>) = withContext(io) {
+        val t = now()
+        val porId = ordem.withIndex().associate { (i, id) -> id to i }
+        val itens = ordem.mapNotNull { routineDao.itemById(it) }
+        routineDao.upsertItems(
+            itens.map { it.copy(position = porId[it.id] ?: it.position, updatedAt = t) },
+        )
+    }
+
     suspend fun rename(routineId: String, name: String) = withContext(io) {
+
         val r = routineDao.routineById(routineId) ?: return@withContext
         routineDao.upsertRoutine(r.copy(name = name, updatedAt = now()))
     }

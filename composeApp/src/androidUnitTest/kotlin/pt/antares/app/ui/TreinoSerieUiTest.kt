@@ -116,8 +116,10 @@ class TreinoSerieUiTest : FluxoUiHarness() {
             onAllNodes(hasSetTextAction()).fetchSemanticsNodes().size >= CAMPOS_DA_SERIE
         }
 
+        // **O peso não se escreve.** Desde a 2.23.0, um exercício sem histórico chega com
+        // o peso alvo da rotina já no campo — aqui, os 60 kg do `targetWeightKg`. Até então
+        // o campo abria vazio apesar de a rotina saber o número, e este teste escrevia-o.
         val campos = onAllNodes(hasSetTextAction())
-        campos[0].performTextInput("60")
         campos[1].performTextInput("8")
         waitForIdle()
         // Por texto e não por descrição: desde a 2.21.0 o botão tem o nome da acção
@@ -135,7 +137,7 @@ class TreinoSerieUiTest : FluxoUiHarness() {
             db.workoutSetDao().exportRows().filter { it.sessionId == sessao.id }
         }
         assertEquals(1, series.size, "a série não ficou na base")
-        assertEquals(60.0, series.single().weightKg)
+        assertEquals(60.0, series.single().weightKg, "o peso alvo da rotina não chegou ao campo")
         assertEquals(8, series.single().reps)
     }
 

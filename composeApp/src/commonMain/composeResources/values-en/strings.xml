@@ -714,8 +714,14 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="routine_superset_none">None</string>
     <string name="routine_superset_group">Group %1$d</string>
     <string name="routine_delete">Delete routine</string>
-    <string name="routine_move_up">Move up</string>
-    <string name="routine_move_down">Move down</string>
+    <string name="routine_drag_handle">Press and hold to drag and reorder</string>
+    <string name="routine_duplicate">Duplicate</string>
+    <string name="routine_duplicate_suffix">%1$s (copy)</string>
+    <string name="routine_rename">Rename</string>
+    <string name="routine_reordered">Order changed</string>
+    <string name="routine_superset_of">Superset %1$d</string>
+    <string name="stepper_less">%1$s, minus %2$d</string>
+    <string name="stepper_more">%1$s, plus %2$d</string>
     <string name="routine_start">Start this routine</string>
 
     <string name="session_title">Workout</string>

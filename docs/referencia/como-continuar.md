@@ -20,7 +20,19 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.22.0 é a última fechada**, a 2026-09-02. Esquema da base **v38 → v39** — a tabela
+- **2.23.0 é a última fechada**, a 2026-09-02. Esquema **v39** e catálogo **v6**, ambos
+  inalterados. «As rotinas»: arrastar para reordenar, duplicar e mudar o nome, desfazer no
+  mover, alvos com `−` e `+`, supersérie agrupada, e o peso alvo da rotina finalmente a
+  servir para alguma coisa. 1724 testes Kotlin, 58 das ferramentas, 68 Deno, detekt e lint
+  limpos.
+- **O arrastar não se prova por `adb`.** Nenhuma das três formas de injectar o gesto o
+  reproduz — o `swipe`, o `draganddrop` e uma sequência de `motionevent`. Ficou provado em
+  **três testes de interface** que constroem o gesto passo a passo, um deles dentro de um
+  `LazyColumn`, que é onde ele disputa o dedo com a lista que rola.
+- **Uma premissa do estudo caiu:** a área 07 diz que «o centro de treino ignora o horário
+  completamente». Deixou de ser verdade na 2.20.0.
+- *O que se segue é o estado até à 2.22.0.*
+- **2.22.0**, a 2026-09-02. Esquema da base **v38 → v39** — a tabela
   `exercise_load` e a coluna `workout_set.bodyweightKg`. Catálogo **v6**, inalterado.
   «Peso do corpo»: os **111 exercícios `body only`** do catálogo — flexões, dominadas,
   fundos, prancha — **deixam de ser impossíveis de registar**. O peso da pessoa entra como
@@ -78,9 +90,8 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   segunda conferiu as seis propostas do esboço 06 uma a uma: quatro batem, uma corrigiu-se a
   favor do esboço, e **duas divergem de propósito** — o botão «Histórico» fica no menu, porque
   tirá-lo deixava o ecrã de histórico sem caminho nenhum.
-- **A próxima do plano é a 2.23.0**, «As rotinas» — arrastar para reordenar, duplicar e
-  renomear uma rotina, desfazer no mover, e alvos com mais do que um número. As perguntas
-  de abertura dela estão escritas no plano.
+- **A próxima do plano é a 2.24.0**, «O histórico do treino». As perguntas de abertura
+  dela estão escritas no plano.
 - *O que se segue é o estado até à 2.19.0, e fica por ser o que explica como se chegou aqui.*
 - **2.19.0 foi publicada**, a 2026-08-30. Esquema da base **v37**, catálogo **v6**.
   «O exercício avulso»: duração escrevível com atalhos, recentes, corrigir um registo do

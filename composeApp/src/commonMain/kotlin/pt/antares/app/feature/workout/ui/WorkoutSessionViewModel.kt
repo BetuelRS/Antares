@@ -34,6 +34,12 @@ data class SessionExerciseUi(
     val targetSets: Int,
     val repsMin: Int,
     val repsMax: Int,
+    /**
+     * O peso planeado na rotina. Serve de ponto de partida **quando não há fantasma** — um
+     * exercício novo, sem histórico. Até à 2.23.0 gravava-se, mostrava-se no editor e mais
+     * nada: o campo abria vazio apesar de a rotina saber o número.
+     */
+    val targetWeightKg: Double? = null,
     val restSec: Int,
     val supersetGroup: Int?,
     val ghost: List<WorkoutSetEntity>,
@@ -182,6 +188,7 @@ class WorkoutSessionViewModel(
                 targetSets = item?.targetSets ?: 3,
                 repsMin = item?.targetRepsMin ?: 8,
                 repsMax = item?.targetRepsMax ?: 12,
+                targetWeightKg = item?.targetWeightKg,
                 restSec = item?.restSec ?: 90,
                 supersetGroup = item?.supersetGroup,
                 ghost = repository.ghostSets(exId, sessionId),

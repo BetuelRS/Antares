@@ -166,6 +166,13 @@ private fun NavGraphBuilder.resto(navController: NavHostController) {
             onStart = { rid -> navController.navigate(Route.WorkoutSession(rid)) },
             onDeleted = { navController.popBackStack() },
             onBack = { navController.popBackStack() },
+            // A cópia substitui o original na pilha: voltar atrás da cópia leva ao sítio de
+            // onde se veio, e não à rotina que se copiou.
+            onOpenRoutine = { rid ->
+                navController.navigate(Route.RoutineEdit(rid)) {
+                    popUpTo(Route.RoutineEdit(route.routineId)) { inclusive = true }
+                }
+            },
         )
     }
 

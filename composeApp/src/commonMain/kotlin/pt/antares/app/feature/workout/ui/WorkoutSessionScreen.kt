@@ -302,6 +302,9 @@ private fun ExerciseBlock(
         } else {
             NewSetRow(
                 prefill = ex.ghost.getOrNull(ex.setsDone),
+                // O peso planeado entra quando não há fantasma nenhum: um exercício novo com
+                // alvo definido abria o campo vazio, apesar de a rotina saber o número.
+                alvoKg = ex.targetWeightKg,
                 warmup = warmup,
                 unidades = unidades,
                 comBarra = ex.equipamento == EQUIPAMENTO_BARRA,
@@ -726,6 +729,7 @@ private fun ExerciseRecolhido(ex: SessionExerciseUi, onSelect: () -> Unit) {
 @Composable
 private fun NewSetRow(
     prefill: WorkoutSetEntity?,
+    alvoKg: Double?,
     warmup: Boolean,
     unidades: UnitSystem,
     comBarra: Boolean,
@@ -741,9 +745,9 @@ private fun NewSetRow(
     // inteiro fazia a app mudar em silêncio um número que a pessoa registou, e 62,5 kg
     // reapareciam como 63.
     val virgula = virgulaDecimal()
-    var weight by remember(prefill, unidades, virgula) {
+    var weight by remember(prefill, alvoKg, unidades, virgula) {
         mutableStateOf(
-            prefill?.weightKg?.let {
+            (prefill?.weightKg ?: alvoKg)?.let {
                 trimmedDecimal(UnitConversions.weightToDisplay(it, unidades), comma = virgula)
             } ?: "",
         )

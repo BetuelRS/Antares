@@ -38,9 +38,21 @@ class RoutineEditViewModel(
     fun updateTargets(itemId: String, sets: Int, repsMin: Int, repsMax: Int, weightKg: Double?, restSec: Int) =
         viewModelScope.launch { repository.updateTargets(itemId, sets, repsMin, repsMax, weightKg, restSec) }
 
-    fun move(itemId: String, up: Boolean) {
+    /**
+     * Grava a ordem que o dedo deixou. Quem chama guarda a ordem **anterior** para a poder
+     * desfazer: mover era a única acção do editor sem desfazer, e é mais fácil de fazer por
+     * engano do que apagar — as setas eram pequenas e estavam coladas ao menu.
+     */
+    fun reordenar(ordem: List<String>) {
+        viewModelScope.launch { repository.reorderItems(ordem) }
+    }
+
+    /** A ordem em que os exercícios estão agora, para se poder voltar a ela. */
+    fun ordemActual(): List<String> = detail.value?.items.orEmpty().map { it.item.id }
+
+    fun duplicar(nome: String, aoTerminar: (String) -> Unit) {
         val id = routineId.value ?: return
-        viewModelScope.launch { repository.move(id, itemId, up) }
+        viewModelScope.launch { repository.duplicateRoutine(id, nome)?.let(aoTerminar) }
     }
 
     fun setSuperset(itemId: String, group: Int?) =

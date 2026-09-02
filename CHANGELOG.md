@@ -13,6 +13,45 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.23.0] — 2026-09-02
+
+**O editor de rotinas.** Pôr o sexto exercício em primeiro custava cinco toques, com a lista a
+saltar debaixo do dedo em cada um. Definir 4×6-8 com 180 s de descanso obrigava a abrir o
+teclado quatro vezes. E «Empurrar A» e «Empurrar B», que partilham oitenta por cento dos
+exercícios, faziam-se as duas de raiz.
+
+Esquema da base inalterado, **v39**; catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **Arrastar para reordenar.** Manter premido um exercício e levá-lo para onde ele deve estar.
+  A lista segue a mão, e a ordem grava-se **uma vez**, quando o dedo levanta.
+- **Duplicar uma rotina**, com os exercícios, os alvos e os grupos de supersérie. Chega com
+  «(cópia)» já escrito no nome, e **não vai ocupar os dias da original no calendário** —
+  duplicar é para partir de uma base, não para ficar com duas rotinas a disputar a terça-feira.
+- **Mudar o nome da rotina** no menu do canto, junto do duplicar e do apagar.
+- **Desfazer no mover.** Era a única acção do editor sem volta atrás, e é mais fácil de fazer
+  por engano do que apagar — que a tem desde sempre.
+
+### Alterado
+
+- **Os alvos acertam-se com `−` e `+`**, com atalhos para os valores que se repetem: 3, 4 ou 5
+  séries; 60, 90, 120 ou 180 segundos de descanso. Eram cinco campos de texto empilhados. O
+  peso continua a escrever-se, porque não há passo que sirva a quem sobe de 2,5 em 2,5 e a
+  quem sobe de dez em dez.
+- **A supersérie passa a ser um cabeçalho do grupo**, e não um chip repetido em cada linha.
+  O grupo existia, mostrava-se três vezes e não agrupava nada.
+- **O nome da rotina deixa de se gravar a cada tecla.** Eram vinte escritas na base num nome
+  de vinte letras, e era o único campo da app sem espera.
+
+### Corrigido
+
+- **O peso alvo da rotina passa a servir para alguma coisa.** Preenchia-se, convertia-se,
+  mostrava-se — e a sessão ignorava-o: um exercício novo com peso alvo definido abria o campo
+  vazio, apesar de a rotina saber o número. Agora entra quando não há histórico de onde tirar.
+- **O máximo de repetições nunca fica abaixo do mínimo.** «8-6» não é um intervalo, e ninguém
+  reparava nele até a sessão o mostrar ao contrário.
+
 ## [2.22.0] — 2026-09-02
 
 **Os exercícios de peso do corpo.** Cento e onze exercícios do catálogo da app — flexões,

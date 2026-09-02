@@ -13,9 +13,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AssistChip
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -44,9 +45,15 @@ import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
 import kotlin.math.roundToInt
 import pt.antares.app.core.designsystem.components.AntaresCard
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import pt.antares.app.core.designsystem.components.CampoComPassos
+import pt.antares.app.core.designsystem.components.ListaArrastavel
+import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
+import pt.antares.app.core.designsystem.components.rememberDesfazer
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.feature.workout.data.RoutineItemView
 import pt.antares.app.generated.resources.Res
@@ -59,6 +66,8 @@ fun RoutineEditScreen(
     onStart: (String) -> Unit,
     onDeleted: () -> Unit,
     onBack: () -> Unit,
+    /** A rotina duplicada abre-se: é nela que se vai mexer, e não na que se copiou. */
+    onOpenRoutine: (String) -> Unit,
     viewModel: RoutineEditViewModel = koinViewModel(),
 ) {
     val detail by viewModel.detail.collectAsState()
@@ -68,7 +77,11 @@ fun RoutineEditScreen(
     LaunchedEffect(deleted) { if (deleted) onDeleted() }
 
     var editItem by remember { mutableStateOf<RoutineItemView?>(null) }
+    var duplicar by remember { mutableStateOf(false) }
+    var renomear by remember { mutableStateOf(false) }
     val apagar = rememberApagarComDesfazer()
+    val desfazer = rememberDesfazer()
+    val reordenado = stringResource(Res.string.routine_reordered)
 
     AntaresScaffold(
         topBar = {
@@ -76,16 +89,16 @@ fun RoutineEditScreen(
                 title = stringResource(Res.string.routine_edit_title),
                 onBack = onBack,
                 actions = {
-                    IconButton(
-                        onClick = {
+                    MenuDaRotina(
+                        onDuplicar = { duplicar = true },
+                        onRenomear = { renomear = true },
+                        onApagar = {
                             apagar(
                                 { viewModel.deleteRoutine() },
                                 { viewModel.restoreRoutine(routineId) },
                             )
                         },
-                    ) {
-                        Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.routine_delete))
-                    }
+                    )
                 },
             )
         },
@@ -95,13 +108,13 @@ fun RoutineEditScreen(
             modifier = Modifier.fillMaxSize().padding(padding).larguraDeLeitura().padding(horizontal = Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
+            // O nome passa a ser um título e não um campo sempre aberto. Gravava-se **a cada
+            // tecla** — vinte transações num nome de vinte letras, e era o único campo da app
+            // sem espera. Mudar o nome é raro, e agora é uma escrita só, no ⋮.
             item {
-                var name by remember(d?.routine?.id) { mutableStateOf(d?.routine?.name ?: "") }
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it; viewModel.rename(it) },
-                    label = { Text(stringResource(Res.string.routine_name)) },
-                    singleLine = true,
+                Text(
+                    d?.routine?.name.orEmpty(),
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
                 )
             }
@@ -116,20 +129,37 @@ fun RoutineEditScreen(
                     )
                 }
             }
-            items(itemsList, key = { it.item.id }) { row ->
-                RoutineItemCard(
-                    row = row,
-                    onEdit = { editItem = row },
-                    onMoveUp = { viewModel.move(row.item.id, up = true) },
-                    onMoveDown = { viewModel.move(row.item.id, up = false) },
-                    onSuperset = { g -> viewModel.setSuperset(row.item.id, g) },
-                    onDelete = {
-                        apagar(
-                            { viewModel.deleteItem(row.item.id) },
-                            { viewModel.restoreItem(row.item.id) },
-                        )
+            // Num `item` só, e não num `items`: o arrastar precisa de ver a lista inteira
+            // para saber por que vizinho passou, e uma rotina tem meia dúzia de exercícios.
+            item {
+                ListaArrastavel(
+                    itens = itemsList,
+                    chave = { it.item.id },
+                    espaco = Spacing.sm,
+                    aoLargar = { nova ->
+                        val antes = viewModel.ordemActual()
+                        viewModel.reordenar(nova)
+                        // Mover era a única acção do editor sem desfazer — e é mais fácil de
+                        // fazer por engano do que apagar. **Não é o `apagar`:** esse traz a
+                        // frase «apagado» colada, e diria à pessoa que o exercício se foi.
+                        desfazer(reordenado) { viewModel.reordenar(antes) }
                     },
-                )
+                    // O levantar do cartão enquanto o dedo o leva é do componente, e não do
+                    // cartão: quem arrastar outra lista ganha-o de graça.
+                ) { row, _ ->
+                    RoutineItemCard(
+                        row = row,
+                        primeiroDoGrupo = ehPrimeiroDoGrupo(itemsList, row),
+                        onEdit = { editItem = row },
+                        onSuperset = { g -> viewModel.setSuperset(row.item.id, g) },
+                        onDelete = {
+                            apagar(
+                                { viewModel.deleteItem(row.item.id) },
+                                { viewModel.restoreItem(row.item.id) },
+                            )
+                        },
+                    )
+                }
             }
 
             item {
@@ -141,7 +171,7 @@ fun RoutineEditScreen(
             }
             if (itemsList.isNotEmpty()) {
                 item {
-                    pt.antares.app.core.designsystem.components.PrimaryButton(
+                    PrimaryButton(
                         text = stringResource(Res.string.routine_start),
                         onClick = { onStart(routineId) },
                         modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.lg),
@@ -161,14 +191,134 @@ fun RoutineEditScreen(
             onDismiss = { editItem = null },
         )
     }
+
+    DialogosDaRotina(
+        nome = detail?.routine?.name.orEmpty(),
+        renomear = renomear,
+        duplicar = duplicar,
+        onFechar = { renomear = false; duplicar = false },
+        onRenomear = { viewModel.rename(it); renomear = false },
+        onDuplicar = { nome ->
+            duplicar = false
+            viewModel.duplicar(nome) { novoId -> onOpenRoutine(novoId) }
+        },
+    )
+}
+
+/** Os dois que perguntam a mesma coisa, fora do ecrã para ele caber num relance. */
+@Composable
+private fun DialogosDaRotina(
+    nome: String,
+    renomear: Boolean,
+    duplicar: Boolean,
+    onFechar: () -> Unit,
+    onRenomear: (String) -> Unit,
+    onDuplicar: (String) -> Unit,
+) {
+    if (renomear) {
+        NomeDaRotinaDialog(
+            atual = nome,
+            titulo = Res.string.routine_rename,
+            onDismiss = onFechar,
+            onConfirm = onRenomear,
+        )
+    }
+    if (duplicar) {
+        NomeDaRotinaDialog(
+            atual = stringResource(Res.string.routine_duplicate_suffix, nome),
+            titulo = Res.string.routine_duplicate,
+            onDismiss = onFechar,
+            onConfirm = onDuplicar,
+        )
+    }
+}
+
+/** O que se faz à rotina inteira, e não a um exercício dela. */
+@Composable
+private fun MenuDaRotina(onDuplicar: () -> Unit, onRenomear: () -> Unit, onApagar: () -> Unit) {
+    var aberto by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { aberto = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.cd_more_options))
+        }
+        DropdownMenu(expanded = aberto, onDismissRequest = { aberto = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.routine_rename)) },
+                onClick = { aberto = false; onRenomear() },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.routine_duplicate)) },
+                onClick = { aberto = false; onDuplicar() },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.routine_delete)) },
+                onClick = { aberto = false; onApagar() },
+            )
+        }
+    }
+}
+
+/**
+ * O nome de uma rotina, escrito de uma vez.
+ *
+ * Serve o renomear e o duplicar porque a pergunta é a mesma. O duplicar chega com «(cópia)»
+ * já escrito: quem quiser outro nome apaga-o, e quem não quiser não escreve nada.
+ */
+@Composable
+private fun NomeDaRotinaDialog(
+    atual: String,
+    titulo: org.jetbrains.compose.resources.StringResource,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit,
+) {
+    var nome by remember { mutableStateOf(atual) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(titulo)) },
+        text = {
+            OutlinedTextField(
+                value = nome,
+                onValueChange = { nome = it.take(MAX_NOME) },
+                label = { Text(stringResource(Res.string.routine_name)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        confirmButton = {
+            PrimaryButton(
+                text = stringResource(Res.string.common_save),
+                enabled = nome.isNotBlank(),
+                onClick = { onConfirm(nome.trim()) },
+            )
+        },
+        dismissButton = { SecondaryButton(text = stringResource(Res.string.common_cancel), onClick = onDismiss) },
+    )
+}
+
+private const val MAX_NOME = 60
+private const val MAX_SERIES = 20
+private const val MAX_REPS_ALVO = 50
+private const val PASSO_DESCANSO = 15
+private const val MAX_DESCANSO_S = 600
+
+/**
+ * Se esta linha abre o grupo de supersérie a que pertence.
+ *
+ * Sem exercício antes dela, ou com um de outro grupo, ela é a primeira — e é ela que leva o
+ * cabeçalho. Os grupos não têm de ser contíguos na lista, e quando não são o cabeçalho
+ * aparece em cada troço, que é o que se lê certo.
+ */
+private fun ehPrimeiroDoGrupo(itens: List<RoutineItemView>, row: RoutineItemView): Boolean {
+    val grupo = row.item.supersetGroup ?: return false
+    val i = itens.indexOfFirst { it.item.id == row.item.id }
+    return i <= 0 || itens[i - 1].item.supersetGroup != grupo
 }
 
 @Composable
 private fun RoutineItemCard(
     row: RoutineItemView,
+    primeiroDoGrupo: Boolean,
     onEdit: () -> Unit,
-    onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit,
     onSuperset: (Int?) -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -178,24 +328,36 @@ private fun RoutineItemCard(
     var ssMenu by remember { mutableStateOf(false) }
 
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
+        // A supersérie passa a ser um cabeçalho do grupo, e não um chip por linha: o grupo
+        // existia, mostrava-se três vezes e não agrupava nada. Quem lê a lista vê agora onde
+        // ele começa. O chip era tocável para abrir o menu; o menu continua no ⋮.
+        if (primeiroDoGrupo) {
+            row.item.supersetGroup?.let { g ->
+                Text(
+                    stringResource(Res.string.routine_superset_of, g),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(row.exerciseName, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
+
                 Text(
                     "${it.targetSets}×${it.targetRepsMin}-${it.targetRepsMax} · ${it.restSec}s" +
                         (it.targetWeightKg?.let { w -> " · " + loadWithUnit(w, unidades) } ?: ""),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                it.supersetGroup?.let { g ->
-                    AssistChip(
-                        onClick = { ssMenu = true },
-                        label = { Text(stringResource(Res.string.routine_superset_group, g)) },
-                    )
-                }
             }
-            IconButton(onClick = onMoveUp) { Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(Res.string.routine_move_up)) }
-            IconButton(onClick = onMoveDown) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(Res.string.routine_move_down)) }
+            // A pega, e não duas setas: as setas moviam uma posição de cada vez e estavam
+            // coladas ao menu. O `contentDescription` diz o gesto, que não se vê.
+            Icon(
+                Icons.Default.DragHandle,
+                contentDescription = stringResource(Res.string.routine_drag_handle),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.cd_more_options)) }
             DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                 DropdownMenuItem(text = { Text(stringResource(Res.string.common_edit)) }, onClick = { menu = false; onEdit() })
@@ -225,10 +387,10 @@ private fun TargetsDialog(
     onDismiss: () -> Unit,
 ) {
     val it = row.item
-    var sets by remember { mutableStateOf(it.targetSets.toString()) }
-    var min by remember { mutableStateOf(it.targetRepsMin.toString()) }
-    var max by remember { mutableStateOf(it.targetRepsMax.toString()) }
-    var rest by remember { mutableStateOf(it.restSec.toString()) }
+    var sets by remember { mutableStateOf(it.targetSets) }
+    var min by remember { mutableStateOf(it.targetRepsMin) }
+    var max by remember { mutableStateOf(it.targetRepsMax) }
+    var rest by remember { mutableStateOf(it.restSec) }
 
     // O alvo é escrito e lido na unidade escolhida, e guardado sempre em quilos.
     val unidades = rememberUnitSystem()
@@ -241,15 +403,48 @@ private fun TargetsDialog(
         )
     }
 
-    androidx.compose.material3.AlertDialog(
+    AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(row.exerciseName, maxLines = 2) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                NumField(sets, { sets = it }, Res.string.routine_sets)
-                NumField(min, { min = it }, Res.string.routine_reps_min)
-                NumField(max, { max = it }, Res.string.routine_reps_max)
-                NumField(rest, { rest = it }, Res.string.routine_rest_sec)
+            // Cinco campos de texto empilhados eram cinco aberturas de teclado para pôr
+            // 4×6-8 com 180 s. Os quatro que são contagens acertam-se com `−` e `+`, e os
+            // atalhos cobrem os valores que se repetem. O peso continua a escrever-se: não
+            // há passo que sirva a quem sobe de 2,5 em 2,5 e a quem sobe de 10 em 10.
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Spacing.md),
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            ) {
+                CampoComPassos(
+                    rotulo = stringResource(Res.string.routine_sets),
+                    valor = sets,
+                    passo = 1,
+                    intervalo = 1..MAX_SERIES,
+                    onValor = { sets = it },
+                    atalhos = listOf(3, 4, 5),
+                )
+                CampoComPassos(
+                    rotulo = stringResource(Res.string.routine_reps_min),
+                    valor = min,
+                    passo = 1,
+                    intervalo = 1..MAX_REPS_ALVO,
+                    onValor = { min = it },
+                )
+                CampoComPassos(
+                    rotulo = stringResource(Res.string.routine_reps_max),
+                    valor = max,
+                    passo = 1,
+                    intervalo = 1..MAX_REPS_ALVO,
+                    onValor = { max = it },
+                )
+                CampoComPassos(
+                    rotulo = stringResource(Res.string.routine_rest_sec),
+                    valor = rest,
+                    passo = PASSO_DESCANSO,
+                    intervalo = 0..MAX_DESCANSO_S,
+                    onValor = { rest = it },
+                    atalhos = listOf(60, 90, 120, 180),
+                )
                 NumField(
                     value = weight,
                     onChange = { weight = it },
@@ -260,17 +455,19 @@ private fun TargetsDialog(
             }
         },
         confirmButton = {
-            pt.antares.app.core.designsystem.components.PrimaryButton(
+            PrimaryButton(
                 text = stringResource(Res.string.common_save),
                 onClick = {
                     onSave(
-                        sets.toIntOrNull() ?: it.targetSets,
-                        min.toIntOrNull() ?: it.targetRepsMin,
-                        max.toIntOrNull() ?: it.targetRepsMax,
+                        sets,
+                        min,
+                        // O máximo nunca fica abaixo do mínimo: «8-6» não é um intervalo, e
+                        // ninguém repara nele até a sessão o mostrar ao contrário.
+                        maxOf(min, max),
                         weight.replace(',', '.').toDoubleOrNull()?.let { v ->
                             if (unidades == UnitSystem.IMPERIAL) UnitConversions.lbToKg(v) else v
                         },
-                        rest.toIntOrNull() ?: it.restSec,
+                        rest,
                     )
                 },
             )

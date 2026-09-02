@@ -23,9 +23,38 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.22.0"
+    const val CURRENT = "2.23.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.23.0",
+            title = "Reordenar uma rotina passa a ser arrastar",
+            titleEn = "Reordering a routine becomes dragging",
+            highlights = listOf(
+                "**Arrastar para reordenar.** Pôr o sexto exercício em primeiro custava cinco " +
+                    "toques, com a lista a saltar debaixo do dedo em cada um",
+                "**Duplicar uma rotina**, com os exercícios, os alvos e as superséries — e sem " +
+                    "ir ocupar os dias da original no calendário",
+                "**Mudar o nome** da rotina, no menu do canto",
+                "**Os alvos acertam-se com − e +**, com atalhos para 3, 4 ou 5 séries e para " +
+                    "60, 90, 120 ou 180 segundos. Eram cinco campos de texto empilhados",
+                "**O peso alvo da rotina passa a servir para alguma coisa**: um exercício sem " +
+                    "histórico já não abre o campo vazio",
+                "Desfazer no mover, e a supersérie a agrupar mesmo o que diz que agrupa",
+            ),
+            highlightsEn = listOf(
+                "**Drag to reorder.** Moving the sixth exercise to the top took five taps, " +
+                    "with the list jumping under your finger each time",
+                "**Duplicate a routine**, with its exercises, targets and supersets — and " +
+                    "without taking over the original's days on the schedule",
+                "**Rename** a routine, from the corner menu",
+                "**Targets are set with − and +**, with shortcuts for 3, 4 or 5 sets and for " +
+                    "60, 90, 120 or 180 seconds. They were five stacked text fields",
+                "**The routine's target weight finally does something**: an exercise with no " +
+                    "history no longer opens an empty field",
+                "Undo on move, and the superset actually grouping what it says it groups",
+            ),
+        ),
         AppVersion(
             name = "2.22.0",
             title = "Uma flexão passa a poder registar-se",
@@ -371,26 +400,7 @@ object AppChangelog {
                     "numbers mean",
             ),
         ),
-        AppVersion(
-            name = "2.6.0",
-            title = "O sódio e a fibra contam em todo o catálogo",
-            titleEn = "Sodium and fibre count across the catalogue",
-            highlights = listOf(
-                "**Ver que alimentos são ricos em fibra ou em sódio passa a olhar para o " +
-                    "catálogo todo**, e não só para os portugueses: de 1 376 alimentos " +
-                    "para mais de 7 600",
-                "O sódio deixa de poder aparecer com dois valores diferentes para o " +
-                    "mesmo alimento, conforme o ecrã",
-            ),
-            highlightsEn = listOf(
-                "**Finding which foods are rich in fibre or sodium now looks at the whole " +
-                    "catalogue**, not just the Portuguese ones: from 1,376 foods to over " +
-                    "7,600",
-                "Sodium can no longer show two different values for the same food, " +
-                    "depending on the screen",
-            ),
-        ),
-        // Da 2.2.0 à 2.5.0 saíram daqui à medida que entraram as versoes novas: a lista tem
+        // Da 2.2.0 à 2.6.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )
