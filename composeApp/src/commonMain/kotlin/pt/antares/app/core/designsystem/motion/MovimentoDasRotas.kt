@@ -16,7 +16,9 @@ package pt.antares.app.core.designsystem.motion
 object MovimentoDasRotas {
 
     private val RESTANTES = listOf(
-        "AppMenu", "ProgressPhotos", "Cycle", "ProfileSettings", "HealthProfile",
+        // A corrida está aqui desde a 2.20.1: deixou de ser separador e passou a ser um
+        // degrau a partir do painel de treino, como a biblioteca ou o histórico.
+        "Run", "ProgressPhotos", "Cycle", "ProfileSettings", "HealthProfile",
         "BodyCompositionEdit", "ShowMaths", "MeasurementHistory", "DietBreak", "Settings",
         "Admin", "WeightHistory", "FoodSearch", "FoodDetail", "FoodEdit", "RecipeEdit",
         "RecipeDetail", "MinhasRefeicoes", "NutritionStats", "RichIn", "Attributions", "About", "Backup",
@@ -28,7 +30,7 @@ object MovimentoDasRotas {
 
     private val porNome: Map<String, Movimento> = buildMap {
         // Os cinco separadores. Ninguém está mais fundo do que ninguém.
-        for (r in listOf("Today", "Diary", "Workout", "Run", "Me")) put(r, Movimento.ENTRE_IRMAOS)
+        for (r in listOf("Today", "Diary", "Workout", "Progresso", "Mais")) put(r, Movimento.ENTRE_IRMAOS)
 
         // Modos em que se entra e de que se sai por baixo.
         put("BarcodeScan", Movimento.DE_BAIXO)

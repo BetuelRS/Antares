@@ -8,6 +8,13 @@ import kotlinx.coroutines.flow.Flow
 import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.database.entities.TrackPointEntity
 
+/** A última corrida, sem o percurso: a linha do painel de treino precisa de três campos. */
+data class UltimaCorridaRow(
+    val name: String,
+    val startedAt: Long,
+    val distanceM: Double,
+)
+
 @Dao
 interface RunDao {
 
@@ -19,6 +26,21 @@ interface RunDao {
 
     @Query("SELECT * FROM run WHERE status = 'DONE' AND deleted = 0 ORDER BY startedAt ASC")
     suspend fun allDone(): List<RunEntity>
+
+    // Duas leituras estreitas para o painel de treino, e não o `observeHistory`: a
+    // `RunEntity` traz a `polyline` e os parciais de cada corrida, e ali mostram-se uma
+    // distância e um nome. É a mesma escolha das três contagens do treino — somar na base.
+    @Query(
+        "SELECT COALESCE(SUM(distanceM), 0) FROM run WHERE status = 'DONE' AND deleted = 0 " +
+            "AND startedAt >= :deMs AND startedAt < :ateMs",
+    )
+    fun observeDistanceBetween(deMs: Long, ateMs: Long): Flow<Double>
+
+    @Query(
+        "SELECT name, startedAt, distanceM FROM run WHERE status = 'DONE' AND deleted = 0 " +
+            "ORDER BY startedAt DESC LIMIT 1",
+    )
+    fun observeLast(): Flow<UltimaCorridaRow?>
 
     @Query(
         "SELECT * FROM run WHERE status = 'DONE' AND deleted = 0 " +

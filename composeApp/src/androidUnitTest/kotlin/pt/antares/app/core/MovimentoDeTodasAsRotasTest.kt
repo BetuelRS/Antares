@@ -60,7 +60,7 @@ class MovimentoDeTodasAsRotasTest {
 
         // É a relação que mais se nota: deslizar entre separadores daria a ideia falsa de que
         // se está a percorrer uma sequência, quando são cinco portas ao mesmo nível.
-        for (aba in listOf("Today", "Diary", "Workout", "Run", "Me")) {
+        for (aba in listOf("Today", "Diary", "Workout", "Progresso", "Mais")) {
             assertEquals(
                 Movimento.ENTRE_IRMAOS,
                 MovimentoDasRotas.de("pt.antares.app.navigation.Route.$aba"),

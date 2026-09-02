@@ -20,7 +20,22 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.20.0 é a última fechada**, a 2026-09-02. Esquema da base **v37**, catálogo **v6** —
+- **2.20.1 é a última fechada**, a 2026-09-02. Esquema da base **v37**, catálogo **v6** —
+  **nenhum dos dois mexeu**. «A barra»: passa a `Hoje · Diário · Treino · Progresso · Mais`. A
+  corrida sai da navegação principal e vai viver dentro do treino, o progresso ganha
+  separador próprio, e o «Eu» junta-se ao menu da app em «Mais». 1686 testes Kotlin, 58 das
+  ferramentas, 68 Deno, detekt e lint limpos. Verificada a correr **com e sem corridas** — o
+  segundo estado exigiu escrever na base por `run-as`, porque o emulador não tem GPS.
+- **É a segunda metade da 2.20.0** (B2), e leva o terceiro número pelo precedente do
+  `versionamento.md` — como a 2.5.1 e a 2.18.1. **MENOR pelo precedente da 2.1.0:** a corrida
+  ganha entrada no treino no mesmo lançamento em que perde o separador. **Nenhuma das 51
+  versões do plano se deslocou**, e a 2.21.0 continua a ser «a sessão».
+- **A D7 apanhou o defeito que a própria versão criou:** a corrida, deixando de ser separador,
+  ficou **sem saída visível** — a barra de baixo era a única maneira de sair dela e o
+  `RunScreen` não tinha barra de topo. Ganhou título e seta, e ficou o `TodoEcraTemSaidaTest`,
+  que exige um `popBackStack` ou um `popUpTo` no bloco de **todas** as rotas fora da barra.
+- *O que se segue é o estado até à 2.20.0.*
+- **2.20.0**, a 2026-09-02. Esquema da base **v37**, catálogo **v6** —
   **nenhum dos dois mexeu**. «O centro de treino»: o separador que não mostrava um único
   número passa a mostrar o treino de hoje, a semana, as rotinas com ▶ e os últimos treinos.
   **Nenhum dado é novo** — todos já eram calculados noutro sítio e não chegavam ali. 1680
@@ -33,12 +48,10 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   segunda conferiu as seis propostas do esboço 06 uma a uma: quatro batem, uma corrigiu-se a
   favor do esboço, e **duas divergem de propósito** — o botão «Histórico» fica no menu, porque
   tirá-lo deixava o ecrã de histórico sem caminho nenhum.
-- **A próxima do plano é a barra**, e ainda não tem número: a resposta do dono à terceira
-  pergunta da 2.20.0 foi que a **Corrida sai da barra e entra o Progresso**. Isso partiu a
-  versão em duas (B2) e a segunda metade **abre com uma decisão de numeração** — se for MAIOR
-  é a 3.0.0 e os grupos passam a 4.0.0; se for MENOR pelo precedente da 2.1.0, é a 2.21.0 e o
-  plano não se desloca. **Não se abre sem essa resposta.** A 2.21.0 do plano é «a sessão:
-  corrigir e cronometrar».
+- **A próxima do plano é a 2.21.0**, «a sessão: corrigir e cronometrar» — relógio da sessão
+  na barra, calculadora de discos, fluxo de teclado peso→reps→gravar, RPE recolhido, notas por
+  exercício, 1RM estimado e o aviso de recorde na hora. As perguntas de abertura dela estão
+  escritas no plano. **Nada começa sem a resposta do dono (A1).**
 - *O que se segue é o estado até à 2.19.0, e fica por ser o que explica como se chegou aqui.*
 - **2.19.0 foi publicada**, a 2026-08-30. Esquema da base **v37**, catálogo **v6**.
   «O exercício avulso»: duração escrevível com atalhos, recentes, corrigir um registo do

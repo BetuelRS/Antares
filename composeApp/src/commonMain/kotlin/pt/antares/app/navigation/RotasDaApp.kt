@@ -7,6 +7,9 @@ import androidx.navigation.toRoute
 import pt.antares.app.feature.settings.AttributionsScreen
 import pt.antares.app.feature.about.AboutScreen
 import pt.antares.app.feature.me.AppMenuScreen
+import pt.antares.app.feature.me.DestinosDaApp
+import pt.antares.app.feature.me.DestinosDoCorpo
+import pt.antares.app.feature.me.DestinosDoSobre
 import pt.antares.app.feature.coach.CoachHistoryScreen
 import pt.antares.app.feature.coach.CoachReportScreen
 import pt.antares.app.feature.today.TodayScreen
@@ -28,7 +31,9 @@ internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
             onAddMeal = { navController.navigateToTab(Route.Diary) },
             onOpenWorkout = { navController.navigateToTab(Route.Workout) },
             onOpenFasting = { navController.navigate(Route.Fasting) { launchSingleTop = true } },
-            onOpenRun = { navController.navigateToTab(Route.Run) },
+            // Um `navigate` e não um `navigateToTab`: a corrida deixou de ser separador, e
+            // saltar para ela pelo caminho dos separadores apagava a pilha até ao Hoje.
+            onOpenRun = { navController.navigate(Route.Run) { launchSingleTop = true } },
             onOpenCoach = { navController.navigate(Route.CoachReport()) },
             onOpenProfile = { navController.navigate(Route.ProfileSettings) },
             onQuickLog = { slot, epochDay, mode, query ->
@@ -38,16 +43,26 @@ internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
             onOpenGap = { chave -> navController.navigate(Route.RichIn(chave)) },
         )
     }
-    composable<Route.AppMenu> {
+    composable<Route.Mais> {
         AppMenuScreen(
-            onSettingsClick = { navController.navigate(Route.Settings) },
-            onHealthClick = { navController.navigate(Route.HealthPermissions) },
-            onAttributionsClick = { navController.navigate(Route.Attributions) },
-            onAboutClick = { navController.navigate(Route.About) },
-            onBackupClick = { navController.navigate(Route.Backup) },
-            onDestinosClick = { navController.navigate(Route.Destinos) },
-            onCrashClick = { navController.navigate(Route.CrashLog) },
-            onBack = { navController.popBackStack() },
+            corpo = DestinosDoCorpo(
+                perfil = { navController.navigate(Route.HealthProfile) },
+                refeicoes = { navController.navigate(Route.MinhasRefeicoes) },
+                estatisticas = { navController.navigate(Route.NutritionStats) },
+                ricoEm = { navController.navigate(Route.RichIn()) },
+                treinador = { navController.navigate(Route.CoachHistory) },
+            ),
+            app = DestinosDaApp(
+                definicoes = { navController.navigate(Route.Settings) },
+                copia = { navController.navigate(Route.Backup) },
+                destinos = { navController.navigate(Route.Destinos) },
+                saude = { navController.navigate(Route.HealthPermissions) },
+            ),
+            sobre = DestinosDoSobre(
+                atribuicoes = { navController.navigate(Route.Attributions) },
+                sobre = { navController.navigate(Route.About) },
+                falhas = { navController.navigate(Route.CrashLog) },
+            ),
         )
     }
     composable<Route.Settings> {

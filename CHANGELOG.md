@@ -13,6 +13,48 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.20.1] — 2026-09-02
+
+**A barra de baixo.** Cinco separadores permanentes, e um deles era a corrida — uma coisa que
+se faz umas vezes por mês a ocupar um quinto da única barra que está sempre no ecrã. Passa a
+ser `Hoje · Diário · Treino · Progresso · Mais`, e a corrida vai viver dentro do treino, que
+é onde a atividade já morava.
+
+**Nada desapareceu: mudou de sítio.** Todos os ecrãs continuam alcançáveis, e os testes-guarda
+que provam isso foram reescritos para o caminho novo em vez de apagados. Esquema da base
+inalterado, **v37**; catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **O progresso ganha separador próprio.** O peso, as fotografias e os gráficos eram a
+  primeira coisa dentro do «Perfil», atrás de um ícone de pessoa. É o ecrã que responde a
+  *está a resultar?*, e estava guardado no único separador cujo nome não dizia nada sobre o
+  que lá havia dentro.
+- **A corrida no painel de treino**, com a distância da semana e a última corrida — nome, data
+  e distância. Sem corridas esta semana diz que não há; sem nenhuma corrida alguma vez, convida
+  a começar. É uma porta, e não um relatório vazio.
+
+### Alterado
+
+- **O «Perfil» passa a «Mais»**, e junta num sítio só o que estava em dois: os atalhos do corpo
+  — perfil e metas, refeições guardadas, estatísticas, ricos em, treinador — e o menu da app,
+  que vivia atrás de uma engrenagem no canto superior do «Perfil». Um menu de definições
+  escondido dentro de um separador chamado «Perfil» é o sítio onde ninguém procura a cópia de
+  segurança.
+- **A corrida sai da barra de baixo.** Continua inteira — começar, o mapa, o histórico, os
+  detalhes de cada corrida. O que muda é o caminho: agora é o separador do treino.
+
+### Corrigido
+
+- **A corrida ganha uma seta para voltar.** Enquanto foi separador, a barra de baixo estava
+  sempre no ecrã e era por ali que se saía. Empurrada a partir do treino, ficava sem saída
+  visível nenhuma — só o gesto do sistema, que não se vê. **Foi o defeito que a versão
+  criou**, e ficou um teste-guarda que o apanha em qualquer ecrã, não só neste.
+- **Os períodos do progresso cortavam-se.** Os quatro botões dividiam a largura em quatro
+  partes iguais numa linha só, e «3 meses» lia-se **«3»** num telemóvel estreito — um período
+  que não existe. Passam a quebrar de linha, como já faziam nas estatísticas da nutrição.
+  Nenhum teste vê largura de texto.
+
 ## [2.20.0] — 2026-09-02
 
 **O centro de treino.** O separador do treino era o único dos cinco que não mostrava um

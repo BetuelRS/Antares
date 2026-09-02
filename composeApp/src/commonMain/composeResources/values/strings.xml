@@ -5,7 +5,8 @@
     <string name="nav_diary">Diário</string>
     <string name="nav_workout">Treino</string>
     <string name="nav_run">Corrida</string>
-    <string name="nav_profile">Perfil</string>
+    <string name="nav_progress">Progresso</string>
+    <string name="nav_more">Mais</string>
 
     <string name="progress_empty_title">Ainda não há caminho para mostrar</string>
     <string name="progress_empty_subtitle">Regista o que comes e pesa-te de vez em quando. Ao fim de umas semanas, isto passa a contar a tua história.</string>
@@ -615,6 +616,10 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_no_routines">Ainda não tens rotinas. Cria uma para começar.</string>
     <string name="workout_hub_new_routine">Nova rotina</string>
     <string name="workout_hub_more">Mais opções de treino</string>
+    <string name="workout_hub_run_week">%1$s esta semana</string>
+    <string name="workout_hub_run_none_week">Ainda não correste esta semana</string>
+    <string name="workout_hub_run_last">%1$s · %2$s · %3$s</string>
+    <string name="workout_hub_run_none_ever">Toca para começar uma corrida</string>
     <string name="workout_hub_resume_running">Retomar o treino · %1$s</string>
     <string name="workout_hub_from_plan">HOJE · DO TEU PLANO</string>
     <string name="workout_hub_last_done">A ÚLTIMA QUE FIZESTE · %1$s</string>

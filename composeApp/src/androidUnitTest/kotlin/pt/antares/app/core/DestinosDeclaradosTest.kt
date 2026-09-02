@@ -117,7 +117,7 @@ class DestinosDeclaradosTest {
             .filter { it.extension == "kt" }
             .joinToString("\n") { it.readText() }
 
-        assertTrue(menu.contains("onDestinosClick"), "o ecrã saiu do menu")
+        assertTrue(menu.contains("app.destinos"), "o ecrã saiu do menu")
         assertTrue(
             rotas.contains("composable<Route.Destinos>"),
             "a rota do ecrã não leva a lado nenhum",

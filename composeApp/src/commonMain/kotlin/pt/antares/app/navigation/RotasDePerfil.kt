@@ -4,8 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import org.koin.compose.viewmodel.koinViewModel
-import pt.antares.app.feature.me.MeScreen
 import pt.antares.app.feature.onboarding.OnboardingScreen
+import pt.antares.app.feature.progress.ProgressoScreen
 import pt.antares.app.feature.profile.ui.BodyCompositionScreen
 import pt.antares.app.feature.profile.ui.DietBreakScreen
 import pt.antares.app.feature.profile.ui.MeasurementHistoryScreen
@@ -21,16 +21,10 @@ import pt.antares.app.feature.progress.ProgressPhotosScreen
  * Quem usa a app: o perfil, o peso, as medições, as definições e a primeira utilização.
  */
 internal fun NavGraphBuilder.rotasDePerfil(navController: NavHostController) {
-    composable<Route.Me> {
-        MeScreen(
-            onSettingsMenu = { navController.navigate(Route.AppMenu) },
-            onProfileClick = { navController.navigate(Route.HealthProfile) },
-            onWeightClick = { navController.navigate(Route.WeightHistory) },
-            onPhotosClick = { navController.navigate(Route.ProgressPhotos) },
-            onStatsClick = { navController.navigate(Route.NutritionStats) },
-            onRichInClick = { navController.navigate(Route.RichIn()) },
-            onRefeicoesClick = { navController.navigate(Route.MinhasRefeicoes) },
-            onCoachClick = { navController.navigate(Route.CoachHistory) },
+    composable<Route.Progresso> {
+        ProgressoScreen(
+            onWeightHistory = { navController.navigate(Route.WeightHistory) },
+            onPhotos = { navController.navigate(Route.ProgressPhotos) },
         )
     }
     composable<Route.HealthProfile> {

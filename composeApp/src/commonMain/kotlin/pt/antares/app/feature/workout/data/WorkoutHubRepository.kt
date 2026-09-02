@@ -4,10 +4,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.isoDayNumber
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.RoutineScheduleDao
+import pt.antares.app.core.database.daos.RunDao
+import pt.antares.app.core.database.daos.UltimaCorridaRow
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
@@ -79,6 +82,25 @@ data class TreinoNaLista(
     val volume: Double,
 )
 
+/**
+ * A corrida, vista do painel de treino.
+ *
+ * São os dois atividade, e a corrida deixou de ter separador próprio — o
+ * `estudo/esbocos/20-sistema-de-desenho.html` argumenta-o e é o que a barra nova faz. O que
+ * entra aqui são **dois factos e um caminho**, e não o hub da corrida outra vez: o que ele
+ * mostra é a `estudo/areas/11-corrida.md`, e tem versão própria no plano.
+ */
+data class CorridaNaSemana(
+    val metrosNaSemana: Double,
+    val ultima: UltimaCorrida?,
+)
+
+data class UltimaCorrida(
+    val nome: String,
+    val epochDay: Long,
+    val metros: Double,
+)
+
 data class CentroDeTreino(
     val carregado: Boolean = false,
     /** O instante em que a sessão a decorrer começou, para o ecrã poder contar o tempo. */
@@ -87,12 +109,13 @@ data class CentroDeTreino(
     val semana: SemanaDeTreino = SemanaDeTreino(0L, emptyList(), 0.0, 0),
     val rotinas: List<RotinaNaLista> = emptyList(),
     val ultimos: List<TreinoNaLista> = emptyList(),
+    val corrida: CorridaNaSemana = CorridaNaSemana(0.0, null),
 )
 
 /**
  * O modelo de leitura do centro de treino.
  *
- * Vive num repositório e não no ViewModel porque são oito fontes a juntar-se, e o `combine`
+ * Vive num repositório e não no ViewModel porque são nove fontes a juntar-se, e o `combine`
  * do Kotlin pára nas cinco: acima disso o ecrã passava a montar a sua própria consulta.
  *
  * **Nada aqui é um dado novo.** Todos estes números já eram calculados noutro sítio da app —
@@ -105,6 +128,7 @@ class WorkoutHubRepository(
     private val setDao: WorkoutSetDao,
     private val scheduleDao: RoutineScheduleDao,
     private val exerciseDao: ExerciseLibraryDao,
+    private val runDao: RunDao,
 ) {
 
     fun observe(
@@ -122,12 +146,25 @@ class WorkoutHubRepository(
             setDao.observeSetCounts(),
         ) { sessoes, series -> sessoes to series }
 
+        // A semana da corrida é a mesma dos treinos — a ISO do `weekStartEpochDay` —, senão
+        // o ecrã dizia duas semanas diferentes ao mesmo tempo. Os limites vão em
+        // milissegundos porque é assim que a corrida guarda a hora a que começou.
+        val semanaDaCorrida = weekStartEpochDay(hoje)
+        val corridaDaSemana = combine(
+            runDao.observeDistanceBetween(
+                deMs = inicioDoDia(semanaDaCorrida, zona),
+                ateMs = inicioDoDia(semanaDaCorrida + DIAS_DA_SEMANA, zona),
+            ),
+            runDao.observeLast(),
+        ) { metros, ultima -> metros to ultima }
+
         return combine(
             rotinasComContagem,
             treinos,
             scheduleDao.observeAll(),
             sessionDao.observeActive(),
-        ) { (rotinas, contagens, ultimas), (sessoes, series), horario, activa ->
+            corridaDaSemana,
+        ) { (rotinas, contagens, ultimas), (sessoes, series), horario, activa, daCorrida ->
             val porRotina = contagens.associate { it.routineId to it.total }
             val ultimaPorRotina = ultimas.associate { it.routineId to it.startedAt }
             val seriesPorSessao = series.associate { it.sessionId to it.total }
@@ -158,6 +195,7 @@ class WorkoutHubRepository(
                         ultimaVezEpochDay = ultimaPorRotina[it.id]?.let { ms -> diaDe(ms, zona) },
                     )
                 },
+                corrida = corrida(daCorrida, zona),
                 ultimos = sessoes.take(ULTIMOS_TREINOS).map { s ->
                     TreinoNaLista(
                         id = s.id,
@@ -246,8 +284,30 @@ class WorkoutHubRepository(
         )
     }
 
+    /**
+     * Junta o que as duas consultas da corrida devolvem. A distância da semana já vem somada
+     * da base; aqui só se converte o instante da última corrida no dia dela, que é o que o
+     * formatador de datas do ecrã recebe.
+     */
+    private fun corrida(
+        semana: Pair<Double, UltimaCorridaRow?>,
+        zona: TimeZone,
+    ): CorridaNaSemana = CorridaNaSemana(
+        metrosNaSemana = semana.first,
+        ultima = semana.second?.let {
+            UltimaCorrida(
+                nome = it.name,
+                epochDay = diaDe(it.startedAt, zona),
+                metros = it.distanceM,
+            )
+        },
+    )
+
     private fun diaDe(ms: Long, zona: TimeZone): Long =
         epochMillisToLocalDate(ms, zona).toEpochDay()
+
+    private fun inicioDoDia(dia: Long, zona: TimeZone): Long =
+        epochDayToLocalDate(dia).atStartOfDayIn(zona).toEpochMilliseconds()
 
     private fun duracaoMin(s: WorkoutSessionEntity): Int =
         (((s.endedAt ?: s.startedAt) - s.startedAt) / MS_POR_MINUTO).toInt().coerceAtLeast(0)

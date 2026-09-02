@@ -23,9 +23,36 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.20.0"
+    const val CURRENT = "2.20.1"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.20.1",
+            title = "A barra de baixo muda, e a corrida passa para o treino",
+            titleEn = "The bottom bar changes, and running moves into Train",
+            highlights = listOf(
+                "**O progresso ganha separador próprio.** Era a primeira coisa dentro do " +
+                    "«Perfil», atrás de um ícone de pessoa — e é o melhor ecrã da app",
+                "**A corrida sai da barra e vive dentro do Treino**, com os quilómetros da " +
+                    "semana e a última corrida. São os dois atividade, e ela ocupava um " +
+                    "quinto da barra para uma coisa que se faz umas vezes por mês",
+                "**O «Perfil» passa a «Mais»**, e junta num sítio só o que estava em dois: " +
+                    "os atalhos do corpo e o menu da app, que vivia atrás de uma engrenagem",
+                "**Os períodos do progresso deixam de se cortar.** «3 meses» lia-se «3» num " +
+                    "telemóvel estreito — um período que não existe",
+            ),
+            highlightsEn = listOf(
+                "**Progress gets its own tab.** It was the first thing inside «Profile», " +
+                    "behind a person icon — and it is the best screen in the app",
+                "**Running leaves the bar and lives inside Train**, with this week's " +
+                    "distance and your last run. Both are activity, and it took up a fifth " +
+                    "of the bar for something you do a few times a month",
+                "**«Profile» becomes «More»**, and gathers in one place what was in two: " +
+                    "the body shortcuts and the app menu, which lived behind a gear icon",
+                "**The progress periods stop being clipped.** «3 months» read as «3» on a " +
+                    "narrow phone — a period that does not exist",
+            ),
+        ),
         AppVersion(
             name = "2.20.0",
             title = "O separador do treino passa a dizer alguma coisa",
@@ -336,34 +363,8 @@ object AppChangelog {
                 "Your favourites, recents and saved portions survive a catalogue update",
             ),
         ),
-        AppVersion(
-            name = "2.3.0",
-            title = "A app passa a ter movimento",
-            titleEn = "The app starts to move",
-            highlights = listOf(
-                "**Transições entre ecrãs**, e cada uma diz uma coisa: os separadores " +
-                    "desvanecem, um detalhe entra da direita com o ecrã de trás a " +
-                    "acompanhar, um treino a começar cresce de dentro, e um resumo assenta",
-                "Se desligaste as animações no telemóvel, a app respeita isso",
-                "Num tablet, tocar num alimento do diário **abre-o ao lado** em vez de " +
-                    "tapar o diário",
-                "O teclado deixou de tapar o que estás a escrever em trinta e dois ecrãs",
-                "Cartões, linhas e margens iguais em toda a app — e num ecrã grande nada " +
-                    "se estica para lá do que se lê bem",
-            ),
-            highlightsEn = listOf(
-                "**Screen transitions**, and each one says something: tabs cross-fade, a " +
-                    "detail slides in from the right with the screen behind following " +
-                    "along, a workout grows from within, and a summary settles",
-                "If you turned animations off on your phone, the app respects that",
-                "On a tablet, tapping a food in the diary **opens it beside** the diary " +
-                    "instead of covering it",
-                "The keyboard no longer covers what you are typing, on thirty-two screens",
-                "Cards, rows and margins the same across the app — and on a big screen " +
-                    "nothing stretches past what reads well",
-            ),
-        ),
-        // A 2.2.0 saiu daqui ao entrar a 2.20.0: a lista tem tecto de doze e o
-        // `AppChangelogTest` cobra-o. O histórico completo é trabalho do `CHANGELOG.md`.
+        // A 2.2.0 e a 2.3.0 saíram daqui ao entrarem a 2.20.0 e a 2.20.1: a lista tem
+        // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
+        // `CHANGELOG.md`, que não tem tecto nenhum.
     )
 }

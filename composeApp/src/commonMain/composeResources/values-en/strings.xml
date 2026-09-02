@@ -5,7 +5,8 @@
     <string name="nav_diary">Diary</string>
     <string name="nav_workout">Train</string>
     <string name="nav_run">Run</string>
-    <string name="nav_profile">Profile</string>
+    <string name="nav_progress">Progress</string>
+    <string name="nav_more">More</string>
 
     <string name="progress_empty_title">No path to show yet</string>
     <string name="progress_empty_subtitle">Log what you eat and weigh yourself now and then. After a few weeks, this starts telling your story.</string>
@@ -614,6 +615,10 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_no_routines">No routines yet. Create one to get started.</string>
     <string name="workout_hub_new_routine">New routine</string>
     <string name="workout_hub_more">More workout options</string>
+    <string name="workout_hub_run_week">%1$s this week</string>
+    <string name="workout_hub_run_none_week">No runs this week yet</string>
+    <string name="workout_hub_run_last">%1$s · %2$s · %3$s</string>
+    <string name="workout_hub_run_none_ever">Tap to start a run</string>
     <string name="workout_hub_resume_running">Resume workout · %1$s</string>
     <string name="workout_hub_from_plan">TODAY · FROM YOUR PLAN</string>
     <string name="workout_hub_last_done">THE LAST ONE YOU DID · %1$s</string>

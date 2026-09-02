@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
@@ -40,13 +41,17 @@ import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.components.SemanaEmPontos
+import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.dayShortDated
 import pt.antares.app.core.util.todayEpochDay
+import pt.antares.app.feature.running.ui.RunFormat
 import pt.antares.app.feature.workout.data.CentroDeTreino
+import pt.antares.app.feature.workout.data.CorridaNaSemana
 import pt.antares.app.feature.workout.data.DestaqueDoTreino
 import pt.antares.app.feature.workout.data.RotinaEmDestaque
 import pt.antares.app.feature.workout.data.RotinaNaLista
@@ -68,15 +73,13 @@ import pt.antares.app.generated.resources.*
  */
 @Composable
 fun WorkoutScreen(
-    onLibrary: () -> Unit,
+    menu: MenuDoTreino,
     onRoutine: (String) -> Unit,
     onStartRoutine: (String) -> Unit,
     onStartEmpty: () -> Unit,
     onResume: () -> Unit,
-    onHistory: () -> Unit,
-    onStats: () -> Unit,
-    onSchedule: () -> Unit,
     onWorkout: (String) -> Unit,
+    onRun: () -> Unit,
     viewModel: WorkoutHubViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -87,16 +90,7 @@ fun WorkoutScreen(
         modifier = Modifier.fillMaxSize().larguraDeLeitura().padding(Spacing.lg),
         verticalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {
-        // Por nome e não por posição: são quatro lambdas do mesmo tipo, e trocar duas não dá
-        // erro de compilação nenhum — dá um menu que abre o ecrã errado.
-        item {
-            Cabecalho(
-                onLibrary = onLibrary,
-                onStats = onStats,
-                onSchedule = onSchedule,
-                onHistory = onHistory,
-            )
-        }
+        item { Cabecalho(menu) }
 
         // Uma sessão a decorrer ganha ao treino de hoje: já se está a treinar, e a pergunta
         // do ecrã passou a ser outra.
@@ -114,7 +108,7 @@ fun WorkoutScreen(
                     destaque = state.destaque,
                     hoje = hoje,
                     onStart = onStartRoutine,
-                    onSchedule = onSchedule,
+                    onSchedule = menu.plano,
                 )
             }
         }
@@ -176,6 +170,18 @@ fun WorkoutScreen(
             }
         }
 
+        // A corrida vive aqui desde que deixou de ter separador próprio: são os dois
+        // atividade, e ela ocupava um quinto da barra para uma coisa que se faz umas vezes
+        // por mês. São dois factos e um caminho — o hub dela continua a ser o hub dela.
+        item {
+            Text(
+                stringResource(Res.string.nav_run),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = Spacing.sm),
+            )
+        }
+        item { LinhaDaCorrida(state.corrida, hoje, unidades, onRun) }
+
         // O treino vazio é a acção mais rara da área, e por isso é a última coisa do ecrã —
         // era a terceira, no lugar mais visível.
         item {
@@ -218,12 +224,7 @@ private fun Retomar(desdeMs: Long, onResume: () -> Unit) {
 }
 
 @Composable
-private fun Cabecalho(
-    onLibrary: () -> Unit,
-    onStats: () -> Unit,
-    onSchedule: () -> Unit,
-    onHistory: () -> Unit,
-) {
+private fun Cabecalho(menu: MenuDoTreino) {
     var aberto by remember { mutableStateOf(false) }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -238,19 +239,19 @@ private fun Cabecalho(
         DropdownMenu(expanded = aberto, onDismissRequest = { aberto = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.schedule_title)) },
-                onClick = { aberto = false; onSchedule() },
+                onClick = { aberto = false; menu.plano() },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.workout_hub_library)) },
-                onClick = { aberto = false; onLibrary() },
+                onClick = { aberto = false; menu.biblioteca() },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.workout_history_title)) },
-                onClick = { aberto = false; onHistory() },
+                onClick = { aberto = false; menu.historico() },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.workout_stats_title)) },
-                onClick = { aberto = false; onStats() },
+                onClick = { aberto = false; menu.estatisticas() },
             )
         }
     }
@@ -438,6 +439,46 @@ private fun LinhaDaRotina(
     )
 }
 
+/**
+ * A corrida no painel de treino — uma linha da lista, e não um cartão: o `CartaoDaCorrida`
+ * do «Hoje» é outro composable, e dois com o mesmo nome fazem procurar duas vezes.
+ *
+ * Dois factos e um caminho. Sem corridas diz que não há, com o mesmo tom do cartão da semana
+ * — o `estudo/areas/01-hoje.md` conta o custo do contrário: *«quem nunca correu tem um cartão
+ * permanente a dizer que não há corridas»*. Aqui ele é uma porta, e não um relatório vazio.
+ */
+@Composable
+private fun LinhaDaCorrida(
+    corrida: CorridaNaSemana,
+    hoje: Long,
+    unidades: UnitSystem,
+    onRun: () -> Unit,
+) {
+    val virgula = virgulaDecimal()
+    val unidade = stringResource(distanceUnitLabel(unidades))
+
+    LinhaDaLista(
+        titulo = if (corrida.metrosNaSemana > 0) {
+            stringResource(
+                Res.string.workout_hub_run_week,
+                "${RunFormat.distance(corrida.metrosNaSemana, unidades, virgula)} $unidade",
+            )
+        } else {
+            stringResource(Res.string.workout_hub_run_none_week)
+        },
+        subtitulo = corrida.ultima?.let {
+            stringResource(
+                Res.string.workout_hub_run_last,
+                it.nome,
+                dayShortDated(it.epochDay, hoje),
+                "${RunFormat.distance(it.metros, unidades, virgula)} $unidade",
+            )
+        } ?: stringResource(Res.string.workout_hub_run_none_ever),
+        icone = Icons.AutoMirrored.Filled.DirectionsRun,
+        onClick = onRun,
+    )
+}
+
 @Composable
 private fun subtituloDaRotina(rotina: RotinaNaLista, hoje: Long): String {
     val exercicios = pluralStringResource(
@@ -477,6 +518,19 @@ private fun LinhaDoTreino(
         onClick = { onOpen(treino.id) },
     )
 }
+
+/**
+ * Os quatro caminhos do menu do canto, num objecto só.
+ *
+ * São um grupo no ecrã — vivem todos no mesmo ⋮ — e por isso são um grupo na assinatura:
+ * soltos, eram quatro lambdas iguais que ninguém distingue ao passá-las por engano.
+ */
+class MenuDoTreino(
+    val biblioteca: () -> Unit,
+    val historico: () -> Unit,
+    val estatisticas: () -> Unit,
+    val plano: () -> Unit,
+)
 
 // O ponto médio separa factos na mesma linha em toda a app — na linha do diário, na do
 // alimento, na do exercício.

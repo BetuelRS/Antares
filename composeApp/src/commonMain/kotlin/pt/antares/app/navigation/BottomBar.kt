@@ -1,10 +1,10 @@
 package pt.antares.app.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsRun
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -23,8 +23,8 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.nav_diary
-import pt.antares.app.generated.resources.nav_profile
-import pt.antares.app.generated.resources.nav_run
+import pt.antares.app.generated.resources.nav_more
+import pt.antares.app.generated.resources.nav_progress
 import pt.antares.app.generated.resources.nav_today
 import pt.antares.app.generated.resources.nav_workout
 
@@ -55,9 +55,8 @@ private val bottomBarItems = listOf(
     BottomBarItem(Route.Today, Icons.Default.WbSunny, Res.string.nav_today),
     BottomBarItem(Route.Diary, Icons.Default.MenuBook, Res.string.nav_diary),
     BottomBarItem(Route.Workout, Icons.Default.FitnessCenter, Res.string.nav_workout),
-    BottomBarItem(Route.Run, Icons.Default.DirectionsRun, Res.string.nav_run),
-
-    BottomBarItem(Route.Me, Icons.Default.Person, Res.string.nav_profile),
+    BottomBarItem(Route.Progresso, Icons.AutoMirrored.Filled.TrendingUp, Res.string.nav_progress),
+    BottomBarItem(Route.Mais, Icons.Default.MoreHoriz, Res.string.nav_more),
 )
 
 @Composable

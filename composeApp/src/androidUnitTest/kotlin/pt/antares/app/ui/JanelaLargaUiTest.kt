@@ -21,7 +21,7 @@ import pt.antares.app.core.designsystem.LocalLarguraDaJanela
 import pt.antares.app.core.designsystem.LocalModoDeEsquema
 import pt.antares.app.core.designsystem.ProvedorDaJanela
 import pt.antares.app.generated.resources.Res
-import pt.antares.app.generated.resources.nav_profile
+import pt.antares.app.generated.resources.nav_more
 import pt.antares.app.generated.resources.nav_today
 import pt.antares.app.navigation.AntaresNavigationRail
 
@@ -95,17 +95,17 @@ class JanelaLargaUiTest {
     @Config(qualifiers = "w1280dp-h800dp")
     fun `o riel mostra os mesmos separadores que a barra`() = runComposeUiTest {
         lateinit var hoje: String
-        lateinit var perfil: String
+        lateinit var ultimo: String
 
         setContent {
             hoje = stringResource(Res.string.nav_today)
-            perfil = stringResource(Res.string.nav_profile)
+            ultimo = stringResource(Res.string.nav_more)
             AntaresNavigationRail(rememberNavController())
         }
 
         // O primeiro e o último da lista: se o riel tivesse ficado com uma lista própria, é
         // nas pontas que a diferença aparecia.
         onNodeWithText(hoje).assertIsDisplayed()
-        onNodeWithText(perfil).assertIsDisplayed()
+        onNodeWithText(ultimo).assertIsDisplayed()
     }
 }

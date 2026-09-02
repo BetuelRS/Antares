@@ -17,11 +17,16 @@ class BackupReachableTest {
         .filter { it.extension == "kt" }
         .joinToString("\n") { it.readText() }
 
+    /**
+     * Deixou de ser «o menu da engrenagem» na 2.20.1: o menu passou a ser o separador «Mais»,
+     * e a engrenagem que o abria desapareceu com o «Eu». O que o teste defende é o mesmo —
+     * **o backup tem de estar na lista** —, e agora está um toque mais perto.
+     */
     @Test
-    fun `o backup esta no menu da engrenagem`() {
+    fun `o backup esta no separador Mais`() {
         assertTrue(
-            menu.contains("backup_title") && menu.contains("onBackupClick"),
-            "o backup saiu do menu — volta a estar a três toques, no fim de um ecrã sobre o corpo",
+            menu.contains("backup_title") && menu.contains("app.copia"),
+            "o backup saiu do menu — é a única cópia que existe, e tem de se alcançar da barra",
         )
     }
 

@@ -27,9 +27,13 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.model.UnitSystem
+import androidx.compose.foundation.layout.Box
+import pt.antares.app.core.designsystem.components.AntaresScaffold
+import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.feature.running.domain.ActivityType
+import pt.antares.app.feature.running.ui.LocationPermissionController
 import pt.antares.app.feature.running.ui.LocationPermissionStatus
 import pt.antares.app.feature.running.ui.RunGoalType
 import pt.antares.app.feature.running.ui.RunViewModel
@@ -38,6 +42,7 @@ import pt.antares.app.feature.running.ui.rememberLocationServicesEnabled
 import pt.antares.app.feature.running.ui.rememberOpenAppSettings
 import pt.antares.app.feature.running.ui.rememberOpenLocationSettings
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.nav_run
 import pt.antares.app.generated.resources.run_autopause
 import pt.antares.app.generated.resources.run_goal_distance
 import pt.antares.app.generated.resources.run_goal_label
@@ -63,13 +68,41 @@ import pt.antares.app.generated.resources.run_type_ride
 import pt.antares.app.generated.resources.run_type_run
 import pt.antares.app.generated.resources.run_type_walk
 
+/**
+ * A seta de voltar nasceu na 2.20.1, e o título com ela.
+ *
+ * Até aí a corrida era separador: a barra de baixo estava sempre no ecrã e era por aí que se
+ * saía. Empurrada a partir do painel de treino, a barra deixa de aparecer — e o ecrã ficava
+ * sem forma nenhuma de sair a não ser o gesto do sistema, que não é uma coisa que se veja.
+ */
 @Composable
 fun RunScreen(
+    onBack: () -> Unit,
     onOpenLive: () -> Unit,
     onOpenHistory: () -> Unit,
     viewModel: RunViewModel = koinViewModel(),
 ) {
     val permission = rememberLocationPermission()
+    AntaresScaffold(
+        topBar = { AntaresTopBar(title = stringResource(Res.string.nav_run), onBack = onBack) },
+    ) { padding ->
+        Box(Modifier.padding(padding)) {
+            EstadoDaCorrida(permission, onOpenLive, onOpenHistory, viewModel)
+        }
+    }
+}
+
+/**
+ * Os quatro estados da permissão, que são o ecrã inteiro antes de haver corrida nenhuma.
+ * Separados do andaime para o `when` não ficar três níveis dentro dele.
+ */
+@Composable
+private fun EstadoDaCorrida(
+    permission: LocationPermissionController,
+    onOpenLive: () -> Unit,
+    onOpenHistory: () -> Unit,
+    viewModel: RunViewModel,
+) {
     when (permission.status) {
         LocationPermissionStatus.GRANTED -> {
 

@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -307,18 +309,27 @@ private fun RangeChangeLine(state: ProgressState, imperial: Boolean, unidade: St
     )
 }
 
+/**
+ * Os quatro períodos.
+ *
+ * Em `FlowRow` e não em `Row` com pesos iguais: um quarto da largura não chega para «3 meses»
+ * num telemóvel estreito, e com `maxLines = 1` o chip lia-se **«3»** — um período que não
+ * existe. É a mesma correcção que o ecrã de estatísticas de nutrição já tinha feito, e pela
+ * mesma razão: uma quarta opção que não cabe **desce**, não se corta.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RangePicker(atual: ProgressRange, onPick: (ProgressRange) -> Unit) {
-    Row(
+    FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
     ) {
         ProgressRange.entries.forEach { range ->
             FilterChip(
                 selected = range == atual,
                 onClick = { onPick(range) },
                 label = { Text(stringResource(rangeLabel(range)), maxLines = 1) },
-                modifier = Modifier.weight(1f),
             )
         }
     }

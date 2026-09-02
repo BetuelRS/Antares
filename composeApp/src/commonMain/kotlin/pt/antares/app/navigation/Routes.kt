@@ -24,11 +24,24 @@ sealed interface Route {
     @Serializable
     data object Run : Route
 
+    /**
+     * O progresso, que era a primeira secção do separador «Eu».
+     *
+     * Passa a separador próprio porque estava atrás do nome menos informativo da app: o
+     * `estudo/areas/14` dá-lhe 17 em 20 e chama-lhe a melhor área da Antares, e ninguém a
+     * encontrava por trás de um ícone de pessoa.
+     */
     @Serializable
-    data object Me : Route
+    data object Progresso : Route
 
+    /**
+     * O que resta do «Eu» mais o menu da app, num sítio só.
+     *
+     * Eram dois ecrãs — o «Eu» com cinco atalhos e o menu da app com mais sete —, e o
+     * `estudo/areas/19` conta as definições espalhadas por três sítios, com uma repetida.
+     */
     @Serializable
-    data object AppMenu : Route
+    data object Mais : Route
 
     @Serializable
     data object ProgressPhotos : Route
@@ -192,10 +205,19 @@ sealed interface Route {
     data object HealthPermissions : Route
 }
 
+/**
+ * Os cinco separadores.
+ *
+ * A **corrida saiu** e vive dentro do treino: são os dois atividade, e ela ocupava um quinto
+ * da navegação principal para uma coisa que se faz umas vezes por mês. Entrou o **progresso**,
+ * que estava escondido dentro do «Eu» — e o «Eu», que não descrevia nada, passou a «Mais».
+ *
+ * É a barra que o `estudo/esbocos/20-sistema-de-desenho.html` desenha.
+ */
 val bottomBarRoutes: List<Route> = listOf(
     Route.Today,
     Route.Diary,
     Route.Workout,
-    Route.Run,
-    Route.Me,
+    Route.Progresso,
+    Route.Mais,
 )

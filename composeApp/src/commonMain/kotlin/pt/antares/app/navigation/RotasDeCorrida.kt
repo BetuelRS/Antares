@@ -17,6 +17,7 @@ import pt.antares.app.feature.running.ui.RunSummaryScreen
 internal fun NavGraphBuilder.rotasDeCorrida(navController: NavHostController) {
     composable<Route.Run> {
         RunScreen(
+            onBack = { navController.popBackStack() },
             onOpenLive = { navController.navigate(Route.RunLive) },
             onOpenHistory = { navController.navigate(Route.RunHistory) },
         )

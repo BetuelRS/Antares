@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -17,10 +18,12 @@ import pt.antares.app.feature.workout.data.RoutineRepository
 import pt.antares.app.feature.workout.data.WorkoutHubRepository
 import pt.antares.app.feature.workout.ui.WorkoutHubViewModel
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.workout_hub_run_none_ever
 import pt.antares.app.generated.resources.workout_hub_start
 import pt.antares.app.generated.resources.workout_hub_start_named
 import pt.antares.app.testing.FluxoUiHarness
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 /**
  * O centro de treino, tocado como se toca.
@@ -55,6 +58,7 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
             setDao = db.workoutSetDao(),
             scheduleDao = db.routineScheduleDao(),
             exerciseDao = db.exerciseLibraryDao(),
+            runDao = db.runDao(),
         ),
     )
 
@@ -88,20 +92,19 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
     }
 
     @Composable
-    private fun ecra(vm: WorkoutHubViewModel, textos: Textos) {
+    private fun ecra(vm: WorkoutHubViewModel, textos: Textos, onRun: () -> Unit = {}) {
         WorkoutScreen(
-            onLibrary = {},
+            menu = MenuDoTreino(biblioteca = {}, historico = {}, estatisticas = {}, plano = {}),
             onRoutine = {},
             onStartRoutine = {},
             onStartEmpty = {},
             onResume = {},
-            onHistory = {},
-            onStats = {},
-            onSchedule = {},
             onWorkout = {},
+            onRun = onRun,
             viewModel = vm,
         )
         textos.ler(Res.string.workout_hub_start)
+        textos.ler(Res.string.workout_hub_run_none_ever)
         textos.lerFormatado(Res.string.workout_hub_start_named, NOME)
     }
 
@@ -140,6 +143,29 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
 
         onNodeWithContentDescription(textos[Res.string.workout_hub_start_named]).assertExists()
         onNodeWithText(textos[Res.string.workout_hub_start]).assertExists()
+    }
+
+    /**
+     * A corrida perdeu o separador na 2.20.1, e a promessa da versão foi que nada
+     * desapareceu — mudou de sítio. Este teste é essa promessa: o painel de treino tem a
+     * linha da corrida e ela leva ao hub dela. Sem isto, apagar seis linhas do ecrã deixava
+     * a corrida sem porta nenhuma e nada acusava.
+     */
+    @Test
+    fun `a corrida continua a ter porta depois de sair da barra`() = runComposeUiTest {
+        arrancaKoin()
+        rotina("r", NOME)
+
+        var foiParaACorrida = false
+        val textos = Textos()
+        val vm = carregado()
+        setContent { ecra(vm, textos, onRun = { foiParaACorrida = true }) }
+        waitForIdle()
+
+        onNodeWithText(textos[Res.string.workout_hub_run_none_ever]).performClick()
+        waitForIdle()
+
+        assertTrue(foiParaACorrida, "a linha da corrida deixou de levar ao hub dela")
     }
 
     private companion object {

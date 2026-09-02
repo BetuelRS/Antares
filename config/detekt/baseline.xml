@@ -475,7 +475,6 @@
     <ID>WildcardImport:GoalSections.kt$import pt.antares.app.generated.resources.*</ID>
     <ID>WildcardImport:HealthProfileScreen.kt$import pt.antares.app.generated.resources.*</ID>
     <ID>WildcardImport:LogDetailSheet.kt$import pt.antares.app.generated.resources.*</ID>
-    <ID>WildcardImport:MeScreen.kt$import pt.antares.app.generated.resources.*</ID>
     <ID>WildcardImport:MealDetailSheet.kt$import pt.antares.app.generated.resources.*</ID>
     <ID>WildcardImport:MeasurementHistoryScreen.kt$import pt.antares.app.generated.resources.*</ID>
     <ID>WildcardImport:MicroLabels.kt$import pt.antares.app.generated.resources.*</ID>

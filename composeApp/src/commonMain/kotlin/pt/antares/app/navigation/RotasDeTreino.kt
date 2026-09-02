@@ -20,6 +20,7 @@ import pt.antares.app.core.designsystem.components.cabeDetalheAoLado
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.painel_escolhe_da_lista
 import pt.antares.app.feature.exercise.AddExerciseScreen
+import pt.antares.app.feature.workout.MenuDoTreino
 import pt.antares.app.feature.workout.WorkoutScreen
 import pt.antares.app.feature.workout.ui.ExerciseCreateScreen
 import pt.antares.app.feature.workout.ui.ExerciseDetailScreen
@@ -40,15 +41,18 @@ import pt.antares.app.feature.workout.ui.WorkoutSummaryScreen
 internal fun NavGraphBuilder.rotasDeTreino(navController: NavHostController) {
     composable<Route.Workout> {
         WorkoutScreen(
-            onLibrary = { navController.navigate(Route.ExerciseLibrary()) },
+            menu = MenuDoTreino(
+                biblioteca = { navController.navigate(Route.ExerciseLibrary()) },
+                historico = { navController.navigate(Route.WorkoutHistory) },
+                estatisticas = { navController.navigate(Route.WorkoutStats) },
+                plano = { navController.navigate(Route.WorkoutSchedule) },
+            ),
             onRoutine = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
             onStartRoutine = { routineId -> navController.navigate(Route.WorkoutSession(routineId)) },
             onStartEmpty = { navController.navigate(Route.WorkoutSession()) },
             onResume = { navController.navigate(Route.WorkoutSession()) },
-            onHistory = { navController.navigate(Route.WorkoutHistory) },
-            onStats = { navController.navigate(Route.WorkoutStats) },
-            onSchedule = { navController.navigate(Route.WorkoutSchedule) },
             onWorkout = { sessionId -> navController.navigate(Route.WorkoutDetail(sessionId)) },
+            onRun = { navController.navigate(Route.Run) },
         )
     }
     composable<Route.WorkoutSchedule> {

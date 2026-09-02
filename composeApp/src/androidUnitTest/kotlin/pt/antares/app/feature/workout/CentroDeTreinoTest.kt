@@ -10,10 +10,13 @@ import pt.antares.app.core.database.entities.ExerciseEntity
 import pt.antares.app.core.database.entities.RoutineEntity
 import pt.antares.app.core.database.entities.RoutineItemEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
+import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.SessionStatus
 import pt.antares.app.core.util.epochDayToLocalDate
+import pt.antares.app.feature.running.domain.ActivityType
+import pt.antares.app.feature.running.domain.RunStatus
 import pt.antares.app.feature.workout.data.DestaqueDoTreino
 import pt.antares.app.feature.workout.data.WorkoutHubRepository
 import kotlin.test.Test
@@ -40,6 +43,7 @@ class CentroDeTreinoTest : ViewModelHarness() {
         setDao = db.workoutSetDao(),
         scheduleDao = db.routineScheduleDao(),
         exerciseDao = db.exerciseLibraryDao(),
+        runDao = db.runDao(),
     )
 
     private fun msDoDia(dia: Long): Long =
@@ -223,7 +227,8 @@ class CentroDeTreinoTest : ViewModelHarness() {
 
     @Test
     fun `a semana conta so os dias desta semana e soma volume e series`() = runTest(dispatcher) {
-        // Uma quinta-feira, para a semana ISO ter dias para trás e para a frente.
+        // Uma sexta-feira - 4 de outubro de 2024 -, para a semana ISO ter dias para
+        // trás e para a frente.
         val hoje = 20_000L
         val inicio = pt.antares.app.core.util.weekStartEpochDay(hoje)
         rotina("r", "R")
@@ -300,5 +305,81 @@ class CentroDeTreinoTest : ViewModelHarness() {
         val treinos = hub().observe(hoje, zona).first { it.carregado }.ultimos
 
         assertEquals(null, treinos.single().nomeDaRotina)
+    }
+
+    private suspend fun corrida(
+        id: String,
+        dia: Long,
+        metros: Double,
+        nome: String = "Corrida da manhã",
+        estado: RunStatus = RunStatus.DONE,
+        apagada: Boolean = false,
+    ) {
+        val inicio = msDoDia(dia)
+        db.runDao().upsert(
+            RunEntity(
+                id = id,
+                type = ActivityType.RUN,
+                startedAt = inicio,
+                endedAt = inicio + 1_800_000L,
+                distanceM = metros,
+                movingS = 1_800L,
+                elapsedS = 1_800L,
+                avgPaceSecPerKm = 300,
+                kcal = 200,
+                elevGainM = 0.0,
+                polyline = "",
+                splitsJson = "[]",
+                name = nome,
+                note = "",
+                status = estado,
+                updatedAt = inicio,
+                deleted = apagada,
+            ),
+        )
+    }
+
+    @Test
+    fun `a corrida conta a mesma semana que o treino`() = runTest(dispatcher) {
+        // A semana da corrida vem do mesmo `weekStartEpochDay` do cartão dos treinos. Se
+        // fossem duas contas diferentes, o mesmo ecrã dizia duas semanas ao mesmo tempo.
+        val hoje = 20_000L
+        val inicio = pt.antares.app.core.util.weekStartEpochDay(hoje)
+        corrida("primeiro dia", inicio, metros = 5_000.0)
+        corrida("ultimo dia", inicio + 6, metros = 3_000.0)
+        corrida("vespera", inicio - 1, metros = 10_000.0)
+
+        val corrida = hub().observe(hoje, zona).first { it.carregado }.corrida
+
+        assertEquals(8_000.0, corrida.metrosNaSemana, "a véspera é a semana passada")
+    }
+
+    @Test
+    fun `a ultima corrida e a mais recente, mesmo fora da semana`() = runTest(dispatcher) {
+        // O cartão tem duas contas com alcances diferentes de propósito: a distância é a
+        // desta semana, a última corrida é a última que houve — senão, quem esteve um mês
+        // parado ficava com metade do cartão em branco.
+        val hoje = 20_000L
+        val inicio = pt.antares.app.core.util.weekStartEpochDay(hoje)
+        corrida("velha", inicio - 30, metros = 12_000.0, nome = "Meia maratona")
+        corrida("menos velha", inicio - 8, metros = 4_000.0, nome = "Ao fim da tarde")
+
+        val corrida = hub().observe(hoje, zona).first { it.carregado }.corrida
+
+        assertEquals(0.0, corrida.metrosNaSemana)
+        assertEquals("Ao fim da tarde", corrida.ultima?.nome)
+        assertEquals(inicio - 8, corrida.ultima?.epochDay)
+    }
+
+    @Test
+    fun `uma corrida descartada ou apagada nao conta nem aparece`() = runTest(dispatcher) {
+        val hoje = 20_000L
+        corrida("fora", hoje, metros = 9_000.0, estado = RunStatus.DISCARDED)
+        corrida("apagada", hoje, metros = 7_000.0, apagada = true)
+
+        val corrida = hub().observe(hoje, zona).first { it.carregado }.corrida
+
+        assertEquals(0.0, corrida.metrosNaSemana)
+        assertEquals(null, corrida.ultima, "uma corrida apagada não volta pela porta do treino")
     }
 }
