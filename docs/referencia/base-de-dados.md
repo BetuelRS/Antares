@@ -1,13 +1,19 @@
 # Base de dados
 
-Room, no telemóvel e mais lado nenhum. Esquema na **versão 39**, com **33 tabelas**, **36
+Room, no telemóvel e mais lado nenhum. Esquema na **versão 39**, com **34 tabelas**, **36
 migrações automáticas** e **duas escritas à mão** — a 26→27 e a 27→28.
 
 > **Este cabeçalho esteve onze versões de esquema atrasado** — dizia v26, 30 tabelas e 25
 > migrações — e nada o apanhou: o `DocumentationHonestyTest` verifica caminhos e a versão da
-> app, não afirmações. Corrigido a 2026-08-31, e **corrigido outra vez a 2026-09-02**: dizia
-> 39 migrações automáticas e são 35, porque as duas escritas à mão vinham somadas às outras e
-> a cadeia salta do 25→26 para o 28→29. Contado no `AntaresDb.kt` e em `composeApp/schemas/`.
+> app, não afirmações. Corrigido a 2026-08-31, outra vez a 2026-09-02, e **outra vez a
+> 2026-09-03**.
+>
+> A correcção de 09-02 trocou um erro por outro: baixou as migrações automáticas de 39 para
+> **35** e são **36** — a cadeia é 1→2 … 25→26, que são vinte e cinco, mais 28→29 … 38→39,
+> que são onze. E as tabelas eram **34** e não 33: a contagem saltou o `db_info`, que é a
+> única entidade cujo nome de classe não acaba em `Entity`. Contado com
+> `grep -c "::class"` na lista de entidades do `AntaresDb.kt` e nos `tableName` do
+> `composeApp/schemas/…/39.json`, que dão os dois o mesmo número.
 
 Os esquemas exportados estão em `composeApp/schemas/`, um ficheiro JSON por versão. São eles que
 permitem ao Room gerar as migrações e aos testes verificá-las.

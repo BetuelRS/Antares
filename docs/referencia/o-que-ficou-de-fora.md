@@ -538,13 +538,15 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **A cafeína e o flúor** — a premissa da decisão de 2.6.0 mudou: 5 215 e 538 alimentos no `food_nutrient.csv` que o oleoduto passou a ler | 2.6.0, medido outra vez a 2026-08-28 | só se o dono reabrir a decisão |
 | **Onde vivem os açúcares e os saturados** — só na coluna, e a `food_nutrient` tem zero linhas dos dois em 7 932 alimentos | bloco D, `estudo/dados/04` §3 | decisão com custo permanente: 81 usos, duas migrações, o mapeador da OFF |
 | **O `FoodRow` com `Card` + `ListItem` do Material** — o último resto das duas linguagens de cartão | 2.3.0, `estudo/areas/20` | precisa de uma corrida no aparelho; é a lista mais usada da app |
-| **Os cinco separadores** — o esboço 20 propõe Hoje · Diário · Treino · Progresso · Mais | 2.3.0 | decisão do dono, não defeito |
+| **«Iniciar treino vazio» leva ao treino que já está a decorrer** — o mesmo defeito que a 2.20.0 fechou no ▶ das rotinas, deixado neste botão | 2.20.0, medido a 2026-09-03 | ver a secção da auditoria abaixo; é um defeito, não uma escolha |
+| **«Retomar o treino · 2618 min»** — o painel conta minutos sem os converter, e a barra da sessão diz `43:39:17` para o mesmo treino | 2.20.0, visto a correr a 2026-09-03 | idem |
+| **Seis importações mortas** — `weightUnitLabel` e `roundToInt` nos três ecrãs do histórico do treino, que nem o detekt nem o lint apanham | `estudo/areas/10`, defeito concreto 1 | 2.24.0, que é o número desses ecrãs |
+| **Os nomes das sete rotinas semeadas** — seis em inglês e «Pernas» em português, literais no código e não recursos | 2.20.0, registado lá como troca por decidir | troca (A5), e é de minutos |
 | **Descarregar as imagens dos exercícios** — o estudo chama-lhe «a única deste documento que eu faria já» | `estudo/transversal/04` | número próprio; resolve também o offline e a fuga a terceiros |
 | **2 909 alimentos em inglês** | 2.13.0 | trabalho de meses, na oficina |
 | **73,7 % do catálogo sem porção** | 2.14.0 | idem |
-| **111 exercícios que não se registam** | dez do estudo, #7 | 2.22.0, já no plano |
 | **A retenção do ciclo não sai do ecrã** | dez do estudo, #8 | 2.34.0, já no plano |
-| **Centro de treino 7 → 16** | dez do estudo, #9 | 2.20.0, já no plano |
+| **O chip «Todas» e o `MET 7,0` em cada linha** | dez do estudo — não; `estudo/areas/13`, «o que é inútil» | **2.19.1**, que está no plano e não saiu |
 | **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data — e envelheceu bem: hoje está menos errada do que quando foi adiada |
 | **O `food_cache` sem expiração, o custo invisível, o modelo fixado no código** | `estudo/sistema/02` | são do servidor, e o modelo fixado é o ponto fraco da longevidade |
 | **A confiança e o intervalo publicado por alimento** — «confiança A · 124–136» | esboço 22, terceira passagem | **não se faz**: nenhuma das três fontes o publica de forma que o oleoduto traga, e inventá-lo é o contrário do que este catálogo faz |
@@ -557,6 +559,90 @@ a regra A5 continua a valer: o que entra a meio é troca, não adição.
 A foto do prato fora da cópia (reaberta e decidida, com o silêncio corrigido) · «uma lista
 só» e a origem na linha · o multiplicador em chips · editar uma refeição guardada · a
 instrução da cintura por sexo, que afinal já estava feita e certa.
+
+**E, do bloco F, três linhas que saíram desta tabela a 2026-09-03** por terem sido feitas e
+por ninguém as ter riscado na altura — que é a regra do fim deste ficheiro: os **111
+exercícios de peso do corpo** (2.22.0), o **centro de treino 7 → 16** (2.20.0) e os **cinco
+separadores**, que deixaram de ser uma decisão em aberto e passaram a ser
+`Hoje · Diário · Treino · Progresso · Mais` (2.20.1).
+
+---
+
+# A varredura de 2026-09-03
+
+Feita depois de ler o estudo inteiro e de correr a app no emulador com a 2.23.1 instalada.
+**O que segue foi medido, e cada linha diz onde.**
+
+## O que está publicado e o que não está
+
+**Seis versões estão comitadas e não saíram de casa.** A última etiqueta e a última release
+são a `v2.19.0`, de 2026-08-30; a `main` do GitHub está em `ad479ac`, e local está em
+`5c0796a`. Entre as duas há **seis commits**: 2.20.0, 2.20.1, 2.21.0, 2.22.0, 2.23.0 e
+2.23.1.
+
+Consequências, e nenhuma é hipotética:
+
+- **A D4 não pôde ser cumprida em nenhuma das seis.** «CI verde antes de fechar a versão»
+  exige uma execução no GitHub, e não houve nenhuma: a última corrida do CI é a do commit
+  `ad479ac`. Os registos das seis dizem «detekt e lint limpos», que é verdade e é local.
+- **A A3 também não** — «uma de cada vez, publicada e usada»: as seis foram feitas no mesmo
+  dia (2026-09-02) e nenhuma foi para o telemóvel como release.
+- **O catálogo descarregável aponta para a 2.19.0.** O botão «Procurar» vai ao `latest` do
+  GitHub, e o `latest` é a release da 2.19.0 — que traz o `catalogo.json` e o
+  `manifesto.json`, portanto o caminho não está partido. Fica partido no dia em que sair uma
+  release sem eles (passo 9 do guia de lançamento).
+
+## Dois defeitos vistos a correr, e os dois no centro de treino
+
+**1 · «Iniciar treino vazio» leva ao treino que já está a decorrer.**
+
+É o defeito que a 2.20.0 diz ter fechado. O `WorkoutScreen.kt` esconde o cartão de destaque
+e o ▶ de cada rotina quando `state.sessaoActivaDesde != null`, com o comentário a explicar
+porquê — *«o `startOrResume` devolve a sessão aberta e ignora a rotina que se lhe pede»* —,
+e depois desenha o `SecondaryButton` do treino vazio **sem condição nenhuma**.
+
+Verificado no emulador: com um treino «Full Body A» aberto, tocar em «Start empty workout»
+abre o «Full Body A». O `WorkoutSessionRepository.startOrResume` faz
+`sessionDao.activeSession()?.let { return@withContext it.id }` antes de olhar para o
+`routineId`, portanto o comportamento é o mesmo para os dois caminhos.
+
+**O `CentroDeTreinoUiTest` viu este botão e não viu o defeito.** O KDoc dele escreve que
+«Começar» é substring de «Começar um treino vazio, que está sempre no ecrã» — a observação
+está certa e serviu para escolher a asserção, e o botão de que ela fala ficou por olhar. É a
+forma de defeito que o `estudo/transversal/02-robustez.md` §3 nomeia: *«a app identifica o
+risco, escreve-o num comentário, e não fecha a saída»*.
+
+**E o CHANGELOG publicado afirma o contrário.** A entrada da 2.20.0 diz «Com um treino a
+decorrer, o ecrã oferece retomá-lo **e mais nada**». Oferece mais uma coisa, e essa faz
+outra coisa.
+
+**2 · «Retomar o treino · 2618 min».**
+
+O botão de retomar formata com o `workout_hub_minutes`, que é `%1$d min` e não converte para
+horas. Um treino aberto há dois dias lê-se «2618 min». A barra da sessão, no mesmo aparelho
+e para o mesmo treino, diz `43:39:17` — **duas formas do mesmo facto em dois ecrãs**, e a do
+painel é a que não se lê. O comentário do `Retomar` explica porque é que ele conta ao minuto
+e não ao segundo; não diz nada sobre o que acontece depois da centésima.
+
+## Três números dos documentos que não batiam
+
+Recontados hoje, e corrigidos no mesmo commit (C4):
+
+| Documento | Dizia | É |
+|---|---|---|
+| `docs/referencia/regras.md` | 67 testes-guarda documentados | **72** — contados na tabela dos [testes-guarda](testes-guarda.md), e os 72 ficheiros existem |
+| `docs/README.md` | as 30 regras da produção | **31** — a D7 entrou a 2026-08-31 e este índice não a apanhou |
+| `docs/referencia/base-de-dados.md` | 33 tabelas, e 35 migrações automáticas na nota | **34** e **36** — a contagem de tabelas saltou o `db_info`, e a nota de 09-02 trocou um erro por outro |
+
+## E o relatório vivo está cinco versões atrasado
+
+O [`como-continuar.md`](como-continuar.md) fecha a dizer que *«o relatório vivo republica-se
+ao fim de cada versão»*. O `estudo/relatorio.html` foi escrito a 2026-08-29 e a versão mais
+alta que menciona é a 2.9.0. O `estudo/PLANO-DE-PRODUCAO.md` diz, na secção do
+versionamento, **«atual: 2.0.2»**.
+
+Nenhum dos dois está no git — são da pasta `estudo/`, que o `.gitignore` exclui —, e por
+isso nenhum teste-guarda os podia ter apanhado. Fica escrito aqui, que é o sítio que está.
 
 ---
 

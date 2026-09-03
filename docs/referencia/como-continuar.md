@@ -20,10 +20,16 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- ⚠️ **Seis versões estão fechadas e não estão publicadas.** A última etiqueta e a última
+  release são a `v2.19.0`; a `main` do GitHub está em `ad479ac` e o local em `5c0796a`, com
+  os seis commits da 2.20.0 à 2.23.1 pelo meio. **Nenhuma das seis teve CI (D4)** — a última
+  corrida é a do commit anterior a todas elas — e nenhuma foi publicada e usada umas semanas
+  antes da seguinte (A3): saíram as seis no mesmo dia. Medido a 2026-09-03; a varredura está
+  em [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md).
 - **2.23.1 é a última fechada**, a 2026-09-02. Esquema **v39** e catálogo **v6**, inalterados.
   «As duas respostas que faltavam»: o horário passa a notificar, com interruptor e hora à
   escolha, desligado por omissão; e a supersérie mantém os dois exercícios abertos na sessão.
-  1728 testes Kotlin, 58 das ferramentas, 68 Deno, detekt e lint limpos.
+  1728 testes Kotlin, 58 das ferramentas, 68 Deno, detekt e lint limpos — **e todos locais**.
 - **Nasceu de uma auditoria contra mim.** As perguntas de abertura da 2.22.0 e da 2.23.0 foram
   respondidas por mim na ausência do dono; ao voltar, foram-lhe refeitas as seis. **Quatro
   bateram e duas não** — o horário notificar e a supersérie —, e são estas duas.
