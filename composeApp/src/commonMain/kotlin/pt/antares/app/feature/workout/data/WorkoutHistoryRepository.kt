@@ -3,11 +3,15 @@ package pt.antares.app.feature.workout.data
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 import pt.antares.app.core.calc.MuscleVolumeInput
 import pt.antares.app.core.calc.OneRepMax
+import pt.antares.app.core.calc.RecordesPorTreino
+import pt.antares.app.core.calc.SerieDeTreino
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
+import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.WorkoutSetEntity
@@ -19,17 +23,29 @@ data class SessionSummary(
     val endedAt: Long?,
     val volume: Double,
 
-    /** Os exercícios que este treino teve, para o filtro os poder usar sem outra consulta. */
-    val exerciseIds: Set<String> = emptySet(),
+    /** Nulo num treino livre, que não nasceu de rotina nenhuma. */
+    val routineId: String? = null,
+    val nomeDaRotina: String? = null,
+
+    val durationMin: Int = 0,
+    val series: Int = 0,
+
+    /**
+     * Se algum exercício deste treino bateu o seu melhor **até àquele dia**. Calculado, e não
+     * guardado — ver o `RecordesPorTreino`.
+     */
+    val temRecorde: Boolean = false,
 )
 
-/** Um exercício que aparece no histórico, com o nome já resolvido para o filtro o mostrar. */
-data class ExerciseOption(val id: String, val name: String)
+/** Uma rotina que aparece no histórico, para o filtro. */
+data class RoutineOption(val id: String, val name: String)
 
 data class SessionBreakdown(
     val startedAt: Long,
+    val nomeDaRotina: String?,
     val durationMin: Int,
     val volume: Double,
+    val series: Int,
     val exercises: List<BreakdownExercise>,
 )
 
@@ -48,36 +64,48 @@ class WorkoutHistoryRepository(
     private val sessionDao: WorkoutSessionDao,
     private val setDao: WorkoutSetDao,
     private val exerciseDao: ExerciseLibraryDao,
+    private val routineDao: RoutineDao,
     private val io: CoroutineDispatcher,
 ) {
 
+    /**
+     * A linha do histórico tinha dois dados — a data e o volume — e dois treinos
+     * completamente diferentes ficavam iguais. Passa a ter quatro, e nenhum deles é novo: o
+     * `WorkoutHubRepository` já os montava na 2.20.0 para os três «últimos treinos» do
+     * painel, e a consulta das séries diz de si própria que é «o quarto dado da linha do
+     * histórico».
+     */
     fun observeHistory(): Flow<List<SessionSummary>> =
-        sessionDao.observeByStatus(SessionStatus.DONE).mapLatest { sessions ->
-            val vols = setDao.sessionVolumes().associate { it.sessionId to it.volume }
-            // Duas consultas para a lista toda, e não duas por treino: com duzentos treinos
-            // gravados, o segundo caminho são quatrocentas idas à base para desenhar uma
-            // lista que já estava desenhada.
-            val exercicios = setDao.sessionExercises()
-                .groupBy { it.sessionId }
-                .mapValues { (_, linhas) -> linhas.map { it.exerciseId }.toSet() }
-            sessions.map {
-                SessionSummary(
-                    id = it.id,
-                    startedAt = it.startedAt,
-                    endedAt = it.endedAt,
-                    volume = vols[it.id] ?: 0.0,
-                    exerciseIds = exercicios[it.id].orEmpty(),
+        combine(
+            sessionDao.observeByStatus(SessionStatus.DONE),
+            setDao.observeSetCounts(),
+        ) { sessions, contagens -> sessions to contagens }
+            .mapLatest { (sessions, contagens) ->
+                val vols = setDao.sessionVolumes().associate { it.sessionId to it.volume }
+                // Uma consulta por facto para a lista toda, e não uma por treino: com
+                // duzentos treinos gravados, o segundo caminho são centenas de idas à base
+                // para desenhar uma lista que já estava desenhada.
+                val series = contagens.associate { it.sessionId to it.total }
+                val nomes = routineDao.allRoutineNames().associate { it.id to it.name }
+                val comRecorde = RecordesPorTreino.comRecorde(
+                    setDao.doneWorkingSetsByTime().map {
+                        SerieDeTreino(it.sessionId, it.exerciseId, it.weightKg, it.reps)
+                    },
                 )
+                sessions.map {
+                    SessionSummary(
+                        id = it.id,
+                        startedAt = it.startedAt,
+                        endedAt = it.endedAt,
+                        volume = vols[it.id] ?: 0.0,
+                        routineId = it.routineId,
+                        nomeDaRotina = it.routineId?.let { id -> nomes[id] },
+                        durationMin = duracaoMin(it.startedAt, it.endedAt),
+                        series = series[it.id] ?: 0,
+                        temRecorde = it.id in comRecorde,
+                    )
+                }
             }
-        }
-
-    /** Os exercícios que aparecem no histórico, com o nome, por ordem alfabética. */
-    suspend fun exerciseOptions(): List<ExerciseOption> = withContext(io) {
-        val ids = setDao.sessionExercises().map { it.exerciseId }.distinct()
-        exerciseDao.namesByIds(ids)
-            .map { ExerciseOption(it.id, it.namePt.ifBlank { it.nameEn }) }
-            .sortedBy { it.name }
-    }
 
     suspend fun breakdown(sessionId: String): SessionBreakdown? = withContext(io) {
         val session = sessionDao.sessionById(sessionId) ?: return@withContext null
@@ -88,9 +116,36 @@ class WorkoutHistoryRepository(
             BreakdownExercise(exId, names[exId] ?: exId, exSets.sortedBy { it.setIndex })
         }
         val volume = sets.filter { !it.isWarmup }.sumOf { it.weightKg * it.reps }
-        val duration = ((session.endedAt ?: session.startedAt) - session.startedAt).let { (it / 60000L).toInt() }
-        SessionBreakdown(session.startedAt, duration.coerceAtLeast(0), volume, exercises)
+        SessionBreakdown(
+            startedAt = session.startedAt,
+            // Um nome só, e vai buscá-lo à consulta que vê as lápides: abrir um treino de há
+            // três meses tem de dizer com que rotina foi feito, mesmo que ela já não exista.
+            nomeDaRotina = session.routineId?.let { routineDao.routineNameById(it) },
+            durationMin = duracaoMin(session.startedAt, session.endedAt),
+            volume = volume,
+            // Séries de trabalho, como em toda a app: o aquecimento não conta.
+            series = sets.count { !it.isWarmup },
+            exercises = exercises,
+        )
     }
+
+    /**
+     * As rotinas que aparecem no histórico, por ordem alfabética. Só as que foram treinadas:
+     * uma rotina que nunca saiu do editor não filtra nada, e um menu com opções que devolvem
+     * sempre lista vazia é pior do que um menu mais curto.
+     */
+    suspend fun routineOptions(): List<RoutineOption> = withContext(io) {
+        val usadas = sessionDao.doneRoutineIds().toSet()
+        routineDao.allRoutineNames()
+            .filter { it.id in usadas }
+            .map { RoutineOption(it.id, it.name) }
+            .sortedBy { it.name }
+    }
+
+    // Um treino por acabar não tem duração: `endedAt` nulo dá zero, e não o tempo que passou
+    // desde que começou — esse é o relógio da sessão, e é outra pergunta.
+    private fun duracaoMin(startedAt: Long, endedAt: Long?): Int =
+        (((endedAt ?: startedAt) - startedAt) / MS_POR_MINUTO).toInt().coerceAtLeast(0)
 
     fun observeMuscleVolume(since: Long): Flow<List<MuscleVolumeStat>> =
         setDao.observeMuscleVolumeSince(since).mapLatest { rows ->
@@ -126,3 +181,7 @@ class WorkoutHistoryRepository(
             .map { ExerciseRecord(names[it.first] ?: it.first, it.second) }
     }
 }
+
+// Os minutos são a unidade da duração em toda a app — a linha do histórico, o cabeçalho
+// do detalhe e os últimos treinos do painel dizem-na todos assim.
+private const val MS_POR_MINUTO = 60_000L

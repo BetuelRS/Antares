@@ -2,7 +2,11 @@ package pt.antares.app.feature.workout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
@@ -20,6 +24,7 @@ import pt.antares.app.feature.workout.ui.WorkoutHubViewModel
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.workout_hub_run_none_ever
 import pt.antares.app.generated.resources.workout_hub_start
+import pt.antares.app.generated.resources.workout_hub_start_empty
 import pt.antares.app.generated.resources.workout_hub_start_named
 import pt.antares.app.testing.FluxoUiHarness
 import kotlin.test.Test
@@ -105,9 +110,19 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
         )
         textos.ler(Res.string.workout_hub_start)
         textos.ler(Res.string.workout_hub_run_none_ever)
+        textos.ler(Res.string.workout_hub_start_empty)
         textos.lerFormatado(Res.string.workout_hub_start_named, NOME)
     }
 
+    /**
+     * Rola a lista até à linha da corrida, que é o penúltimo item do ecrã. Numa
+     * `LazyColumn` só está composto o que está à vista, e uma afirmação sobre o último
+     * item sem isto fala do ecrã e não do que lá devia estar.
+     */
+    private fun ComposeUiTest.aoFundo(textos: Textos) {
+        onNode(hasScrollAction())
+            .performScrollToNode(hasText(textos[Res.string.workout_hub_run_none_ever]))
+    }
     @Test
     fun `com um treino a decorrer o ecra oferece retomar e nao comecar uma rotina`() = runComposeUiTest {
         arrancaKoin()
@@ -128,8 +143,34 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
         onNodeWithContentDescription(textos[Res.string.workout_hub_start_named])
             .assertDoesNotExist()
         onNodeWithText(textos[Res.string.workout_hub_start]).assertDoesNotExist()
+
+        // **E o treino vazio também não.** Ficou de fora quando os outros dois foram
+        // escondidos, e fazia exactamente o mesmo: o `startOrResume` devolve a sessão
+        // aberta, portanto «Iniciar treino vazio» abria o treino que estava a meio.
+        // Verificado no aparelho antes de se escrever este teste.
+        //
+        // Rola-se até à linha da corrida primeiro, que é o item logo acima dele: numa
+        // `LazyColumn` só existe o que está à vista, e sem isto um `assertDoesNotExist`
+        // passava por o botão estar fora do ecrã em vez de não existir.
+        aoFundo(textos)
+        onNodeWithText(textos[Res.string.workout_hub_start_empty]).assertDoesNotExist()
     }
 
+    @Test
+    fun `sem treino a decorrer o treino vazio esta la`() = runComposeUiTest {
+        arrancaKoin()
+        rotina("r", NOME)
+        sessao("feito", SessionStatus.DONE, fim = 2_000L)
+
+        val textos = Textos()
+        val vm = carregado()
+        setContent { ecra(vm, textos) }
+        waitForIdle()
+
+        // O simétrico do de cima: sem ele, esconder o botão para sempre passava nos dois.
+        aoFundo(textos)
+        onNodeWithText(textos[Res.string.workout_hub_start_empty]).assertExists()
+    }
     @Test
     fun `sem treino a decorrer a rotina pode comecar-se da lista`() = runComposeUiTest {
         arrancaKoin()

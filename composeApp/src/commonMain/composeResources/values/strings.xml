@@ -59,7 +59,7 @@
     <string name="undo_action">Desfazer</string>
     <string name="filter_all">Todos</string>
     <string name="filter_month">Mês</string>
-    <string name="filter_exercise">Exercício</string>
+    <string name="filter_routine">Rotina</string>
     <string name="filter_type">Tipo</string>
     <string name="filter_no_match">Nada com estes filtros.</string>
     <string name="cycle_pick_date">Escolher data</string>
@@ -625,7 +625,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_last_done">A ÚLTIMA QUE FIZESTE · %1$s</string>
     <string name="workout_hub_start">Começar</string>
     <string name="workout_hub_start_named">Começar %1$s</string>
-    <string name="workout_hub_minutes">%1$d min</string>
+
     <string name="workout_hub_last_duration">~%1$d min da última vez</string>
     <string name="workout_hub_week">Esta semana</string>
     <string name="workout_hub_week_summary">%1$s de volume · %2$s</string>
@@ -774,8 +774,13 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_summary_done">Concluir</string>
 
     <string name="workout_history_title">Histórico</string>
+    <string name="workout_history_line">%1$s · %2$s · %3$s</string>
+    <string name="workout_history_pr_mark">🌟</string>
+    <string name="workout_history_pr">Recorde neste treino</string>
     <string name="workout_history_empty">Ainda não terminaste nenhum treino.</string>
     <string name="workout_detail_title">Treino</string>
+    <string name="workout_detail_when">%1$s · %2$s</string>
+    <string name="workout_detail_metrics">%1$s · %2$s · %3$s</string>
     <string name="workout_stats_title">Estatísticas</string>
     <string name="schedule_title">Plano semanal</string>
     <string name="schedule_intro">Escolhe que rotina fazer em cada dia. Tocas no dia e confirmas os exercícios antes de agendar.</string>

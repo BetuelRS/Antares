@@ -17,8 +17,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
+import pt.antares.app.core.util.formatDurationMin
 import pt.antares.app.core.designsystem.rememberUnitSystem
-import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
@@ -26,7 +26,6 @@ import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
-import kotlin.math.roundToInt
 
 @Composable
 fun WorkoutSummaryScreen(
@@ -46,7 +45,13 @@ fun WorkoutSummaryScreen(
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
-                Stat(stringResource(Res.string.workout_summary_duration), "${state.durationMin} min")
+                // O mesmo formato do painel de treino e da linha do histórico. Estava aqui
+                // a terceira cópia do `%d min` sem conversão, e um treino esquecido aberto
+                // de um dia para o outro fechava com «2715 min» — visto a correr.
+                Stat(
+                    stringResource(Res.string.workout_summary_duration),
+                    formatDurationMin(state.durationMin),
+                )
                 Stat(stringResource(Res.string.workout_summary_volume), weightWithUnit(state.volume, unidades))
                 Stat(stringResource(Res.string.workout_summary_sets), "${state.setCount}")
             }

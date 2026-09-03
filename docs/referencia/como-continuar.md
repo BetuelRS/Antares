@@ -20,6 +20,28 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **2.24.0 é a última fechada**, a 2026-09-03. Esquema **v39** e catálogo **v6**, inalterados,
+  e **nenhum dado é novo** — é a mesma forma da 2.20.0. «O histórico do treino»: quatro dados
+  em cada linha, a 🌟 dos recordes, cabeçalho no detalhe, o RPE que se via pela primeira vez, e
+  o filtro por rotina no lugar do de exercício. 1742 testes Kotlin, 58 das ferramentas, 68
+  Deno, detekt e lint limpos.
+- **A troca (A5) foi o «Iniciar treino vazio», que abria o treino a decorrer** — o defeito que
+  a 2.20.0 diz ter fechado no ▶ das rotinas e deixou neste botão, e que o CHANGELOG dela nega
+  ao escrever «oferece retomá-lo e mais nada». Saiu «recordes com data», que é do ecrã da
+  2.25.0.
+- **A estrela é calculada e não guardada, contra o esboço 10 e por decisão do dono.** Um
+  recorde guardado volta a poder discordar das séries — o defeito que a 2.21.0 desfez.
+- **O `%d min` sem conversão existia em quatro sítios e não num.** O botão de retomar dizia
+  «2618 min» e o resumo «2715 min»; a linha nova do histórico nasceu com o mesmo defeito. O
+  `workout_hub_minutes` deixou de existir e os quatro passam pelo `formatDurationMin`.
+- **Um comentário meu prometeu o que o código não precisava de fazer**, e só apareceu ao
+  tentar ver o teste vermelho: parti a conta dos recordes de propósito e **ela passou**,
+  porque o `groupBy` já fazia o que a segunda passagem dizia fazer. Ver o teste a falhar não é
+  cerimónia — é o que distingue um guarda de uma decoração.
+- **A próxima do plano é a 2.25.0**, «As estatísticas do treino», com o esboço
+  `10-treino-estatisticas` obrigatório — é o mesmo esboço desta versão, secção 2. Leva também
+  «recordes com data», que saiu daqui por troca.
+- *O que se segue é o estado até à 2.23.1.*
 - **As seis versões que estavam por publicar saíram a 2026-09-03.** Estiveram fechadas e
   dentro de casa desde 09-02: a última etiqueta era a `v2.19.0` e a `main` do GitHub estava
   em `ad479ac`, seis commits atrás. **Nenhuma delas teve CI enquanto lá esteve**, que é a D4,
@@ -535,6 +557,11 @@ teste-guarda a exigir que sejam a mesma. Ver [`tools/README.md`](../../tools/REA
   Ficheiros com barras escrevem-se com a ferramenta de escrita.
 - **Os ficheiros estão em `CRLF`.** Uma substituição de texto com `\n` não encontra nada, e um
   teste que procure `"…\n"` acusa quem mexeu no ficheiro em vez de quem partiu a regra.
+- **O `/tmp` do node e o do Bash não são o mesmo sítio.** O `fs.writeFileSync("/tmp/x")` do
+  node escreve em `C:	mp`; o `cp /tmp/x` do Git Bash lê o temporário do MSYS. Guardei uma
+  cópia de segurança de um ficheiro com um script de node e restaurei-a com o `cp` — e o que
+  voltou foi a versão do `git`, sem as duas correcções que estavam por comitar. **Para
+  guardar e repor um ficheiro usa-se o `git`**, que sabe o que lá estava.
 - **Não reescrever Kotlin com expressões regulares.** Três tentativas, duas produziram código
   partido.
 - **`MSYS_NO_PATHCONV=1` em todo o comando `adb` que toque em `/sdcard`.** Sem isso o Git Bash

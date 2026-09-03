@@ -28,8 +28,6 @@ data class ExerciseSessionAgg(
 
 data class SessionVolumeRow(val sessionId: String, val volume: Double)
 
-data class SessionExerciseRow(val sessionId: String, val exerciseId: String)
-
 data class RoutineItemCountRow(val routineId: String, val total: Int)
 
 data class RoutineLastDoneRow(val routineId: String, val startedAt: Long)
@@ -37,6 +35,16 @@ data class RoutineLastDoneRow(val routineId: String, val startedAt: Long)
 data class SessionSetCountRow(val sessionId: String, val total: Int)
 
 data class ExerciseSetRow(val exerciseId: String, val weightKg: Double, val reps: Int)
+
+/** Como o [ExerciseSetRow], mais o treino a que a série pertence. */
+data class SessionSetRow(
+    val sessionId: String,
+    val exerciseId: String,
+    val weightKg: Double,
+    val reps: Int,
+)
+
+data class RoutineNameRow(val id: String, val name: String)
 
 @Dao
 interface RoutineDao {
@@ -69,6 +77,19 @@ interface RoutineDao {
 
     @Query("SELECT * FROM routine_item WHERE routineId = :routineId AND deleted = 0 ORDER BY position")
     suspend fun itemsOf(routineId: String): List<RoutineItemEntity>
+
+    /**
+     * O nome de cada rotina, **incluindo as apagadas** — e é a única consulta de rotinas que
+     * ignora a lápide de propósito. O histórico fala do passado: um treino feito com uma
+     * rotina que entretanto se apagou continua a ter sido feito com ela, e a alternativa era
+     * a linha passar a chamar-lhe «treino livre», que é outra coisa.
+     */
+    @Query("SELECT id, name FROM routine")
+    suspend fun allRoutineNames(): List<RoutineNameRow>
+
+    /** Pela mesma razão do [allRoutineNames], e sem trazer a lista toda para achar um nome. */
+    @Query("SELECT name FROM routine WHERE id = :id")
+    suspend fun routineNameById(id: String): String?
 
     @Query("UPDATE routine SET deleted = 1, updatedAt = :now WHERE id = :id")
     suspend fun softDeleteRoutine(id: String, now: Long)
@@ -165,6 +186,17 @@ interface WorkoutSessionDao {
         """,
     )
     fun observeLastDoneByRoutine(): Flow<List<RoutineLastDoneRow>>
+
+    /**
+     * As rotinas que chegaram a ser treinadas. É o que o filtro do histórico oferece: uma
+     * rotina que nunca saiu do editor devolveria sempre lista vazia, e um menu com opções
+     * que não filtram nada é pior do que um menu mais curto.
+     */
+    @Query(
+        "SELECT DISTINCT routineId FROM workout_session " +
+            "WHERE deleted = 0 AND status = 'DONE' AND routineId IS NOT NULL",
+    )
+    suspend fun doneRoutineIds(): List<String>
 
     @Query("SELECT * FROM workout_session WHERE deleted = 0")
     suspend fun exportRows(): List<WorkoutSessionEntity>
@@ -284,23 +316,6 @@ interface WorkoutSetDao {
     )
     suspend fun sessionVolumes(): List<SessionVolumeRow>
 
-    /**
-     * Que exercícios teve cada treino. Uma linha por par, e não uma consulta por treino: o
-     * histórico com duzentos treinos faria duzentas idas à base para desenhar um filtro.
-     *
-     * O aquecimento conta aqui, ao contrário do volume: quem procura os treinos em que fez
-     * agachamento quer também aquele em que só aqueceu com ele.
-     */
-    @Query(
-        """
-        SELECT DISTINCT s.sessionId AS sessionId, s.exerciseId AS exerciseId
-        FROM workout_set s
-        JOIN workout_session ws ON s.sessionId = ws.id
-        WHERE ws.status = 'DONE' AND ws.deleted = 0 AND s.deleted = 0
-        """,
-    )
-    suspend fun sessionExercises(): List<SessionExerciseRow>
-
     @Query(
         """
         SELECT COALESCE(SUM(s.weightKg * s.reps), 0)
@@ -336,6 +351,27 @@ interface WorkoutSetDao {
         """,
     )
     suspend fun allDoneWorkingSets(): List<ExerciseSetRow>
+
+    /**
+     * As mesmas séries do [allDoneWorkingSets], mais o treino a que pertencem e **por ordem
+     * de início do treino**.
+     *
+     * O outro responde ao melhor de sempre, que é a pergunta do quadro de recordes. Esta
+     * responde ao que era o melhor **naquele dia**, que é a pergunta da estrela do histórico,
+     * e para isso a ordem faz parte do resultado: sem ela não há como saber o que já tinha
+     * acontecido antes de cada treino.
+     */
+    @Query(
+        """
+        SELECT s.sessionId AS sessionId, s.exerciseId AS exerciseId,
+               s.weightKg AS weightKg, s.reps AS reps
+        FROM workout_set s
+        JOIN workout_session ws ON s.sessionId = ws.id
+        WHERE ws.status = 'DONE' AND ws.deleted = 0 AND s.deleted = 0 AND s.isWarmup = 0
+        ORDER BY ws.startedAt, s.setIndex
+        """,
+    )
+    suspend fun doneWorkingSetsByTime(): List<SessionSetRow>
 
     @Query("SELECT * FROM workout_set WHERE deleted = 0")
     suspend fun exportRows(): List<WorkoutSetEntity>

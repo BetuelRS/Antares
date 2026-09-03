@@ -13,30 +13,34 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import pt.antares.app.core.calc.HistoryFilter
 import pt.antares.app.core.calc.Mes
-import pt.antares.app.feature.workout.data.ExerciseOption
 import pt.antares.app.feature.workout.data.ExerciseRecord
 import pt.antares.app.feature.workout.data.MuscleVolumeStat
+import pt.antares.app.feature.workout.data.RoutineOption
 import pt.antares.app.feature.workout.data.SessionBreakdown
 import pt.antares.app.feature.workout.data.SessionSummary
 import pt.antares.app.feature.workout.data.WorkoutHistoryRepository
 
 data class WorkoutHistoryState(
     val todos: List<SessionSummary> = emptyList(),
-    val exercicios: List<ExerciseOption> = emptyList(),
+    val rotinas: List<RoutineOption> = emptyList(),
     val mes: Mes? = null,
-    val exercicioId: String? = null,
+    val rotinaId: String? = null,
 ) {
     val meses: List<Mes> get() = HistoryFilter.mesesDe(todos.map { it.startedAt })
 
     /**
-     * A lista depois dos filtros. Os dois cruzam-se: mês **e** exercício, e não um ou outro —
-     * quem procura os agachamentos de fevereiro procura os dois ao mesmo tempo.
+     * A lista depois dos filtros. Os dois cruzam-se: mês **e** rotina, e não um ou outro —
+     * quem procura os empurrares de fevereiro procura os dois ao mesmo tempo.
+     *
+     * **Filtra-se por rotina e não por exercício**, que era o que estava. Filtrar sessões por
+     * exercício devolve os dias em que ele foi feito, e mostra a data e o volume da sessão —
+     * quem escreve «supino» quer a progressão do supino, e essa vive no detalhe do exercício,
+     * que já tem o gráfico. É a queixa do `estudo/areas/10`, e o esboço 10 desenha a rotina.
      */
     val visiveis: List<SessionSummary>
         get() = HistoryFilter.porMes(todos, mes) { it.startedAt }
-            .filter { exercicioId == null || exercicioId in it.exerciseIds }
+            .filter { rotinaId == null || rotinaId == it.routineId }
 
-    val filtrado: Boolean get() = mes != null || exercicioId != null
 }
 
 class WorkoutHistoryViewModel(
@@ -51,15 +55,15 @@ class WorkoutHistoryViewModel(
             .onEach { linhas -> filtros.update { it.copy(todos = linhas) } }
             .launchIn(viewModelScope)
         viewModelScope.launch {
-            filtros.update { it.copy(exercicios = repository.exerciseOptions()) }
+            filtros.update { it.copy(rotinas = repository.routineOptions()) }
         }
     }
 
     fun setMes(mes: Mes?) = filtros.update { it.copy(mes = mes) }
 
-    fun setExercicio(id: String?) = filtros.update { it.copy(exercicioId = id) }
+    fun setRotina(id: String?) = filtros.update { it.copy(rotinaId = id) }
 
-    fun limparFiltros() = filtros.update { it.copy(mes = null, exercicioId = null) }
+    fun limparFiltros() = filtros.update { it.copy(mes = null, rotinaId = null) }
 }
 
 class WorkoutDetailViewModel(

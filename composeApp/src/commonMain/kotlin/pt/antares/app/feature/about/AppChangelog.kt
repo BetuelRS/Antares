@@ -23,9 +23,41 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.23.1"
+    const val CURRENT = "2.24.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.24.0",
+            title = "O histórico deixa de dizer duas coisas sobre cada treino",
+            titleEn = "The history stops saying two things about each workout",
+            highlights = listOf(
+                "**Cada linha do histórico diz a rotina, a data, a duração e as séries** — " +
+                    "eram a data e o volume, e dois treinos completamente diferentes ficavam " +
+                    "iguais",
+                "**Uma 🌟 nos treinos em que bateste um recorde**, e é o recorde do dia em " +
+                    "que ele aconteceu, não o melhor de hoje",
+                "**Abrir um treino diz qual foi e quando** — a rotina no título, a data e a " +
+                    "hora por baixo. Dizia «Treino» e mais nada",
+                "**O RPE que escreves aparece**. Era gravado desde sempre e não se via em " +
+                    "lado nenhum depois de o escrever",
+                "**Filtras o histórico por rotina**, e já não por exercício: quem procura o " +
+                    "supino quer a progressão do supino, e essa está no exercício",
+            ),
+            highlightsEn = listOf(
+                "**Every history row now shows the routine, the date, the duration and the " +
+                    "sets** — it was the date and the volume, and two completely different " +
+                    "workouts looked the same",
+                "**A 🌟 on the workouts where you set a record**, and it is the record as it " +
+                    "stood that day, not your best today",
+                "**Opening a workout tells you which one and when** — the routine in the " +
+                    "title, the date and time below. It used to say “Workout” and nothing else",
+                "**The RPE you write shows up.** It was always saved and never shown " +
+                    "anywhere after you wrote it",
+                "**You filter the history by routine**, not by exercise: if you are looking " +
+                    "for the bench press you want its progression, and that lives in the " +
+                    "exercise",
+            ),
+        ),
         AppVersion(
             name = "2.23.1",
             title = "O horário passa a avisar, e uma supersérie passa a ser uma supersérie",
@@ -348,38 +380,6 @@ object AppChangelog {
                 "**Creating a food carries the name you typed**, instead of asking again",
                 "The shortcuts to what you have eaten no longer vanish when search answers",
                 "Packaged products show their photo in the list",
-            ),
-        ),
-        AppVersion(
-            name = "2.8.0",
-            title = "O que faltava à comida cozinhada",
-            titleEn = "What the cooked food was missing",
-            highlights = listOf(
-                "**Uma receita cozinhada deixa de ganhar vitaminas ao lume.** A água que " +
-                    "evapora concentrava tudo, vitamina C incluída — e essa perde-se a " +
-                    "cozer. Escolhes como cozinhaste o prato e cada ingrediente perde o " +
-                    "que a tabela dele diz",
-                "**Um mililitro deixa de contar como uma grama.** 200 ml de azeite pesam " +
-                    "184 g, e a app contava-lhes 200",
-                "**A procura junta o mesmo alimento nos seus estados**: uma linha em vez " +
-                    "de sete quase iguais, e as outras a um toque",
-                "**O abacaxi encontra o ananás**, e o cimbalino encontra o café. Quem " +
-                    "escreve «frango» encontra também o que ainda está em inglês",
-                "**A app aprende quanto pesa uma fatia tua**, quando ela não é a da tabela",
-            ),
-            highlightsEn = listOf(
-                "**A cooked recipe no longer gains vitamins from the heat.** Evaporating " +
-                    "water concentrated everything, vitamin C included — and that one is " +
-                    "lost to boiling. Pick how you cooked it and each ingredient loses " +
-                    "what its own table says",
-                "**A millilitre no longer counts as a gram.** 200 ml of olive oil weigh " +
-                    "184 g, and the app was counting 200",
-                "**Search groups a food with its own states**: one line instead of seven " +
-                    "near-identical ones, the rest a tap away",
-                "**Pineapple finds ananás**, and cimbalino finds café. Typing «frango» " +
-                    "also finds what is still in English",
-                "**The app learns how much your own slice weighs**, when it is not the " +
-                    "table's",
             ),
         ),
         // Da 2.2.0 à 2.7.0 saíram daqui à medida que entraram as versões novas: a lista tem

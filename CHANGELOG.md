@@ -13,6 +13,54 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.24.0] — 2026-09-03
+
+**O histórico do treino.** A app grava séries, repetições, RPE, aquecimento, supersérie,
+duração, rotina e data — e a linha do histórico mostrava **a data e o volume**. Dois treinos
+completamente diferentes ficavam iguais: «sáb, 9 ago · 9 338 kg» e «ter, 12 ago · 9 340 kg»
+podiam ser um dia de pernas e um de braços.
+
+**Nenhum dado desta versão é novo, e o esquema não mexeu** — v39, catálogo v6. Os quatro
+dados da linha já eram montados noutro sítio: o painel de treino usa-os desde a 2.20.0 para
+os três últimos treinos.
+
+### Adicionado
+
+- **Quatro dados em cada linha do histórico** — a rotina, a data, a duração e as séries de
+  trabalho —, com o volume a continuar à direita. Ele não é comparável entre grupos
+  musculares, e como única métrica visível fazia a alternância do plano parecer progressão.
+- **Uma 🌟 nos treinos em que houve recorde.** É o recorde **do dia em que aconteceu**, e não
+  o melhor de hoje: um treino de há um ano que foi o melhor de sempre naquele exercício
+  continua a ter a estrela depois de outro o bater. Não é guardada em lado nenhum — calcula-se
+  das séries, que é o que faz corrigir uma série corrigir a estrela no mesmo instante.
+- **O detalhe de um treino ganha cabeçalho**: a rotina no título, a data e a hora por baixo, e
+  as três métricas. Dizia «Treino» e «45 min · 9 338 kg» — abrir um treino de há três meses
+  não dizia qual era nem quando foi.
+- **O RPE aparece nas séries do detalhe.** Era gravado desde sempre e nunca era lido em lado
+  nenhum da app depois de escrito. Aparece só onde foi escrito: uma série sem RPE não ganha um
+  traço nem um zero.
+
+### Alterado
+
+- **O histórico filtra-se por rotina, e já não por exercício.** Filtrar sessões por exercício
+  devolvia os dias em que ele foi feito e mostrava a data e o volume da sessão — quem procura
+  o supino quer a progressão do supino, e essa vive no detalhe do exercício, que já tem o
+  gráfico. O filtro só oferece rotinas que chegaram a ser treinadas.
+- **Um treino feito com uma rotina que entretanto se apagou continua a dizer o nome dela.** O
+  histórico fala do passado, e chamar-lhe «treino livre» seria reescrever o que aconteceu.
+
+### Corrigido
+
+- **«Iniciar treino vazio» abria o treino que já estava a decorrer.** A app só permite um
+  treino de cada vez, e este botão pedia um vazio e recebia o que estava a meio. A 2.20.0
+  escondeu o cartão de destaque e o ▶ das rotinas por esta razão exacta, e deixou este botão
+  — e o texto dela dizia «o ecrã oferece retomá-lo e mais nada», o que não era verdade.
+  Desaparece enquanto houver um treino aberto, como os outros dois.
+- **«Retomar o treino · 2618 min».** O botão contava minutos sem os converter, e um treino
+  esquecido aberto de um dia para o outro ficava com um número que não se lê — enquanto a
+  barra da sessão, no mesmo treino, dizia `43:39:17`. Passa a dizer `43h 39m`, que é o formato
+  que a janela alimentar e o jejum já usam.
+
 ## [2.23.1] — 2026-09-02
 
 **Duas decisões refeitas.** As perguntas de abertura da 2.23.0 tinham sido respondidas na

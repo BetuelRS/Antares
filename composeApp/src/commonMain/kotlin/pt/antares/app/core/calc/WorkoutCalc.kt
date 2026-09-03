@@ -151,4 +151,62 @@ object MuscleVolume {
     }
 }
 
+/** Uma série de trabalho, com o treino a que pertence. */
+data class SerieDeTreino(
+    val sessionId: String,
+    val exerciseId: String,
+    val weightKg: Double,
+    val reps: Int,
+)
+
+/**
+ * Que treinos bateram algum recorde **no dia em que aconteceram**.
+ *
+ * O quadro de recordes responde a outra pergunta — o melhor de sempre — e por isso não serve
+ * aqui: um treino de há um ano pode ter sido o melhor da vida naquele exercício e não ser o
+ * melhor de hoje. A estrela do histórico é sobre o momento, e lê-se para a frente.
+ *
+ * **Uma passagem sobre as séries todas, e não uma consulta por linha da lista.** O melhor por
+ * exercício anda à frente com a lista; o treino em que ele melhora é o treino que ganha a
+ * estrela. Com duzentos treinos, o outro caminho são duzentas idas à base.
+ *
+ * Não se guarda nada: é a decisão que a 2.21.0 tomou ao pôr o [PrDetector] a calcular em vez
+ * de guardar um recorde — corrigir uma série corrige a estrela no mesmo instante.
+ */
+object RecordesPorTreino {
+
+    /**
+     * [seriesPorOrdemDeTreino] tem de vir ordenada do treino mais antigo para o mais recente:
+     * é a ordem que decide o que era recorde na altura, e ordená-la aqui obrigaria a trazer a
+     * hora de cada treino só para a voltar a comparar.
+     */
+    fun comRecorde(seriesPorOrdemDeTreino: List<SerieDeTreino>): Set<String> {
+        val melhor = mutableMapOf<String, ExercisePr>()
+        val comRecorde = mutableSetOf<String>()
+
+        for ((sessionId, doTreino) in seriesPorOrdemDeTreino.groupBy { it.sessionId }) {
+            // O `groupBy` junta as séries do mesmo exercício, e é isso que impede a segunda
+            // série de um exercício de bater o recorde que a primeira acabou de pôr: o treino
+            // é comparado inteiro, de uma vez, contra o melhor que havia antes dele.
+            for ((exerciseId, series) in doTreino.groupBy { it.exerciseId }) {
+                val entradas = series.map { SetEntry(it.weightKg, it.reps) }
+                if (PrDetector.detect(melhor[exerciseId], entradas).any) comRecorde += sessionId
+                val agora = PrDetector.best(entradas) ?: continue
+                melhor[exerciseId] = juntar(melhor[exerciseId], agora)
+            }
+        }
+        return comRecorde
+    }
+
+    private fun juntar(anterior: ExercisePr?, agora: ExercisePr): ExercisePr {
+        if (anterior == null) return agora
+        return ExercisePr(
+            // `maxOf` com nulos daria nulo: o melhor de dois, quando um deles não existe, é
+            // o outro — e não «não há».
+            bestOneRm = listOfNotNull(anterior.bestOneRm, agora.bestOneRm).maxOrNull(),
+            bestWeightReps = maxOf(anterior.bestWeightReps, agora.bestWeightReps),
+        )
+    }
+}
+
 fun Double.round1(): Double = (this * 10).roundToInt() / 10.0

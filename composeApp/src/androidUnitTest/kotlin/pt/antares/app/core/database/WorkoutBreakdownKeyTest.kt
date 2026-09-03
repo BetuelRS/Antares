@@ -35,6 +35,7 @@ class WorkoutBreakdownKeyTest {
             db.workoutSessionDao(),
             db.workoutSetDao(),
             db.exerciseLibraryDao(),
+            db.routineDao(),
             Dispatchers.Default,
         )
     }

@@ -92,4 +92,84 @@ class WorkoutCalcTest {
 
         assertTrue(PrDetector.detect(previous = semEstimativa, current = comEstimativa).newOneRm)
     }
+    // ---- RecordesPorTreino ----
+
+    private fun serie(treino: String, exercicio: String, peso: Double, reps: Int) =
+        SerieDeTreino(sessionId = treino, exerciseId = exercicio, weightKg = peso, reps = reps)
+
+    @Test
+    fun `o primeiro treino de um exercicio conta como recorde`() {
+
+        // A app celebra o começo: o `PrDetector` já o faz no resumo do fim do treino, e a
+        // estrela do histórico tem de dizer a mesma coisa sobre o mesmo treino.
+        val recordes = RecordesPorTreino.comRecorde(listOf(serie("t1", "supino", 60.0, 8)))
+
+        assertEquals(setOf("t1"), recordes)
+    }
+
+    @Test
+    fun `so o treino que melhora leva a estrela`() {
+
+        val series = listOf(
+            serie("t1", "supino", 60.0, 8),
+            serie("t2", "supino", 60.0, 8),
+            serie("t3", "supino", 62.5, 8),
+        )
+
+        assertEquals(setOf("t1", "t3"), RecordesPorTreino.comRecorde(series))
+    }
+
+    @Test
+    fun `um treino posterior nao apaga a estrela do que foi recorde na altura`() {
+
+        // É a diferença entre esta conta e o quadro de recordes: aquele responde sobre o
+        // melhor de sempre, e apagaria a estrela de t1 assim que t2 a batesse.
+        val series = listOf(
+            serie("t1", "supino", 60.0, 8),
+            serie("t2", "supino", 80.0, 8),
+        )
+
+        assertTrue("t1" in RecordesPorTreino.comRecorde(series))
+    }
+
+    @Test
+    fun `um exercicio repetido no mesmo treino nao bate o recorde que ele proprio acabou de por`() {
+
+        // Duas séries do mesmo exercício no mesmo treino são um treino, e não dois: se a
+        // segunda fosse comparada com a primeira, qualquer treino a subir de peso entre
+        // séries ganhava estrela sempre.
+        val series = listOf(
+            serie("t1", "supino", 60.0, 8),
+            serie("t2", "supino", 60.0, 8),
+            serie("t2", "supino", 60.0, 8),
+        )
+
+        assertEquals(setOf("t1"), RecordesPorTreino.comRecorde(series))
+    }
+
+    @Test
+    fun `o recorde de um exercicio nao da estrela a outro`() {
+
+        val series = listOf(
+            serie("t1", "supino", 60.0, 8),
+            serie("t2", "agachamento", 100.0, 8),
+            serie("t3", "supino", 50.0, 8),
+        )
+
+        // t3 fez menos do que t1 no supino, e o agachamento de t2 não lhe empresta nada.
+        assertEquals(setOf("t1", "t2"), RecordesPorTreino.comRecorde(series))
+    }
+
+    @Test
+    fun `uma serie longa ganha estrela pelo peso vezes reps quando a Epley nao estima`() {
+
+        // Acima de doze repetições não há 1RM, e sem o segundo recorde quem faz 4×15 nunca
+        // teria estrela nenhuma — que é a razão de o `ExercisePr` ter dois campos.
+        val series = listOf(
+            serie("t1", "prancha", 20.0, 15),
+            serie("t2", "prancha", 20.0, 20),
+        )
+
+        assertEquals(setOf("t1", "t2"), RecordesPorTreino.comRecorde(series))
+    }
 }

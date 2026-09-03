@@ -48,6 +48,7 @@ import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.dayShortDated
+import pt.antares.app.core.util.formatDurationMin
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.feature.running.ui.RunFormat
 import pt.antares.app.feature.workout.data.CentroDeTreino
@@ -184,12 +185,21 @@ fun WorkoutScreen(
 
         // O treino vazio é a acção mais rara da área, e por isso é a última coisa do ecrã —
         // era a terceira, no lugar mais visível.
-        item {
-            SecondaryButton(
-                text = stringResource(Res.string.workout_hub_start_empty),
-                onClick = onStartEmpty,
-                modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
-            )
+        //
+        // E desaparece com um treino aberto, **pela mesma razão do cartão de destaque e do
+        // ▶ das rotinas**: o `startOrResume` devolve a sessão que já está a decorrer, por
+        // isso este botão abria o treino que estava a meio em vez de um vazio. A 2.20.0
+        // escondeu os outros dois e deixou este — o `CentroDeTreinoUiTest` chegou a escrever
+        // que ele «está sempre no ecrã», para escolher a asserção, e ninguém foi ver o que
+        // ele fazia.
+        if (state.sessaoActivaDesde == null) {
+            item {
+                SecondaryButton(
+                    text = stringResource(Res.string.workout_hub_start_empty),
+                    onClick = onStartEmpty,
+                    modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
+                )
+            }
         }
     }
 }
@@ -214,10 +224,11 @@ private fun Retomar(desdeMs: Long, onResume: () -> Unit) {
 
     val minutos = ((agora - desdeMs) / MS_POR_MINUTO).toInt().coerceAtLeast(0)
     PrimaryButton(
-        text = stringResource(
-            Res.string.workout_hub_resume_running,
-            stringResource(Res.string.workout_hub_minutes, minutos),
-        ),
+        // `%d min` sem conversão dava «2618 min» a um treino esquecido aberto de um dia para
+        // o outro — e a barra da sessão, no mesmo treino, dizia `43:39:17`. Duas formas do
+        // mesmo facto, e a deste ecrã era a que não se lia. O `formatDurationMin` é o que a
+        // janela alimentar e o jejum já usam.
+        text = stringResource(Res.string.workout_hub_resume_running, formatDurationMin(minutos)),
         onClick = onResume,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -505,7 +516,7 @@ private fun LinhaDoTreino(
         subtitulo = stringResource(
             Res.string.workout_hub_workout_line,
             dayShortDated(treino.epochDay, hoje),
-            stringResource(Res.string.workout_hub_minutes, treino.duracaoMin),
+            formatDurationMin(treino.duracaoMin),
             pluralStringResource(Res.plurals.workout_hub_series, treino.series, treino.series),
         ),
         aoLado = {

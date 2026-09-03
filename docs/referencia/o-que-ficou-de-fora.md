@@ -538,9 +538,6 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **A cafeína e o flúor** — a premissa da decisão de 2.6.0 mudou: 5 215 e 538 alimentos no `food_nutrient.csv` que o oleoduto passou a ler | 2.6.0, medido outra vez a 2026-08-28 | só se o dono reabrir a decisão |
 | **Onde vivem os açúcares e os saturados** — só na coluna, e a `food_nutrient` tem zero linhas dos dois em 7 932 alimentos | bloco D, `estudo/dados/04` §3 | decisão com custo permanente: 81 usos, duas migrações, o mapeador da OFF |
 | **O `FoodRow` com `Card` + `ListItem` do Material** — o último resto das duas linguagens de cartão | 2.3.0, `estudo/areas/20` | precisa de uma corrida no aparelho; é a lista mais usada da app |
-| **«Iniciar treino vazio» leva ao treino que já está a decorrer** — o mesmo defeito que a 2.20.0 fechou no ▶ das rotinas, deixado neste botão | 2.20.0, medido a 2026-09-03 | ver a secção da auditoria abaixo; é um defeito, não uma escolha |
-| **«Retomar o treino · 2618 min»** — o painel conta minutos sem os converter, e a barra da sessão diz `43:39:17` para o mesmo treino | 2.20.0, visto a correr a 2026-09-03 | idem |
-| **Seis importações mortas** — `weightUnitLabel` e `roundToInt` nos três ecrãs do histórico do treino, que nem o detekt nem o lint apanham | `estudo/areas/10`, defeito concreto 1 | 2.24.0, que é o número desses ecrãs |
 | **Os nomes das sete rotinas semeadas** — seis em inglês e «Pernas» em português, literais no código e não recursos | 2.20.0, registado lá como troca por decidir | troca (A5), e é de minutos |
 | **Descarregar as imagens dos exercícios** — o estudo chama-lhe «a única deste documento que eu faria já» | `estudo/transversal/04` | número próprio; resolve também o offline e a fuga a terceiros |
 | **2 909 alimentos em inglês** | 2.13.0 | trabalho de meses, na oficina |
@@ -565,6 +562,23 @@ por ninguém as ter riscado na altura — que é a regra do fim deste ficheiro: 
 exercícios de peso do corpo** (2.22.0), o **centro de treino 7 → 16** (2.20.0) e os **cinco
 separadores**, que deixaram de ser uma decisão em aberto e passaram a ser
 `Hoje · Diário · Treino · Progresso · Mais` (2.20.1).
+
+## 2.24.0 · O histórico do treino
+
+**Construída com o estudo aberto**, e por isso esta entrada é curta: o que ficou de fora ficou
+por decisão. As duas revisões da D7 estão no registo da versão, no plano.
+
+- **«Recordes com data» saiu por troca (A5)**, para entrar a correcção do «Iniciar treino
+  vazio». Os recordes vivem no `WorkoutStatsScreen`, que é o ecrã da **2.25.0**, e o esboço 10
+  desenha-os na secção das estatísticas.
+- **A 🌟 é calculada e não guardada, contra o que o esboço 10 pede.** Decisão do dono: um
+  recorde guardado volta a poder discordar das séries, que é o defeito que a 2.21.0 desfez.
+  Custou uma consulta nova e nenhuma coluna — o esquema fica em v39.
+- **As secções 2 e 3 do esboço 10** — o seletor de período, as séries por músculo com faixa de
+  referência, e o resumo pós-treino comparado — são a **2.25.0** e a **2.26.0**.
+- **Fechado de caminho, e não estava no conteúdo da versão:** o `%d min` sem conversão existia
+  em **quatro** sítios, não num. O `workout_hub_minutes` deixou de existir e os quatro passam
+  pelo `formatDurationMin`.
 
 ---
 

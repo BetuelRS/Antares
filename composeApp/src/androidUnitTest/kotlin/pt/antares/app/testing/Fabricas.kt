@@ -63,7 +63,13 @@ object Fabricas {
         )
 
     fun workoutHistoryRepository(db: AntaresDb, io: CoroutineDispatcher) =
-        WorkoutHistoryRepository(db.workoutSessionDao(), db.workoutSetDao(), db.exerciseLibraryDao(), io)
+        WorkoutHistoryRepository(
+            db.workoutSessionDao(),
+            db.workoutSetDao(),
+            db.exerciseLibraryDao(),
+            db.routineDao(),
+            io,
+        )
 
     fun routineRepository(db: AntaresDb, io: CoroutineDispatcher) =
         RoutineRepository(db.routineDao(), db.exerciseLibraryDao(), db.routineScheduleDao(), io)

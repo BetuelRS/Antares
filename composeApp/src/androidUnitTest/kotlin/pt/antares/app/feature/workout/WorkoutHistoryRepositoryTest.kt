@@ -31,7 +31,13 @@ class WorkoutHistoryRepositoryTest {
         db = Room.inMemoryDatabaseBuilder(context, AntaresDb::class.java)
             .setQueryCoroutineContext(Dispatchers.Default)
             .build()
-        repo = WorkoutHistoryRepository(db.workoutSessionDao(), db.workoutSetDao(), db.exerciseLibraryDao(), Dispatchers.Default)
+        repo = WorkoutHistoryRepository(
+            db.workoutSessionDao(),
+            db.workoutSetDao(),
+            db.exerciseLibraryDao(),
+            db.routineDao(),
+            Dispatchers.Default,
+        )
     }
 
     @After

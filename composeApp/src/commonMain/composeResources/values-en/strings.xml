@@ -59,7 +59,7 @@
     <string name="undo_action">Undo</string>
     <string name="filter_all">All</string>
     <string name="filter_month">Month</string>
-    <string name="filter_exercise">Exercise</string>
+    <string name="filter_routine">Routine</string>
     <string name="filter_type">Type</string>
     <string name="filter_no_match">Nothing matches these filters.</string>
     <string name="cycle_pick_date">Pick a date</string>
@@ -624,7 +624,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_last_done">THE LAST ONE YOU DID · %1$s</string>
     <string name="workout_hub_start">Start</string>
     <string name="workout_hub_start_named">Start %1$s</string>
-    <string name="workout_hub_minutes">%1$d min</string>
+
     <string name="workout_hub_last_duration">~%1$d min last time</string>
     <string name="workout_hub_week">This week</string>
     <string name="workout_hub_week_summary">%1$s of volume · %2$s</string>
@@ -773,8 +773,13 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_summary_done">Done</string>
 
     <string name="workout_history_title">History</string>
+    <string name="workout_history_line">%1$s · %2$s · %3$s</string>
+    <string name="workout_history_pr_mark">🌟</string>
+    <string name="workout_history_pr">Personal record in this workout</string>
     <string name="workout_history_empty">You haven't finished any workout yet.</string>
     <string name="workout_detail_title">Workout</string>
+    <string name="workout_detail_when">%1$s · %2$s</string>
+    <string name="workout_detail_metrics">%1$s · %2$s · %3$s</string>
     <string name="workout_stats_title">Statistics</string>
     <string name="schedule_title">Weekly plan</string>
     <string name="schedule_intro">Pick which routine to do each day. Tap a day and confirm the exercises before scheduling.</string>
