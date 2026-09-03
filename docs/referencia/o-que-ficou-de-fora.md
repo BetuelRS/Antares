@@ -575,22 +575,31 @@ Feita depois de ler o estudo inteiro e de correr a app no emulador com a 2.23.1 
 
 ## O que está publicado e o que não está
 
-**Seis versões estão comitadas e não saíram de casa.** A última etiqueta e a última release
-são a `v2.19.0`, de 2026-08-30; a `main` do GitHub está em `ad479ac`, e local está em
-`5c0796a`. Entre as duas há **seis commits**: 2.20.0, 2.20.1, 2.21.0, 2.22.0, 2.23.0 e
-2.23.1.
+**Seis versões estiveram fechadas e dentro de casa, e saíram a 2026-09-03.** Quando esta
+varredura começou, a última etiqueta e a última release eram a `v2.19.0`, de 2026-08-30; a
+`main` do GitHub estava em `ad479ac` e o local em `5c0796a`, com **seis commits** pelo meio:
+2.20.0, 2.20.1, 2.21.0, 2.22.0, 2.23.0 e 2.23.1.
 
-Consequências, e nenhuma é hipotética:
+O que isso custou, e não se desfaz publicando:
 
-- **A D4 não pôde ser cumprida em nenhuma das seis.** «CI verde antes de fechar a versão»
-  exige uma execução no GitHub, e não houve nenhuma: a última corrida do CI é a do commit
-  `ad479ac`. Os registos das seis dizem «detekt e lint limpos», que é verdade e é local.
-- **A A3 também não** — «uma de cada vez, publicada e usada»: as seis foram feitas no mesmo
-  dia (2026-09-02) e nenhuma foi para o telemóvel como release.
-- **O catálogo descarregável aponta para a 2.19.0.** O botão «Procurar» vai ao `latest` do
-  GitHub, e o `latest` é a release da 2.19.0 — que traz o `catalogo.json` e o
-  `manifesto.json`, portanto o caminho não está partido. Fica partido no dia em que sair uma
-  release sem eles (passo 9 do guia de lançamento).
+- **A D4 não foi cumprida em nenhuma das seis.** «CI verde antes de fechar a versão» exige
+  uma execução no GitHub, e não houve nenhuma enquanto elas estiveram fechadas: a última
+  corrida era a do commit `ad479ac`, anterior a todas. Os registos das seis dizem «detekt e
+  lint limpos», que é verdade e é local. O CI só correu sobre elas depois — em `fc908b9`, e
+  **veio verde nos três trabalhos**, o que prova o código da 2.23.1 e não prova cada uma das
+  cinco anteriores no ponto em que foi fechada.
+- **A A3 também não** — «uma de cada vez, publicada e usada, umas semanas antes da
+  seguinte»: as seis foram feitas no mesmo dia, 2026-09-02, e nenhuma viveu num telemóvel
+  antes de a seguinte começar. Isso não se recupera: o que se aprende a usar é que muda o que
+  vem a seguir, e aqui não houve uso pelo meio.
+
+**O que ficou feito a 09-03:** seis etiquetas de `v2.20.0` a `v2.23.1`, e seis releases com
+os quatro APKs cada, mais o `catalogo.json` e o `manifesto.json`. Cada APK foi compilado **no
+seu próprio commit** — o `appVersion` vive no `build.gradle.kts` e o nome do ficheiro deriva
+dele — com as saídas de recursos apagadas antes e o `unzip` conferido depois: **um
+`catalogo.json` em cada um**, que é o passo 7 do guia. O `latest` é a `v2.23.1`, e o
+manifesto e o catálogo respondem lá com **HTTP 200** e o `sha256` a bater — a verificação que
+a própria app faz antes de trocar o catálogo.
 
 ## Dois defeitos vistos a correr, e os dois no centro de treino
 
