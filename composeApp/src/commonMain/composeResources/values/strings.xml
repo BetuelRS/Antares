@@ -845,6 +845,9 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="settings_quiet_from">Silêncio a partir de</string>
     <string name="settings_quiet_to">Silêncio até</string>
     <string name="settings_weighin_time">Hora da pesagem</string>
+    <string name="settings_notif_workout">Treino do dia</string>
+    <string name="settings_notif_workout_desc">Avisa nos dias com rotina marcada no horário, e só se ainda não treinaste.</string>
+    <string name="settings_workout_time">Hora do aviso</string>
     <string name="settings_notif_water">Lembrete de água</string>
     <string name="settings_notif_water_desc">Diz quanto falta para a meta do dia. Vem desligado.</string>
     <string name="settings_notif_water_every">%1$d h</string>

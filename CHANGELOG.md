@@ -13,6 +13,29 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.23.1] — 2026-09-02
+
+**Duas decisões refeitas.** As perguntas de abertura da 2.23.0 tinham sido respondidas na
+ausência do dono, e as respostas dele foram outras nas duas. Esta versão é isso: o horário
+passa a avisar, e uma supersérie passa a ser uma supersérie.
+
+Esquema da base inalterado, **v39**; catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **O horário semanal passa a avisar**, com interruptor nas definições e hora à escolha.
+  **Desligado por omissão** — uma app que começa a interromper sem ninguém lhe pedir é uma
+  app que se desinstala. Avisa só nos dias com rotina marcada, só depois da hora escolhida,
+  uma vez por dia, e **não avisa quem já treinou**. O nome da rotina vai no aviso: «Está
+  marcado: Empurrar A» diz o que fazer; «tens treino hoje» obrigaria a abrir a app para saber.
+
+### Alterado
+
+- **Uma supersérie abre os dois exercícios ao mesmo tempo.** É o que ela é: alternar entre
+  eles sem descanso pelo meio. Até aqui só o exercício aberto podia registar, e o ecrã trocava
+  a seleção sozinho quando as séries acabavam — numa supersérie isso lutava com quem a faz,
+  série sim série não.
+
 ## [2.23.0] — 2026-09-02
 
 **O editor de rotinas.** Pôr o sexto exercício em primeiro custava cinco toques, com a lista a

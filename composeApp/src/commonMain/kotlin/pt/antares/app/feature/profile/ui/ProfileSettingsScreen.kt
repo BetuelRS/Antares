@@ -506,6 +506,21 @@ fun ProfileSettingsScreen(
                 )
             }
             SettingSwitchRow(
+                title = stringResource(Res.string.settings_notif_workout),
+                desc = stringResource(Res.string.settings_notif_workout_desc),
+                checked = state.workoutReminder,
+                onChange = viewModel::setWorkoutReminder,
+            )
+            // A hora só aparece com o lembrete ligado, como no da pesagem: uma escolha que
+            // não tem efeito nenhum é pior do que não haver escolha.
+            if (state.workoutReminder) {
+                TimeField(
+                    label = stringResource(Res.string.settings_workout_time),
+                    minuteOfDay = state.workoutMinuteOfDay,
+                    onPick = viewModel::setWorkoutTime,
+                )
+            }
+            SettingSwitchRow(
                 title = stringResource(Res.string.settings_notif_coach),
                 desc = stringResource(Res.string.settings_notif_coach_desc),
                 checked = state.coachReadyNotif,

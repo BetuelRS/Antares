@@ -30,6 +30,10 @@
     <string name="notif_weighin_text">It\'s been a week. A weigh-in keeps your trend up to date.</string>
     <string name="notif_coach_title">Weekly report ready</string>
     <string name="notif_coach_text">Your coach reviewed the week. Tap to see it.</string>
+    <string name="notif_workout_title">Workout day</string>
+    <string name="notif_workout_text">You have %1$s scheduled.</string>
+    <string name="notif_channel_workout_name">Workout of the day</string>
+    <string name="notif_channel_workout_desc">Reminds you of the workout on your weekly schedule.</string>
 
     <string name="notif_channel_water_name">Water reminder</string>
     <string name="notif_channel_water_desc">Tells you how much is left of today\'s water goal. Off by default.</string>

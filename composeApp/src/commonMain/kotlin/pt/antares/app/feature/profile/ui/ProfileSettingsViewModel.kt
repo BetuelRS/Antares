@@ -56,6 +56,8 @@ data class ProfileSettingsState(
     val quietEndMin: Int = NotificationRules.DEFAULT_QUIET_END_MIN,
     val weighInDayIso: Int = NotificationRules.DEFAULT_WEIGH_IN_DAY_ISO,
     val weighInMinuteOfDay: Int = NotificationRules.DEFAULT_WEIGH_IN_MIN,
+    val workoutReminder: Boolean = false,
+    val workoutMinuteOfDay: Int = NotificationRules.DEFAULT_WORKOUT_MIN,
 
     val aiUsage: StoredAiUsage? = null,
     val saved: Boolean = false,
@@ -105,7 +107,10 @@ class ProfileSettingsViewModel(
             preferences.quietEndMin,
             preferences.weighInDayIso,
             preferences.weighInMinuteOfDay,
-        ) { qStart, qEnd, dia, hora -> Horarios(qStart, qEnd, dia, hora) }
+            combine(preferences.workoutReminder, preferences.workoutMinuteOfDay) { on, m -> on to m },
+        ) { qStart, qEnd, dia, hora, treino ->
+            Horarios(qStart, qEnd, dia, hora, treino.first, treino.second)
+        }
 
         val withAi = combine(
             base,
@@ -128,6 +133,8 @@ class ProfileSettingsViewModel(
                 quietEndMin = h.quietEnd,
                 weighInDayIso = h.weighInDay,
                 weighInMinuteOfDay = h.weighInMin,
+                workoutReminder = h.treinoLigado,
+                workoutMinuteOfDay = h.treinoMin,
             )
         }
             // `saved` sobrevive à emissão nova: é o aviso de "guardado" no ecrã, e vem de
@@ -151,6 +158,8 @@ class ProfileSettingsViewModel(
         val quietEnd: Int,
         val weighInDay: Int,
         val weighInMin: Int,
+        val treinoLigado: Boolean,
+        val treinoMin: Int,
     )
 
     /**
@@ -170,6 +179,14 @@ class ProfileSettingsViewModel(
     fun setWeighInDay(dayIso: Int) {
         val atual = _state.value
         viewModelScope.launch { preferences.setWeighInSchedule(dayIso, atual.weighInMinuteOfDay) }
+    }
+
+    fun setWorkoutReminder(on: Boolean) {
+        viewModelScope.launch { preferences.setWorkoutReminder(on) }
+    }
+
+    fun setWorkoutTime(minuteOfDay: Int) {
+        viewModelScope.launch { preferences.setWorkoutMinute(minuteOfDay) }
     }
 
     fun setWeighInTime(minuteOfDay: Int) {

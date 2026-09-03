@@ -24,6 +24,7 @@ object AppNotificationChannels {
     const val WEIGH_IN = "weigh_in_reminder"
     const val COACH = "coach_ready"
     const val WATER = "water_reminder"
+    const val WORKOUT = "workout_reminder"
 
     fun ensureAll(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
@@ -41,6 +42,15 @@ object AppNotificationChannels {
         nm.createNotificationChannel(
             NotificationChannel(COACH, context.getString(R.string.notif_channel_coach_name), NotificationManager.IMPORTANCE_DEFAULT).apply {
                 description = context.getString(R.string.notif_channel_coach_desc)
+            },
+        )
+        nm.createNotificationChannel(
+            NotificationChannel(
+                WORKOUT,
+                context.getString(R.string.notif_channel_workout_name),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
+                description = context.getString(R.string.notif_channel_workout_desc)
             },
         )
         // O canal existe mesmo com o lembrete desligado: é assim que ele aparece nas
@@ -64,6 +74,7 @@ object NotificationScheduler {
     private const val WIDGET_WORK = "widget_midnight_refresh"
     private const val PROTEIN_WORK = "end_of_day_protein_periodic"
     private const val WATER_WORK = "water_reminder_periodic"
+    private const val WORKOUT_WORK = "workout_reminder_periodic"
 
     // O mais curto que a app oferece: o trabalhador filtra o resto.
     private const val WATER_TICK_HOURS = 2L
@@ -92,6 +103,15 @@ object NotificationScheduler {
             .build()
         WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(WEIGH_IN_WORK, ExistingPeriodicWorkPolicy.UPDATE, weighIn)
+
+        // De três em três horas, pela mesma razão da pesagem: a hora é escolhida e um
+        // trabalho diário chegava quando calhasse. O trabalhador é que decide, e só avisa
+        // uma vez por dia.
+        val treino = PeriodicWorkRequestBuilder<WorkoutReminderWorker>(3, TimeUnit.HOURS)
+            .setConstraints(Constraints.NONE)
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniquePeriodicWork(WORKOUT_WORK, ExistingPeriodicWorkPolicy.UPDATE, treino)
 
         val widgetDelay = DayTicker.msUntilNextMidnight() + 10 * 60 * 1000L
         val widget = PeriodicWorkRequestBuilder<WidgetMidnightWorker>(1, TimeUnit.DAYS)

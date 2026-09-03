@@ -72,6 +72,7 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
 
         val mealRemindersEnabled = booleanPreferencesKey("notif_meal_reminders")
         val weighInReminderEnabled = booleanPreferencesKey("notif_weighin")
+        val workoutReminderEnabled = booleanPreferencesKey("notif_workout")
         val coachReadyNotifEnabled = booleanPreferencesKey("notif_coach_ready")
         val quietHoursEnabled = booleanPreferencesKey("notif_quiet_enabled")
         val quietStartMin = androidx.datastore.preferences.core.intPreferencesKey("notif_quiet_start")
@@ -101,6 +102,9 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
         val lastWaterNotifAt =
             androidx.datastore.preferences.core.longPreferencesKey("notif_water_last_at")
         val weighInDayIso = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_day")
+        val workoutMinute = androidx.datastore.preferences.core.intPreferencesKey("notif_workout_min")
+        val lastWorkoutNotifDay =
+            androidx.datastore.preferences.core.longPreferencesKey("notif_workout_last_day")
         val weighInMinute = androidx.datastore.preferences.core.intPreferencesKey("notif_weighin_min")
         val pesquisaEmLinha = booleanPreferencesKey("off_online_enabled")
         val avisoDaOffVisto = booleanPreferencesKey("off_notice_seen")
@@ -263,6 +267,34 @@ class AppPreferences(private val dataStore: DataStore<Preferences>) {
             it[Keys.weighInDayIso] = dayIso.coerceIn(1, DIAS_DA_SEMANA)
             it[Keys.weighInMinute] = minuteOfDay.coerceIn(0, MINUTOS_DO_DIA - 1)
         }
+    }
+
+    /**
+     * O lembrete do treino do dia. **Desligado por omissão**, ao contrário da pesagem.
+     *
+     * Quem marca o horário semanal já vê o treino de hoje em dois sítios — no cartão do
+     * «Hoje» e no destaque do painel de treino —, e uma app que começa a interromper sem
+     * ninguém lhe pedir é uma app que se desinstala. Este liga-se de propósito.
+     */
+    val workoutReminder: Flow<Boolean> =
+        dataStore.data.map { it[Keys.workoutReminderEnabled] ?: false }
+
+    suspend fun setWorkoutReminder(enabled: Boolean) {
+        dataStore.edit { it[Keys.workoutReminderEnabled] = enabled }
+    }
+
+    val workoutMinuteOfDay: Flow<Int> =
+        dataStore.data.map { it[Keys.workoutMinute] ?: NotificationRules.DEFAULT_WORKOUT_MIN }
+
+    suspend fun setWorkoutMinute(minuteOfDay: Int) {
+        dataStore.edit { it[Keys.workoutMinute] = minuteOfDay.coerceIn(0, MINUTOS_DO_DIA - 1) }
+    }
+
+    val lastWorkoutNotifDay: Flow<Long> =
+        dataStore.data.map { it[Keys.lastWorkoutNotifDay] ?: -1L }
+
+    suspend fun setLastWorkoutNotifDay(epochDay: Long) {
+        dataStore.edit { it[Keys.lastWorkoutNotifDay] = epochDay }
     }
 
     /** O dia em que o último aviso de pesagem saiu, para não sair duas vezes no mesmo. */

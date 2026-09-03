@@ -712,4 +712,73 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         )
         assertEquals("Empurrar A", estado.routineName)
     }
+    /**
+     * **Uma supersérie abre os dois exercícios ao mesmo tempo.** É o que ela é: alternar entre
+     * eles sem descanso pelo meio. Até à 2.23.1 só o exercício aberto podia registar, e o ecrã
+     * trocava a seleção sozinho quando as séries acabavam — numa supersérie isso lutava com
+     * quem a faz, série sim série não. É o defeito 4 da área 08.
+     */
+    @Test
+    fun `uma superserie abre os exercicios todos do grupo`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        exercicio("remada", pt = "Remada")
+        exercicio("agachamento", pt = "Agachamento")
+        rotina(
+            "r1",
+            item("r1", "supino", position = 0, supersetGroup = 1),
+            item("r1", "remada", position = 1, supersetGroup = 1),
+            item("r1", "agachamento", position = 2),
+        )
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+
+        assertEquals(setOf("supino", "remada"), estado.abertos)
+    }
+
+    /** Fora de um grupo, o conjunto é o de sempre: um exercício de cada vez. */
+    @Test
+    fun `sem superserie so um exercicio fica aberto`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        exercicio("remada", pt = "Remada")
+        rotina("r1", item("r1", "supino", position = 0), item("r1", "remada", position = 1))
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        val estado = vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+
+        assertEquals(setOf("supino"), estado.abertos)
+    }
+
+    /** Escolher um exercício de outro grupo muda o conjunto inteiro, e não só o escolhido. */
+    @Test
+    fun `escolher um exercicio de outro grupo abre o grupo dele`() = runTest(dispatcher) {
+        exercicio("supino", pt = "Supino")
+        exercicio("remada", pt = "Remada")
+        exercicio("biceps", pt = "Bíceps")
+        exercicio("triceps", pt = "Tríceps")
+        rotina(
+            "r1",
+            item("r1", "supino", position = 0, supersetGroup = 1),
+            item("r1", "remada", position = 1, supersetGroup = 1),
+            item("r1", "biceps", position = 2, supersetGroup = 2),
+            item("r1", "triceps", position = 3, supersetGroup = 2),
+        )
+
+        val vm = viewModel()
+        mantemVivo(vm)
+        vm.ensureStarted("r1")
+        advanceUntilIdle()
+        vm.state.first { !it.loading && it.exercises.isNotEmpty() }
+
+        vm.select("biceps")
+        advanceUntilIdle()
+
+        assertEquals(setOf("biceps", "triceps"), vm.state.value.abertos)
+    }
 }

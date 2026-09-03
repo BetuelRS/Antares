@@ -15,6 +15,11 @@ interface RoutineScheduleDao {
     @Query("SELECT routineId FROM routine_schedule WHERE dayOfWeek = :dayOfWeek AND deleted = 0")
     fun observeRoutineForDay(dayOfWeek: Int): Flow<String?>
 
+    // A mesma pergunta, uma vez só: o trabalhador do lembrete corre fora de qualquer ecrã
+    // e não tem onde subscrever um fluxo.
+    @Query("SELECT routineId FROM routine_schedule WHERE dayOfWeek = :dayOfWeek AND deleted = 0")
+    suspend fun routineForDay(dayOfWeek: Int): String?
+
     @Upsert
     suspend fun upsert(entry: RoutineScheduleEntity)
 

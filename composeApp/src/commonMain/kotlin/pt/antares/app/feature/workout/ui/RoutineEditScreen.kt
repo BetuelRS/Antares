@@ -149,7 +149,6 @@ fun RoutineEditScreen(
                 ) { row, _ ->
                     RoutineItemCard(
                         row = row,
-                        primeiroDoGrupo = ehPrimeiroDoGrupo(itemsList, row),
                         onEdit = { editItem = row },
                         onSuperset = { g -> viewModel.setSuperset(row.item.id, g) },
                         onDelete = {
@@ -301,23 +300,9 @@ private const val MAX_REPS_ALVO = 50
 private const val PASSO_DESCANSO = 15
 private const val MAX_DESCANSO_S = 600
 
-/**
- * Se esta linha abre o grupo de supersérie a que pertence.
- *
- * Sem exercício antes dela, ou com um de outro grupo, ela é a primeira — e é ela que leva o
- * cabeçalho. Os grupos não têm de ser contíguos na lista, e quando não são o cabeçalho
- * aparece em cada troço, que é o que se lê certo.
- */
-private fun ehPrimeiroDoGrupo(itens: List<RoutineItemView>, row: RoutineItemView): Boolean {
-    val grupo = row.item.supersetGroup ?: return false
-    val i = itens.indexOfFirst { it.item.id == row.item.id }
-    return i <= 0 || itens[i - 1].item.supersetGroup != grupo
-}
-
 @Composable
 private fun RoutineItemCard(
     row: RoutineItemView,
-    primeiroDoGrupo: Boolean,
     onEdit: () -> Unit,
     onSuperset: (Int?) -> Unit,
     onDelete: () -> Unit,
@@ -328,17 +313,19 @@ private fun RoutineItemCard(
     var ssMenu by remember { mutableStateOf(false) }
 
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
-        // A supersérie passa a ser um cabeçalho do grupo, e não um chip por linha: o grupo
-        // existia, mostrava-se três vezes e não agrupava nada. Quem lê a lista vê agora onde
-        // ele começa. O chip era tocável para abrir o menu; o menu continua no ⋮.
-        if (primeiroDoGrupo) {
-            row.item.supersetGroup?.let { g ->
-                Text(
-                    stringResource(Res.string.routine_superset_of, g),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+        // A etiqueta da supersérie aparece em **todas** as linhas do grupo, e não só na
+        // primeira. Um cabeçalho só no topo diz onde o grupo começa e não diz onde acaba:
+        // no aparelho, o segundo exercício do grupo ficava indistinguível de um solto. É a
+        // forma que o `estudo/esbocos/07-treino-rotinas.html` desenha, e tem razão.
+        //
+        // Continua a não ser um chip: era um `AssistChip` tocável que abria o menu, e o menu
+        // está no ⋮. Um alvo de toque a duplicar outro é o que a área 03 condena.
+        row.item.supersetGroup?.let { g ->
+            Text(
+                stringResource(Res.string.routine_superset_of, g),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+            )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {

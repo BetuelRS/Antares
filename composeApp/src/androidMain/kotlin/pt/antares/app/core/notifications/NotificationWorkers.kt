@@ -16,6 +16,7 @@ import com.antares.app.R
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.context.GlobalContext
@@ -24,6 +25,9 @@ import pt.antares.app.core.calc.DailyGoals
 import pt.antares.app.core.calc.EndOfDayProtein
 import pt.antares.app.core.database.daos.ExerciseLogDao
 import pt.antares.app.core.database.daos.FoodLogDao
+import pt.antares.app.core.database.daos.RoutineDao
+import pt.antares.app.core.database.daos.RoutineScheduleDao
+import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WaterLogDao
 import pt.antares.app.core.database.daos.WeightLogDao
 import pt.antares.app.core.datastore.AppPreferences
@@ -158,7 +162,63 @@ class WeighInReminderWorker(ctx: Context, params: WorkerParameters) : CoroutineW
     }
 }
 
+/**
+ * O lembrete do treino do dia.
+ *
+ * Lê o horário semanal — o mesmo que alimenta o destaque do painel de treino — e só avisa
+ * quando há rotina marcada para hoje e ela ainda não foi feita. **O nome da rotina vai no
+ * texto:** «Hoje é dia de Empurrar A» diz o que fazer; «tens treino hoje» obriga a abrir a
+ * app para saber qual.
+ */
+class WorkoutReminderWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
+
+    override suspend fun doWork(): Result {
+        val koin = GlobalContext.get()
+        val prefs = koin.get<AppPreferences>()
+        val ctx = applicationContext.appLocalized()
+
+        if (!prefs.workoutReminder.first()) return Result.success()
+        if (!canPostNotifications(ctx)) return Result.success()
+        if (inQuietHours(prefs)) return Result.success()
+
+        val hoje = todayEpochDay()
+        val diaIso = epochDayToLocalDate(hoje).dayOfWeek.isoDayNumber
+        val marcada = koin.get<RoutineScheduleDao>().routineForDay(diaIso)
+        val rotina = marcada?.let { koin.get<RoutineDao>().routineById(it) }
+
+        val avisar = NotificationRules.shouldRemindWorkout(
+            agoraMin = nowMinuteOfDay(),
+            horaEscolhidaMin = prefs.workoutMinuteOfDay.first(),
+            temRotinaHoje = rotina != null,
+            treinouHoje = koin.get<WorkoutSessionDao>()
+                .sessionsBetween(inicioDoDiaMs(hoje), inicioDoDiaMs(hoje + 1))
+                .isNotEmpty(),
+            jaAvisadoHoje = prefs.lastWorkoutNotifDay.first() == hoje,
+        )
+        if (!avisar) return Result.success()
+
+        AppNotificationChannels.ensureAll(ctx)
+        postNotification(
+            ctx,
+            AppNotificationChannels.WORKOUT,
+            id = NOTIF_ID,
+            title = ctx.getString(R.string.notif_workout_title),
+            text = ctx.getString(R.string.notif_workout_text, rotina!!.name),
+        )
+        prefs.setLastWorkoutNotifDay(hoje)
+        return Result.success()
+    }
+
+    private fun inicioDoDiaMs(dia: Long): Long =
+        epochDayToLocalDate(dia).atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+
+    companion object {
+        const val NOTIF_ID = 5311
+    }
+}
+
 class EndOfDayProteinWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
+
 
     override suspend fun doWork(): Result {
         val koin = GlobalContext.get()

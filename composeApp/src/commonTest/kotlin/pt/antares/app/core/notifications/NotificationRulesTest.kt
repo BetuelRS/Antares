@@ -180,4 +180,32 @@ class NotificationRulesTest {
             NotificationRules.waterIntervalElapsed(1_000L, lastNotifiedMs = 9_000_000L, intervalHours = 2),
         )
     }
+    /**
+     * O lembrete do treino não avisa em dia de descanso nem a quem já treinou.
+     *
+     * As duas recusas são a mesma decisão: um lembrete para fazer o que já se fez, ou para
+     * fazer o que não estava planeado, é a forma mais rápida de alguém o desligar — e
+     * desligado ele não serve para o dia em que era preciso.
+     */
+    @Test
+    fun `o lembrete do treino avisa uma vez, no dia marcado, a quem ainda nao treinou`() {
+        fun avisa(
+            agoraMin: Int = 9 * 60,
+            temRotina: Boolean = true,
+            treinou: Boolean = false,
+            avisado: Boolean = false,
+        ) = NotificationRules.shouldRemindWorkout(
+            agoraMin = agoraMin,
+            horaEscolhidaMin = 8 * 60,
+            temRotinaHoje = temRotina,
+            treinouHoje = treinou,
+            jaAvisadoHoje = avisado,
+        )
+
+        assertTrue(avisa(), "dia marcado, depois da hora, sem treino: tinha de avisar")
+        assertFalse(avisa(agoraMin = 7 * 60), "avisou antes da hora escolhida")
+        assertFalse(avisa(temRotina = false), "avisou num dia de descanso")
+        assertFalse(avisa(treinou = true), "avisou quem já tinha treinado")
+        assertFalse(avisa(avisado = true), "avisou duas vezes no mesmo dia")
+    }
 }

@@ -93,6 +93,11 @@ data class SessionUiState(
     val exercises: List<SessionExerciseUi> = emptyList(),
     /** O exercício que ocupa o ecrã. Os outros ficam recolhidos, com nome e progresso. */
     val currentExerciseId: String? = null,
+    /**
+     * Os exercícios abertos. É um só — o [currentExerciseId] —, excepto numa supersérie,
+     * onde são os do grupo: alternar entre eles é o que faz dela uma supersérie.
+     */
+    val abertos: Set<String> = emptySet(),
     val finishedSessionId: String? = null,
     val discarded: Boolean = false,
 )
@@ -212,6 +217,18 @@ class WorkoutSessionViewModel(
             ?: exercises.firstOrNull { !it.isComplete }?.exerciseId
             ?: exercises.lastOrNull()?.exerciseId
 
+        // **Uma supersérie abre os dois exercícios ao mesmo tempo**, e é o que ela é: alternar
+        // entre eles sem descanso pelo meio. Até aqui só o exercício aberto podia registar, e
+        // o ecrã trocava a seleção sozinho quando as séries acabavam — numa supersérie isso
+        // lutava com quem a faz, série sim série não. Fora de um grupo, o conjunto é o de
+        // sempre: um exercício.
+        val grupoAberto = exercises.firstOrNull { it.exerciseId == current }?.supersetGroup
+        val abertos = if (grupoAberto == null) {
+            setOfNotNull(current)
+        } else {
+            exercises.filter { it.supersetGroup == grupoAberto }.map { it.exerciseId }.toSet()
+        }
+
         return SessionUiState(
             loading = false,
             sessionId = sessionId,
@@ -220,6 +237,7 @@ class WorkoutSessionViewModel(
             routineName = routineId?.let { routineDao.routineById(it)?.name },
             exercises = exercises,
             currentExerciseId = current,
+            abertos = abertos,
         )
     }
 

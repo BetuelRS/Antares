@@ -57,8 +57,37 @@ object NotificationRules {
         return !pesouHoje && !jaAvisadoHoje
     }
 
+    // Às oito da manhã. É cedo para caber antes do trabalho e tarde para não acordar
+    // ninguém, e quem treina à noite muda-a.
+    const val DEFAULT_WORKOUT_MIN = 8 * 60
+
     /**
-     * Quantos mililitros faltam para a meta de água, ou `null` quando não há nada a dizer.
+     * Se é altura de lembrar o treino de hoje.
+     *
+     * **Não avisa quem já treinou hoje.** Um lembrete para fazer o que já se fez é a forma
+     * mais rápida de o desligarem — e a app sabe se houve treino, porque a sessão fica
+     * gravada com a data.
+     *
+     * **Não avisa em dia de descanso.** O horário tem sete dias e a maioria das pessoas
+     * marca três ou quatro; avisar nos outros era inventar um treino que ninguém planeou.
+     */
+    fun shouldRemindWorkout(
+        agoraMin: Int,
+        horaEscolhidaMin: Int,
+        temRotinaHoje: Boolean,
+        treinouHoje: Boolean,
+        jaAvisadoHoje: Boolean,
+    ): Boolean {
+        if (!temRotinaHoje) return false
+        // Antes da hora não se avisa; depois dela, sim — o trabalho periódico chega perto
+        // da hora e não à hora, e recusar por dez minutos era perder o aviso do dia.
+        if (agoraMin < horaEscolhidaMin) return false
+        return !treinouHoje && !jaAvisadoHoje
+    }
+
+    /**
+     * Quantos mililitros faltam para a meta de água
+, ou `null` quando não há nada a dizer.
      *
      * Devolve `null` com a meta cumprida — avisar quem já bebeu o que devia é o caminho mais
      * curto para o lembrete ser desligado. E devolve `null` quando falta muito pouco: um

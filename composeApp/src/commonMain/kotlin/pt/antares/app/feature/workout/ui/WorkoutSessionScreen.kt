@@ -162,7 +162,7 @@ fun WorkoutSessionScreen(
                 }
             }
             items(state.exercises, key = { it.exerciseId }) { ex ->
-                if (ex.exerciseId == state.currentExerciseId) {
+                if (ex.exerciseId in state.abertos) {
                     ExerciseBlock(
                         pesoDoCorpoKg = state.pesoDoCorpoKg,
                         ex = ex,

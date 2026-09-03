@@ -23,9 +23,28 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.23.0"
+    const val CURRENT = "2.23.1"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.23.1",
+            title = "O horário passa a avisar, e uma supersérie passa a ser uma supersérie",
+            titleEn = "The schedule starts reminding you, and a superset becomes a superset",
+            highlights = listOf(
+                "**O treino marcado no horário avisa-te**, à hora que escolheres. Desligado " +
+                    "por omissão, e nunca avisa se já treinaste nesse dia",
+                "**Uma supersérie abre os dois exercícios ao mesmo tempo** — que é o que ela " +
+                    "é. Antes só um podia registar, e a app trocava de exercício sozinha a " +
+                    "meio da supersérie",
+            ),
+            highlightsEn = listOf(
+                "**The workout on your schedule reminds you**, at the time you choose. Off by " +
+                    "default, and never if you already trained that day",
+                "**A superset opens both exercises at once** — which is what a superset is. " +
+                    "Before, only one could be logged, and the app switched exercises on its " +
+                    "own halfway through",
+            ),
+        ),
         AppVersion(
             name = "2.23.0",
             title = "Reordenar uma rotina passa a ser arrastar",
@@ -363,44 +382,7 @@ object AppChangelog {
                     "table's",
             ),
         ),
-        AppVersion(
-            name = "2.7.0",
-            title = "A comida cozinha, mede-se e diz o que não sabe",
-            titleEn = "Food cooks, measures itself, and says what it does not know",
-            highlights = listOf(
-                "**O cru e o cozinhado deixam de ser dois alimentos.** Escolhes o método e a " +
-                    "app faz as contas: o peso que se perde e as vitaminas que sobrevivem. " +
-                    "Se pesaste depois de cozinhar, esse peso vale mais do que a tabela",
-                "**Sete vezes mais alimentos com porção** — «uma fatia», «uma chávena» — em " +
-                    "vez de escreveres gramas",
-                "**Dois mil alimentos deixam de ter nome de laboratório em inglês**, e 97 " +
-                    "que estavam repetidos passam a estar uma vez só. O que ainda não tem " +
-                    "nome inteiro em português fica em inglês, e não meio traduzido",
-                "**O catálogo passa a poder descarregar-se**, nas Definições: corrigir um " +
-                    "alimento deixa de esperar por uma versão na loja",
-                "**Um nutriente procurado e não encontrado passa a dizê-lo**, em vez de " +
-                    "desaparecer do ecrã como se ninguém o tivesse medido",
-                "O dia diz-te de quanto é o «cerca de» das calorias, quando isso muda o que " +
-                    "elas querem dizer",
-            ),
-            highlightsEn = listOf(
-                "**Raw and cooked are no longer two foods.** Pick the method and the app does " +
-                    "the sums: the weight lost and the vitamins that survive. If you weighed " +
-                    "it after cooking, that weight beats the table",
-                "**Seven times more foods with a serving** — «a slice», «a cup» — instead of " +
-                    "typing grams",
-                "**Two thousand foods lose their English lab names**, and 97 that were " +
-                    "duplicated are now there once. What has no full Portuguese name yet " +
-                    "stays in English, rather than half translated",
-                "**The catalogue can now be downloaded**, from Settings: fixing a food no " +
-                    "longer waits for a store release",
-                "**A nutrient looked for and not found now says so**, instead of vanishing " +
-                    "from the screen as if nobody had measured it",
-                "Your day tells you how big its «about» is, when that changes what the " +
-                    "numbers mean",
-            ),
-        ),
-        // Da 2.2.0 à 2.6.0 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.7.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

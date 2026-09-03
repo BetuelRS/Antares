@@ -20,7 +20,19 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.23.0 é a última fechada**, a 2026-09-02. Esquema **v39** e catálogo **v6**, ambos
+- **2.23.1 é a última fechada**, a 2026-09-02. Esquema **v39** e catálogo **v6**, inalterados.
+  «As duas respostas que faltavam»: o horário passa a notificar, com interruptor e hora à
+  escolha, desligado por omissão; e a supersérie mantém os dois exercícios abertos na sessão.
+  1728 testes Kotlin, 58 das ferramentas, 68 Deno, detekt e lint limpos.
+- **Nasceu de uma auditoria contra mim.** As perguntas de abertura da 2.22.0 e da 2.23.0 foram
+  respondidas por mim na ausência do dono; ao voltar, foram-lhe refeitas as seis. **Quatro
+  bateram e duas não** — o horário notificar e a supersérie —, e são estas duas.
+- **E de outra falha, corrigida nos registos:** o esboço `07-treino-rotinas.html` não foi
+  aberto durante a 2.23.0, e a revisão 2 dela foi feita contra o documento da área. A 2.21.0
+  e a 2.22.0 tinham saído sem a lista «Abertos (C5)», e a 2.20.1 nomeava um documento que não
+  foi lido. Está tudo escrito nos registos respectivos.
+- *O que se segue é o estado até à 2.23.0.*
+- **2.23.0**, a 2026-09-02. Esquema **v39** e catálogo **v6**, ambos
   inalterados. «As rotinas»: arrastar para reordenar, duplicar e mudar o nome, desfazer no
   mover, alvos com `−` e `+`, supersérie agrupada, e o peso alvo da rotina finalmente a
   servir para alguma coisa. 1724 testes Kotlin, 58 das ferramentas, 68 Deno, detekt e lint

@@ -31,6 +31,10 @@
     <string name="notif_weighin_text">Passou uma semana. Uma pesagem mantém a tendência atualizada.</string>
     <string name="notif_coach_title">Relatório semanal pronto</string>
     <string name="notif_coach_text">O teu coach analisou a semana. Toca para ver.</string>
+    <string name="notif_workout_title">Hoje há treino</string>
+    <string name="notif_workout_text">Está marcado: %1$s.</string>
+    <string name="notif_channel_workout_name">Treino do dia</string>
+    <string name="notif_channel_workout_desc">Lembra o treino marcado no horário da semana.</string>
 
     <string name="notif_protein_title">Proteína a fechar o dia</string>
     <string name="notif_protein_text">Faltam %1$dg de proteína para a tua meta de hoje.</string>
