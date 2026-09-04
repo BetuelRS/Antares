@@ -661,11 +661,113 @@ Recontados hoje, e corrigidos no mesmo commit (C4):
 
 O [`como-continuar.md`](como-continuar.md) fecha a dizer que *«o relatório vivo republica-se
 ao fim de cada versão»*. O `estudo/relatorio.html` foi escrito a 2026-08-29 e a versão mais
-alta que menciona é a 2.9.0. O `estudo/PLANO-DE-PRODUCAO.md` diz, na secção do
-versionamento, **«atual: 2.0.2»**.
+alta que menciona é a ~~2.9.0~~ **2.19.0** *(recontado a 2026-09-04: o corpo dele declara a
+2.18.1 publicada e a 2.19.0 como «a seguir»)*. O `estudo/PLANO-DE-PRODUCAO.md` diz, na secção
+do versionamento, **«atual: 2.0.2»**.
 
 Nenhum dos dois está no git — são da pasta `estudo/`, que o `.gitignore` exclui —, e por
 isso nenhum teste-guarda os podia ter apanhado. Fica escrito aqui, que é o sítio que está.
+
+---
+
+# A varredura de 2026-09-04
+
+Feita depois de ler o `estudo/` inteiro — os 63 documentos e os dezassete esboços — e de
+correr a 2.24.0 de lançamento no emulador, **actualizada por cima da 2.20.1 com dados lá
+dentro**, que é o que prova a migração v37 → v39 num salto. Cada linha diz onde foi medida.
+
+## O que se confirmou, e não é achado
+
+A 2.24.0 está publicada e verde: `main` em `e6f03c6`, etiqueta `v2.24.0`, release com os
+quatro APKs mais o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit**. O
+`latest` do GitHub responde com HTTP 200 aos dois ficheiros e o `sha256` do catálogo bate com
+o do manifesto — que é a verificação que a app faz antes de trocar o catálogo. Localmente:
+**1742 testes Kotlin, 58 das ferramentas, 68 Deno, detekt e lint limpos**, e nenhum segredo em
+1033 ficheiros.
+
+Recontados no catálogo construído, e todos certos: **7 932 alimentos** · 3 329 `ciqual-`,
+2 944 `usda-`, 1 372 `tca-`, 274 `ptx`, 13 `pt-` · **2 090 com porção (26,3 %)** · 4 153 com
+família de confeção · 773 líquidos · **42 chaves declaradas, 40 em uso**. E no esquema: **34
+tabelas, 36 migrações automáticas, versão 39**, contadas na lista de entidades do `AntaresDb`
+e nos `tableName` do `39.json`, que dão o mesmo número.
+
+## Um defeito visto a correr, e é o quinto de uma família que a 2.24.0 deu por fechada
+
+**«5 exercises · ~4236 min last time», no cartão de destaque do centro de treino.**
+
+O `workout_hub_last_duration` é `~%1$d min` e o `resumoDaRotina` passa-lhe os minutos crus
+(`WorkoutScreen.kt:376`). A 2.24.0 diz, no registo e no CHANGELOG, que o `%d min` sem
+conversão *«existia em quatro sítios e não num»* e que **os quatro** passaram pelo
+`formatDurationMin`. São cinco: este ficou.
+
+E vê-se ao lado do que a versão corrigiu — no mesmo aparelho, a linha do histórico do mesmo
+treino diz **«70h 36m»** e o cartão de destaque diz **«~4236 min»**. É a mesma queixa que
+fechou a 2.24.0, duas linhas acima da correcção.
+
+**Como escapou:** a correcção foi feita a partir da string `workout_hub_minutes`, e esta é
+outra chave. Quem procurou o nome encontrou quatro; quem procurasse o formato `%1$d min`
+encontrava cinco.
+
+## Doze importações mortas na área que a 2.25.0 vai abrir
+
+O defeito concreto 1 da `estudo/areas/10` são importações que não se usam. A 2.24.0 apagou as
+seis dos três ficheiros que reescreveu — histórico, detalhe e resumo — e o módulo do treino
+tem mais. Contadas à mão, uma a uma, confirmando que o nome não aparece fora da linha do
+`import`:
+
+| Ficheiro | Importações sem uso |
+|---|---|
+| `WorkoutStatsScreen.kt` | `weightUnitLabel`, `roundToInt` |
+| `WorkoutHistoryViewModels.kt` | `SharingStarted`, `stateIn` |
+| `RoutineEditScreen.kt` | `Icons.Default.Add`, `Icons.Default.Delete`, `KeyboardArrowDown` |
+| `ExerciseLibraryScreen.kt` | `AntaresCard`, `clickable`, `Role` |
+| `ExerciseLibraryViewModel.kt` | `map` |
+| `WorkoutSessionScreen.kt` | `Icons.Default.Delete` |
+
+As duas primeiras linhas são os ficheiros da **2.25.0**; as outras quatro são vizinhas e não
+são do conteúdo dela. **Nem o detekt nem o lint as apanham** — os dois vieram limpos nesta
+mesma varredura, e é por isso que a família sobrevive de versão em versão.
+
+## Duas semanas diferentes dentro do mesmo separador
+
+O `WorkoutStatsViewModel` calcula `weekAgo = agora − 7 dias` e pede o volume por músculo a
+partir daí: é uma **janela móvel de sete dias**, e o ecrã escreve-o — «Volume by muscle
+(7 days)», visto no aparelho.
+
+O cartão «Esta semana» do painel de treino, dois toques atrás, conta a **semana ISO**: a
+2.20.0 decidiu-o e escreveu porquê — *«é o que faz este cartão, o relatório do treinador e a
+grelha do progresso concordarem»*.
+
+Não é um número errado; é a mesma palavra a querer dizer duas coisas no mesmo separador, e o
+seletor de período da **2.25.0** é onde isso se decide.
+
+## Três números dos documentos, recontados hoje
+
+Corrigidos no mesmo commit (C4):
+
+| Documento | Dizia | É |
+|---|---|---|
+| `docs/referencia/regras.md` | 73 testes-guarda documentados | **74** — 73 classes de teste em Kotlin mais o `tools/catalogo/origem-por-nutriente.test.mjs`; os 74 ficheiros existem |
+| `docs/referencia/dados-e-licencas.md` | mediana de 20 chaves por alimento | **25** — contada no `catalogo.json` construído, sobre os 7 932 |
+| `docs/referencia/como-continuar.md` | «o formatador da app já diz ontem» | **não diz** — o `dayShortDated` dá sempre o dia da semana com a data. O plano corrigiu a sua cópia a 2026-09-02 e esta ficou para trás |
+
+E, dentro deste ficheiro, a linha do relatório vivo dizia que a versão mais alta que ele
+menciona é a 2.9.0. **É a 2.19.0.** Corrigida acima.
+
+## O que continua aberto e foi reconfirmado no código
+
+Nenhum destes mudou, e nenhum se toca sem autorização (A1):
+
+- **Os nomes das sete rotinas semeadas** são literais no `RoutineTemplateSeeder.kt:41-45` —
+  «Full Body A», «Full Body B», «Push», «Pull» e **«Pernas»**, quatro em inglês e um em
+  português, e vê-se assim no ecrã com a app em inglês.
+- **As imagens dos exercícios** continuam a sair para o `raw.githubusercontent.com`
+  (`ExerciseSeeder.kt:136`).
+- **O `FoodRow` continua a usar `Card` + `ListItem` do Material**
+  (`FoodSearchScreen.kt:896` e `:909`), que é o último resto das duas linguagens de cartão.
+- **O `estudo/relatorio.html` está seis versões atrasado** — declara a 2.18.1 publicada, o
+  esquema v35, o catálogo v5, 30 regras e 62 testes-guarda. Hoje são a 2.24.0, v39, v6, 31 e
+  74. Está fora do git, e é por isso que nada o apanha.
 
 ---
 

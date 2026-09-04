@@ -78,7 +78,7 @@ Cada nutriente tem **uma chave e uma só**, declarada em
 internacional do INFOODS, a unidade, o grupo, a referência da EFSA quando existe, e se essa
 referência é uma meta a atingir ou um tecto a não passar.
 
-São **42 chaves**, 40 em uso, e a mediana é de **20 por alimento**. As duas que não se usam —
+São **42 chaves**, 40 em uso, e a mediana é de **25 por alimento**. As duas que não se usam —
 o açúcar e a gordura saturada — vivem em coluna na linha do alimento, e a app junta-as ao mapa
 ao ler.
 

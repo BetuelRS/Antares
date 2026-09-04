@@ -20,6 +20,13 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **A 2.24.0 está publicada e verde**, conferido a 2026-09-04: `main` em `e6f03c6`, etiqueta
+  `v2.24.0`, release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`, e **CI
+  verde nesse commit**. O `latest` responde HTTP 200 aos dois ficheiros e o `sha256` bate.
+- **A varredura de 2026-09-04** — o `estudo/` lido inteiro e a 2.24.0 de lançamento corrida
+  por cima da 2.20.1 com dados — encontrou **um defeito da própria 2.24.0**: o `%d min` sem
+  conversão estava em **cinco** sítios e não em quatro. Fica em
+  [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md), com o resto do que ela mediu.
 - **2.24.0 é a última fechada**, a 2026-09-03. Esquema **v39** e catálogo **v6**, inalterados,
   e **nenhum dado é novo** — é a mesma forma da 2.20.0. «O histórico do treino»: quatro dados
   em cada linha, a 🌟 dos recordes, cabeçalho no detalhe, o RPE que se via pela primeira vez, e
@@ -34,6 +41,9 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 - **O `%d min` sem conversão existia em quatro sítios e não num.** O botão de retomar dizia
   «2618 min» e o resumo «2715 min»; a linha nova do histórico nasceu com o mesmo defeito. O
   `workout_hub_minutes` deixou de existir e os quatro passam pelo `formatDurationMin`.
+  **E eram cinco:** o `workout_hub_last_duration` do cartão de destaque ficou, e o aparelho
+  mostra «~4236 min last time» duas linhas acima de «70h 36m». A busca foi feita pelo nome da
+  string e não pelo formato.
 - **Um comentário meu prometeu o que o código não precisava de fazer**, e só apareceu ao
   tentar ver o teste vermelho: parti a conta dos recordes de propósito e **ela passou**,
   porque o `groupBy` já fazia o que a segunda passagem dizia fazer. Ver o teste a falhar não é
@@ -239,7 +249,10 @@ dos 1677 testes via um único** — dois eram plurais, um era uma cor, e o quart
 que fazia outra coisa:
 
 1. **«1 DAYS AGO».** O cartão contava dias e não tinha plural. O contador desapareceu em vez
-   de ganhar um plural: passou a levar o dia, e o formatador da app já diz «ontem».
+   de ganhar um plural: passou a levar o dia, que o formatador escreve sem plural nenhum —
+   «sáb, 30 ago». *(Esta linha dizia que o formatador «já diz ontem». Não diz: o
+   `dayShortDated` dá sempre o dia da semana com a data. O registo da 2.20.0 no plano foi
+   corrigido a 2026-09-02 e esta cópia ficou para trás.)*
 2. **Os sete quadrados da semana eram invisíveis** — pintados com o `surfaceVariant`, que
    desde a paleta da 2.18.2 é a própria cor do cartão. **Também no relatório do treinador**,
    desde essa versão. **Nenhum teste vê cor.**
