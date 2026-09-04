@@ -19,7 +19,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
-import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.designsystem.components.AntaresCard
@@ -28,7 +27,6 @@ import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.LabeledBar
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
-import kotlin.math.roundToInt
 
 @Composable
 fun WorkoutStatsScreen(

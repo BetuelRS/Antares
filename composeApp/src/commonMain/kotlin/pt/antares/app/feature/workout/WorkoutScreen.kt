@@ -372,8 +372,13 @@ private fun resumoDaRotina(rotina: RotinaEmDestaque): String {
         rotina.totalDeExercicios,
         rotina.totalDeExercicios,
     )
+    // Pelo `formatDurationMin`, como os outros quatro sítios que a 2.24.0 converteu: um
+    // treino esquecido aberto de um dia para o outro dava «~4236 min» aqui, e a linha do
+    // histórico do mesmo treino dizia «70h 36m» dois toques à frente. Esta chave escapou
+    // àquela correcção por se ter procurado o nome `workout_hub_minutes` e não o formato.
     val duracao = rotina.ultimaDuracaoMin ?: return exercicios
-    return exercicios + SEPARADOR + stringResource(Res.string.workout_hub_last_duration, duracao)
+    return exercicios + SEPARADOR +
+        stringResource(Res.string.workout_hub_last_duration, formatDurationMin(duracao))
 }
 
 @Composable

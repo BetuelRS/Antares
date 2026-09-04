@@ -203,4 +203,60 @@ class StringResourcesTest {
             "uma excepção sem razão é uma string esquecida com autorização",
         )
     }
+
+    /**
+     * Strings onde um número inteiro de minutos está certo, com a razão de cada uma.
+     *
+     * O critério é estreito: só passa quem mostra uma **diferença** de minutos escolhida de
+     * uma lista curta, e não uma duração medida. Uma duração medida cresce sem ninguém a
+     * vigiar — um treino esquecido aberto de um dia para o outro chega aos milhares.
+     */
+    private val minutosInteirosPermitidos = mapOf(
+        "exercise_duration_less" to
+            "é o passo do botão −, e vale 5: uma diferença de cinco minutos nunca vira horas",
+        "exercise_duration_more" to
+            "o mesmo, do botão +",
+    )
+
+    private val minutosCrus = Regex("""%\d*\$?d\s*(min\b|minuto|minute)""", RegexOption.IGNORE_CASE)
+
+    /**
+     * **Uma duração de minutos nunca se mostra como inteiro.**
+     *
+     * A app tem o `formatDurationMin`, que escreve `43h 39m`, e é ele que a janela alimentar,
+     * o jejum, o histórico do treino e o resumo já usam. Um `%1$d min` cru lê-se enquanto o
+     * número é pequeno e deixa de se ler no dia em que não é.
+     *
+     * **Este guarda nasce de a correcção ter falhado uma vez.** A 2.24.0 encontrou o defeito
+     * em quatro sítios, converteu os quatro, e escreveu no CHANGELOG que estava fechado — e a
+     * varredura de 2026-09-04 achou o quinto no aparelho: o cartão de destaque do treino dizia
+     * «~4236 min last time» duas linhas acima de «70h 36m». Escapou porque a busca foi feita
+     * pelo **nome** da string, `workout_hub_minutes`, e a quinta chamava-se outra coisa.
+     *
+     * Procurar pelo formato apanha as cinco, e apanha a sexta que alguém escrever.
+     */
+    @Test
+    fun `nenhuma duracao em minutos e mostrada como inteiro`() {
+        val offenders = stringFiles().flatMap { file ->
+            stringEntry.findAll(file.readText())
+                .filter { it.groupValues[1] !in minutosInteirosPermitidos }
+                .filter { minutosCrus.containsMatchIn(it.groupValues[2]) }
+                .map { "${file.parentFile.name}/${it.groupValues[1]} → \"${it.groupValues[2]}\"" }
+        }
+        assertEquals(
+            emptyList(),
+            offenders,
+            "duração em minutos sem conversão. Ou passa pelo `formatDurationMin`, ou entra " +
+                "no `minutosInteirosPermitidos` com a razão escrita:\n" + offenders.joinToString("\n"),
+        )
+    }
+
+    @Test
+    fun `toda a excecao de minutos inteiros traz a razao por escrito`() {
+        assertEquals(
+            emptyList(),
+            minutosInteirosPermitidos.filterValues { it.isBlank() }.keys.toList(),
+            "uma excepção sem razão é um número por converter com autorização",
+        )
+    }
 }

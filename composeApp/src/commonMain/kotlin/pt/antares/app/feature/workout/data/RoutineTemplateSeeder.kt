@@ -3,6 +3,16 @@ package pt.antares.app.feature.workout.data
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
+import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.workout_seed_full_body_a
+import pt.antares.app.generated.resources.workout_seed_full_body_b
+import pt.antares.app.generated.resources.workout_seed_legs
+import pt.antares.app.generated.resources.workout_seed_lower
+import pt.antares.app.generated.resources.workout_seed_pull
+import pt.antares.app.generated.resources.workout_seed_push
+import pt.antares.app.generated.resources.workout_seed_upper
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.entities.RoutineEntity
@@ -17,7 +27,7 @@ class RoutineTemplateSeeder(
 ) {
 
     private data class Ex(val id: String, val fallbackTerm: String)
-    private data class Template(val name: String, val exercises: List<Ex>)
+    private data class Template(val nome: StringResource, val exercises: List<Ex>)
 
     private companion object {
         val BENCH = Ex("Barbell_Bench_Press_-_Medium_Grip", "bench press")
@@ -37,14 +47,25 @@ class RoutineTemplateSeeder(
         val CALF = Ex("Standing_Calf_Raises", "calf raise")
     }
 
+    /**
+     * Os nomes vêm dos recursos e não do código.
+     *
+     * Eram sete literais — seis em inglês e «Pernas» em português —, e viam-se assim nas duas
+     * línguas da app: quem abria a app em inglês encontrava «Pernas» a meio da lista. Ficou
+     * medido na 2.20.0 e registado como troca por decidir.
+     *
+     * **O nome fica congelado na língua do primeiro arranque**, e é de propósito: a partir do
+     * momento em que a rotina existe ela é da pessoa, com nome que ela pode mudar — e reescrever
+     * nomes de rotinas ao trocar de idioma mexia numa coisa que já não é da app.
+     */
     private val templates = listOf(
-        Template("Full Body A", listOf(BENCH, SQUAT, ROW, OHP, CURL)),
-        Template("Full Body B", listOf(DEADLIFT, INCLINE, PULLDOWN, LEGPRESS, PUSHDOWN)),
-        Template("Push", listOf(BENCH, OHP, INCLINE, LATRAISE, PUSHDOWN)),
-        Template("Pull", listOf(DEADLIFT, PULLDOWN, ROW, PULLUP, CURL)),
-        Template("Pernas", listOf(SQUAT, LEGPRESS, RDL, LUNGE, CALF)),
-        Template("Upper", listOf(BENCH, ROW, OHP, PULLDOWN, CURL, PUSHDOWN)),
-        Template("Lower", listOf(SQUAT, RDL, LEGPRESS, LUNGE, CALF)),
+        Template(Res.string.workout_seed_full_body_a, listOf(BENCH, SQUAT, ROW, OHP, CURL)),
+        Template(Res.string.workout_seed_full_body_b, listOf(DEADLIFT, INCLINE, PULLDOWN, LEGPRESS, PUSHDOWN)),
+        Template(Res.string.workout_seed_push, listOf(BENCH, OHP, INCLINE, LATRAISE, PUSHDOWN)),
+        Template(Res.string.workout_seed_pull, listOf(DEADLIFT, PULLDOWN, ROW, PULLUP, CURL)),
+        Template(Res.string.workout_seed_legs, listOf(SQUAT, LEGPRESS, RDL, LUNGE, CALF)),
+        Template(Res.string.workout_seed_upper, listOf(BENCH, ROW, OHP, PULLDOWN, CURL, PUSHDOWN)),
+        Template(Res.string.workout_seed_lower, listOf(SQUAT, RDL, LEGPRESS, LUNGE, CALF)),
     )
 
     suspend fun seedIfNeeded() = withContext(io) {
@@ -77,7 +98,7 @@ class RoutineTemplateSeeder(
             routineDao.upsertRoutine(
                 RoutineEntity(
                     id = routineId,
-                    name = template.name,
+                    name = getString(template.nome),
                     note = null,
                     position = rIndex,
                     updatedAt = now,

@@ -625,7 +625,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_start">Start</string>
     <string name="workout_hub_start_named">Start %1$s</string>
 
-    <string name="workout_hub_last_duration">~%1$d min last time</string>
+    <string name="workout_hub_last_duration">~%1$s last time</string>
     <string name="workout_hub_week">This week</string>
     <string name="workout_hub_week_summary">%1$s of volume · %2$s</string>
     <string name="workout_hub_week_none">No workouts this week yet.</string>
@@ -636,6 +636,13 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_recent">Recent workouts</string>
     <string name="workout_hub_free_workout">Free workout</string>
     <string name="workout_hub_workout_line">%1$s · %2$s · %3$s</string>
+    <string name="workout_seed_full_body_a">Full Body A</string>
+    <string name="workout_seed_full_body_b">Full Body B</string>
+    <string name="workout_seed_push">Push</string>
+    <string name="workout_seed_pull">Pull</string>
+    <string name="workout_seed_legs">Legs</string>
+    <string name="workout_seed_upper">Upper</string>
+    <string name="workout_seed_lower">Lower</string>
 
     <string name="exlib_title">Exercises</string>
     <string name="exlib_search_hint">Search exercise</string>
