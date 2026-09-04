@@ -538,7 +538,8 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **A cafeína e o flúor** — a premissa da decisão de 2.6.0 mudou: 5 215 e 538 alimentos no `food_nutrient.csv` que o oleoduto passou a ler | 2.6.0, medido outra vez a 2026-08-28 | só se o dono reabrir a decisão |
 | **Onde vivem os açúcares e os saturados** — só na coluna, e a `food_nutrient` tem zero linhas dos dois em 7 932 alimentos | bloco D, `estudo/dados/04` §3 | decisão com custo permanente: 81 usos, duas migrações, o mapeador da OFF |
 | **O `FoodRow` com `Card` + `ListItem` do Material** — o último resto das duas linguagens de cartão | 2.3.0, `estudo/areas/20` | precisa de uma corrida no aparelho; é a lista mais usada da app |
-| **Os nomes das sete rotinas semeadas** — seis em inglês e «Pernas» em português, literais no código e não recursos | 2.20.0, registado lá como troca por decidir | troca (A5), e é de minutos |
+| ~~**Os nomes das sete rotinas semeadas**~~ | 2.20.0 | **feito na 2.25.0** — vêm dos recursos, e o `Template` recebe um `StringResource`, portanto um literal já não compila |
+| **O `LoggingStreak.current` sem chamador** — a sequência estrita, que o comentário dava como a dos marcos e dos troféus | 2.25.0, ao alargar a varredura ao `composeApp/src/commonMain/kotlin/pt/antares/app/core/calc/` | decisão de produto: ligar os troféus a ela, ou apagá-la. O `estudo/motor/07` trata as duas sequências como uma escolha |
 | **Descarregar as imagens dos exercícios** — o estudo chama-lhe «a única deste documento que eu faria já» | `estudo/transversal/04` | número próprio; resolve também o offline e a fuga a terceiros |
 | **2 909 alimentos em inglês** | 2.13.0 | trabalho de meses, na oficina |
 | **73,7 % do catálogo sem porção** | 2.14.0 | idem |
@@ -768,6 +769,37 @@ Nenhum destes mudou, e nenhum se toca sem autorização (A1):
 - **O `estudo/relatorio.html` está seis versões atrasado** — declara a 2.18.1 publicada, o
   esquema v35, o catálogo v5, 30 regras e 62 testes-guarda. Hoje são a 2.24.0, v39, v6, 31 e
   74. Está fora do git, e é por isso que nada o apanha.
+
+## 2.25.0 · As estatísticas do treino
+
+**Construída com o estudo aberto**, e por isso esta entrada é curta: o que ficou de fora ficou
+por decisão. As duas revisões da D7 estão no registo da versão, no plano.
+
+- **Três das linhas da tabela do fim deste ficheiro fecharam**, e riscam-se aqui no mesmo
+  commit: o **`%d min` do cartão de destaque** (era o quinto sítio, não o quarto), as **doze
+  importações mortas** do módulo do treino, e os **nomes das sete rotinas semeadas**, que eram
+  literais e em duas línguas — hoje vêm dos recursos, e viu-se «Corpo inteiro A» e «Empurrar»
+  numa instalação limpa com a app em português.
+- **A faixa de 10 a 20 séries semanais entra**, decisão delegada, desenhada como faixa e com a
+  frase que diz que é uma orientação da literatura e não um alvo calculado para esta pessoa.
+- **A barra abaixo da faixa é âmbar e não vermelha**, contra a letra do esboço 10 e com a razão
+  medida: o `error` do tema é `#FF6B6B` e a primária `#FF5A4A`, e lado a lado não se distinguem.
+- **A frequência cobre o período escolhido e não doze semanas fixas**, contra a área 10. As duas
+  coisas que o estudo pede colidem — «o período governa o ecrã inteiro» é a exigência dele —, e
+  um gráfico de doze semanas ao lado de um seletor era o seletor a não governar nada.
+- **A comparação com a semana anterior** — «o que está mal» ponto 3 da área 10 — é a **2.26.0**,
+  que a promete no resumo pós-treino.
+
+### Uma coisa que a versão abriu e não fechou
+
+**O `LoggingStreak.current` não tem chamador na app**, e o comentário dela dizia «é a que os
+marcos e os troféus usam» — o ecrã do Hoje usa a `currentWithFreeze` e a `longest`. Medido a
+2026-09-04, ao alargar a varredura de código morto ao `composeApp/src/commonMain/kotlin/pt/antares/app/core/calc/` inteiro.
+
+O comentário passou a dizer a verdade, e a função ficou declarada na varredura com a razão.
+**Ligar os troféus à sequência estrita ou apagá-la é uma decisão de produto** que o
+`estudo/motor/07` descreve — «estrita para os troféus, perdoada para o ecrã» — e não é do ecrã
+das estatísticas. Fica na tabela do fim.
 
 ---
 

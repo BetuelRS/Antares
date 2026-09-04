@@ -811,6 +811,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_stats_frequency_title">Workouts per week</string>
     <string name="workout_stats_frequency_avg">%1$s on average over %2$d weeks</string>
     <string name="workout_stats_frequency_count">%1$d in the chosen period</string>
+    <string name="workout_stats_frequency_unit">workouts</string>
     <string name="workout_stats_volume_title">Volume per week</string>
     <string name="workout_stats_record_new">new</string>
     <string name="workout_stats_record_when">%1$s · %2$s</string>

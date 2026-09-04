@@ -20,6 +20,33 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **2.25.0 é a última fechada**, a 2026-09-04. Esquema **v39** e catálogo **v6**, inalterados, e
+  **nenhum dado é novo**. «As estatísticas do treino»: seletor de período com os quatro chips da
+  nutrição, séries por músculo por semana com a faixa de 10 a 20, treinos e volume por semana
+  desenhados com o `AntaresChart`, e os recordes com a data em que aconteceram. 1766 testes
+  Kotlin, 58 das ferramentas, 68 Deno, detekt e lint limpos.
+- **A versão abriu pelas correcções das anteriores**, por decisão do dono: o `%d min` do cartão
+  de destaque — que era o **quinto** sítio e não o quarto —, doze importações mortas no módulo
+  do treino, e os nomes das sete rotinas semeadas, que eram literais e em duas línguas.
+- **«Esta semana» passa a querer dizer o mesmo em toda a app.** Este ecrã contava sete dias para
+  trás a partir do relógio; o painel de treino, o treinador e a grelha do progresso contam a
+  semana ISO. E os chips contavam 24 h × N enquanto os da nutrição — os mesmos quatro rótulos —
+  contam dias inteiros.
+- **A faixa de 10 a 20 séries foi decisão delegada, e a razão está escrita para poder ser
+  desfeita:** não é o caso dos «65 % da flexão» que a 2.22.0 recusou — ali eram cento e onze
+  frações inventadas, aqui é um intervalo publicado que o esboço nomeia, mostrado a dizer que
+  não é um alvo calculado para esta pessoa.
+- **A D7 apanhou seis defeitos na primeira passagem e dois na segunda**, e três deles são a
+  mesma coisa: **duas janelas de tempo lidas juntas**. Os dois gráficos não cobriam a mesma
+  primeira semana; os chips não contavam dias inteiros; e a linha do músculo dizia «15 séries ·
+  39 000 kg» com a média da semana ao lado do total do mês.
+- **A varredura de código morto só via oito dos quarenta e um ficheiros do `composeApp/src/commonMain/kotlin/pt/antares/app/core/calc/`** — os
+  que acabam em `Calc.kt`, que é uma convenção de nomes que a pasta já tinha abandonado. Passa
+  a ver a pasta inteira, e a contar chamadas com lambda à direita: sem isso acusava de morta uma
+  função chamada três linhas abaixo.
+- **A próxima do plano é a 2.26.0**, «O resumo pós-treino», com o esboço `10-treino-estatisticas`
+  outra vez — é a secção 3 dele. As perguntas de abertura estão escritas no plano.
+- *O que se segue é o estado até à 2.24.0.*
 - **A 2.24.0 está publicada e verde**, conferido a 2026-09-04: `main` em `e6f03c6`, etiqueta
   `v2.24.0`, release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`, e **CI
   verde nesse commit**. O `latest` responde HTTP 200 aos dois ficheiros e o `sha256` bate.

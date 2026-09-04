@@ -32,8 +32,14 @@ data class ChartScale(
         /**
          * Escala a partir dos dados, nunca a partir do zero: numa série de pesos entre 80
          * e 82 kg, começar em zero espalmava a linha até ela deixar de dizer nada.
+         *
+         * [chao] é o valor abaixo do qual a grandeza não existe, e serve às séries que
+         * contam coisas. A folga de 12 % é calculada dos dados e não sabe nada do que eles
+         * são: numa série de treinos por semana entre 0 e 4, ela punha o eixo a começar em
+         * **−0,5 treinos** — visto no aparelho, escrito na etiqueta. Um peso nunca chega
+         * perto do zero e por isso o gráfico do peso não passa nada.
          */
-        fun of(values: List<Double>): ChartScale {
+        fun of(values: List<Double>, chao: Double? = null): ChartScale {
             // NaN e infinito vêm de divisões em séries vazias; um deles contamina o mínimo
             // e o máximo e a escala inteira deixa de existir.
             val vivos = values.filter { it.isFinite() }
@@ -49,13 +55,13 @@ data class ChartScale(
                 // A janela abre 2% do valor, com um mínimo em unidades absolutas para que
                 // séries perto de zero também tenham escala.
                 val meia = maxOf(abs(dataMin) * FLAT_WINDOW_FRACTION, FLAT_WINDOW_MIN)
-                val lo = dataMin - meia
+                val lo = comChao(dataMin - meia, dataMin, chao)
                 val hi = dataMax + meia
                 return ChartScale(lo, hi, niceTicks(lo, hi))
             }
 
             val folga = (dataMax - dataMin) * PADDING_FRACTION
-            val lo = dataMin - folga
+            val lo = comChao(dataMin - folga, dataMin, chao)
             val hi = dataMax + folga
             return ChartScale(lo, hi, niceTicks(lo, hi))
         }
@@ -89,6 +95,18 @@ data class ChartScale(
             }
             return out
         }
+
+        /**
+         * O chão trava a **folga**, e não os dados.
+         *
+         * Um valor abaixo do chão continua a caber na escala: se ele existe, o gráfico tem de
+         * o desenhar, e um chão que o cortasse escondia exactamente o ponto que interessava.
+         * Escrevi isto primeiro como um `maxOf(lo, chao)` e foi o teste que o apanhou — o
+         * comentário já dizia «nunca empurra a escala para cima de onde os dados estão», e o
+         * código empurrava.
+         */
+        private fun comChao(lo: Double, dataMin: Double, chao: Double?): Double =
+            if (chao == null) lo else maxOf(lo, minOf(chao, dataMin))
 
         private const val FLAT_EPSILON = 1e-9
         private const val FLAT_WINDOW_FRACTION = 0.02

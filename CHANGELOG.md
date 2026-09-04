@@ -28,14 +28,14 @@ cada série, e o que faltava era contá-las em vez de só as multiplicar.
 - **Seletor de período** — dia · semana · mês · ano —, o mesmo do ecrã de nutrição, e
   governa o ecrã inteiro e não um cartão só.
 - **Séries por músculo por semana, com faixa de referência de 10 a 20.** É a métrica que
-  responde a «estou a treinar o suficiente para crescer?», e nenhuma das outras respondia. A
-  faixa é a forma e não a cor: quem está abaixo dela não é pintado de vermelho, porque uma
-  orientação da literatura não é um juízo sobre o treino de ninguém. E a app di-lo — não é um
-  alvo calculado a partir de nada desta pessoa.
-- **Treinos por semana e volume por semana, desenhados.** Com as semanas vazias a zero: um
-  gráfico que só desenha as semanas com treino transforma uma paragem de um mês num traço
-  contínuo. As duas linhas só aparecem com quatro semanas ou mais — dois pontos não são uma
-  tendência.
+  responde a «estou a treinar o suficiente para crescer?», e nenhuma das outras respondia. Um
+  músculo abaixo da faixa fica assinalado a âmbar — a única forma de descobrir um
+  desequilíbrio é alguém o apontar. E a frase por baixo diz o que a faixa é: uma orientação da
+  literatura, não um alvo calculado a partir de nada desta pessoa.
+- **Treinos por semana e volume por semana, desenhados** com o mesmo gráfico do peso e das
+  medidas — com eixo e datas, para uma paragem de um mês ocupar no traço o espaço que ocupou
+  na vida. As semanas sem treino entram a zero, e as duas linhas só aparecem com quatro
+  semanas ou mais: dois pontos não são uma tendência.
 - **Os recordes dizem quando aconteceram**, e o mais recente vem assinalado. Um de 2024
   aparecia igual a um de ontem.
 
@@ -56,6 +56,9 @@ cada série, e o que faltava era contá-las em vez de só as multiplicar.
 - **«~4236 min da última vez», no cartão de destaque do treino.** A 2.24.0 diz ter corrigido
   este defeito em quatro sítios e eram cinco: este ficou, e lia-se duas linhas acima de
   «70h 36m» no histórico do mesmo treino. Passa pelo mesmo formatador que os outros quatro.
+- **Um eixo de gráfico que dizia «−0,5 treinos».** A folga da escala é calculada dos dados e
+  não sabe o que eles são; numa contagem, que começa em zero, punha o eixo abaixo dele. O
+  gráfico do peso não muda — um peso nunca chega perto do zero.
 - **Doze importações sem uso** no módulo do treino, que nem o detekt nem o lint apanham.
 
 ## [2.24.0] — 2026-09-03

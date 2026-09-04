@@ -128,4 +128,34 @@ class ChartScaleTest {
         }
         assertTrue(vistos > 500, "o varrimento encolheu: $vistos")
     }
+
+    /**
+     * **Uma contagem não desce abaixo de zero, e o eixo não pode dizer que desce.**
+     *
+     * A folga de 12 % é calculada dos dados e não sabe o que eles são. Numa série de treinos
+     * por semana entre 0 e 4 punha o eixo a começar em −0,5, e a etiqueta escrevia-o: «Eixo
+     * vertical: −0,5 a 4,5 treinos». Visto no aparelho, a 2026-09-04.
+     */
+    @Test
+    fun `o chao trava a folga por baixo`() {
+        val comChao = ChartScale.of(listOf(0.0, 1.0, 4.0), chao = 0.0)
+        assertEquals(0.0, comChao.min)
+        assertTrue(comChao.max >= 4.0, "o chão não pode cortar o topo")
+
+        // Sem chão continua a folgar por baixo: é o que o gráfico do peso quer.
+        assertTrue(ChartScale.of(listOf(0.0, 1.0, 4.0)).min < 0.0)
+    }
+
+    /** Uma série constante também não passa do chão. */
+    @Test
+    fun `o chao trava tambem numa serie constante`() {
+        assertEquals(0.0, ChartScale.of(listOf(0.0, 0.0, 0.0), chao = 0.0).min)
+    }
+
+    /** O chão nunca empurra a escala para dentro dos dados. */
+    @Test
+    fun `o chao nunca corta um valor que existe`() {
+        val s = ChartScale.of(listOf(-5.0, 10.0), chao = 0.0)
+        assertTrue(s.min <= -5.0, "o chão cortou um valor que os dados têm")
+    }
 }

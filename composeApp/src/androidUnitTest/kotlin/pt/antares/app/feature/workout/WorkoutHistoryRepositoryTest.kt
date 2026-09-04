@@ -129,6 +129,26 @@ class WorkoutHistoryRepositoryTest {
     }
 
     /**
+     * O volume da linha usa a **mesma janela** das séries ao lado dele. Visto no aparelho:
+     * «15 séries · 39 000 kg» eram a média da semana e o total do mês na mesma linha.
+     */
+    @Test
+    fun `o volume da linha esta na mesma janela das series`() = runTest {
+        seed()
+        val mes = estatisticas(dias = 30).musculos.first()
+        assertEquals(500.0, mes.volume, "o total do período mudou")
+        // 30 dias são 4,28 semanas: 500 kg dão 116,6 por semana.
+        assertTrue(
+            mes.volumeDaJanela!! in 116.0..117.0,
+            "o volume da janela é ${mes.volumeDaJanela} e devia ser o do período a dividir " +
+                "pelas semanas que ele tem",
+        )
+
+        // Com um dia não há janela semanal, e o volume da linha volta a ser o do período.
+        assertEquals(null, estatisticas(dias = 1).musculos.first().volumeDaJanela)
+    }
+
+    /**
      * A contagem de treinos é a do **período** e não a das semanas ISO que o cobrem.
      *
      * Vistas no aparelho, as duas discordavam: com «Dia» escolhido, o cartão dizia «1 no

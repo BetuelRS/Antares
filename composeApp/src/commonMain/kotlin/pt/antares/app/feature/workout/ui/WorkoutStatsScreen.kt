@@ -31,19 +31,23 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.calc.ChartScale
 import pt.antares.app.core.calc.SeriesPorMusculo
+import pt.antares.app.core.calc.TimeAxis
 import pt.antares.app.core.calc.StatsPeriod
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
-import pt.antares.app.core.designsystem.components.Sparkline
+import pt.antares.app.core.designsystem.components.AntaresChart
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.loadWithUnit
 import pt.antares.app.core.designsystem.rememberUnitSystem
+import pt.antares.app.core.designsystem.weightUnitLabel
 import pt.antares.app.core.designsystem.weightWithUnit
 import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.util.axisDate
 import pt.antares.app.core.util.dayShortDated
 import pt.antares.app.feature.workout.data.MusculoNaSemana
 import pt.antares.app.generated.resources.Res
@@ -139,11 +143,53 @@ private fun Frequencia(state: WorkoutStatsState) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Sparkline(
-                values = semanas.map { it.toFloat() },
-                modifier = Modifier.fillMaxWidth()
-                    .height(ALTURA_DO_GRAFICO_DP.dp)
-                    .padding(top = Spacing.sm),
+            GraficoSemanal(
+                dias = state.estatisticas.semanasEpochDay,
+                valores = semanas.map { it.toDouble() },
+                unidade = stringResource(Res.string.workout_stats_frequency_unit),
+            )
+        }
+    }
+}
+
+/**
+ * Uma série por semana ISO, com o gráfico da app — o mesmo do peso e das medidas.
+ *
+ * O esboço 10 pede-o pelo nome: um `Sparkline` desenha a forma e não diz onde ela começa nem
+ * acaba, e uma paragem de um mês fica indistinguível de uma semana fraca. Com eixo temporal,
+ * cada semana ocupa no traço o espaço que ocupou na vida.
+ */
+@Composable
+private fun GraficoSemanal(dias: List<Long>, valores: List<Double>, unidade: String) {
+    if (dias.size != valores.size || dias.isEmpty()) return
+    AntaresChart(
+        points = dias.zip(valores),
+        height = ALTURA_DO_GRAFICO_DP,
+        modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
+        // As duas séries contam coisas, e nenhuma delas existe abaixo de zero: sem o chão, a
+        // folga da escala punha o eixo a começar em «−0,5 treinos» numa semana sem treino
+        // nenhum. Visto no aparelho, escrito na etiqueta.
+        chaoDaEscala = 0.0,
+        labels = { escala, eixo -> EixoDoGrafico(escala, eixo, unidade) },
+    )
+}
+
+@Composable
+private fun EixoDoGrafico(escala: ChartScale, eixo: TimeAxis, unidade: String) {
+    // Os extremos numa linha só e longe das datas, como no Progresso: postos um em cada
+    // ponta por cima delas, lê-se o valor de um lado com a data do outro.
+    Text(
+        stringResource(Res.string.chart_vertical_range, fmtG(escala.min), fmtG(escala.max), unidade),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.fillMaxWidth().padding(top = Spacing.xs),
+    )
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        eixo.tickDays().forEach { dia ->
+            Text(
+                axisDate(dia, eixo.spanDays),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -162,11 +208,10 @@ private fun VolumePorSemana(state: WorkoutStatsState, unidades: UnitSystem) {
         // O número é o da semana corrente, que é a última da série: é ao lado dela que se lê
         // a linha, e escrever o total do período misturava duas leituras no mesmo cartão.
         Text(weightWithUnit(volumes.last(), unidades), style = MaterialTheme.typography.bodyMedium)
-        Sparkline(
-            values = volumes.map { it.toFloat() },
-            modifier = Modifier.fillMaxWidth()
-                .height(ALTURA_DO_GRAFICO_DP.dp)
-                .padding(top = Spacing.sm),
+        GraficoSemanal(
+            dias = state.estatisticas.semanasEpochDay,
+            valores = volumes,
+            unidade = stringResource(weightUnitLabel(unidades)),
         )
     }
 }
@@ -271,7 +316,8 @@ private fun BarraDoMusculo(
                     stringResource(Res.string.workout_stats_series_under_one)
                 } else {
                     pluralStringResource(Res.plurals.workout_hub_series, valor, valor)
-                } + SEPARADOR + weightWithUnit(musculo.volume, unidades),
+                } + SEPARADOR +
+                    weightWithUnit(musculo.volumeDaJanela ?: musculo.volume, unidades),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -281,12 +327,20 @@ private fun BarraDoMusculo(
 }
 
 /**
- * Uma barra de séries com a faixa de referência desenhada por trás.
+ * Uma barra de séries com a faixa de referência desenhada por trás, e a barra em cor de
+ * atenção quando fica abaixo dela.
  *
- * **A faixa é forma e não cor.** Pintar de vermelho quem está abaixo dela transformava uma
- * orientação da literatura num juízo sobre o treino de alguém — e a app tem a regra escrita
- * em três sítios: a cor diz categoria, a forma diz estado. É a mesma decisão que põe a
- * `estudo/areas/15` à frente da Cronometer nos micronutrientes.
+ * **A cor é o que o esboço 10 pede**, com a razão dele: *«a única forma de descobrir um
+ * desequilíbrio é alguém o apontar»*. Cheguei a decidir o contrário — que a faixa fosse só
+ * forma —, e a razão que dei era a regra dos micronutrientes: lá, uma barra curta pode ser
+ * carência **ou** falta de análise, e a cor não distingue as duas. Aqui não há a segunda
+ * leitura: a contagem é medida, e abaixo da faixa quer dizer uma coisa só.
+ *
+ * O `UmaConvencaoDeCorTest` guarda que a cor não diga **duas** coisas ao mesmo tempo. Nestas
+ * barras não dizia nenhuma; passa a dizer uma.
+ *
+ * E o que impede isto de virar juízo é a frase por baixo do cartão, que diz que a faixa vem
+ * da literatura e não é um alvo calculado para esta pessoa.
  */
 @Composable
 private fun BarraComFaixa(valor: Int, maximo: Int, comFaixa: Boolean) {
@@ -314,15 +368,30 @@ private fun BarraComFaixa(valor: Int, maximo: Int, comFaixa: Boolean) {
                             SeriesPorMusculo.FAIXA_MIN) / maximo,
                     )
                     .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                    // Neutra, e não da família do âmbar: a barra abaixo da faixa é âmbar, e
+                    // as duas ficam encostadas uma à outra — âmbar vivo ao lado de âmbar
+                    // apagado lê-se como uma só mancha.
+                    .background(MaterialTheme.colorScheme.outline),
             )
         }
+        // **Âmbar e não vermelho.** O `error` do tema é `#FF6B6B` e a primária é `#FF5A4A`:
+        // lado a lado não se distinguem, e a barra abaixo da faixa ficava igual às outras.
+        // Além disso, «nesta app o vermelho quer dizer isto faz alguma coisa» — foi a razão
+        // escrita na 2.18.2 para o selo da origem deixar de o ser. O âmbar já é a cor de
+        // atenção sem acção: é a da suposição da AI e a do aviso da cópia em atraso.
+        val abaixo = comFaixa && valor < SeriesPorMusculo.FAIXA_MIN
         Box(
             Modifier
                 .fillMaxWidth(valor.coerceAtMost(maximo).toFloat() / maximo)
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(RAIO_DA_BARRA_DP.dp))
-                .background(MaterialTheme.colorScheme.primary),
+                .background(
+                    if (abaixo) {
+                        MaterialTheme.colorScheme.secondary
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+                ),
         )
     }
 }

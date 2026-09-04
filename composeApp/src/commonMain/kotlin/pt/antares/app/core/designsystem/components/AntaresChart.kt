@@ -47,6 +47,15 @@ fun AntaresChart(
     targetColor: Color = MaterialTheme.colorScheme.tertiary,
     gridColor: Color = MaterialTheme.colorScheme.outline,
 
+    /**
+     * O valor abaixo do qual a grandeza não existe, quando existe um.
+     *
+     * O gráfico do peso não passa nada: um peso nunca chega perto do zero, e a folga da
+     * escala nunca o atravessa. Uma contagem chega — os treinos por semana começam em zero, e
+     * o eixo escrevia «−0,5 treinos».
+     */
+    chaoDaEscala: Double? = null,
+
     labels: @Composable (ChartScale, TimeAxis) -> Unit = { _, _ -> },
 ) {
     if (points.isEmpty()) return
@@ -54,7 +63,10 @@ fun AntaresChart(
     val linha = trend.sortedBy { it.first }
     // A escala considera as duas séries e o objetivo ao mesmo tempo: calculada só sobre os
     // pontos, a linha do objetivo podia cair fora do gráfico.
-    val scale = ChartScale.of(crus.map { it.second } + linha.map { it.second } + listOfNotNull(targetValue))
+    val scale = ChartScale.of(
+        crus.map { it.second } + linha.map { it.second } + listOfNotNull(targetValue),
+        chao = chaoDaEscala,
+    )
     val eixo = TimeAxis.of(crus.map { it.first } + linha.map { it.first }) ?: return
 
     // O gráfico do peso é o ecrã inteiro para quem o abre, e não tinha nada que o

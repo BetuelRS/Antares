@@ -90,6 +90,15 @@ data class MusculoNaSemana(
     val series: Int,
     val porSemana: Int?,
     val volume: Double,
+
+    /**
+     * O volume na mesma janela em que as [porSemana] estão contadas.
+     *
+     * Nulo pela mesma razão que elas: sem uma semana inteira não há média semanal. **Existe
+     * porque a linha mostra os dois lado a lado** — «15 séries · 39 000 kg» lia-se como um só
+     * período quando as séries eram a média da semana e o volume o total do mês.
+     */
+    val volumeDaJanela: Double?,
 )
 
 /**
@@ -105,6 +114,14 @@ data class EstatisticasDoTreino(
     val treinosPorSemana: List<Int> = emptyList(),
     val mediaDeTreinos: Double = 0.0,
     val treinosNoPeriodo: Int = 0,
+
+    /**
+     * A segunda-feira de cada semana das duas séries acima, pela mesma ordem.
+     *
+     * Viaja com elas porque o gráfico da app desenha pontos com data — e é o eixo temporal
+     * que faz uma paragem de um mês ocupar no traço o espaço que ocupou na vida.
+     */
+    val semanasEpochDay: List<Long> = emptyList(),
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -238,13 +255,19 @@ class WorkoutHistoryRepository(
                     MuscleVolumeInput(s.weightKg, s.reps, musculosPorSerie[i])
                 },
             )
+            val semanasDoPeriodo = diasDoPeriodo / DIAS_POR_SEMANA.toDouble()
             val musculos = SeriesPorMusculo.contar(musculosPorSerie)
                 .map { (m, n) ->
+                    val porSemana = SeriesPorMusculo.porSemana(n, diasDoPeriodo)
+                    val volume = volumes[m] ?: 0.0
                     MusculoNaSemana(
                         musculo = m,
                         series = n,
-                        porSemana = SeriesPorMusculo.porSemana(n, diasDoPeriodo),
-                        volume = volumes[m] ?: 0.0,
+                        porSemana = porSemana,
+                        volume = volume,
+                        // A mesma janela das séries, e não o total: os dois aparecem na mesma
+                        // linha, e um por semana ao lado de um por mês lê-se como um só.
+                        volumeDaJanela = if (porSemana == null) null else volume / semanasDoPeriodo,
                     )
                 }
                 .sortedByDescending { it.series }
@@ -270,6 +293,7 @@ class WorkoutHistoryRepository(
                 // de «Sem séries no período escolhido». A semana ISO é a unidade do gráfico, e
                 // arredondar um dia para a semana inteira dava-lhe treinos que não são dele.
                 treinosNoPeriodo = iniciosMs.count { it >= desdeMs },
+                semanasEpochDay = (0 until semanas).map { primeiraSemana + it * DIAS_POR_SEMANA },
             )
         }
     }
