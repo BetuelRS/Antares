@@ -15,6 +15,7 @@ import pt.antares.app.core.database.entities.ExerciseEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.SessionStatus
+import pt.antares.app.core.util.epochMillisToLocalDate
 import pt.antares.app.feature.workout.data.WorkoutHistoryRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -83,12 +84,74 @@ class WorkoutHistoryRepositoryTest {
         assertTrue(records.first().oneRm in 116.0..117.0)
     }
 
+    /**
+     * O recorde traz o dia em que aconteceu, e não o de hoje: sem ele, um recorde de 2024
+     * aparecia igual a um de ontem — é o defeito concreto 4 da `estudo/areas/10`.
+     */
     @Test
-    fun `volume por musculo agrega na janela`() = runTest {
+    fun `o recorde diz o dia em que aconteceu`() = runTest {
         seed()
-        val stats = repo.observeMuscleVolume(since = 0).first()
-        assertEquals(1, stats.size)
-        assertEquals("chest", stats.first().muscle)
-        assertEquals(500.0, stats.first().volume)
+        val records = repo.records()
+        assertEquals(
+            epochMillisToLocalDate(1_000).toEpochDays().toLong(),
+            records.first().epochDay,
+        )
     }
+
+    @Test
+    fun `as series por musculo contam so as de trabalho`() = runTest {
+        seed()
+        val stats = estatisticas()
+        assertEquals(1, stats.musculos.size)
+        assertEquals("chest", stats.musculos.first().musculo)
+        // Duas séries gravadas, uma delas aquecimento: conta uma.
+        assertEquals(1, stats.musculos.first().series)
+        assertEquals(500.0, stats.musculos.first().volume)
+    }
+
+    /**
+     * A faixa é semanal, e um período mais curto do que uma semana não lhe chega. Multiplicar
+     * um dia por sete inventava seis dias que não aconteceram.
+     */
+    @Test
+    fun `um periodo de um dia nao da media semanal`() = runTest {
+        seed()
+        assertEquals(null, estatisticas(dias = 1).musculos.first().porSemana)
+    }
+
+    @Test
+    fun `um mes divide as series pelas semanas que ele tem`() = runTest {
+        seed()
+        // Uma série de trabalho em 30 dias arredonda a zero por semana, e é o que ela é.
+        assertEquals(0, estatisticas(dias = 30).musculos.first().porSemana)
+    }
+
+    /**
+     * A contagem de treinos é a do **período** e não a das semanas ISO que o cobrem.
+     *
+     * Vistas no aparelho, as duas discordavam: com «Dia» escolhido, o cartão dizia «1 no
+     * período escolhido» por cima de «Sem séries no período escolhido» — o treino era de há
+     * três dias e a semana ISO apanhava-o.
+     */
+    @Test
+    fun `a contagem de treinos respeita o periodo e nao a semana ISO`() = runTest {
+        seed()
+        val depoisDoTreino = 1_000L + 3 * 24 * 60 * 60 * 1000
+        val stats = repo.observeEstatisticas(
+            desdeMs = depoisDoTreino,
+            diasDoPeriodo = 1,
+            hojeEpochDay = epochMillisToLocalDate(depoisDoTreino).toEpochDays().toLong(),
+            semanas = 1,
+        ).first()
+
+        assertEquals(0, stats.treinosNoPeriodo, "contou um treino que está fora do período")
+        assertTrue(stats.musculos.isEmpty(), "contou séries que estão fora do período")
+    }
+
+    private suspend fun estatisticas(dias: Int = 7) = repo.observeEstatisticas(
+        desdeMs = 0,
+        diasDoPeriodo = dias,
+        hojeEpochDay = epochMillisToLocalDate(1_000).toEpochDays().toLong(),
+        semanas = 1,
+    ).first()
 }

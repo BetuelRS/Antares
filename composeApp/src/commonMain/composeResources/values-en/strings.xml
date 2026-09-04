@@ -802,8 +802,18 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="schedule_day_5">Friday</string>
     <string name="schedule_day_6">Saturday</string>
     <string name="schedule_day_7">Sunday</string>
-    <string name="workout_stats_volume_week">Volume by muscle (7 days)</string>
-    <string name="workout_stats_no_volume">No volume in the last 7 days.</string>
+    <string name="workout_stats_series_title">Sets per muscle</string>
+    <string name="workout_stats_series_week_sub">weekly average</string>
+    <string name="workout_stats_series_period_sub">in the chosen period</string>
+    <string name="workout_stats_series_band">The band is the common range for growth: %1$d to %2$d sets per week. It comes from the literature — it is not a target worked out for you.</string>
+    <string name="workout_stats_series_under_one">under 1 set per week</string>
+    <string name="workout_stats_no_series">No sets in the chosen period.</string>
+    <string name="workout_stats_frequency_title">Workouts per week</string>
+    <string name="workout_stats_frequency_avg">%1$s on average over %2$d weeks</string>
+    <string name="workout_stats_frequency_count">%1$d in the chosen period</string>
+    <string name="workout_stats_volume_title">Volume per week</string>
+    <string name="workout_stats_record_new">new</string>
+    <string name="workout_stats_record_when">%1$s · %2$s</string>
     <string name="workout_stats_records">Records (estimated 1RM)</string>
     <string name="workout_stats_no_records">No records yet.</string>
 

@@ -36,12 +36,19 @@ data class SessionSetCountRow(val sessionId: String, val total: Int)
 
 data class ExerciseSetRow(val exerciseId: String, val weightKg: Double, val reps: Int)
 
-/** Como o [ExerciseSetRow], mais o treino a que a série pertence. */
+/**
+ * Como o [ExerciseSetRow], mais o treino a que a série pertence e quando ele começou.
+ *
+ * O instante viaja aqui para o quadro de recordes poder dizer **quando** cada um aconteceu
+ * sem uma segunda varredura sobre as mesmas séries: um recorde de 2024 aparecia igual a um
+ * de ontem, que é o defeito concreto 4 da `estudo/areas/10`.
+ */
 data class SessionSetRow(
     val sessionId: String,
     val exerciseId: String,
     val weightKg: Double,
     val reps: Int,
+    val startedAt: Long,
 )
 
 data class RoutineNameRow(val id: String, val name: String)
@@ -149,6 +156,22 @@ interface WorkoutSessionDao {
         "SELECT * FROM workout_session WHERE status = :status AND deleted = 0 ORDER BY startedAt DESC",
     )
     fun observeByStatus(status: SessionStatus): Flow<List<WorkoutSessionEntity>>
+
+    /**
+     * Quando começou cada treino terminado, do mais antigo para o mais recente.
+     *
+     * É a consulta mais estreita que responde à frequência: uma linha por treino, com um
+     * número. O [observeByStatus] traz a sessão inteira, e para contar treinos por semana isso
+     * é trazer a rotina, a nota e o estado de cada um para os deitar fora a seguir.
+     */
+    @Query(
+        """
+        SELECT startedAt FROM workout_session
+        WHERE status = 'DONE' AND deleted = 0
+        ORDER BY startedAt
+        """,
+    )
+    fun observeDoneStarts(): Flow<List<Long>>
 
     @Query("SELECT * FROM workout_session WHERE deleted = 0 AND endedAt IS NOT NULL AND endedAt >= :fromMs")
     suspend fun endedSince(fromMs: Long): List<WorkoutSessionEntity>
@@ -342,29 +365,20 @@ interface WorkoutSetDao {
     )
     fun observeSetCounts(): Flow<List<SessionSetCountRow>>
 
-    @Query(
-        """
-        SELECT s.exerciseId AS exerciseId, s.weightKg AS weightKg, s.reps AS reps
-        FROM workout_set s
-        JOIN workout_session ws ON s.sessionId = ws.id
-        WHERE ws.status = 'DONE' AND ws.deleted = 0 AND s.deleted = 0 AND s.isWarmup = 0
-        """,
-    )
-    suspend fun allDoneWorkingSets(): List<ExerciseSetRow>
-
     /**
-     * As mesmas séries do [allDoneWorkingSets], mais o treino a que pertencem e **por ordem
-     * de início do treino**.
+     * As séries de trabalho de todos os treinos terminados, com o treino a que pertencem, o
+     * instante em que ele começou, e **por ordem de início do treino**.
      *
-     * O outro responde ao melhor de sempre, que é a pergunta do quadro de recordes. Esta
-     * responde ao que era o melhor **naquele dia**, que é a pergunta da estrela do histórico,
-     * e para isso a ordem faz parte do resultado: sem ela não há como saber o que já tinha
-     * acontecido antes de cada treino.
+     * Responde a duas perguntas com uma leitura. O que era o melhor **naquele dia**, que é a
+     * estrela do histórico e precisa da ordem — sem ela não há como saber o que já tinha
+     * acontecido antes de cada treino. E **quando** cada recorde de sempre foi feito, que é a
+     * data do quadro de recordes: havia uma segunda consulta só para isso, e ela varria
+     * exactamente as mesmas séries para as devolver sem o instante.
      */
     @Query(
         """
         SELECT s.sessionId AS sessionId, s.exerciseId AS exerciseId,
-               s.weightKg AS weightKg, s.reps AS reps
+               s.weightKg AS weightKg, s.reps AS reps, ws.startedAt AS startedAt
         FROM workout_set s
         JOIN workout_session ws ON s.sessionId = ws.id
         WHERE ws.status = 'DONE' AND ws.deleted = 0 AND s.deleted = 0 AND s.isWarmup = 0

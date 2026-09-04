@@ -2,17 +2,24 @@ package pt.antares.app.feature.workout.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import pt.antares.app.core.calc.HistoryFilter
 import pt.antares.app.core.calc.Mes
+import pt.antares.app.core.calc.StatsPeriod
+import pt.antares.app.core.util.todayEpochDay
+import pt.antares.app.feature.workout.data.EstatisticasDoTreino
 import pt.antares.app.feature.workout.data.ExerciseRecord
-import pt.antares.app.feature.workout.data.MuscleVolumeStat
 import pt.antares.app.feature.workout.data.RoutineOption
 import pt.antares.app.feature.workout.data.SessionBreakdown
 import pt.antares.app.feature.workout.data.SessionSummary
@@ -77,27 +84,61 @@ class WorkoutDetailViewModel(
 
 data class WorkoutStatsState(
     val loading: Boolean = true,
-    val muscleVolume: List<MuscleVolumeStat> = emptyList(),
+    val period: StatsPeriod = StatsPeriod.WEEK,
+    val estatisticas: EstatisticasDoTreino = EstatisticasDoTreino(),
     val records: List<ExerciseRecord> = emptyList(),
-)
+) {
+    /** O recorde mais recente, para o ecrã o poder assinalar. Nulo sem recordes nenhuns. */
+    val recordeMaisRecente: Long? get() = records.maxOfOrNull { it.epochDay }
+}
 
+/**
+ * As estatísticas do treino.
+ *
+ * **Abre na semana e não no dia**, ao contrário do ecrã da nutrição: um dia de nutrição é uma
+ * pergunta que se faz — «o que é que comi hoje?» —, e um dia de treino é um treino ou nenhum.
+ * A pergunta deste ecrã é sobre o que se repete.
+ */
 class WorkoutStatsViewModel(
     private val repository: WorkoutHistoryRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(WorkoutStatsState())
-    val state: StateFlow<WorkoutStatsState> = _state
 
-    private val weekAgo = Clock.System.now().toEpochMilliseconds() - 7L * 24 * 60 * 60 * 1000
+    private val period = MutableStateFlow(StatsPeriod.WEEK)
+    private val records = MutableStateFlow<List<ExerciseRecord>>(emptyList())
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: StateFlow<WorkoutStatsState> = combine(
+        period,
+        period.flatMapLatest { p ->
+            val hoje = todayEpochDay()
+            repository.observeEstatisticas(
+                desdeMs = Clock.System.now().toEpochMilliseconds() - p.dias * MS_POR_DIA,
+                diasDoPeriodo = p.dias,
+                hojeEpochDay = hoje,
+                semanas = p.semanas,
+            )
+        },
+        records,
+    ) { p, estatisticas, recs ->
+        WorkoutStatsState(
+            loading = estatisticas.loading,
+            period = p,
+            estatisticas = estatisticas,
+            records = recs,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(PARAGEM_MS), WorkoutStatsState())
 
     init {
-        viewModelScope.launch {
-            repository.observeMuscleVolume(weekAgo).collect { volumes ->
-                _state.update { it.copy(loading = false, muscleVolume = volumes) }
-            }
-        }
-        viewModelScope.launch {
-            val recs = repository.records()
-            _state.update { it.copy(records = recs) }
-        }
+        // Os recordes são o melhor de **sempre** e não mudam com o período escolhido — lê-los
+        // outra vez a cada toque num chip era percorrer todas as séries de todos os treinos
+        // para chegar exactamente ao mesmo resultado.
+        viewModelScope.launch { records.value = repository.records() }
+    }
+
+    fun setPeriod(p: StatsPeriod) { period.value = p }
+
+    private companion object {
+        const val MS_POR_DIA = 24L * 60 * 60 * 1000
+        const val PARAGEM_MS = 5_000L
     }
 }

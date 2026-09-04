@@ -13,6 +13,51 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.25.0] — 2026-09-04
+
+**As estatísticas do treino.** Duas listas sem tempo nenhum: o volume por músculo «desta
+semana», sem dizer o que isso era nem deixar mudar, e os recordes sem data. O ecrã de
+nutrição tem quatro períodos desde sempre; este não tinha nenhum.
+
+Esquema da base inalterado, **v39**; catálogo inalterado, **v6**. **Nenhum dado é novo** — a
+consulta que trazia o volume por músculo já trazia o peso, as repetições e os músculos de
+cada série, e o que faltava era contá-las em vez de só as multiplicar.
+
+### Adicionado
+
+- **Seletor de período** — dia · semana · mês · ano —, o mesmo do ecrã de nutrição, e
+  governa o ecrã inteiro e não um cartão só.
+- **Séries por músculo por semana, com faixa de referência de 10 a 20.** É a métrica que
+  responde a «estou a treinar o suficiente para crescer?», e nenhuma das outras respondia. A
+  faixa é a forma e não a cor: quem está abaixo dela não é pintado de vermelho, porque uma
+  orientação da literatura não é um juízo sobre o treino de ninguém. E a app di-lo — não é um
+  alvo calculado a partir de nada desta pessoa.
+- **Treinos por semana e volume por semana, desenhados.** Com as semanas vazias a zero: um
+  gráfico que só desenha as semanas com treino transforma uma paragem de um mês num traço
+  contínuo. As duas linhas só aparecem com quatro semanas ou mais — dois pontos não são uma
+  tendência.
+- **Os recordes dizem quando aconteceram**, e o mais recente vem assinalado. Um de 2024
+  aparecia igual a um de ontem.
+
+### Alterado
+
+- **A barra por músculo mede séries, e já não volume.** O volume não é comparável entre
+  grupos musculares — um dia de pernas tem sempre mais do que um de braços —, e como barra
+  fazia a alternância do plano parecer desequilíbrio. Continua na linha, ao lado da contagem:
+  é a estatística certa para o equilíbrio, e só deixou de ser ela a decidir o comprimento.
+- **«Esta semana» quer dizer a mesma coisa em toda a app.** Este ecrã contava sete dias para
+  trás a partir de agora; o painel de treino, o relatório do treinador e a grelha do
+  progresso contam de segunda a domingo. Passam a ser a mesma semana.
+- **Os nomes das sete rotinas de exemplo vêm dos recursos.** Eram literais no código e nem da
+  mesma língua — seis em inglês e «Pernas» em português, e via-se assim com a app em inglês.
+
+### Corrigido
+
+- **«~4236 min da última vez», no cartão de destaque do treino.** A 2.24.0 diz ter corrigido
+  este defeito em quatro sítios e eram cinco: este ficou, e lia-se duas linhas acima de
+  «70h 36m» no histórico do mesmo treino. Passa pelo mesmo formatador que os outros quatro.
+- **Doze importações sem uso** no módulo do treino, que nem o detekt nem o lint apanham.
+
 ## [2.24.0] — 2026-09-03
 
 **O histórico do treino.** A app grava séries, repetições, RPE, aquecimento, supersérie,

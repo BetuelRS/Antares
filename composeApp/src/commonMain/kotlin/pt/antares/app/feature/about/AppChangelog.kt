@@ -23,9 +23,43 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.24.0"
+    const val CURRENT = "2.25.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.25.0",
+            title = "As estatísticas do treino passam a ter tempo",
+            titleEn = "Your training stats get a sense of time",
+            highlights = listOf(
+                "**Escolhes o período** — dia, semana, mês ou ano —, e ele governa o ecrã " +
+                    "inteiro. Dizia «esta semana» e não deixava mudar",
+                "**Séries por músculo por semana, com a faixa de 10 a 20** que a literatura " +
+                    "usa para crescer. É a conta que responde a «estou a treinar o " +
+                    "suficiente?», e o volume, que não é comparável entre músculos, deixa de " +
+                    "ser ele a desenhar a barra",
+                "**Treinos por semana e volume por semana, em linha**, para se ver uma " +
+                    "paragem em vez de a adivinhar",
+                "**Os recordes dizem quando aconteceram**, e o mais recente vem assinalado. " +
+                    "Um de 2024 aparecia igual a um de ontem",
+                "**«Esta semana» quer dizer o mesmo em toda a app** — de segunda a domingo. " +
+                    "Aqui contava sete dias para trás e no painel de treino contava a semana",
+            ),
+            highlightsEn = listOf(
+                "**You pick the period** — day, week, month or year — and it governs the " +
+                    "whole screen. It used to say “this week” and let you change nothing",
+                "**Sets per muscle per week, with the 10-to-20 band** the literature uses " +
+                    "for growth. It is the count that answers “am I training enough?”, and " +
+                    "volume — which is not comparable between muscles — stops being the one " +
+                    "that draws the bar",
+                "**Workouts per week and volume per week, as a line**, so a break shows up " +
+                    "instead of having to be guessed",
+                "**Records say when they happened**, and the most recent one is marked. One " +
+                    "from 2024 looked just like one from yesterday",
+                "**“This week” means the same thing everywhere in the app** — Monday to " +
+                    "Sunday. Here it counted seven days back while the workout panel counted " +
+                    "the week",
+            ),
+        ),
         AppVersion(
             name = "2.24.0",
             title = "O histórico deixa de dizer duas coisas sobre cada treino",
@@ -361,28 +395,7 @@ object AppChangelog {
                 "**The photo of the plate stays in the diary** for two months, then clears itself",
             ),
         ),
-        AppVersion(
-            name = "2.16.0",
-            title = "A procura abre no que tu comes",
-            titleEn = "Search opens on what you eat",
-            highlights = listOf(
-                "**Seis separadores passam a três.** Nada desapareceu: os recentes e os " +
-                    "favoritos estão dentro do Procurar, por baixo do que registas mais",
-                "**A linha diz a porção** — «uma fatia 30 g» — nos alimentos que têm uma",
-                "**Criar um alimento leva o nome que escreveste**, em vez de o pedir outra vez",
-                "Os atalhos do que já comeste deixam de desaparecer quando a procura responde",
-                "Os produtos de embalagem mostram a fotografia na lista",
-            ),
-            highlightsEn = listOf(
-                "**Six tabs become three.** Nothing is gone: recents and favourites now sit " +
-                    "inside Search, below what you log most",
-                "**The row shows the serving** — «a slice 30 g» — for foods that have one",
-                "**Creating a food carries the name you typed**, instead of asking again",
-                "The shortcuts to what you have eaten no longer vanish when search answers",
-                "Packaged products show their photo in the list",
-            ),
-        ),
-        // Da 2.2.0 à 2.7.0 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.16.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

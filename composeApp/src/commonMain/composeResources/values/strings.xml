@@ -803,8 +803,18 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="schedule_day_5">Sexta-feira</string>
     <string name="schedule_day_6">Sábado</string>
     <string name="schedule_day_7">Domingo</string>
-    <string name="workout_stats_volume_week">Volume por músculo (7 dias)</string>
-    <string name="workout_stats_no_volume">Sem volume nos últimos 7 dias.</string>
+    <string name="workout_stats_series_title">Séries por músculo</string>
+    <string name="workout_stats_series_week_sub">média por semana</string>
+    <string name="workout_stats_series_period_sub">no período escolhido</string>
+    <string name="workout_stats_series_band">A faixa é o intervalo comum para crescer: %1$d a %2$d séries por semana. É uma orientação da literatura, não um alvo calculado para ti.</string>
+    <string name="workout_stats_series_under_one">menos de 1 série por semana</string>
+    <string name="workout_stats_no_series">Sem séries no período escolhido.</string>
+    <string name="workout_stats_frequency_title">Treinos por semana</string>
+    <string name="workout_stats_frequency_avg">%1$s de média em %2$d semanas</string>
+    <string name="workout_stats_frequency_count">%1$d no período escolhido</string>
+    <string name="workout_stats_volume_title">Volume por semana</string>
+    <string name="workout_stats_record_new">novo</string>
+    <string name="workout_stats_record_when">%1$s · %2$s</string>
     <string name="workout_stats_records">Recordes (1RM estimado)</string>
     <string name="workout_stats_no_records">Ainda sem recordes.</string>
 

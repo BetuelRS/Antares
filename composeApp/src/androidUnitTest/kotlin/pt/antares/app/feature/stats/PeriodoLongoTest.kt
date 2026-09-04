@@ -1,5 +1,6 @@
 package pt.antares.app.feature.stats
 
+import pt.antares.app.core.calc.StatsPeriod
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

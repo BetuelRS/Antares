@@ -6,10 +6,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+import pt.antares.app.core.calc.FrequenciaDeTreino
 import pt.antares.app.core.calc.MuscleVolumeInput
 import pt.antares.app.core.calc.OneRepMax
 import pt.antares.app.core.calc.RecordesPorTreino
 import pt.antares.app.core.calc.SerieDeTreino
+import pt.antares.app.core.calc.SeriesPorMusculo
+import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
@@ -55,9 +59,51 @@ data class BreakdownExercise(
     val sets: List<WorkoutSetEntity>,
 )
 
-data class ExerciseRecord(val name: String, val oneRm: Double)
+/**
+ * Um recorde, com o dia em que aconteceu.
+ *
+ * O dia é o defeito concreto 4 da `estudo/areas/10`: sem ele, um recorde de 2024 aparece
+ * igual a um de ontem, e a lista deixa de dizer onde houve progresso.
+ */
+data class ExerciseRecord(
+    val name: String,
+    val oneRm: Double,
+    val epochDay: Long,
+)
 
-data class MuscleVolumeStat(val muscle: String, val volume: Double)
+/**
+ * Quantas séries um músculo levou, quantas isso dá por semana, e o volume que elas somaram.
+ *
+ * **A barra mede séries e não volume**, que é o que o esboço 10 desenha: o volume não é
+ * comparável entre grupos musculares — um dia de pernas tem sempre mais do que um de braços —
+ * e como barra fazia a alternância do plano parecer desequilíbrio. O volume fica na mesma
+ * linha porque a `estudo/areas/10` lhe chama «a estatística certa» para saber se o treino
+ * está equilibrado; o que muda é qual dos dois números manda no comprimento.
+ *
+ * [porSemana] é nulo quando o período escolhido é mais curto do que uma semana: a faixa de
+ * referência é semanal, e esticar um dia até lá era inventar seis dias.
+ */
+data class MusculoNaSemana(
+    val musculo: String,
+    val series: Int,
+    val porSemana: Int?,
+    val volume: Double,
+)
+
+/**
+ * O que o ecrã de estatísticas mostra, para o período escolhido.
+ *
+ * As séries e o volume saem da **mesma leitura** — a consulta traz peso, repetições e os
+ * músculos de cada série —, e por isso contar as duas coisas não custa uma segunda ida à base.
+ */
+data class EstatisticasDoTreino(
+    val loading: Boolean = true,
+    val musculos: List<MusculoNaSemana> = emptyList(),
+    val volumePorSemana: List<Double> = emptyList(),
+    val treinosPorSemana: List<Int> = emptyList(),
+    val mediaDeTreinos: Double = 0.0,
+    val treinosNoPeriodo: Int = 0,
+)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WorkoutHistoryRepository(
@@ -147,41 +193,115 @@ class WorkoutHistoryRepository(
     private fun duracaoMin(startedAt: Long, endedAt: Long?): Int =
         (((endedAt ?: startedAt) - startedAt) / MS_POR_MINUTO).toInt().coerceAtLeast(0)
 
-    fun observeMuscleVolume(since: Long): Flow<List<MuscleVolumeStat>> =
-        setDao.observeMuscleVolumeSince(since).mapLatest { rows ->
-            val inputs = rows.map {
+    /**
+     * As estatísticas do período escolhido.
+     *
+     * **A semana é a ISO em toda a parte**, como no painel de treino, no relatório do
+     * treinador e na grelha do progresso. Este ecrã contava sete dias para trás a partir de
+     * agora, e por isso «esta semana» queria dizer duas coisas dentro do mesmo separador.
+     *
+     * As séries e o volume vêm da mesma leitura: a consulta já trazia o peso, as repetições e
+     * os músculos de cada série, e o que faltava era contá-las em vez de só as multiplicar.
+     */
+    fun observeEstatisticas(
+        desdeMs: Long,
+        diasDoPeriodo: Int,
+        hojeEpochDay: Long,
+        semanas: Int,
+    ): Flow<EstatisticasDoTreino> = combine(
+        setDao.observeMuscleVolumeSince(desdeMs),
+        sessionDao.observeDoneStarts(),
+    ) { series, iniciosMs ->
+
+        val musculosPorSerie = series.map { ExerciseSeeder.unwrap(it.primaryMuscles) }
+        val volumes = pt.antares.app.core.calc.MuscleVolume.aggregate(
+            series.map {
                 MuscleVolumeInput(it.weightKg, it.reps, ExerciseSeeder.unwrap(it.primaryMuscles))
+            },
+        )
+        val musculos = SeriesPorMusculo.contar(musculosPorSerie)
+            .map { (m, n) ->
+                MusculoNaSemana(
+                    musculo = m,
+                    series = n,
+                    porSemana = SeriesPorMusculo.porSemana(n, diasDoPeriodo),
+                    volume = volumes[m] ?: 0.0,
+                )
             }
-            pt.antares.app.core.calc.MuscleVolume.aggregate(inputs)
-                .map { (m, v) -> MuscleVolumeStat(m, v) }
-                .sortedByDescending { it.volume }
+            .sortedByDescending { it.series }
+
+        val iniciosDia = iniciosMs.map { epochMillisToLocalDate(it).toEpochDays().toLong() }
+        val treinosPorSemana = FrequenciaDeTreino.porSemana(iniciosDia, hojeEpochDay, semanas)
+
+        // O volume por semana usa as mesmas semanas ISO do gráfico da frequência, para os dois
+        // se lerem um por baixo do outro sem terem de coincidir por acaso.
+        val porSemana = DoubleArray(semanas)
+        val estaSemana = weekStartEpochDay(hojeEpochDay)
+        val primeira = estaSemana - (semanas - 1) * DIAS_POR_SEMANA
+        for (s in series) {
+            val dia = epochMillisToLocalDate(s.startedAt).toEpochDays().toLong()
+            val indice = ((weekStartEpochDay(dia) - primeira) / DIAS_POR_SEMANA).toInt()
+            if (indice in 0 until semanas) porSemana[indice] += s.weightKg * s.reps
         }
+
+        EstatisticasDoTreino(
+            loading = false,
+            musculos = musculos,
+            volumePorSemana = porSemana.toList(),
+            treinosPorSemana = treinosPorSemana,
+            mediaDeTreinos = FrequenciaDeTreino.media(treinosPorSemana),
+            // A contagem é a do **período**, e não a soma das semanas ISO que o cobrem: em
+            // «Dia» as duas discordavam, e o cartão dizia «1 no período escolhido» por cima
+            // de «Sem séries no período escolhido». A semana ISO é a unidade do gráfico, e
+            // arredondar um dia para a semana inteira dava-lhe treinos que não são dele.
+            treinosNoPeriodo = iniciosMs.count { it >= desdeMs },
+        )
+    }
 
     suspend fun exerciseVolumeSeries(exerciseId: String): List<Float> = withContext(io) {
         setDao.exerciseProgress(exerciseId).map { it.volume.toFloat() }
     }
 
     /**
-     * O melhor 1RM estimado de cada exercício, os mais pesados primeiro. Ordenar por carga
-     * absoluta faz o agachamento e o peso morto ficarem sempre no topo — é a ordem certa
-     * para um quadro de recordes, mas não diz nada sobre onde houve mais progresso.
+     * O melhor 1RM estimado de cada exercício, **com o dia em que foi feito**, os mais
+     * pesados primeiro. Ordenar por carga absoluta faz o agachamento e o peso morto ficarem
+     * sempre no topo — é a ordem certa para um quadro de recordes, mas não diz nada sobre
+     * onde houve mais progresso, e é por isso que a data passa a viajar ao lado.
+     *
+     * A data é a do treino em que a melhor série foi gravada. Quando o mesmo 1RM se repete,
+     * fica a **primeira** vez: um recorde é quando se chegou lá, e não a última vez que se
+     * empatou com ele.
      */
     suspend fun records(limit: Int = 12): List<ExerciseRecord> = withContext(io) {
-        val byExercise = setDao.allDoneWorkingSets().groupBy { it.exerciseId }
+        val byExercise = setDao.doneWorkingSetsByTime().groupBy { it.exerciseId }
         val bests = byExercise.mapNotNull { (exId, rows) ->
             // Exercícios cujas séries passam todas das doze repetições ficam de fora: a
             // Epley não os estima, e um 1RM inventado dali não valeria nada.
-            val best = rows.mapNotNull { OneRepMax.epley(it.weightKg, it.reps) }.maxOrNull()
-            best?.let { exId to it }
+            val melhor = rows
+                .mapNotNull { linha ->
+                    OneRepMax.epley(linha.weightKg, linha.reps)?.let { it to linha.startedAt }
+                }
+                // As linhas já vêm por ordem de treino, e o `maxByOrNull` fica com a primeira
+                // das iguais — que é o dia em que o recorde aconteceu.
+                .maxByOrNull { it.first }
+            melhor?.let { Triple(exId, it.first, it.second) }
         }
         val names = exerciseDao.namesByIds(bests.map { it.first })
             .associate { it.id to it.namePt.ifBlank { it.nameEn } }
         bests.sortedByDescending { it.second }
             .take(limit)
-            .map { ExerciseRecord(names[it.first] ?: it.first, it.second) }
+            .map {
+                ExerciseRecord(
+                    name = names[it.first] ?: it.first,
+                    oneRm = it.second,
+                    epochDay = epochMillisToLocalDate(it.third).toEpochDays().toLong(),
+                )
+            }
     }
 }
 
 // Os minutos são a unidade da duração em toda a app — a linha do histórico, o cabeçalho
 // do detalhe e os últimos treinos do painel dizem-na todos assim.
 private const val MS_POR_MINUTO = 60_000L
+
+private const val DIAS_POR_SEMANA = 7L
