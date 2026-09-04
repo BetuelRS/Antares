@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import pt.antares.app.core.calc.HistoryFilter
 import pt.antares.app.core.calc.Mes
 import pt.antares.app.core.calc.StatsPeriod
+import pt.antares.app.core.util.epochMillisAt
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.feature.workout.data.EstatisticasDoTreino
 import pt.antares.app.feature.workout.data.ExerciseRecord
@@ -112,7 +112,12 @@ class WorkoutStatsViewModel(
         period.flatMapLatest { p ->
             val hoje = todayEpochDay()
             repository.observeEstatisticas(
-                desdeMs = Clock.System.now().toEpochMilliseconds() - p.dias * MS_POR_DIA,
+                // **Dias inteiros, e não vinte e quatro horas para trás.** É a mesma conta do
+                // ecrã da nutrição, que usa estes mesmos quatro chips: `hoje − (dias − 1)`,
+                // com hoje incluído. Contar a partir do relógio fazia «Dia» querer dizer «as
+                // últimas 24 horas» aqui e «hoje» ali, com o mesmo rótulo nos dois — que é o
+                // defeito que esta versão veio corrigir na palavra «semana».
+                desdeMs = epochMillisAt(hoje - (p.dias - 1), minuteOfDay = 0),
                 diasDoPeriodo = p.dias,
                 hojeEpochDay = hoje,
                 semanas = p.semanas,
@@ -138,7 +143,6 @@ class WorkoutStatsViewModel(
     fun setPeriod(p: StatsPeriod) { period.value = p }
 
     private companion object {
-        const val MS_POR_DIA = 24L * 60 * 60 * 1000
         const val PARAGEM_MS = 5_000L
     }
 }

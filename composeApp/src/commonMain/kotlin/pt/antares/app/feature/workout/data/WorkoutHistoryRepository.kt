@@ -7,19 +7,21 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 import pt.antares.app.core.calc.FrequenciaDeTreino
+import pt.antares.app.core.calc.MuscleVolume
 import pt.antares.app.core.calc.MuscleVolumeInput
 import pt.antares.app.core.calc.OneRepMax
 import pt.antares.app.core.calc.RecordesPorTreino
 import pt.antares.app.core.calc.SerieDeTreino
 import pt.antares.app.core.calc.SeriesPorMusculo
-import pt.antares.app.core.util.epochMillisToLocalDate
-import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.SessionStatus
+import pt.antares.app.core.util.epochMillisAt
+import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.weekStartEpochDay
 
 data class SessionSummary(
     val id: String,
@@ -208,54 +210,68 @@ class WorkoutHistoryRepository(
         diasDoPeriodo: Int,
         hojeEpochDay: Long,
         semanas: Int,
-    ): Flow<EstatisticasDoTreino> = combine(
-        setDao.observeMuscleVolumeSince(desdeMs),
-        sessionDao.observeDoneStarts(),
-    ) { series, iniciosMs ->
+    ): Flow<EstatisticasDoTreino> {
 
-        val musculosPorSerie = series.map { ExerciseSeeder.unwrap(it.primaryMuscles) }
-        val volumes = pt.antares.app.core.calc.MuscleVolume.aggregate(
-            series.map {
-                MuscleVolumeInput(it.weightKg, it.reps, ExerciseSeeder.unwrap(it.primaryMuscles))
-            },
-        )
-        val musculos = SeriesPorMusculo.contar(musculosPorSerie)
-            .map { (m, n) ->
-                MusculoNaSemana(
-                    musculo = m,
-                    series = n,
-                    porSemana = SeriesPorMusculo.porSemana(n, diasDoPeriodo),
-                    volume = volumes[m] ?: 0.0,
-                )
+        // **Duas janelas, e uma leitura só.**
+        //
+        // As barras por músculo são do período escolhido; os dois gráficos são por semana
+        // ISO, e a primeira dessas semanas começa antes do período quando ele cai a meio de
+        // uma. Ler só o período dava uma primeira coluna de volume que cobria três dias
+        // desenhada ao lado de uma de frequência que cobria sete — os dois gráficos ficavam
+        // um por baixo do outro a contar coisas diferentes, que é exactamente o defeito que
+        // esta versão veio corrigir noutro sítio.
+        //
+        // Lê-se pela mais larga das duas e corta-se a do período em memória: a alternativa
+        // eram duas consultas sobre as mesmas séries.
+        val primeiraSemana = weekStartEpochDay(hojeEpochDay) - (semanas - 1) * DIAS_POR_SEMANA
+        val desdeAsSemanasMs = minOf(desdeMs, epochMillisAt(primeiraSemana, minuteOfDay = 0))
+
+        return combine(
+            setDao.observeMuscleVolumeSince(desdeAsSemanasMs),
+            sessionDao.observeDoneStarts(),
+        ) { series, iniciosMs ->
+
+            val doPeriodo = series.filter { it.startedAt >= desdeMs }
+            val musculosPorSerie = doPeriodo.map { ExerciseSeeder.unwrap(it.primaryMuscles) }
+            val volumes = MuscleVolume.aggregate(
+                doPeriodo.mapIndexed { i, s ->
+                    MuscleVolumeInput(s.weightKg, s.reps, musculosPorSerie[i])
+                },
+            )
+            val musculos = SeriesPorMusculo.contar(musculosPorSerie)
+                .map { (m, n) ->
+                    MusculoNaSemana(
+                        musculo = m,
+                        series = n,
+                        porSemana = SeriesPorMusculo.porSemana(n, diasDoPeriodo),
+                        volume = volumes[m] ?: 0.0,
+                    )
+                }
+                .sortedByDescending { it.series }
+
+            val iniciosDia = iniciosMs.map { epochMillisToLocalDate(it).toEpochDays().toLong() }
+            val treinosPorSemana = FrequenciaDeTreino.porSemana(iniciosDia, hojeEpochDay, semanas)
+
+            val volumePorSemana = DoubleArray(semanas)
+            for (s in series) {
+                val dia = epochMillisToLocalDate(s.startedAt).toEpochDays().toLong()
+                val indice = ((weekStartEpochDay(dia) - primeiraSemana) / DIAS_POR_SEMANA).toInt()
+                if (indice in 0 until semanas) volumePorSemana[indice] += s.weightKg * s.reps
             }
-            .sortedByDescending { it.series }
 
-        val iniciosDia = iniciosMs.map { epochMillisToLocalDate(it).toEpochDays().toLong() }
-        val treinosPorSemana = FrequenciaDeTreino.porSemana(iniciosDia, hojeEpochDay, semanas)
-
-        // O volume por semana usa as mesmas semanas ISO do gráfico da frequência, para os dois
-        // se lerem um por baixo do outro sem terem de coincidir por acaso.
-        val porSemana = DoubleArray(semanas)
-        val estaSemana = weekStartEpochDay(hojeEpochDay)
-        val primeira = estaSemana - (semanas - 1) * DIAS_POR_SEMANA
-        for (s in series) {
-            val dia = epochMillisToLocalDate(s.startedAt).toEpochDays().toLong()
-            val indice = ((weekStartEpochDay(dia) - primeira) / DIAS_POR_SEMANA).toInt()
-            if (indice in 0 until semanas) porSemana[indice] += s.weightKg * s.reps
+            EstatisticasDoTreino(
+                loading = false,
+                musculos = musculos,
+                volumePorSemana = volumePorSemana.toList(),
+                treinosPorSemana = treinosPorSemana,
+                mediaDeTreinos = FrequenciaDeTreino.media(treinosPorSemana),
+                // A contagem é a do **período**, e não a soma das semanas ISO que o cobrem: em
+                // «Dia» as duas discordavam, e o cartão dizia «1 no período escolhido» por cima
+                // de «Sem séries no período escolhido». A semana ISO é a unidade do gráfico, e
+                // arredondar um dia para a semana inteira dava-lhe treinos que não são dele.
+                treinosNoPeriodo = iniciosMs.count { it >= desdeMs },
+            )
         }
-
-        EstatisticasDoTreino(
-            loading = false,
-            musculos = musculos,
-            volumePorSemana = porSemana.toList(),
-            treinosPorSemana = treinosPorSemana,
-            mediaDeTreinos = FrequenciaDeTreino.media(treinosPorSemana),
-            // A contagem é a do **período**, e não a soma das semanas ISO que o cobrem: em
-            // «Dia» as duas discordavam, e o cartão dizia «1 no período escolhido» por cima
-            // de «Sem séries no período escolhido». A semana ISO é a unidade do gráfico, e
-            // arredondar um dia para a semana inteira dava-lhe treinos que não são dele.
-            treinosNoPeriodo = iniciosMs.count { it >= desdeMs },
-        )
     }
 
     suspend fun exerciseVolumeSeries(exerciseId: String): List<Float> = withContext(io) {

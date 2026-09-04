@@ -67,14 +67,10 @@ object SeriesPorMusculo {
         return (total / (diasDoPeriodo / DIAS_POR_SEMANA)).roundToInt()
     }
 
-    /** Onde é que uma contagem semanal cai em relação à faixa. */
-    enum class Faixa { ABAIXO, DENTRO, ACIMA }
-
-    fun faixaDe(seriesPorSemana: Int): Faixa = when {
-        seriesPorSemana < FAIXA_MIN -> Faixa.ABAIXO
-        seriesPorSemana > FAIXA_MAX -> Faixa.ACIMA
-        else -> Faixa.DENTRO
-    }
+    // Não há função que diga se um músculo está abaixo, dentro ou acima da faixa, e é de
+    // propósito: o ecrã desenha a faixa por trás da barra e deixa a comparação ao olho.
+    // Uma classificação em três estados só serviria para pintar a barra de outra cor, que é
+    // exactamente o que esta faixa não faz — a cor diz categoria, a forma diz estado.
 }
 
 /**

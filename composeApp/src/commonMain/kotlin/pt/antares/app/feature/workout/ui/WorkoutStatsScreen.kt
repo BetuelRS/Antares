@@ -202,10 +202,19 @@ private fun SeriesDosMusculos(state: WorkoutStatsState, unidades: UnitSystem) {
     )
 
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
-        // O topo da escala nunca fica abaixo do fim da faixa: senão um músculo com cinco
-        // séries enchia a barra toda e parecia que estava no sítio.
-        val maximo = musculos.maxOf { it.porSemana ?: it.series }
-            .coerceAtLeast(SeriesPorMusculo.FAIXA_MAX)
+        // Com a faixa desenhada, o topo da escala nunca fica abaixo do fim dela: senão um
+        // músculo com cinco séries enchia a barra toda e parecia estar no sítio.
+        //
+        // **Sem faixa, a escala é só o maior dos músculos.** Travá-la nas vinte séries
+        // semanais quando o período é um dia media as barras contra uma referência que não
+        // está no ecrã e que não vale para um dia — o comprimento passava a dizer uma coisa
+        // que ninguém podia ler.
+        val maiorValor = musculos.maxOf { it.porSemana ?: it.series }
+        val maximo = if (temSemana) {
+            maiorValor.coerceAtLeast(SeriesPorMusculo.FAIXA_MAX)
+        } else {
+            maiorValor
+        }
         musculos.forEach { BarraDoMusculo(it, maximo, temSemana, unidades) }
     }
 

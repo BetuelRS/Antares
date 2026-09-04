@@ -15,7 +15,9 @@ import pt.antares.app.core.database.entities.ExerciseEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.SessionStatus
+import pt.antares.app.core.util.epochMillisAt
 import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.feature.workout.data.WorkoutHistoryRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -146,6 +148,56 @@ class WorkoutHistoryRepositoryTest {
 
         assertEquals(0, stats.treinosNoPeriodo, "contou um treino que está fora do período")
         assertTrue(stats.musculos.isEmpty(), "contou séries que estão fora do período")
+    }
+
+    /**
+     * **Os dois gráficos cobrem a mesma primeira semana.**
+     *
+     * Eles desenham-se um por baixo do outro, e o de cima conta treinos por semana ISO
+     * enquanto o de baixo somava o volume só do que caía dentro da janela do período. Quando
+     * o período começa a meio de uma semana — que é quase sempre —, a primeira coluna de um
+     * cobria sete dias e a do outro três.
+     *
+     * O treino deste teste fica **antes do início do período e dentro da primeira semana**,
+     * que é onde as duas discordavam.
+     */
+    @Test
+    fun `os dois graficos cobrem a mesma primeira semana`() = runTest {
+        val hoje = epochMillisToLocalDate(1_000).toEpochDays().toLong()
+        val inicioDaSemana = weekStartEpochDay(hoje)
+        seedEm(epochMillisAt(inicioDaSemana, minuteOfDay = 0))
+
+        val stats = repo.observeEstatisticas(
+            // O período começa hoje; a semana ISO começou antes, e é lá que está o treino.
+            desdeMs = epochMillisAt(hoje, minuteOfDay = 0),
+            diasDoPeriodo = 1,
+            hojeEpochDay = hoje,
+            semanas = 1,
+        ).first()
+
+        assertEquals(listOf(1), stats.treinosPorSemana, "a frequência não viu o treino")
+        assertTrue(
+            stats.volumePorSemana.first() > 0.0,
+            "o volume por semana não viu o treino que a frequência viu",
+        )
+    }
+
+    private suspend fun seedEm(quando: Long) {
+        db.exerciseLibraryDao().upsert(
+            ExerciseEntity(
+                id = "bench", nameEn = "Bench Press", namePt = "Supino", searchText = "supino",
+                category = "strength", force = null, mechanic = null, equipment = "barbell",
+                level = "beginner", primaryMuscles = "|chest|", secondaryMuscles = "",
+                instructionsEnJson = "[]", instructionsPtJson = "[]", imagesJson = "[]",
+                updatedAt = 1L,
+            ),
+        )
+        db.workoutSessionDao().upsertSession(
+            WorkoutSessionEntity("A", quando, quando, null, null, SessionStatus.DONE, quando),
+        )
+        db.workoutSetDao().upsertSet(
+            WorkoutSetEntity("a1", "A", "bench", 0, 100.0, reps = 5, rpe = null, updatedAt = quando),
+        )
     }
 
     private suspend fun estatisticas(dias: Int = 7) = repo.observeEstatisticas(

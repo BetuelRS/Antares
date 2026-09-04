@@ -54,12 +54,14 @@ class SeriesPorMusculoTest {
         assertNull(SeriesPorMusculo.porSemana(total = 5, diasDoPeriodo = 1))
     }
 
+    /**
+     * A faixa é um intervalo publicado e não um alvo calculado, e o teste guarda os dois
+     * números para eles não mudarem sem ninguém decidir.
+     */
     @Test
-    fun `a faixa separa abaixo dentro e acima`() {
-        assertEquals(SeriesPorMusculo.Faixa.ABAIXO, SeriesPorMusculo.faixaDe(9))
-        assertEquals(SeriesPorMusculo.Faixa.DENTRO, SeriesPorMusculo.faixaDe(10))
-        assertEquals(SeriesPorMusculo.Faixa.DENTRO, SeriesPorMusculo.faixaDe(20))
-        assertEquals(SeriesPorMusculo.Faixa.ACIMA, SeriesPorMusculo.faixaDe(21))
+    fun `a faixa e a que a literatura publica`() {
+        assertEquals(10, SeriesPorMusculo.FAIXA_MIN)
+        assertEquals(20, SeriesPorMusculo.FAIXA_MAX)
     }
 }
 

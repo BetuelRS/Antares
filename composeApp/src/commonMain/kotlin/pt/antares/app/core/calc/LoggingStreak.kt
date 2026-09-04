@@ -12,7 +12,18 @@ data class StreakResult(
 
 object LoggingStreak {
 
-    /** Sequência estrita, sem perdões. É a que os marcos e os troféus usam. */
+    /**
+     * Sequência estrita, sem perdões.
+     *
+     * **Hoje não tem chamador na app.** Este comentário dizia que era a dos marcos e dos
+     * troféus; era verdade quando foi escrito, e o ecrã do Hoje passou a usar a
+     * [currentWithFreeze] e a [longest]. Medido a 2026-09-05.
+     *
+     * Fica, e está declarada na varredura de código morto com a razão: o
+     * `estudo/motor/07` trata as duas sequências como uma decisão de produto — estrita para
+     * os troféus, perdoada para o ecrã — e escolher entre ligar uma e apagar a outra é do
+     * dono, não de quem passa por aqui.
+     */
     fun current(loggedDays: Set<Long>, today: Long): Int {
         if (loggedDays.isEmpty()) return 0
 
