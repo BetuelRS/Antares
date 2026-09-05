@@ -1,6 +1,8 @@
 package pt.antares.app.testing
 
 import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.cancel
@@ -80,6 +82,10 @@ abstract class ViewModelHarness {
         // no fim da suite, num teste qualquer que estivesse a correr quando o recolector
         // passasse — e a queixa não dizia de onde vinha.
         scope.cancel()
+
+        // E os ViewModels, que têm cada um o seu scope e não vivem no de cima. Antes do
+        // `resetMain`: ver a razão no [vivo].
+        viewModels.clear()
         Dispatchers.resetMain()
         db.close()
         prefsFile.delete()
@@ -91,7 +97,22 @@ abstract class ViewModelHarness {
 
     protected fun statsRepository() = Fabricas.statsRepository(db, dispatcher)
 
-    protected fun diaryViewModel() = DiaryViewModel(
+    private val viewModels = ViewModelStore()
+
+    /**
+     * Entrega o ViewModel ao harness, que o fecha no fim do teste.
+     *
+     * O [scope] deste harness não é o do ViewModel: cada `viewModelScope` é um scope próprio,
+     * ligado ao `Main`, e cancelar aquele não cancela estes. Um ViewModel que fica a coleccionar
+     * as preferências — que têm um scope de IO só delas — resume no `Main` depois de o teste
+     * acabar, enquanto o teste seguinte lhe chama o `setMain`: o `kotlinx-coroutines-test`
+     * rebenta aí com «is used concurrently with setting it», e a vítima é sempre outro teste.
+     */
+    protected fun <T : ViewModel> vivo(vm: T): T = vm.also {
+        viewModels.put("vm-${viewModels.keys().size}", it)
+    }
+
+    protected fun diaryViewModel() = vivo(DiaryViewModel(
         diaryRepository = diaryRepository(),
         profileRepository = profileRepository(),
         fastingRepository = Fabricas.fastingRepository(db, dispatcher),
@@ -99,8 +120,8 @@ abstract class ViewModelHarness {
         preferences = prefs,
         templateRepository = Fabricas.mealTemplateRepository(db, dispatcher),
         statsRepository = statsRepository(),
-    )
+    ))
 
     protected fun todayViewModel(gateway: HealthGateway = CountingHealthGateway()): TodayViewModel =
-        Fabricas.todayViewModel(db, prefs, dispatcher, gateway)
+        vivo(Fabricas.todayViewModel(db, prefs, dispatcher, gateway))
 }

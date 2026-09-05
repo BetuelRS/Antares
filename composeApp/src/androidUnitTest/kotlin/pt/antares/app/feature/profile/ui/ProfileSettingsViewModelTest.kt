@@ -54,7 +54,7 @@ class ProfileSettingsViewModelTest : ViewModelHarness() {
     /** Devolve o ViewModel já com o perfil carregado: os setters não fazem nada antes disso. */
     private suspend fun viewModelCom(profile: UserProfileEntity): ProfileSettingsViewModel {
         profileRepository().saveProfile(profile)
-        val vm = ProfileSettingsViewModel(profileRepository(), prefs)
+        val vm = vivo(ProfileSettingsViewModel(profileRepository(), prefs))
         vm.state.first { !it.loading }
         return vm
     }

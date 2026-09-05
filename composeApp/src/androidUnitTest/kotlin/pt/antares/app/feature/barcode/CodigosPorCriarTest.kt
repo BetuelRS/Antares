@@ -53,7 +53,7 @@ class CodigosPorCriarTest : ViewModelHarness() {
     }
 
     private fun viewModel(): BarcodeResolveViewModel {
-        val vm = BarcodeResolveViewModel(
+        val vm = vivo(BarcodeResolveViewModel(
             foodRepository = FoodRepository(
                 db.foodDao(),
                 db.foodMarkDao(),
@@ -64,6 +64,7 @@ class CodigosPorCriarTest : ViewModelHarness() {
             ),
             offRepository = offSemProdutos(),
             diaryRepository = diaryRepository(),
+        ),
         )
         vm.configure(MealSlot.LUNCH, epochDay = 20_000L)
         vm.toggleContinuous()

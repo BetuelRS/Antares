@@ -27,7 +27,7 @@ class SegundaPesagemPerguntaTest : ViewModelHarness() {
 
     private val hoje = 20_000L
 
-    private fun viewModel() = WeightViewModel(Fabricas.profileRepository(db, dispatcher))
+    private fun viewModel() = vivo(WeightViewModel(Fabricas.profileRepository(db, dispatcher)))
 
     private fun pesar(vm: WeightViewModel, kg: Double) {
         vm.submit(epochDay = hoje, weightKg = kg, note = null)

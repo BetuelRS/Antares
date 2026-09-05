@@ -80,7 +80,7 @@ class BodyCompositionSaveTest : ViewModelHarness() {
                 updatedAt = Clock.System.now().toEpochMilliseconds(),
             ),
         )
-        val vm = BodyCompositionViewModel(profileRepository(), measurements())
+        val vm = vivo(BodyCompositionViewModel(profileRepository(), measurements()))
         vm.state.first { !it.loading && it.weightKg != null }
         return vm
     }

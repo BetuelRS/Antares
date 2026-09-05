@@ -31,7 +31,7 @@ class ResumoDoTreinoTest : ViewModelHarness() {
 
     private val minuto = 60_000L
 
-    private fun viewModel() = WorkoutSummaryViewModel(
+    private fun viewModel() = vivo(WorkoutSummaryViewModel(
         sessionRepository = WorkoutSessionRepository(
             db.workoutSessionDao(),
             db.workoutSetDao(),
@@ -43,6 +43,7 @@ class ResumoDoTreinoTest : ViewModelHarness() {
             dispatcher,
         ),
         exerciseDao = db.exerciseLibraryDao(),
+    ),
     )
 
     private suspend fun exercicio(id: String) = db.exerciseLibraryDao().upsert(

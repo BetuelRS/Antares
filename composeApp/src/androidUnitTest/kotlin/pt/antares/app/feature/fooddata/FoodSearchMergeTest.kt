@@ -61,7 +61,7 @@ class FoodSearchMergeTest : ViewModelHarness() {
         return OffRepository(OffApi(client, "teste"), db.foodDao(), dispatcher) { true }
     }
 
-    private fun viewModel(off: OffRepository) = FoodSearchViewModel(
+    private fun viewModel(off: OffRepository) = vivo(FoodSearchViewModel(
         repository = FoodRepository(
             db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), db.foodLogDao(), dispatcher,
         ),
@@ -83,6 +83,7 @@ class FoodSearchMergeTest : ViewModelHarness() {
         ),
         diaryRepository = diaryRepository(),
         preferences = prefs,
+    ),
     )
 
     /**

@@ -37,7 +37,7 @@ class FalhaCriaAlimentoTest : ViewModelHarness() {
             dispatcher,
         )
 
-    private fun viewModel(repo: FoodRepository) = FoodEditViewModel(
+    private fun viewModel(repo: FoodRepository) = vivo(FoodEditViewModel(
         repository = repo,
         ai = AiRepository(
             client = NenhumaIa,
@@ -47,6 +47,7 @@ class FalhaCriaAlimentoTest : ViewModelHarness() {
             persistUsage = { _, _ -> },
             io = Dispatchers.Unconfined,
         ),
+    ),
     )
 
     private suspend fun preencherEGuardar(vm: FoodEditViewModel) {

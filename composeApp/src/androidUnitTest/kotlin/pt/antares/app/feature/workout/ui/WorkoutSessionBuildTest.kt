@@ -61,12 +61,13 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         dispatcher,
     )
 
-    private fun viewModel() = WorkoutSessionViewModel(
+    private fun viewModel() = vivo(WorkoutSessionViewModel(
         repository = sessionRepository(),
         routineDao = db.routineDao(),
         exerciseDao = db.exerciseLibraryDao(),
         alerts = alerts,
         pickBus = bus,
+    ),
     )
 
     private suspend fun exercicio(id: String, pt: String = "", en: String = id, equipamento: String? = null) {

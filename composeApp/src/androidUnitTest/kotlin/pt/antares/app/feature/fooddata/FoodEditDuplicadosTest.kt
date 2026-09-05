@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
 @RunWith(RobolectricTestRunner::class)
 class FoodEditDuplicadosTest : ViewModelHarness() {
 
-    private fun viewModel() = FoodEditViewModel(
+    private fun viewModel() = vivo(FoodEditViewModel(
         repository = FoodRepository(
             db.foodDao(), db.foodMarkDao(), db.foodNutrientDao(), db.searchMissDao(), db.foodLogDao(), dispatcher,
         ),
@@ -41,6 +41,7 @@ class FoodEditDuplicadosTest : ViewModelHarness() {
             persistUsage = { _, _ -> },
             io = Dispatchers.Unconfined,
         ),
+    ),
     )
 
     private suspend fun guardado(id: String, nome: String, kcal: Int) {

@@ -35,12 +35,13 @@ import kotlin.test.assertTrue
 @RunWith(RobolectricTestRunner::class)
 class PesoDoCorpoNaSessaoTest : ViewModelHarness() {
 
-    private fun viewModel() = WorkoutSessionViewModel(
+    private fun viewModel() = vivo(WorkoutSessionViewModel(
         repository = Fabricas.workoutSessionRepository(db, dispatcher),
         routineDao = db.routineDao(),
         exerciseDao = db.exerciseLibraryDao(),
         alerts = NoopWorkoutAlerts(),
         pickBus = SessionPickBus(),
+    ),
     )
 
     /** Ver a razão em [WorkoutSessionBuildTest]: sem coletor, o `state.value` fica parado. */
