@@ -548,6 +548,10 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data — e envelheceu bem: hoje está menos errada do que quando foi adiada |
 | **O `food_cache` sem expiração, o custo invisível, o modelo fixado no código** | `estudo/sistema/02` | são do servidor, e o modelo fixado é o ponto fraco da longevidade |
 | **A confiança e o intervalo publicado por alimento** — «confiança A · 124–136» | esboço 22, terceira passagem | **não se faz**: nenhuma das três fontes o publica de forma que o oleoduto traga, e inventá-lo é o contrário do que este catálogo faz |
+| **«Ainda não treinaste» com treinos na mesma semana por baixo** — o destaque cai no `Convite` quando só há treinos livres | 2.20.0, visto a correr a 2026-09-05 | é o ecrã da 2.20.0 e o esboço 06 não desenha o caso; cabe numa versão do treino, ou entra por troca |
+| **O `today_no_profile` sem saída** — defeito concreto 3 da `estudo/areas/01` | 2.0.x, reconfirmado a 2026-09-05 | a **2.32.0** é o Hoje; a **2.40.0** é o arranque |
+| **O `ShareCard` regista a camada em cada composição** — defeito concreto 3 da `estudo/areas/14` | 2026-09-05 | custo constante para uma acção rara; a **2.26.0** vai tocar no mesmo padrão |
+| **Os nomes dos exercícios saem em inglês** quando o catálogo não tem `namePt` — «Alternating Floor Press» nos recordes, com a app em português | 2.20.0 nomeia a convenção `namePt.ifBlank { nameEn }`; visto nos recordes a 2026-09-05 | é conteúdo do `seed_exercises.json`, e o `estudo/areas/09` trata da biblioteca — **2.27.0** |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e
 a regra A5 continua a valer: o que entra a meio é troca, não adição.
@@ -800,6 +804,66 @@ O comentário passou a dizer a verdade, e a função ficou declarada na varredur
 **Ligar os troféus à sequência estrita ou apagá-la é uma decisão de produto** que o
 `estudo/motor/07` descreve — «estrita para os troféus, perdoada para o ecrã» — e não é do ecrã
 das estatísticas. Fica na tabela do fim.
+
+---
+
+# A varredura de 2026-09-05
+
+Feita depois de ler o `estudo/` inteiro — os documentos e os dezassete esboços — e de correr a
+**2.25.0 de lançamento** no emulador. Cada linha diz onde foi medida.
+
+## O que se confirmou, e não é achado
+
+A 2.25.0 está publicada e verde: `main` e a etiqueta `v2.25.0` em `abc998d`, release com os
+quatro APKs mais o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit** (`gh run
+list`). Localmente, com o `verificar.mjs`: **1769 testes Kotlin**, 58 das ferramentas, 68 Deno,
+detekt e lint limpos, nenhum segredo em 1037 ficheiros.
+
+Recontados, e todos certos: **75 testes-guarda** documentados — 74 classes em Kotlin mais o
+`tools/catalogo/origem-por-nutriente.test.mjs`, e os 75 ficheiros existem · **31 regras** ·
+esquema **v39**, **34 tabelas**, **36 migrações automáticas** · catálogo **v6**, **7 932
+alimentos** (3 329 `ciqual-`, 2 944 `usda-`, 1 372 `tca-`, 274 `ptx`, 13 `pt-`), **2 090 com
+porção (26,3 %)**, 4 153 com família de confeção, 773 líquidos, **42 chaves declaradas, 40 em
+uso, mediana de 25** · **41 ficheiros** no `composeApp/src/commonMain/kotlin/pt/antares/app/core/calc/` · **51 ecrãs**.
+
+## Dois defeitos vistos a correr, e nenhum é da versão que acabou de fechar
+
+**1 · O painel de treino diz «Ainda não treinaste» com quatro treinos na mesma semana, dois
+centímetros abaixo.**
+
+Visto no emulador com a 2.25.0 de lançamento: o cartão de destaque mostra o terceiro estado —
+«Ainda não treinaste · Marca as rotinas pelos dias» — e o cartão da semana, logo por baixo, diz
+**«9720 kg de volume · 18 séries»** com três dias pintados.
+
+Medido: o histórico só tem **«Treino livre»**, e o `destaque()` do `WorkoutHubRepository` escolhe
+o `Convite` quando nenhuma **rotina** foi treinada — o `observeLastDoneByRoutine` ignora, e bem,
+as sessões com `routineId` nulo. O cartão da semana conta **todas** as sessões terminadas. Os dois
+números estão certos e a frase que os acompanha não: o KDoc do `Convite` diz «sem plano e **sem
+histórico**», e há histórico.
+
+Não é do conteúdo da 2.25.0 — nasceu com os três estados da 2.20.0, e o esboço 06 não desenha
+este caso. **Quem só faça treinos livres vê este ecrã sempre.**
+
+**2 · O `today_no_profile` continua a ser um beco sem saída**, que é o defeito concreto 3 da
+`estudo/areas/01-hoje.md`. `TodayScreen.kt:121-127`: sem perfil, o ecrã desenha um `Text` e faz
+`return` — sem botão, sem caminho para o arranque. Visto no ecrã, e é o primeiro que aparece nesse
+estado.
+
+## E uma coisa a saber antes de a 2.26.0 abrir
+
+O **`ShareCard` do Progresso regista a camada em cada composição** — `ProgressScreen.kt:199-201`,
+`camada.record { … }` dentro do `drawWithContent`. É o defeito concreto 3 da
+`estudo/areas/14-progresso.md`, e interessa agora porque a 2.26.0 promete partilhar o resumo
+**com o partilhador que já existe**: copiar o padrão copia o defeito.
+
+## O relatório vivo estava sete versões atrasado
+
+Declarava a 2.18.1 publicada, esquema v35, catálogo v5, 30 regras e 62 testes-guarda. **Republicado
+a 2026-09-05** com os números acima. Continua fora do git, e é por isso que nenhum teste-guarda o
+apanha — o que o mantém honesto é esta linha.
+
+E o `estudo/PLANO-DE-PRODUCAO.md` dizia, na secção do versionamento, «atual: **2.24.0**».
+Corrigido para 2.25.0, e a versão ganhou a linha de publicação que lhe faltava.
 
 ---
 

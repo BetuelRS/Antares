@@ -23,8 +23,13 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 - **2.25.0 é a última fechada**, a 2026-09-04. Esquema **v39** e catálogo **v6**, inalterados, e
   **nenhum dado é novo**. «As estatísticas do treino»: seletor de período com os quatro chips da
   nutrição, séries por músculo por semana com a faixa de 10 a 20, treinos e volume por semana
-  desenhados com o `AntaresChart`, e os recordes com a data em que aconteceram. 1766 testes
-  Kotlin, 58 das ferramentas, 68 Deno, detekt e lint limpos.
+  desenhados com o `AntaresChart`, e os recordes com a data em que aconteceram. **1769 testes
+  Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados a 2026-09-05 com o
+  `verificar.mjs`. Eram 1766 quando o conteúdo fechou; as duas revisões da D7 juntaram três.
+- **A 2.25.0 está publicada e verde**, conferido a 2026-09-05: `main` e a etiqueta `v2.25.0` em
+  `abc998d`, release «2.25.0 — as estatísticas do treino passam a ter tempo» com os quatro APKs
+  mais o `catalogo.json` e o `manifesto.json`, e **CI verde nesse commit**. A etiqueta ficou na
+  segunda revisão da D7 e não no commit do conteúdo — é o que faz o APK publicado levar as duas.
 - **A versão abriu pelas correcções das anteriores**, por decisão do dono: o `%d min` do cartão
   de destaque — que era o **quinto** sítio e não o quarto —, doze importações mortas no módulo
   do treino, e os nomes das sete rotinas semeadas, que eram literais e em duas línguas.
