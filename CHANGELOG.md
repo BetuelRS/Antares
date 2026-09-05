@@ -32,8 +32,10 @@ era uma consulta que dissesse qual foi o treino **anterior a este** da mesma rot
   consegue ir ver, e um dia mau dela faz o de hoje parecer um salto que não houve; a média
   não se deixa enganar por um dia, e em troca não aponta para lado nenhum. **A média só
   aparece com três** — com duas, «média das últimas três» seria mentir sobre o que se somou.
-- **O nome da rotina no título** — «Empurrar A · terminado». Dizia «Resumo do treino», e quem
-  acabou de treinar já sabe que treinou.
+- **O nome da rotina no título** — «Empurrar A». Dizia «Resumo do treino», e quem acabou de
+  treinar já sabe que treinou. O esboço escreve «Empurrar A · terminado»; a 200 % de escala de
+  letra o «· terminado» era o que se perdia, e o nome vale mais num ecrã a que só se chega
+  tocando em «Terminar».
 - **Partilhar o resumo como imagem**, com o partilhador que o progresso já usava.
 - **Um treino livre diz porque é que não compara.** Não tem rotina, e por isso não tem termo
   de comparação — e a primeira vez de uma rotina diz outra coisa, porque é outra coisa.
@@ -55,6 +57,10 @@ era uma consulta que dissesse qual foi o treino **anterior a este** da mesma rot
 - **O cartão de partilha do progresso gravava a imagem a cada desenho do ecrã**, e não quando
   alguém carrega em partilhar — custo constante para uma acção rara. Agora grava a pedido, e
   os dois cartões partilháveis da app passam pelo mesmo código.
+- **A 200 % de escala de letra, o título da barra do topo era cortado a meio das letras.** A
+  barra tem altura fixa: um título de duas linhas não a faz crescer, corta-lhe a segunda. Passa
+  a ser uma linha com reticências, em todos os ecrãs.
+- **E, na sessão de treino, o «1RM est. · 114 kg» saía uma letra por linha**, na vertical.
 
 ## [2.25.0] — 2026-09-04
 
