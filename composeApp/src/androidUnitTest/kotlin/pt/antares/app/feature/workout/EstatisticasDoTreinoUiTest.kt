@@ -98,7 +98,7 @@ class EstatisticasDoTreinoUiTest : FluxoUiHarness() {
      * recomposição, e o relógio do teste de interface não deixa a base chegar depois.
      */
     private fun carregado(): WorkoutStatsViewModel =
-        WorkoutStatsViewModel(repositorio()).also { vm ->
+        vivo(WorkoutStatsViewModel(repositorio())).also { vm ->
             runBlocking { vm.state.first { !it.loading } }
         }
 

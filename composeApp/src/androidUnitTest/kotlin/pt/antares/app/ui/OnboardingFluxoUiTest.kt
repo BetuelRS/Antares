@@ -60,7 +60,7 @@ class OnboardingFluxoUiTest : FluxoUiHarness() {
 
     @Test
     fun `do primeiro ecra ao ultimo, o perfil fica guardado`() = runComposeUiTest {
-        val vm = OnboardingViewModel(repositorio(), prefs)
+        val vm = vivo(OnboardingViewModel(repositorio(), prefs))
         val textos = Textos()
         var terminou = false
 
@@ -139,7 +139,7 @@ class OnboardingFluxoUiTest : FluxoUiHarness() {
     @Test
     fun `saltar o que nao e obrigatorio deixa a app utilizavel, e diz o que ficou por responder`() =
         runComposeUiTest {
-            val vm = OnboardingViewModel(repositorio(), prefs)
+            val vm = vivo(OnboardingViewModel(repositorio(), prefs))
             val textos = Textos()
             var terminou = false
 

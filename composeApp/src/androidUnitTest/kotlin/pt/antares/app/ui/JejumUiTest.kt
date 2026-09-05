@@ -60,7 +60,7 @@ class JejumUiTest : FluxoUiHarness() {
             arrancaKoin()
             jejumAtivo(faltamMs)
 
-            val vm = FastingViewModel(Fabricas.fastingRepository(db, io))
+            val vm = vivo(FastingViewModel(Fabricas.fastingRepository(db, io)))
             val textos = Textos()
             setContent {
                 textos.ler(Res.string.fasting_finish, Res.string.fasting_break)

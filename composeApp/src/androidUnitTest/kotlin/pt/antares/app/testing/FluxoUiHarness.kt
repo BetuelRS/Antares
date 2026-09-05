@@ -3,6 +3,8 @@ package pt.antares.app.testing
 import android.content.ContentProvider
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.CoroutineDispatcher
@@ -132,10 +134,32 @@ abstract class FluxoUiHarness {
 
     @After
     fun fechaTudo() {
+        // Os ViewModels primeiro, e **antes** do `resetMain`. Um ViewModel construído à mão
+        // no teste fica com o `viewModelScope` vivo depois de o teste acabar, e esse scope
+        // despacha para o `Main`: uma leitura da base que ainda vinha a caminho resumia no
+        // `Main` enquanto a classe seguinte lhe chamava o `setMain`, e o
+        // `kotlinx-coroutines-test` rebenta com «is used concurrently with setting it».
+        //
+        // Falhou assim no CI e não aqui — a corrida é entre máquinas de velocidades
+        // diferentes, e a vítima era a classe a seguir, que não tinha culpa nenhuma.
+        viewModels.clear()
         stopKoin()
         Dispatchers.resetMain()
         db.close()
         prefsFile.delete()
+    }
+
+    private val viewModels = ViewModelStore()
+
+    /**
+     * Entrega o ViewModel ao harness, que o fecha no fim do teste.
+     *
+     * Os testes de fluxo constroem os ViewModels à mão — é a porta da frente, e é o que os
+     * torna legíveis —, e um ViewModel que ninguém fecha continua a trabalhar depois de o
+     * teste dele acabar.
+     */
+    protected fun <T : ViewModel> vivo(vm: T): T = vm.also {
+        viewModels.put("vm-${viewModels.keys().size}", it)
     }
 
     /**

@@ -38,18 +38,20 @@ import kotlin.test.Test
 @Config(application = android.app.Application::class, qualifiers = "w411dp-h891dp")
 class ResumoDoTreinoUiTest : FluxoUiHarness() {
 
-    private fun viewModel() = WorkoutSummaryViewModel(
-        sessionRepository = WorkoutSessionRepository(
-            db.workoutSessionDao(),
-            db.workoutSetDao(),
-            db.exerciseLogDao(),
-            db.weightLogDao(),
-            db.routineDao(),
-            db.sessionExerciseNoteDao(),
-            db.exerciseLoadDao(),
-            io,
+    private fun viewModel() = vivo(
+        WorkoutSummaryViewModel(
+            sessionRepository = WorkoutSessionRepository(
+                db.workoutSessionDao(),
+                db.workoutSetDao(),
+                db.exerciseLogDao(),
+                db.weightLogDao(),
+                db.routineDao(),
+                db.sessionExerciseNoteDao(),
+                db.exerciseLoadDao(),
+                io,
+            ),
+            exerciseDao = db.exerciseLibraryDao(),
         ),
-        exerciseDao = db.exerciseLibraryDao(),
     )
 
     private fun montar(comRotina: Boolean, comAnterior: Boolean) = runBlocking {

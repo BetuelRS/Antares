@@ -61,7 +61,7 @@ class AnelDoDiaUiTest : FluxoUiHarness() {
     fun `registar comida faz o anel descer sem recarregar o ecra`() = runComposeUiTest {
         arrancaKoin()
         perfilCom80Kg()
-        val vm = Fabricas.todayViewModel(db, prefs, io)
+        val vm = vivo(Fabricas.todayViewModel(db, prefs, io))
 
         setContent {
             TodayScreen(

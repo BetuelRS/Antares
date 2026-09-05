@@ -52,20 +52,22 @@ import kotlin.test.assertTrue
 @Config(application = android.app.Application::class, qualifiers = "w411dp-h891dp")
 class CentroDeTreinoUiTest : FluxoUiHarness() {
 
-    private fun viewModel() = WorkoutHubViewModel(
-        routineRepository = RoutineRepository(
-            db.routineDao(),
-            db.exerciseLibraryDao(),
-            db.routineScheduleDao(),
-            io,
-        ),
-        hubRepository = WorkoutHubRepository(
-            routineDao = db.routineDao(),
-            sessionDao = db.workoutSessionDao(),
-            setDao = db.workoutSetDao(),
-            scheduleDao = db.routineScheduleDao(),
-            exerciseDao = db.exerciseLibraryDao(),
-            runDao = db.runDao(),
+    private fun viewModel() = vivo(
+        WorkoutHubViewModel(
+            routineRepository = RoutineRepository(
+                db.routineDao(),
+                db.exerciseLibraryDao(),
+                db.routineScheduleDao(),
+                io,
+            ),
+            hubRepository = WorkoutHubRepository(
+                routineDao = db.routineDao(),
+                sessionDao = db.workoutSessionDao(),
+                setDao = db.workoutSetDao(),
+                scheduleDao = db.routineScheduleDao(),
+                exerciseDao = db.exerciseLibraryDao(),
+                runDao = db.runDao(),
+            ),
         ),
     )
 

@@ -86,12 +86,14 @@ class TreinoSerieUiTest : FluxoUiHarness() {
         arrancaKoin()
         rotinaComUmExercicio()
 
-        val vm = WorkoutSessionViewModel(
-            repository = Fabricas.workoutSessionRepository(db, io),
-            routineDao = db.routineDao(),
-            exerciseDao = db.exerciseLibraryDao(),
-            alerts = NoopWorkoutAlerts(),
-            pickBus = SessionPickBus(),
+        val vm = vivo(
+            WorkoutSessionViewModel(
+                repository = Fabricas.workoutSessionRepository(db, io),
+                routineDao = db.routineDao(),
+                exerciseDao = db.exerciseLibraryDao(),
+                alerts = NoopWorkoutAlerts(),
+                pickBus = SessionPickBus(),
+            ),
         )
         val textos = Textos()
 
