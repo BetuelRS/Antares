@@ -198,7 +198,7 @@ class CentroDeTreinoTest : ViewModelHarness() {
 
         val estado = hub().observe(20_000L, zona).first { it.carregado }
 
-        assertEquals(DestaqueDoTreino.Convite, estado.destaque)
+        assertEquals(DestaqueDoTreino.Convite(jaTreinou = false), estado.destaque)
     }
 
     /**

@@ -297,18 +297,34 @@ private fun Destaque(
             onStart = onStart,
         )
 
-        // Sem plano e sem histórico não há o que propor. A app semeia sete rotinas e nenhuma
-        // delas é mais desta pessoa do que as outras — escolher uma seria fingir que sabe.
+        // Sem plano e sem rotina treinada não há o que propor. A app semeia sete rotinas e
+        // nenhuma delas é mais desta pessoa do que as outras — escolher uma seria fingir que
+        // sabe.
         //
         // Cartão tracejado, e não sólido: é uma proposta, não um facto, e essa é a mesma
         // distinção que separa a sugestão de repetir de um registo no diário.
-        DestaqueDoTreino.Convite -> AntaresGhostCard(modifier = Modifier.fillMaxWidth()) {
+        is DestaqueDoTreino.Convite -> AntaresGhostCard(modifier = Modifier.fillMaxWidth()) {
             Text(
-                stringResource(Res.string.workout_hub_no_plan_title),
+                stringResource(
+                    // «Ainda não treinaste» por cima de um cartão da semana com quatro
+                    // treinos era uma frase a contradizer o número ao lado dela. Quem só faz
+                    // treinos livres treinou — o que não fez foi treinar uma rotina.
+                    if (destaque.jaTreinou) {
+                        Res.string.workout_hub_sem_rotina_title
+                    } else {
+                        Res.string.workout_hub_no_plan_title
+                    },
+                ),
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                stringResource(Res.string.workout_hub_no_plan_body),
+                stringResource(
+                    if (destaque.jaTreinou) {
+                        Res.string.workout_hub_sem_rotina_body
+                    } else {
+                        Res.string.workout_hub_no_plan_body
+                    },
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = Spacing.xs),

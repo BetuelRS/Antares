@@ -246,7 +246,8 @@
     <string name="today_weight_title">Peso</string>
     <string name="today_weight_trend">Tendência</string>
     <string name="today_weight_log_cta">Registar peso</string>
-    <string name="today_no_profile">Completa o onboarding para veres as tuas metas.</string>
+    <string name="today_no_profile">Faltam as respostas do arranque para a app poder calcular as tuas metas.</string>
+    <string name="today_no_profile_action">Responder agora</string>
 
     <string name="weight_title">Histórico de peso</string>
     <string name="weight_add">Registar peso</string>
@@ -633,6 +634,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_no_plan_title">Ainda não treinaste</string>
     <string name="workout_hub_no_plan_body">Marca as rotinas pelos dias e o treino de hoje passa a aparecer aqui.</string>
     <string name="workout_hub_no_plan_action">Marcar a semana</string>
+    <string name="workout_hub_sem_rotina_title">Ainda não treinaste com uma rotina</string>
+    <string name="workout_hub_sem_rotina_body">Os treinos que fizeste foram livres. Marca as rotinas pelos dias e o treino de hoje passa a aparecer aqui.</string>
     <string name="workout_hub_routine_never">ainda não a fizeste</string>
     <string name="workout_hub_recent">Últimos treinos</string>
     <string name="workout_hub_free_workout">Treino livre</string>

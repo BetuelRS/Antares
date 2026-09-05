@@ -22,7 +22,9 @@ import pt.antares.app.feature.workout.data.RoutineRepository
 import pt.antares.app.feature.workout.data.WorkoutHubRepository
 import pt.antares.app.feature.workout.ui.WorkoutHubViewModel
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.workout_hub_no_plan_title
 import pt.antares.app.generated.resources.workout_hub_run_none_ever
+import pt.antares.app.generated.resources.workout_hub_sem_rotina_title
 import pt.antares.app.generated.resources.workout_hub_start
 import pt.antares.app.generated.resources.workout_hub_start_empty
 import pt.antares.app.generated.resources.workout_hub_start_named
@@ -73,13 +75,18 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
         )
     }
 
-    private fun sessao(id: String, status: SessionStatus, fim: Long?) = runBlocking {
+    private fun sessao(
+        id: String,
+        status: SessionStatus,
+        fim: Long?,
+        rotinaId: String? = "r",
+    ) = runBlocking {
         db.workoutSessionDao().upsertSession(
             WorkoutSessionEntity(
                 id = id,
                 startedAt = 1_000L,
                 endedAt = fim,
-                routineId = "r",
+                routineId = rotinaId,
                 note = null,
                 status = status,
                 updatedAt = 1_000L,
@@ -207,6 +214,53 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
         waitForIdle()
 
         assertTrue(foiParaACorrida, "a linha da corrida deixou de levar ao hub dela")
+    }
+
+    /**
+     * O cartão de destaque dizia **«Ainda não treinaste»** por cima de um cartão da semana com
+     * treinos contados nele. Quem só faz treinos livres nunca treinou uma **rotina**, e
+     * treinou: o destaque só olha para as sessões que nasceram de uma rotina, e a semana
+     * conta-as todas.
+     *
+     * Os dois números estavam certos, e por isso nenhum teste de estado via nada — o que
+     * estava errado era a frase que os acompanhava.
+     */
+    @Test
+    fun `um treino livre nao faz o cartao dizer que nunca treinaste`() = runComposeUiTest {
+        arrancaKoin()
+        rotina("r", NOME)
+        sessao("livre", SessionStatus.DONE, fim = 2_000L, rotinaId = null)
+
+        val textos = Textos()
+        val vm = carregado()
+        setContent {
+            ecra(vm, textos)
+            textos.ler(Res.string.workout_hub_no_plan_title)
+            textos.ler(Res.string.workout_hub_sem_rotina_title)
+        }
+        waitForIdle()
+
+        onNodeWithText(textos[Res.string.workout_hub_no_plan_title]).assertDoesNotExist()
+        onNodeWithText(textos[Res.string.workout_hub_sem_rotina_title]).assertExists()
+    }
+
+    /** O simétrico: sem treino nenhum, é mesmo a primeira vez, e a frase de sempre serve. */
+    @Test
+    fun `sem treinos o cartao continua a dizer que ainda nao treinaste`() = runComposeUiTest {
+        arrancaKoin()
+        rotina("r", NOME)
+
+        val textos = Textos()
+        val vm = carregado()
+        setContent {
+            ecra(vm, textos)
+            textos.ler(Res.string.workout_hub_no_plan_title)
+            textos.ler(Res.string.workout_hub_sem_rotina_title)
+        }
+        waitForIdle()
+
+        onNodeWithText(textos[Res.string.workout_hub_no_plan_title]).assertExists()
+        onNodeWithText(textos[Res.string.workout_hub_sem_rotina_title]).assertDoesNotExist()
     }
 
     private companion object {

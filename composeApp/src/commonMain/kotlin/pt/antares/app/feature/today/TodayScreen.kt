@@ -76,13 +76,7 @@ import pt.antares.app.generated.resources.*
 
 @Composable
 fun TodayScreen(
-    onLogWeight: () -> Unit,
-    onAddMeal: () -> Unit,
-    onOpenWorkout: () -> Unit,
-    onOpenFasting: () -> Unit,
-    onOpenRun: () -> Unit,
-    onOpenCoach: () -> Unit,
-    onOpenProfile: () -> Unit,
+    destinos: DestinosDoHoje,
 
     onQuickLog: (pt.antares.app.core.model.MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -> Unit,
 
@@ -120,8 +114,17 @@ fun TodayScreen(
     val targets = state.targets
     if (targets == null) {
 
+        // Sem perfil não há metas para mostrar — e havia uma frase, um `return`, e mais nada.
+        // É o defeito concreto 3 da `estudo/areas/01-hoje.md`: um estado raro, e sem saída
+        // nenhuma. É também o primeiro ecrã que aparece a quem chega aqui, e por isso o botão
+        // vai ao sítio onde as respostas se dão.
         Column(Modifier.fillMaxSize().padding(Spacing.xl), verticalArrangement = Arrangement.Center) {
             Text(stringResource(Res.string.today_no_profile), style = MaterialTheme.typography.bodyLarge)
+            PrimaryButton(
+                text = stringResource(Res.string.today_no_profile_action),
+                onClick = destinos.arranque,
+                modifier = Modifier.fillMaxWidth().padding(top = Spacing.lg),
+            )
         }
         return
     }
@@ -161,7 +164,7 @@ fun TodayScreen(
         // três anos de diário não.
         cartao { AvisoDeCopiaAtrasada() }
 
-        cartao { CoachTeaserCard(onOpen = onOpenCoach) }
+        cartao { CoachTeaserCard(onOpen = destinos.treinador) }
 
         if (streak.current >= 1) {
             cartao { StreakCard(streak = streak) }
@@ -171,43 +174,43 @@ fun TodayScreen(
             cartao {
                 RespostasEmFaltaCard(
                     passos = porResponder,
-                    onAnswer = onOpenProfile,
+                    onAnswer = destinos.perfil,
                     onDismiss = viewModel::naoPerguntar,
                 )
             }
         }
 
-        cartao { CartaoDaMeta(targets = targets, state = state, onAddMeal = onAddMeal) }
+        cartao { CartaoDaMeta(targets = targets, state = state, onAddMeal = destinos.refeicao) }
 
         weeklyBudget?.let { orcamento -> cartao { WeeklyBudgetCard(orcamento) } }
 
         dailyGap?.let { folga -> cartao { DailyGapCard(folga, onOpenGap) } }
 
         cartao {
-            CartaoDaAgua(state = state, aguaDaComidaMl = aguaDaComidaMl, onAbrirDiario = onAddMeal)
+            CartaoDaAgua(state = state, aguaDaComidaMl = aguaDaComidaMl, onAbrirDiario = destinos.refeicao)
         }
 
         cartao {
             CartaoDoTreino(
                 treino = workout,
                 unidades = state.unitSystem,
-                onAbrir = onOpenWorkout,
+                onAbrir = destinos.treino,
             )
         }
 
-        cartao { CartaoDoJejum(sessao = fasting, agoraMs = nowMin, onAbrir = onOpenFasting) }
+        cartao { CartaoDoJejum(sessao = fasting, agoraMs = nowMin, onAbrir = destinos.jejum) }
 
         cartao {
             CartaoDaCorrida(
                 corrida = lastRun,
                 unidades = state.unitSystem,
-                onAbrir = onOpenRun,
+                onAbrir = destinos.corrida,
             )
         }
 
         steps?.let { passos -> cartao { CartaoDosPassos(passos) } }
 
-        cartao { CartaoDoPeso(state = state, onRegistarPeso = onLogWeight) }
+        cartao { CartaoDoPeso(state = state, onRegistarPeso = destinos.peso) }
     }
 }
 

@@ -25,14 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringArrayResource
@@ -56,12 +52,11 @@ import pt.antares.app.core.designsystem.components.LoadingState
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.components.SectionHeader
 import pt.antares.app.core.designsystem.components.SplitRow
+import pt.antares.app.core.designsystem.components.rememberCartaoPartilhavel
 import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.core.util.UnitConversions
-import kotlinx.coroutines.launch
 import pt.antares.app.core.util.axisDate
-import pt.antares.app.core.util.rememberImageSharer
 import pt.antares.app.core.util.dayShortDated
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
@@ -187,20 +182,12 @@ private fun ShareCard(state: ProgressState) {
     val mudanca = state.rangeChangeKg ?: return
     val imperial = state.unitSystem == UnitSystem.IMPERIAL
     val unidade = stringResource(if (imperial) Res.string.common_lb else Res.string.common_kg)
-    val camada = rememberGraphicsLayer()
-    val partilhar = rememberImageSharer()
-    val scope = rememberCoroutineScope()
-    val ficheiro = stringResource(Res.string.share_card_filename)
+    // A camada só se grava quando alguém carrega em partilhar. Antes gravava-se a cada
+    // desenho deste ecrã — cada rolagem, cada mudança de período — para uma acção que se faz
+    // uma vez por mês, e é o defeito concreto 3 da `estudo/areas/14-progresso.md`.
+    val cartao = rememberCartaoPartilhavel(stringResource(Res.string.share_card_filename))
 
-    AntaresCard(
-        modifier = Modifier
-            .fillMaxWidth()
-
-            .drawWithContent {
-                camada.record { this@drawWithContent.drawContent() }
-                drawLayer(camada)
-            },
-    ) {
+    AntaresCard(modifier = Modifier.fillMaxWidth().then(cartao.modifier)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -228,9 +215,7 @@ private fun ShareCard(state: ProgressState) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            IconButton(
-                onClick = { scope.launch { partilhar(ficheiro, camada.toImageBitmap()) } },
-            ) {
+            IconButton(onClick = cartao.partilhar) {
                 Icon(
                     Icons.Default.Share,
                     contentDescription = stringResource(Res.string.share_card_cta),

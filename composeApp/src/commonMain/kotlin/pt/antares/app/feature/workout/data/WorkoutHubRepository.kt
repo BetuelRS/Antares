@@ -51,10 +51,17 @@ sealed interface DestaqueDoTreino {
     data class Ultima(val rotina: RotinaEmDestaque, val ultimaVezEpochDay: Long) : DestaqueDoTreino
 
     /**
-     * Sem plano e sem histórico. Não há o que propor, e o cartão diz isso em vez de escolher
-     * uma rotina ao acaso — a app semeia sete, e nenhuma delas é mais tua do que as outras.
+     * Sem plano e sem rotina treinada. Não há o que propor, e o cartão diz isso em vez de
+     * escolher uma rotina ao acaso — a app semeia sete, e nenhuma delas é mais tua do que as
+     * outras.
+     *
+     * [jaTreinou] distingue as duas maneiras de aqui chegar, e existe porque o cartão dizia
+     * «Ainda não treinaste» **por cima de um cartão da semana com quatro treinos**: quem só
+     * faz treinos livres nunca treinou uma rotina, e treinou. Os dois números estavam certos
+     * e a frase é que não — a semana conta todas as sessões, e o destaque só olha para as que
+     * nasceram de uma rotina.
      */
-    data object Convite : DestaqueDoTreino
+    data class Convite(val jaTreinou: Boolean) : DestaqueDoTreino
 }
 
 /** A semana de treino: que dias tiveram treino, e quanto trabalho deram. */
@@ -105,7 +112,7 @@ data class CentroDeTreino(
     val carregado: Boolean = false,
     /** O instante em que a sessão a decorrer começou, para o ecrã poder contar o tempo. */
     val sessaoActivaDesde: Long? = null,
-    val destaque: DestaqueDoTreino = DestaqueDoTreino.Convite,
+    val destaque: DestaqueDoTreino = DestaqueDoTreino.Convite(jaTreinou = false),
     val semana: SemanaDeTreino = SemanaDeTreino(0L, emptyList(), 0.0, 0),
     val rotinas: List<RotinaNaLista> = emptyList(),
     val ultimos: List<TreinoNaLista> = emptyList(),
@@ -231,12 +238,16 @@ class WorkoutHubRepository(
             }
         }
 
+        // O convite leva se já houve treinos: a semana conta-os todos, e o cartão dizia
+        // «Ainda não treinaste» por cima dela.
+        val convite = DestaqueDoTreino.Convite(jaTreinou = sessoes.isNotEmpty())
+
         val ultimaId = ultimaPorRotina.entries
             .filter { existe.containsKey(it.key) }
             .maxByOrNull { it.value }
-            ?: return DestaqueDoTreino.Convite
+            ?: return convite
 
-        val nome = existe[ultimaId.key] ?: return DestaqueDoTreino.Convite
+        val nome = existe[ultimaId.key] ?: return convite
         return DestaqueDoTreino.Ultima(
             rotina = emDestaque(ultimaId.key, nome, porRotina, sessoes),
             ultimaVezEpochDay = diaDe(ultimaId.value, zona),

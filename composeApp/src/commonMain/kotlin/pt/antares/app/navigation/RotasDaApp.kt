@@ -12,6 +12,7 @@ import pt.antares.app.feature.me.DestinosDoCorpo
 import pt.antares.app.feature.me.DestinosDoSobre
 import pt.antares.app.feature.coach.CoachHistoryScreen
 import pt.antares.app.feature.coach.CoachReportScreen
+import pt.antares.app.feature.today.DestinosDoHoje
 import pt.antares.app.feature.today.TodayScreen
 import pt.antares.app.feature.fasting.ui.FastingHistoryScreen
 import pt.antares.app.feature.fasting.ui.FastingScreen
@@ -26,16 +27,20 @@ import pt.antares.app.feature.crash.CrashScreen
 internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
     composable<Route.Today> {
         TodayScreen(
-            onLogWeight = { navController.navigate(Route.WeightHistory) },
-
-            onAddMeal = { navController.navigateToTab(Route.Diary) },
-            onOpenWorkout = { navController.navigateToTab(Route.Workout) },
-            onOpenFasting = { navController.navigate(Route.Fasting) { launchSingleTop = true } },
-            // Um `navigate` e não um `navigateToTab`: a corrida deixou de ser separador, e
-            // saltar para ela pelo caminho dos separadores apagava a pilha até ao Hoje.
-            onOpenRun = { navController.navigate(Route.Run) { launchSingleTop = true } },
-            onOpenCoach = { navController.navigate(Route.CoachReport()) },
-            onOpenProfile = { navController.navigate(Route.ProfileSettings) },
+            destinos = DestinosDoHoje(
+                peso = { navController.navigate(Route.WeightHistory) },
+                refeicao = { navController.navigateToTab(Route.Diary) },
+                treino = { navController.navigateToTab(Route.Workout) },
+                jejum = { navController.navigate(Route.Fasting) { launchSingleTop = true } },
+                // Um `navigate` e não um `navigateToTab`: a corrida deixou de ser separador, e
+                // saltar para ela pelo caminho dos separadores apagava a pilha até ao Hoje.
+                corrida = { navController.navigate(Route.Run) { launchSingleTop = true } },
+                treinador = { navController.navigate(Route.CoachReport()) },
+                perfil = { navController.navigate(Route.ProfileSettings) },
+                // O arranque é um destino como os outros: quem lá chega daqui volta ao Hoje
+                // pelo caminho que ele já tem — o `onFinished` faz `popUpTo(Onboarding)`.
+                arranque = { navController.navigate(Route.Onboarding) },
+            ),
             onQuickLog = { slot, epochDay, mode, query ->
                 navController.navigate(Route.FoodSearch(slot.name, epochDay, mode.name, query))
             },

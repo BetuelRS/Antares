@@ -246,7 +246,8 @@
     <string name="today_weight_title">Weight</string>
     <string name="today_weight_trend">Trend</string>
     <string name="today_weight_log_cta">Log weight</string>
-    <string name="today_no_profile">Complete onboarding to see your targets.</string>
+    <string name="today_no_profile">The setup answers are missing, so the app cannot work out your targets.</string>
+    <string name="today_no_profile_action">Answer now</string>
 
     <string name="weight_title">Weight history</string>
     <string name="weight_add">Log weight</string>
@@ -632,6 +633,8 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="workout_hub_no_plan_title">You haven't trained yet</string>
     <string name="workout_hub_no_plan_body">Assign routines to days and today's workout will show up here.</string>
     <string name="workout_hub_no_plan_action">Plan the week</string>
+    <string name="workout_hub_sem_rotina_title">You haven't trained with a routine yet</string>
+    <string name="workout_hub_sem_rotina_body">The workouts you have done were free ones. Assign routines to days and today's workout will show up here.</string>
     <string name="workout_hub_routine_never">not done yet</string>
     <string name="workout_hub_recent">Recent workouts</string>
     <string name="workout_hub_free_workout">Free workout</string>

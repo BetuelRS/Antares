@@ -17,6 +17,7 @@ import pt.antares.app.core.model.MacroStrategy
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.Sex
 import pt.antares.app.core.util.todayEpochDay
+import pt.antares.app.feature.today.DestinosDoHoje
 import pt.antares.app.feature.today.TodayScreen
 import pt.antares.app.testing.Fabricas
 import pt.antares.app.testing.FluxoUiHarness
@@ -64,13 +65,10 @@ class AnelDoDiaUiTest : FluxoUiHarness() {
 
         setContent {
             TodayScreen(
-                onLogWeight = {},
-                onAddMeal = {},
-                onOpenWorkout = {},
-                onOpenFasting = {},
-                onOpenRun = {},
-                onOpenCoach = {},
-                onOpenProfile = {},
+                destinos = DestinosDoHoje(
+                    peso = {}, refeicao = {}, treino = {}, jejum = {},
+                    corrida = {}, treinador = {}, perfil = {}, arranque = {},
+                ),
                 onQuickLog = { _, _, _, _ -> },
                 onOpenGap = {},
                 viewModel = vm,
