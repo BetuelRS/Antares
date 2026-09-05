@@ -34,6 +34,15 @@ data class RoutineLastDoneRow(val routineId: String, val startedAt: Long)
 
 data class SessionSetCountRow(val sessionId: String, val total: Int)
 
+/** Um treino anterior da mesma rotina, com o que a comparação do resumo pós-treino precisa. */
+data class TreinoDaRotinaRow(
+    val sessionId: String,
+    val startedAt: Long,
+    val endedAt: Long?,
+    val volume: Double,
+    val series: Int,
+)
+
 data class ExerciseSetRow(val exerciseId: String, val weightKg: Double, val reps: Int)
 
 /**
@@ -386,6 +395,42 @@ interface WorkoutSetDao {
         """,
     )
     suspend fun doneWorkingSetsByTime(): List<SessionSetRow>
+
+    /**
+     * Os treinos anteriores **desta rotina**, do mais recente para o mais antigo, já com o
+     * volume e as séries somados.
+     *
+     * É o que o resumo pós-treino compara. A base sabia dizer qual foi a **última vez** de
+     * cada rotina — o `observeLastDoneByRoutine` — e não sabia dizer qual foi a **anterior a
+     * esta**, que é outra pergunta: aquela inclui o treino que acabou agora mesmo.
+     *
+     * O treino de hoje sai pelo `id` e não pelo instante: excluí-lo por `startedAt <` deixava
+     * passar um empate ao milissegundo, e um treino não se compara consigo próprio.
+     *
+     * A junção é à esquerda de propósito: um treino terminado sem uma única série continua a
+     * ser um treino que aconteceu, e some da comparação se a junção o exigir.
+     */
+    @Query(
+        """
+        SELECT ws.id AS sessionId, ws.startedAt AS startedAt, ws.endedAt AS endedAt,
+               COALESCE(SUM(CASE WHEN s.deleted = 0 AND s.isWarmup = 0
+                                 THEN s.weightKg * s.reps END), 0) AS volume,
+               COALESCE(SUM(CASE WHEN s.deleted = 0 AND s.isWarmup = 0
+                                 THEN 1 END), 0) AS series
+        FROM workout_session ws
+        LEFT JOIN workout_set s ON s.sessionId = ws.id
+        WHERE ws.status = 'DONE' AND ws.deleted = 0
+          AND ws.routineId = :routineId AND ws.id <> :excepto
+        GROUP BY ws.id
+        ORDER BY ws.startedAt DESC
+        LIMIT :limite
+        """,
+    )
+    suspend fun anterioresDaRotina(
+        routineId: String,
+        excepto: String,
+        limite: Int,
+    ): List<TreinoDaRotinaRow>
 
     @Query("SELECT * FROM workout_set WHERE deleted = 0")
     suspend fun exportRows(): List<WorkoutSetEntity>

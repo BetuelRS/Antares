@@ -776,12 +776,18 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_rest_skip">Saltar</string>
     <string name="workout_summary_title">Resumo do treino</string>
     <string name="workout_summary_duration">Duração</string>
-    <string name="workout_summary_volume">Volume total</string>
+    <string name="workout_summary_volume">Volume</string>
     <string name="workout_summary_sets">Séries</string>
     <string name="workout_summary_prs">Recordes</string>
     <string name="workout_summary_pr_line">%1$s — novo recorde</string>
-    <string name="workout_summary_no_prs">Sem recordes desta vez.</string>
     <string name="workout_summary_done">Concluir</string>
+    <string name="workout_summary_vs_ultima">Vs. a última vez que fizeste esta rotina</string>
+    <string name="workout_summary_vs_media">Vs. a média das últimas três</string>
+    <string name="workout_summary_vs_media_igual">Igual à média das últimas três.</string>
+    <string name="workout_summary_sem_rotina">Este treino não veio de uma rotina, e por isso não há com que o comparar.</string>
+    <string name="workout_summary_primeira_vez">É a primeira vez que fazes esta rotina — a comparação aparece na próxima.</string>
+    <string name="workout_summary_share">Partilhar o resumo</string>
+    <string name="workout_summary_share_filename">antares-treino.png</string>
 
     <string name="workout_history_title">Histórico</string>
     <string name="workout_history_line">%1$s · %2$s · %3$s</string>

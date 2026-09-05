@@ -14,6 +14,7 @@ import pt.antares.app.core.database.daos.ExerciseLogDao
 import pt.antares.app.core.database.daos.ExerciseLoadDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.SessionExerciseNoteDao
+import pt.antares.app.core.database.daos.TreinoDaRotinaRow
 import pt.antares.app.core.database.daos.WeightLogDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
@@ -48,6 +49,27 @@ class WorkoutSessionRepository(
     fun observeSets(sessionId: String): Flow<List<WorkoutSetEntity>> = setDao.observeSetsForSession(sessionId)
 
     suspend fun sessionById(id: String): WorkoutSessionEntity? = withContext(io) { sessionDao.sessionById(id) }
+
+    /**
+     * O nome da rotina com que um treino foi feito. Vai pela consulta que **vê as lápides**,
+     * como o detalhe do histórico: um treino feito com uma rotina entretanto apagada continua
+     * a ter sido feito com ela, e chamar-lhe «treino livre» era reescrever o passado.
+     */
+    suspend fun nomeDaRotina(routineId: String): String? =
+        withContext(io) { routineDao.routineNameById(routineId) }
+
+    /**
+     * Os treinos anteriores da mesma rotina, do mais recente para o mais antigo, para o
+     * resumo poder comparar. São poucos — três — e leem-se uma vez, no fim de um treino: é a
+     * razão de isto ser uma consulta pontual e não um fluxo.
+     */
+    suspend fun anterioresDaRotina(
+        routineId: String,
+        excepto: String,
+        limite: Int,
+    ): List<TreinoDaRotinaRow> = withContext(io) {
+        setDao.anterioresDaRotina(routineId, excepto, limite)
+    }
 
     /**
      * Devolve o treino a decorrer se houver um, em vez de começar outro. É o que faz sair

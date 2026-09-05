@@ -775,12 +775,18 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="session_rest_skip">Skip</string>
     <string name="workout_summary_title">Workout summary</string>
     <string name="workout_summary_duration">Duration</string>
-    <string name="workout_summary_volume">Total volume</string>
+    <string name="workout_summary_volume">Volume</string>
     <string name="workout_summary_sets">Sets</string>
     <string name="workout_summary_prs">Records</string>
     <string name="workout_summary_pr_line">%1$s — new record</string>
-    <string name="workout_summary_no_prs">No records this time.</string>
     <string name="workout_summary_done">Done</string>
+    <string name="workout_summary_vs_ultima">Vs. the last time you did this routine</string>
+    <string name="workout_summary_vs_media">Vs. the average of the last three</string>
+    <string name="workout_summary_vs_media_igual">The same as the average of the last three.</string>
+    <string name="workout_summary_sem_rotina">This workout did not come from a routine, so there is nothing to compare it with.</string>
+    <string name="workout_summary_primeira_vez">This is the first time you have done this routine — the comparison shows up next time.</string>
+    <string name="workout_summary_share">Share the summary</string>
+    <string name="workout_summary_share_filename">antares-workout.png</string>
 
     <string name="workout_history_title">History</string>
     <string name="workout_history_line">%1$s · %2$s · %3$s</string>
