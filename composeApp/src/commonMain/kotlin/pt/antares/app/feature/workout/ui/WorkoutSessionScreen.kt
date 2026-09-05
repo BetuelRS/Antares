@@ -2,7 +2,6 @@ package pt.antares.app.feature.workout.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -365,20 +364,19 @@ private fun LinhaDoAlvo(
     onWarmup: () -> Unit,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
+        // O alvo e o 1RM num **texto só**, e não em dois lado a lado. Em dois, o primeiro
+        // ficava sem peso e comia a largura toda: a 200 % de escala de letra o segundo saía
+        // uma letra por linha, «1 R M e s t .» na vertical — visto a correr. Num texto só,
+        // o que não cabe muda de linha por palavras.
+        val alvo = "${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s"
         Text(
-            "${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s" +
-                (if (ex.melhorOneRmKg != null) " · " else ""),
+            text = ex.melhorOneRmKg?.let {
+                "$alvo · " + stringResource(Res.string.session_one_rm, loadWithUnit(it, unidades))
+            } ?: alvo,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f),
         )
-        ex.melhorOneRmKg?.let {
-            Text(
-                stringResource(Res.string.session_one_rm, loadWithUnit(it, unidades)),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-            )
-        } ?: Spacer(Modifier.weight(1f))
 
         // O aquecimento não aparece nos exercícios de peso do corpo: a linha deles não tem
         // campo de peso para aquecer com menos, e um interruptor que só muda uma marca no

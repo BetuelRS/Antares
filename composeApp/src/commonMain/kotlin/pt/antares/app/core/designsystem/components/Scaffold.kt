@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.larguraDeLeitura
@@ -174,7 +175,10 @@ fun AntaresTopBar(
 ) {
     CenterAlignedTopAppBar(
         modifier = modifier,
-        title = { Text(title) },
+        // Uma linha, com reticências. A barra do topo tem altura fixa: a 200 % de escala de
+        // letra o título passava a duas linhas e a segunda saía cortada a meio das letras —
+        // visto a correr, no ecrã da sessão. Cortado com reticências lê-se que há mais.
+        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         navigationIcon = {
             if (onBack != null) {
                 IconButton(onClick = onBack) {
