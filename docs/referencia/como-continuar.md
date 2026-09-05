@@ -25,6 +25,17 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   rotina e com a média das últimas três, partilha do resumo como imagem, e a secção dos recordes
   só quando há um. **1790 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos —
   contados com o `verificar.mjs`.
+- **A 2.26.0 está publicada e verde**, conferido a 2026-09-05: `main` e a etiqueta `v2.26.0` em
+  `cde4488`, release «2.26.0 — o fim de um treino passa a dizer se ele foi melhor» com os quatro
+  APKs mais o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit**, e o `latest` a
+  responder 200 aos dois ficheiros.
+- **A etiqueta andou duas vezes, e as duas razões ficam escritas.** À primeira, o `CHANGELOG.md`
+  prometia um título que a corrida a 200 % me fez mudar. À segunda, **o CI ficou vermelho em dois
+  testes do perfil que ninguém tinha tocado**: os testes constroem os ViewModels à mão e ninguém
+  os fechava, e um `viewModelScope` vivo resume no `Main` enquanto o teste seguinte lhe chama o
+  `setMain`. Verde aqui e vermelho lá — é uma corrida entre máquinas de velocidades diferentes.
+  Os dois harnesses passam a fechá-los; foram precisas duas passagens, porque a primeira só
+  tratou um deles.
 - **A versão abriu pelas correcções dos achados da varredura**, por decisão do dono: o painel de
   treino que dizia «Ainda não treinaste» a quem tinha quatro treinos livres na semana; o
   `ShareCard` do Progresso que gravava a camada de desenho **a cada composição**; e o «Hoje» sem

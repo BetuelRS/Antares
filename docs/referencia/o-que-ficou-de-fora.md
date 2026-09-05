@@ -590,6 +590,13 @@ feitas, e as duas revisões da D7 estão no registo da versão, no plano.
   lá dentro por muito que se lhe suba a escala — medido, ao tentar escrever o guarda como um
   `runComposeUiTest`. O `EscalaDeLetraTest` que ficou guarda a fonte, não a forma; a forma
   continua a encontrar-se **no aparelho** (D3).
+- **E o CI apanhou o que 1790 testes verdes aqui não apanhavam.** Os testes constroem os
+  ViewModels à mão e nenhum dos dois harnesses os fechava: cada `viewModelScope` é um scope
+  próprio, ligado ao `Main`, e um ViewModel que fica a coleccionar as preferências resume no
+  `Main` depois de o teste acabar — enquanto o teste seguinte lhe chama o `setMain`. «Dispatchers
+  .Main is used concurrently with setting it», sempre num teste que não tinha culpa. Verde aqui e
+  vermelho lá porque é uma corrida entre máquinas de velocidades diferentes, e **foram precisas
+  duas passagens**: a primeira só tratou o harness dos testes de fluxo.
 - **O que ficou de fora está nas linhas novas da tabela acima**, e é decisão: o recorde escrito
   por extenso como o esboço o desenha, «o teu maior volume de sempre», e os nomes dos exercícios
   cortados na lista da sessão a 200 %.
