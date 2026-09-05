@@ -20,7 +20,42 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.25.0 é a última fechada**, a 2026-09-04. Esquema **v39** e catálogo **v6**, inalterados, e
+- **2.26.0 é a última fechada**, a 2026-09-05. Esquema **v39** e catálogo **v6**, inalterados, e
+  **nenhuma coluna é nova**. «O resumo pós-treino»: comparação com a última vez que se fez a
+  rotina e com a média das últimas três, partilha do resumo como imagem, e a secção dos recordes
+  só quando há um. **1790 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos —
+  contados com o `verificar.mjs`.
+- **A versão abriu pelas correcções dos achados da varredura**, por decisão do dono: o painel de
+  treino que dizia «Ainda não treinaste» a quem tinha quatro treinos livres na semana; o
+  `ShareCard` do Progresso que gravava a camada de desenho **a cada composição**; e o «Hoje» sem
+  perfil, que era uma frase sem saída nenhuma.
+- **A gravação do cartão partilhável vive agora num sítio só**, o `rememberCartaoPartilhavel`, e
+  só acontece quando alguém carrega em partilhar. Era o defeito concreto 3 da
+  `estudo/areas/14-progresso.md`, e o resumo do treino ia copiá-lo.
+- **A comparação é com treinos da mesma rotina, e mais nada.** Um treino livre não compara e diz
+  porquê; a primeira vez de uma rotina também. A média só aparece com os três treinos completos
+   — com dois, «média das últimas três» era mentir sobre o que se somou.
+- **A 200 % de escala de letra apanhou dois defeitos que 1790 testes não viam**, e os dois são
+  anteriores a esta versão: o título da barra do topo passava a duas linhas e a segunda saía
+  cortada a meio das letras — corrigido no `AntaresTopBar`, para a app inteira —, e o «1RM est. ·
+  114 kg» da sessão saía uma letra por linha, por serem dois textos num `Row` e só o segundo com
+  `weight`. É a terceira vez que esta família aparece: 2.19.0, 2.25.0, e agora.
+- **E não há teste de composição que os apanhe.** O Robolectric não tem tipos de letra: mede
+  «Corpo inteiro A · terminado» como 27 dp de largura, e por isso a frase nunca muda de linha lá
+  dentro por muito que se suba a escala — medido, ao tentar escrever o guarda como um
+  `runComposeUiTest`. Estes defeitos encontram-se **no aparelho**, que é a regra D3, e o
+  `EscalaDeLetraTest` guarda só que as correcções não sejam desfeitas.
+- **A D7 apanhou três defeitos na primeira passagem e dois na segunda.** Uma consulta à base
+  dentro do ciclo de comparar-e-trocar do `_state.update { }`; a bandeira da gravação sem
+  `finally`; um comentário a dizer o contrário do código; as três colunas encostadas à esquerda
+  quando o esboço as centra; e três importações mortas — que é o defeito concreto 1 que a área
+  10 aponta a este mesmo ficheiro.
+- **A próxima do plano é a 2.27.0**, «A biblioteca de exercícios». **Não tem esboço** — a área 09
+  é uma das que ficaram sem um —, e por isso vale o `estudo/areas/09-treino-biblioteca.md` por
+  inteiro. As perguntas de abertura estão escritas no plano, e **nada começa sem a palavra do
+  dono** (A1).
+- *O que se segue é o estado até à 2.25.0.*
+- **A 2.25.0 fechou a 2026-09-04.** Esquema **v39** e catálogo **v6**, inalterados, e
   **nenhum dado é novo**. «As estatísticas do treino»: seletor de período com os quatro chips da
   nutrição, séries por músculo por semana com a faixa de 10 a 20, treinos e volume por semana
   desenhados com o `AntaresChart`, e os recordes com a data em que aconteceram. **1769 testes
@@ -49,8 +84,6 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   que acabam em `Calc.kt`, que é uma convenção de nomes que a pasta já tinha abandonado. Passa
   a ver a pasta inteira, e a contar chamadas com lambda à direita: sem isso acusava de morta uma
   função chamada três linhas abaixo.
-- **A próxima do plano é a 2.26.0**, «O resumo pós-treino», com o esboço `10-treino-estatisticas`
-  outra vez — é a secção 3 dele. As perguntas de abertura estão escritas no plano.
 - *O que se segue é o estado até à 2.24.0.*
 - **A 2.24.0 está publicada e verde**, conferido a 2026-09-04: `main` em `e6f03c6`, etiqueta
   `v2.24.0`, release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`, e **CI

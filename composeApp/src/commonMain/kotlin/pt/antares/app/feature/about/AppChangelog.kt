@@ -23,9 +23,43 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.25.0"
+    const val CURRENT = "2.26.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.26.0",
+            title = "O fim de um treino passa a dizer se ele foi melhor",
+            titleEn = "Finishing a workout now tells you if it was better",
+            highlights = listOf(
+                "**O resumo compara com a última vez que fizeste esta rotina** — a duração, " +
+                    "o volume e as séries, lado a lado. Mostrava três números e não os " +
+                    "comparava com nada",
+                "**E com a média das últimas três**, por baixo: a última vez aponta para um " +
+                    "treino que podes ir ver, a média não se deixa enganar por um dia mau",
+                "**«Sem recordes» desapareceu.** Dizê-lo a seguir a cada treino normal " +
+                    "transformava a ausência de recorde num facto negativo repetido",
+                "**Podes partilhar o resumo como imagem**, com o mesmo botão do progresso",
+                "**O cartão do treino deixa de dizer «ainda não treinaste»** a quem só fez " +
+                    "treinos livres — treinaste; o que não fizeste foi treinar uma rotina",
+                "**Sem perfil, o «Hoje» leva-te às perguntas** em vez de ser um beco: era " +
+                    "uma frase no meio do ecrã e mais nada",
+            ),
+            highlightsEn = listOf(
+                "**The summary compares with the last time you did this routine** — " +
+                    "duration, volume and sets, side by side. It showed three numbers and " +
+                    "compared them with nothing",
+                "**And with the average of the last three**, underneath: the last time " +
+                    "points at a workout you can go and look at, the average is not fooled " +
+                    "by one bad day",
+                "**“No records” is gone.** Saying it after every ordinary workout turned the " +
+                    "absence of a record into a repeated piece of bad news",
+                "**You can share the summary as an image**, with the same button as progress",
+                "**The workout card stops saying “you haven't trained yet”** to someone who " +
+                    "only did free workouts — you did; what you did not do was train a routine",
+                "**With no profile, Today takes you to the questions** instead of being a " +
+                    "dead end: it was a sentence in the middle of the screen and nothing else",
+            ),
+        ),
         AppVersion(
             name = "2.25.0",
             title = "As estatísticas do treino passam a ter tempo",
@@ -366,33 +400,6 @@ object AppChangelog {
                     "never corrects it: whoever weighed the pan beats the table",
                 "**Method steps**, in order, with move up and down — and readable on the recipe " +
                     "screen, with the pan on the stove",
-            ),
-        ),
-        AppVersion(
-            name = "2.17.0",
-            title = "A revisão da AI passa a corrigir-se",
-            titleEn = "The AI review becomes editable",
-            highlights = listOf(
-                "**O microfone deixa de ir para a pesquisa e passa a ir para a AI.** Já dizia " +
-                    "«diz o que comeste», e entregava a frase a uma procura de catálogo — onde " +
-                    "«dois ovos e uma torrada» não encontra nada",
-                "**As gramas escrevem-se.** De 30 g para 180 g eram quinze toques no +10",
-                "**Trocar um item por um alimento do catálogo**, e o registo passa a ligar-se a " +
-                    "ele: micronutrientes medidos, porção habitual, e conta para os mais registados",
-                "**Acrescentar o que a AI não viu** — o arroz que ficou tapado pela carne",
-                "**Guardar como refeição no fim**, com o que acabaste de rever e mais nada",
-                "**A fotografia do prato fica no diário** durante dois meses, e apaga-se sozinha",
-            ),
-            highlightsEn = listOf(
-                "**The mic no longer goes to search — it goes to the AI.** It already said " +
-                    "\"say what you ate\", then handed that sentence to a catalogue search, " +
-                    "where \"two eggs and a slice of toast\" finds nothing",
-                "**Grams are typed now.** Going from 30 g to 180 g was fifteen taps on +10",
-                "**Swap an item for a catalogue food**, and the entry links to it: measured " +
-                    "micronutrients, its usual serving, and it counts towards your most logged",
-                "**Add what the AI missed** — the rice hidden behind the meat",
-                "**Save as a meal at the end**, with what you just reviewed and nothing else",
-                "**The photo of the plate stays in the diary** for two months, then clears itself",
             ),
         ),
         // Da 2.2.0 à 2.16.0 saíram daqui à medida que entraram as versões novas: a lista tem

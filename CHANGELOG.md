@@ -13,6 +13,49 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.26.0] — 2026-09-05
+
+**O resumo pós-treino.** Depois de uma hora de treino, o ecrã mostrava **três números
+empilhados e uma lista** — e não comparava com nada. O número que faz voltar não é o
+volume de hoje: é o de hoje ao lado do da última vez.
+
+Esquema da base inalterado, **v39**; catálogo inalterado, **v6**. **Nenhum dado é novo** —
+a duração, o volume e as séries de cada treino já eram somados noutro sítio; o que faltava
+era uma consulta que dissesse qual foi o treino **anterior a este** da mesma rotina.
+
+### Adicionado
+
+- **A comparação com a última vez que fizeste esta rotina** — duração, volume e séries,
+  cada um com o sinal à frente e um `=` quando não mudou. A diferença viaja com o treino de
+  que partiu, e por isso «+436 kg» aponta para um treino que está no histórico.
+- **E com a média das últimas três**, por baixo. As duas, e não uma: a última vez é a que se
+  consegue ir ver, e um dia mau dela faz o de hoje parecer um salto que não houve; a média
+  não se deixa enganar por um dia, e em troca não aponta para lado nenhum. **A média só
+  aparece com três** — com duas, «média das últimas três» seria mentir sobre o que se somou.
+- **O nome da rotina no título** — «Empurrar A · terminado». Dizia «Resumo do treino», e quem
+  acabou de treinar já sabe que treinou.
+- **Partilhar o resumo como imagem**, com o partilhador que o progresso já usava.
+- **Um treino livre diz porque é que não compara.** Não tem rotina, e por isso não tem termo
+  de comparação — e a primeira vez de uma rotina diz outra coisa, porque é outra coisa.
+
+### Alterado
+
+- **A secção dos recordes só existe quando há um.** Dizer «sem recordes» a seguir a cada
+  treino normal transformava a ausência num facto negativo repetido.
+- **A contagem de séries do resumo ganha plural.** Dizia «1» ao lado de um rótulo fixo.
+
+### Corrigido
+
+- **«Ainda não treinaste», com os treinos da semana contados dois centímetros abaixo.** O
+  cartão de destaque do treino só olha para as sessões que nasceram de uma rotina, e o cartão
+  da semana conta-as todas: quem só faz treinos livres via as duas coisas ao mesmo tempo. Os
+  números estavam certos — a frase é que não.
+- **Sem perfil, o «Hoje» era um beco sem saída**: uma frase centrada, sem botão e sem caminho
+  para o arranque. Passa a levar lá.
+- **O cartão de partilha do progresso gravava a imagem a cada desenho do ecrã**, e não quando
+  alguém carrega em partilhar — custo constante para uma acção rara. Agora grava a pedido, e
+  os dois cartões partilháveis da app passam pelo mesmo código.
+
 ## [2.25.0] — 2026-09-04
 
 **As estatísticas do treino.** Duas listas sem tempo nenhum: o volume por músculo «desta

@@ -548,9 +548,12 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data — e envelheceu bem: hoje está menos errada do que quando foi adiada |
 | **O `food_cache` sem expiração, o custo invisível, o modelo fixado no código** | `estudo/sistema/02` | são do servidor, e o modelo fixado é o ponto fraco da longevidade |
 | **A confiança e o intervalo publicado por alimento** — «confiança A · 124–136» | esboço 22, terceira passagem | **não se faz**: nenhuma das três fontes o publica de forma que o oleoduto traga, e inventá-lo é o contrário do que este catálogo faz |
-| **«Ainda não treinaste» com treinos na mesma semana por baixo** — o destaque cai no `Convite` quando só há treinos livres | 2.20.0, visto a correr a 2026-09-05 | é o ecrã da 2.20.0 e o esboço 06 não desenha o caso; cabe numa versão do treino, ou entra por troca |
-| **O `today_no_profile` sem saída** — defeito concreto 3 da `estudo/areas/01` | 2.0.x, reconfirmado a 2026-09-05 | a **2.32.0** é o Hoje; a **2.40.0** é o arranque |
-| **O `ShareCard` regista a camada em cada composição** — defeito concreto 3 da `estudo/areas/14` | 2026-09-05 | custo constante para uma acção rara; a **2.26.0** vai tocar no mesmo padrão |
+| ~~**«Ainda não treinaste» com treinos na mesma semana por baixo**~~ | 2.20.0, visto a correr a 2026-09-05 | **feito na 2.26.0**, por decisão do dono — o `Convite` passa a saber se já houve treinos, e diz «ainda não treinaste **com uma rotina**» |
+| ~~**O `today_no_profile` sem saída**~~ | 2.0.x, reconfirmado a 2026-09-05 | **feito na 2.26.0** — o ecrã ganhou o botão «Responder agora», que leva ao arranque |
+| ~~**O `ShareCard` regista a camada em cada composição**~~ | 2026-09-05 | **feito na 2.26.0** — a gravação saiu para o `rememberCartaoPartilhavel` e só acontece ao carregar em partilhar |
+| **Os nomes dos exercícios cortados na lista da sessão a 200 %** de escala de letra — «Agachamento com» | visto a correr a 2026-09-05, na corrida da 2.26.0 | é o ecrã da área 08; cortar um nome numa lista não é o mesmo que cortar letras a meio, e por isso não entrou por troca |
+| **O recorde sem o número de onde veio** — o esboço 10 §3 escreve «1RM estimado subiu de 76 para 78 kg», e a app escreve «novo recorde» | 2.26.0, decidido | é uma leitura a mais por recorde; cabe onde os recordes forem trabalhados |
+| **«O teu maior volume de sempre»** — o «o que está mal» ponto 5 da `estudo/areas/10` | 2.26.0, decidido | é comparação com a história toda e não com a rotina; casa com os recordes |
 | **Os nomes dos exercícios saem em inglês** quando o catálogo não tem `namePt` — «Alternating Floor Press» nos recordes, com a app em português | 2.20.0 nomeia a convenção `namePt.ifBlank { nameEn }`; visto nos recordes a 2026-09-05 | é conteúdo do `seed_exercises.json`, e o `estudo/areas/09` trata da biblioteca — **2.27.0** |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e
@@ -567,6 +570,29 @@ por ninguém as ter riscado na altura — que é a regra do fim deste ficheiro: 
 exercícios de peso do corpo** (2.22.0), o **centro de treino 7 → 16** (2.20.0) e os **cinco
 separadores**, que deixaram de ser uma decisão em aberto e passaram a ser
 `Hoje · Diário · Treino · Progresso · Mais` (2.20.1).
+
+## 2.26.0 · O resumo pós-treino
+
+**Construída com a área 10 e o esboço 10 §3 abertos.** As três propostas da secção 3 estão
+feitas, e as duas revisões da D7 estão no registo da versão, no plano.
+
+- **A versão abriu pelas três correcções que o dono mandou entrar**, e as três estavam nesta
+  tabela: o «Ainda não treinaste» com treinos livres na semana, o `ShareCard` a gravar a camada
+  sempre, e o «Hoje» sem perfil sem saída. Foi adição e não troca, e está escrito como tal no
+  plano — a A5 pede que algo saia, e não saiu nada.
+- **Dois defeitos de 200 % de escala de letra, ambos anteriores a esta versão**, corrigidos de
+  caminho: o título da barra do topo passava a duas linhas e a segunda era cortada a meio das
+  letras — corrigido no `AntaresTopBar`, e vale para a app inteira —, e a linha do alvo da sessão
+  saía uma letra por linha. É a terceira aparição da família que o `estudo/transversal/03` §3.1
+  nomeia: 2.19.0, 2.25.0, e agora.
+- **E não há teste de composição que os apanhe.** O Robolectric não tem tipos de letra: mede a
+  frase «Corpo inteiro A · terminado» como 27 dp de largura, e por isso ela nunca muda de linha
+  lá dentro por muito que se lhe suba a escala — medido, ao tentar escrever o guarda como um
+  `runComposeUiTest`. O `EscalaDeLetraTest` que ficou guarda a fonte, não a forma; a forma
+  continua a encontrar-se **no aparelho** (D3).
+- **O que ficou de fora está nas linhas novas da tabela acima**, e é decisão: o recorde escrito
+  por extenso como o esboço o desenha, «o teu maior volume de sempre», e os nomes dos exercícios
+  cortados na lista da sessão a 200 %.
 
 ## 2.24.0 · O histórico do treino
 
@@ -855,6 +881,10 @@ O **`ShareCard` do Progresso regista a camada em cada composição** — `Progre
 `camada.record { … }` dentro do `drawWithContent`. É o defeito concreto 3 da
 `estudo/areas/14-progresso.md`, e interessa agora porque a 2.26.0 promete partilhar o resumo
 **com o partilhador que já existe**: copiar o padrão copia o defeito.
+
+**Foi o que aconteceu, ao contrário:** a 2.26.0 abriu por aqui. A gravação saiu para o
+`rememberCartaoPartilhavel`, num sítio só, e passou a acontecer apenas quando alguém carrega em
+partilhar — e é esse o cartão que o resumo do treino usa.
 
 ## O relatório vivo estava sete versões atrasado
 
