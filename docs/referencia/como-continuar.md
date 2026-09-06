@@ -61,10 +61,20 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   `finally`; um comentário a dizer o contrário do código; as três colunas encostadas à esquerda
   quando o esboço as centra; e três importações mortas — que é o defeito concreto 1 que a área
   10 aponta a este mesmo ficheiro.
+- **A varredura de 2026-09-06** — o `estudo/` lido inteiro e a 2.26.0 de lançamento corrida no
+  emulador — encontrou **um teste-guarda por documentar e um defeito por corrigir**, e os dois
+  estão em [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md). O guarda é o `EscalaDeLetraTest`,
+  que nasceu na 2.26.0 e não estava na tabela: é a **D6** a falhar na versão em que ela correu.
+  Documentado, e os testes-guarda passam de **75 para 76**.
+- **O defeito é do ecrã que a 2.27.0 vai reescrever**: os três filtros da biblioteca de
+  exercícios cortam o rótulo a meio, sem reticências — «Equipame» a 100 % de escala de letra, e
+  «Mús · Equi · Nível» a 200 %. **É a primeira desta família que se vê sem subir a escala.**
 - **A próxima do plano é a 2.27.0**, «A biblioteca de exercícios». **Não tem esboço** — a área 09
   é uma das que ficaram sem um —, e por isso vale o `estudo/areas/09-treino-biblioteca.md` por
   inteiro. As perguntas de abertura estão escritas no plano, e **nada começa sem a palavra do
-  dono** (A1).
+  dono** (A1). A medição C1 está feita e está na varredura: a premissa que decide o tamanho da
+  versão é que a `ExerciseEntity` **não tem `isFavorite` nem `lastUsedAt`** — favoritos e
+  recentes são tabela nova e esquema **v40**.
 - *O que se segue é o estado até à 2.25.0.*
 - **A 2.25.0 fechou a 2026-09-04.** Esquema **v39** e catálogo **v6**, inalterados, e
   **nenhum dado é novo**. «As estatísticas do treino»: seletor de período com os quatro chips da

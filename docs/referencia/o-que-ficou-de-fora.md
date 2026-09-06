@@ -554,7 +554,8 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **Os nomes dos exercícios cortados na lista da sessão a 200 %** de escala de letra — «Agachamento com» | visto a correr a 2026-09-05, na corrida da 2.26.0 | é o ecrã da área 08; cortar um nome numa lista não é o mesmo que cortar letras a meio, e por isso não entrou por troca |
 | **O recorde sem o número de onde veio** — o esboço 10 §3 escreve «1RM estimado subiu de 76 para 78 kg», e a app escreve «novo recorde» | 2.26.0, decidido | é uma leitura a mais por recorde; cabe onde os recordes forem trabalhados |
 | **«O teu maior volume de sempre»** — o «o que está mal» ponto 5 da `estudo/areas/10` | 2.26.0, decidido | é comparação com a história toda e não com a rotina; casa com os recordes |
-| **Os nomes dos exercícios saem em inglês** quando o catálogo não tem `namePt` — «Alternating Floor Press» nos recordes, com a app em português | 2.20.0 nomeia a convenção `namePt.ifBlank { nameEn }`; visto nos recordes a 2026-09-05 | é conteúdo do `seed_exercises.json`, e o `estudo/areas/09` trata da biblioteca — **2.27.0** |
+| **Os nomes dos exercícios saem em inglês** quando o catálogo não tem `namePt` — «Alternating Floor Press» nos recordes, com a app em português | 2.20.0 nomeia a convenção `namePt.ifBlank { nameEn }`; visto nos recordes a 2026-09-05 | é conteúdo do `seed_exercises.json`, e o `estudo/areas/09` trata da biblioteca — **2.27.0**. Contados a 2026-09-06: são **160 dos 873** |
+| **Os três filtros da biblioteca cortam o rótulo sem reticências** — «Equipame» a 100 %, «Mús · Equi · Nível» a 200 % | visto a correr a 2026-09-06, nas duas escalas | é o ecrã da **2.27.0**, e o `Text` do `FilterChip` tem `maxLines = 1` sem `overflow`. Quarta aparição da família do `estudo/transversal/03` §3.1, e a primeira que se vê sem subir a escala |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e
 a regra A5 continua a valer: o que entra a meio é troca, não adição.
@@ -901,6 +902,85 @@ apanha — o que o mantém honesto é esta linha.
 
 E o `estudo/PLANO-DE-PRODUCAO.md` dizia, na secção do versionamento, «atual: **2.24.0**».
 Corrigido para 2.25.0, e a versão ganhou a linha de publicação que lhe faltava.
+
+---
+
+# A varredura de 2026-09-06
+
+Feita depois de ler o `estudo/` inteiro — os documentos e os dezassete esboços — e de correr a
+**2.26.0 de lançamento** no emulador, descarregada da release e instalada por cima. Cada linha
+diz onde foi medida.
+
+## O que se confirmou, e não é achado
+
+A 2.26.0 está publicada e verde: `main` em `a91ee8e`, etiqueta `v2.26.0` em `cde4488`, release
+«2.26.0 — o fim de um treino passa a dizer se ele foi melhor» com os quatro APKs mais o
+`catalogo.json` e o `manifesto.json`, e **CI verde** nos dois últimos commits de `main`
+(`gh run list`). Localmente, com o `verificar.mjs`: **1790 testes Kotlin**, 58 das ferramentas,
+68 Deno, detekt e lint limpos, nenhum segredo em **1044** ficheiros.
+
+Recontados, e todos certos: esquema **v39**, **34 tabelas**, **36 migrações automáticas** —
+contadas na lista de entidades do `AntaresDb.kt` · catálogo **v6**, **7 932 alimentos**
+(3 329 `ciqual-`, 2 944 `usda-`, 1 372 `tca-`, 274 `ptx`, 13 `pt-`), contados no
+`catalogo.json` construído · **51 ecrãs** · **873 exercícios**, dos quais **111 `body only`**,
+contados no `seed_exercises.json`.
+
+E **42 ficheiros** no `composeApp/src/commonMain/kotlin/pt/antares/app/core/calc/`, não 41: a
+2.26.0 acrescentou o `ComparacaoDeTreino.kt` depois de a varredura anterior os ter contado.
+
+**Duas correcções da 2.26.0 e uma da 2.25.0, vistas a correr:** o «Hoje» sem perfil tem o botão
+«Responder agora» e ele leva ao arranque · o painel de treino diz «A última que fizeste» com a
+data · e as sete rotinas semeadas aparecem em português — «Corpo inteiro A», «Corpo inteiro B»,
+«Empurrar» — numa instalação com a app em português.
+
+## Um teste-guarda novo que ficou por documentar
+
+**O `EscalaDeLetraTest` nasceu na 2.26.0 e não estava em [`testes-guarda.md`](testes-guarda.md).**
+O ficheiro existe — `composeApp/src/androidUnitTest/kotlin/pt/antares/app/core/EscalaDeLetraTest.kt` —
+e é um guarda a sério: lê a fonte do `AntaresTopBar` e da `LinhaDoAlvo` e falha se alguém desfizer
+as duas correcções de 200 % de escala de letra daquela versão.
+
+É a **D6** — *«antes de etiquetar: os testes-guarda novos estão documentados?»* — e ela falhou na
+versão em que a varredura correu. Documentado a 2026-09-06, e os números passam de **75 para 76**:
+75 classes em Kotlin mais o `tools/catalogo/origem-por-nutriente.test.mjs`. O
+[`regras.md`](regras.md) foi corrigido no mesmo commit.
+
+## Um defeito visto a correr, no ecrã que a 2.27.0 vai reescrever
+
+**Os três filtros da biblioteca de exercícios cortam o rótulo a meio, sem reticências.**
+
+Visto no emulador Android 16, x86_64, com a 2.26.0 de lançamento, em **duas escalas de letra**:
+
+- a **100 %**, o chip do meio lê-se **«Equipame»** — «Equipamento» cortado;
+- a **200 %**, os três lêem-se **«Mús»**, **«Equi»** e **«Nível»**.
+
+A causa está no `ExerciseLibraryScreen.kt`: os três `FilterDropdown` vivem num `Row` com
+`Modifier.weight(1f)` cada, e o `Text` do `FilterChip` leva `maxLines = 1` **sem `overflow`** —
+o valor por omissão é `TextOverflow.Clip`, que corta a letra a meio em vez de pôr reticências.
+
+**É a quarta aparição da família que o `estudo/transversal/03-acessibilidade.md` §3.1 nomeia** —
+2.19.0, 2.25.0, 2.26.0, e agora —, e é a primeira que se vê **sem** subir a escala de letra. Não
+foi corrigida por iniciativa minha (A1): é do ecrã da **2.27.0**, e entra lá se o dono mandar.
+
+## A medição C1 da 2.27.0, feita antes de a versão abrir
+
+Contra o `estudo/areas/09-treino-biblioteca.md`, que é o documento que decide a forma — **a área
+09 é uma das três sem esboço**. Duas premissas do documento mudaram e uma decide o tamanho da
+versão:
+
+| Premissa da área 09 | O que o código e o aparelho dizem |
+|---|---|
+| «`ExerciseLibraryScreen.kt` (214), `ExerciseDetailScreen.kt` (139)» | **205 e 138.** O ecrã da lista encolheu com a migração da 2.3.0 — usa hoje `LinhaDaLista`, `ListaAdaptavel` e `AntaresScaffold`, e já não `Card` do Material |
+| defeito concreto 1: `stringResource` dentro de um `map` | **confirmado, e é o único que resta** — no `MuscleRow` do detalhe. As importações mortas que a varredura de 09-04 apontou a estes dois ficheiros já não existem: saíram na 2.25.0 |
+| defeito concreto 2: o modo de escolha mostra os 873 | **confirmado.** O `pickMode` só esconde o botão de criar |
+| defeito concreto 3: apagar um personalizado sem confirmação nem desfazer | **confirmado.** `deleteCustom` é chamado directamente do ícone da barra |
+| «não há favoritos nem usados recentemente» | **confirmado, e é o que decide o esquema:** a `ExerciseEntity` não tem `isFavorite` nem `lastUsedAt`. Pelo molde da `FoodMarkEntity` e da `ExerciseLoadEntity`, o que é da pessoa não vive dentro da linha do catálogo — portanto favoritos e recentes são **tabela nova e esquema v40**, e a versão deixa de poder prometer «sem dados novos» |
+| «o detalhe não diz nada sobre o teu desempenho» | **confirmado.** Só o `Sparkline`, e só com dois pontos ou mais |
+| «o filtro de nível ocupa um terço da barra» | **confirmado**, e reparte-se assim: 523 iniciante, 293 intermédio, 57 avançado |
+
+**E um número novo, contado hoje:** **160 dos 873 exercícios têm o `namePt` igual ao `nameEn`** —
+são eles os nomes ingleses que esta tabela nomeia («Alternating Floor Press» nos recordes). Não é
+uma falta da app: é conteúdo do `seed_exercises.json`.
 
 ---
 

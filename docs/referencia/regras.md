@@ -111,8 +111,8 @@ estado de uma execução no GitHub, que um teste local não consegue consultar s
 Trinta e uma é muito, e o risco é conhecido: uma lista longa lê-se uma vez e nunca
 mais. A defesa é a coluna da direita.
 
-Este repositório já provou qual é o filtro. Há **75 testes-guarda** documentados em
-[Testes-guarda](testes-guarda.md) — 74 classes de teste em Kotlin mais um `.test.mjs` das
+Este repositório já provou qual é o filtro. Há **76 testes-guarda** documentados em
+[Testes-guarda](testes-guarda.md) — 75 classes de teste em Kotlin mais um `.test.mjs` das
 ferramentas —, e foram eles — não os documentos — que fizeram
 as decisões sobreviver a meses de trabalho. As regras marcadas **teste** cuidam-se
 sozinhas. As marcadas **tu** são decisões, e por isso não podem ser automatizadas.
