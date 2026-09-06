@@ -150,6 +150,8 @@
     <string name="run_live_pause">Pausar</string>
     <string name="run_live_resume">Retomar</string>
     <string name="run_live_split">Km %1$d</string>
+    <string name="run_live_lap">Volta</string>
+    <string name="run_live_lap_n">Volta %1$d</string>
     <string name="run_live_paused_manual">Em pausa — o tempo e a distância estão parados</string>
     <string name="run_live_locked">Bloqueado. Mantém o cadeado premido para abrir.</string>
     <string name="run_live_kcal">kcal</string>

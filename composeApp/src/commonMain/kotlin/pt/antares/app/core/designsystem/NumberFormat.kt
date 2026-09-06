@@ -19,12 +19,20 @@ fun fmtG(value: Double): String = oneDecimal(value, comma = Locale.current.langu
 fun fmt2(value: Double): String = twoDecimals(value, comma = Locale.current.language == "pt")
 
 /**
- * Se o idioma em uso escreve os decimais com vírgula. Existe para quem formata fora daqui
- * poder seguir a mesma regra em vez de a escolher à mão — foi assim que a corrida ficou com
- * vírgula fixa e passou a discordar do peso no mesmo cartão.
+ * Se um idioma escreve os decimais com vírgula.
+ *
+ * Recebe o idioma em vez de o ir buscar, porque **nem tudo o que a app escreve nasce dentro
+ * de uma composição**: a notificação da corrida vive num serviço, e foi por não ter onde
+ * perguntar isto que ficou com a vírgula escrita à mão — o ecrã dizia `0.06 km` e a
+ * notificação `0,05 km` na mesma corrida.
+ */
+fun usaVirgulaDecimal(idioma: String): Boolean = idioma == "pt"
+
+/**
+ * A mesma regra, para quem está numa composição e tem o idioma à mão.
  */
 @Composable
-fun virgulaDecimal(): Boolean = Locale.current.language == "pt"
+fun virgulaDecimal(): Boolean = usaVirgulaDecimal(Locale.current.language)
 
 fun twoDecimals(value: Double, comma: Boolean): String = fixedDecimals(value, 2, comma)
 

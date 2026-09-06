@@ -24,6 +24,20 @@ data class Split(
     val movingMs: Long,
     val paceSecPerKm: Int,
     val kcal: Int,
+
+    /**
+     * Se este parcial foi **marcado à mão** em vez de fechado por um quilómetro.
+     *
+     * Nasce com omissão, e é isso que faz as corridas já gravadas continuarem a abrir: as
+     * parciais viajam num `splitsJson` dentro da corrida, e um campo sem omissão parava a
+     * leitura de tudo o que foi gravado antes dele. É a lição do `RotinaDeCopiaAntigaTest`,
+     * noutro formato.
+     *
+     * As duas séries partilham a lista e **não partilham a numeração**: o quilómetro 2 é o
+     * segundo quilómetro, e a volta 2 é a segunda volta. Uma volta marcada a meio não
+     * renumera os quilómetros que vêm a seguir.
+     */
+    val manual: Boolean = false,
 )
 
 data class RunMetrics(

@@ -52,6 +52,8 @@ import pt.antares.app.generated.resources.run_goal_reached
 import pt.antares.app.generated.resources.run_live_distance
 import pt.antares.app.generated.resources.run_live_finish
 import pt.antares.app.generated.resources.run_live_kcal
+import pt.antares.app.generated.resources.run_live_lap
+import pt.antares.app.generated.resources.run_live_lap_n
 import pt.antares.app.generated.resources.run_live_lock
 import pt.antares.app.generated.resources.run_live_pace_avg
 import pt.antares.app.generated.resources.run_live_pace_km
@@ -165,41 +167,83 @@ fun RunLiveScreen(
 
             Spacer(Modifier.height(Spacing.lg))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Spacing.md),
-            ) {
-                Cadeado(locked = locked, aoAlternar = { locked = !locked })
-
-                BotaoDeCorrida(
-                    texto = stringResource(
-                        if (m.pausaManual) Res.string.run_live_resume else Res.string.run_live_pause,
-                    ),
-                    cor = MaterialTheme.colorScheme.primary,
-                    corDoTexto = MaterialTheme.colorScheme.onPrimary,
-                    activo = !locked,
-                    modifier = Modifier.weight(1f),
-                    aoTocar = { if (m.pausaManual) viewModel.retomar() else viewModel.pausar() },
-                )
-            }
-
-            // **Terminar só aparece em pausa**, e é onde a decisão faz sentido: a correr, o
-            // sítio mais premido do ecrã deixa de ser um botão vermelho que acaba tudo. O
-            // toque longo fica: são duas fechaduras, e nenhuma delas se abre no bolso.
-            if (m.pausaManual) {
-                Spacer(Modifier.height(Spacing.sm))
-                BotaoDeCorrida(
-                    texto = stringResource(Res.string.run_live_finish),
-                    cor = MaterialTheme.colorScheme.error,
-                    corDoTexto = MaterialTheme.colorScheme.onError,
-                    activo = !locked,
-                    modifier = Modifier.fillMaxWidth(),
-                    aoTocar = {},
-                    aoTocarLongo = { viewModel.finish(); onFinish() },
-                )
-            }
+            Controlos(
+                emPausa = m.pausaManual,
+                locked = locked,
+                aoAlternarCadeado = { locked = !locked },
+                aoPausar = { viewModel.pausar() },
+                aoRetomar = { viewModel.retomar() },
+                aoMarcarVolta = { viewModel.volta() },
+                aoTerminar = { viewModel.finish(); onFinish() },
+            )
         }
+    }
+}
+
+/**
+ * O cadeado, a pausa, a volta e o terminar.
+ *
+ * Estão os quatro numa peça própria porque a regra que os governa é uma só e lê-se mal
+ * espalhada: **o que se pode fazer depende de estar em pausa**. A correr marca-se volta e
+ * não se termina; em pausa termina-se e não se marca volta.
+ */
+@Composable
+private fun Controlos(
+    emPausa: Boolean,
+    locked: Boolean,
+    aoAlternarCadeado: () -> Unit,
+    aoPausar: () -> Unit,
+    aoRetomar: () -> Unit,
+    aoMarcarVolta: () -> Unit,
+    aoTerminar: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+    ) {
+        Cadeado(locked = locked, aoAlternar = aoAlternarCadeado)
+
+        BotaoDeCorrida(
+            texto = stringResource(
+                if (emPausa) Res.string.run_live_resume else Res.string.run_live_pause,
+            ),
+            cor = MaterialTheme.colorScheme.primary,
+            corDoTexto = MaterialTheme.colorScheme.onPrimary,
+            activo = !locked,
+            modifier = Modifier.weight(1f),
+            aoTocar = { if (emPausa) aoRetomar() else aoPausar() },
+        )
+
+        // A volta fica ao lado da pausa e **desaparece em pausa**: a pausa existe para o
+        // que aconteceu não contar, e uma volta é o contrário disso. O motor recusa-a de
+        // qualquer maneira; isto é para o botão não mentir sobre o que faz.
+        if (!emPausa) {
+            BotaoDeCorrida(
+                texto = stringResource(Res.string.run_live_lap),
+                cor = MaterialTheme.colorScheme.surfaceVariant,
+                corDoTexto = MaterialTheme.colorScheme.onSurfaceVariant,
+                activo = !locked,
+                modifier = Modifier.weight(1f),
+                aoTocar = aoMarcarVolta,
+            )
+        }
+    }
+
+    // **Terminar só aparece em pausa**, e é onde a decisão faz sentido: a correr, o sítio
+    // mais premido do ecrã deixa de ser um botão vermelho que acaba tudo. O toque longo
+    // fica: são duas fechaduras, e nenhuma delas se abre no bolso.
+    if (emPausa) {
+        Spacer(Modifier.height(Spacing.sm))
+        BotaoDeCorrida(
+            texto = stringResource(Res.string.run_live_finish),
+            cor = MaterialTheme.colorScheme.error,
+            corDoTexto = MaterialTheme.colorScheme.onError,
+            activo = !locked,
+            modifier = Modifier.fillMaxWidth(),
+            aoTocar = {},
+            aoTocarLongo = aoTerminar,
+        )
     }
 }
 
@@ -216,11 +260,16 @@ private fun UltimosParciais(parciais: List<Split>, unidades: UnitSystem) {
 
     Spacer(Modifier.height(Spacing.sm))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-        // Do mais recente para trás, que é a ordem por que se lêem.
+        // Do mais recente para trás, que é a ordem por que se lêem. E cada um diz **o que
+        // é**: uma volta de 400 m ao lado de um quilómetro, ambos com o número 2 e sem
+        // rótulo a distingui-los, era a tabela a somar duas coisas diferentes.
         for (s in parciais.takeLast(2).reversed()) {
             Metric(
                 RunFormat.pace(s.paceSecPerKm, unidades),
-                stringResource(Res.string.run_live_split, s.index),
+                stringResource(
+                    if (s.manual) Res.string.run_live_lap_n else Res.string.run_live_split,
+                    s.index,
+                ),
             )
         }
     }

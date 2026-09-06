@@ -11,10 +11,15 @@ object RunPrCalc {
 
     fun timeForKm(splits: List<Split>, km: Int): Long? {
 
+        // As voltas marcadas à mão ficam de fora, e não é um pormenor: elas vivem na mesma
+        // lista dos quilómetros e medem o que a pessoa quis, não mil metros. Sem esta
+        // condição, uma volta de 1 200 m entrava na conta como se fosse um quilómetro e o
+        // recorde saía por uma distância que ninguém correu.
+        //
         // O último parcial de uma corrida está quase sempre incompleto — a corrida acabou
         // a meio do quilómetro — e somá-lo dava um tempo bom por uma distância menor. A
         // margem de um metro absorve o arredondamento do GPS.
-        val full = splits.filter { it.distanceM >= 999.0 }
+        val full = splits.filter { !it.manual && it.distanceM >= 999.0 }
         // Sem quilómetros completos que cheguem não há recorde a esta distância.
         if (full.size < km) return null
         return full.take(km).sumOf { it.movingMs }

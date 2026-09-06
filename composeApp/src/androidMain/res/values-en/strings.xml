@@ -16,6 +16,19 @@
     <string name="notif_channel_run_desc">Shows your metrics while recording a run.</string>
     <string name="notif_run_title">Antares — recording run</string>
     <string name="notif_run_paused">Paused</string>
+    <string name="notif_unit_km">km</string>
+    <string name="notif_unit_mi">mi</string>
+    <string name="run_voice_km">Kilometre %1$d.</string>
+    <string name="run_voice_lap">Lap %1$d.</string>
+    <string name="run_voice_pace">Pace %1$d %2$02d per kilometre.</string>
+    <plurals name="run_voice_time_min">
+        <item quantity="one">Total time %1$d minute.</item>
+        <item quantity="other">Total time %1$d minutes.</item>
+    </plurals>
+    <plurals name="run_voice_time_h">
+        <item quantity="one">Total time %1$d hour %2$d minutes.</item>
+        <item quantity="other">Total time %1$d hours %2$d minutes.</item>
+    </plurals>
 
     <string name="notif_channel_meal_name">Meal reminders</string>
     <string name="notif_channel_meal_desc">Reminds you to log a meal you haven\'t recorded yet.</string>

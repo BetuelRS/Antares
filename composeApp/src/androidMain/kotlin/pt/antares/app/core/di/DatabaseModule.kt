@@ -29,7 +29,7 @@ val databaseModule = module {
 
     single<FastingNotifier> { AndroidFastingNotifier(androidContext()) }
 
-    single<RunController> { AndroidRunController(androidContext(), get()) }
+    single<RunController> { AndroidRunController(androidContext(), get(), get()) }
 
     single { SupabaseContainer(createAntaresSupabase()) }
 

@@ -71,6 +71,7 @@ class RunViewModel(
     fun start() = controller.start(_type.value, _autoPause.value)
     fun pausar() = controller.pausar()
     fun retomar() = controller.retomar()
+    fun volta() = controller.volta()
     fun finish() = controller.stop()
     fun discard() = controller.discard()
 }

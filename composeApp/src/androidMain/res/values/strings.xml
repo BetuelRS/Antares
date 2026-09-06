@@ -17,6 +17,19 @@
     <string name="notif_channel_run_desc">Mostra as métricas enquanto gravas uma corrida.</string>
     <string name="notif_run_title">Antares — a gravar corrida</string>
     <string name="notif_run_paused">Em pausa</string>
+    <string name="notif_unit_km">km</string>
+    <string name="notif_unit_mi">mi</string>
+    <string name="run_voice_km">Quilómetro %1$d.</string>
+    <string name="run_voice_lap">Volta %1$d.</string>
+    <string name="run_voice_pace">Ritmo %1$d e %2$02d por quilómetro.</string>
+    <plurals name="run_voice_time_min">
+        <item quantity="one">Tempo total %1$d minuto.</item>
+        <item quantity="other">Tempo total %1$d minutos.</item>
+    </plurals>
+    <plurals name="run_voice_time_h">
+        <item quantity="one">Tempo total %1$d hora e %2$d minutos.</item>
+        <item quantity="other">Tempo total %1$d horas e %2$d minutos.</item>
+    </plurals>
 
     <string name="notif_channel_meal_name">Lembretes de refeição</string>
     <string name="notif_channel_meal_desc">Lembra-te de registar uma refeição que ainda não anotaste.</string>

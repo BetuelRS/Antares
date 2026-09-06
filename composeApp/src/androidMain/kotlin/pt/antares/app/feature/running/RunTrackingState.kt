@@ -1,6 +1,7 @@
 package pt.antares.app.feature.running
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.feature.running.domain.ActivityType
 import pt.antares.app.feature.running.domain.GeoSample
 import pt.antares.app.feature.running.domain.RunEngine
@@ -18,11 +19,11 @@ internal object RunTrackingState {
     private var engine: RunEngine? = null
     private val path = mutableListOf<Pair<Double, Double>>()
 
-    fun begin(type: ActivityType, weightKg: Double, autoPause: Boolean) {
+    fun begin(type: ActivityType, weightKg: Double, autoPause: Boolean, unidades: UnitSystem) {
         engine = RunEngine(type, weightKg, autoPause)
         path.clear()
         last.value = null
-        live.value = RunLiveState(active = true, type = type, autoPause = autoPause)
+        live.value = RunLiveState(active = true, type = type, autoPause = autoPause, unidades = unidades)
     }
 
     fun onSample(sample: GeoSample) {
@@ -59,6 +60,16 @@ internal object RunTrackingState {
         val e = engine ?: return
         e.retomar()
         live.value = live.value.copy(metrics = live.value.metrics.copy(pausaManual = false))
+    }
+
+    /**
+     * Fecha uma volta. O estado só muda quando o motor a aceitou — em pausa, ou sem um metro
+     * andado desde a anterior, não há volta e o ecrã não pode fingir que houve.
+     */
+    fun volta() {
+        val e = engine ?: return
+        if (e.volta() == null) return
+        live.value = live.value.copy(parciais = e.parciaisAteAgora())
     }
 
     fun finish() {

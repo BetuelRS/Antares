@@ -150,6 +150,8 @@
     <string name="run_live_pause">Pause</string>
     <string name="run_live_resume">Resume</string>
     <string name="run_live_split">Km %1$d</string>
+    <string name="run_live_lap">Lap</string>
+    <string name="run_live_lap_n">Lap %1$d</string>
     <string name="run_live_paused_manual">Paused — time and distance have stopped</string>
     <string name="run_live_locked">Locked. Press and hold the padlock to unlock.</string>
     <string name="run_live_kcal">kcal</string>

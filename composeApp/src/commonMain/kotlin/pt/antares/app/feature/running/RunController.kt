@@ -1,6 +1,7 @@
 package pt.antares.app.feature.running
 
 import kotlinx.coroutines.flow.StateFlow
+import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.feature.running.domain.ActivityType
 import pt.antares.app.feature.running.domain.RunMetrics
 import pt.antares.app.feature.running.domain.Split
@@ -11,6 +12,16 @@ data class RunLiveState(
     val type: ActivityType = ActivityType.RUN,
     val autoPause: Boolean = true,
     val metrics: RunMetrics = RunMetrics(),
+
+    /**
+     * As unidades da pessoa, lidas **uma vez ao começar**.
+     *
+     * Estão aqui e não no ecrã porque quem as precisa fora dele é a notificação, e essa
+     * vive num serviço sem composição por baixo. Sem elas, a notificação escrevia
+     * quilómetros a quem escolheu milhas — que é o defeito que o `RunFormat` proíbe por
+     * escrito e ao qual ela chegava por fora.
+     */
+    val unidades: UnitSystem = UnitSystem.METRIC,
 
     val path: List<Pair<Double, Double>> = emptyList(),
 
@@ -35,6 +46,9 @@ interface RunController {
 
     fun retomar()
 
+    /** Fecha uma volta aqui. Não faz nada em pausa nem sem distância desde a anterior. */
+    fun volta()
+
     fun stop()
     fun discard()
 }
@@ -47,6 +61,7 @@ class NoopRunController : RunController {
     override fun start(type: ActivityType, autoPause: Boolean) {}
     override fun pausar() {}
     override fun retomar() {}
+    override fun volta() {}
     override fun stop() {}
     override fun discard() {}
 }

@@ -16,6 +16,8 @@ import pt.antares.app.core.designsystem.components.AutoShrinkText
 import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.feature.running.domain.Split
 import pt.antares.app.generated.resources.Res
+import pt.antares.app.generated.resources.run_live_lap_n
+import pt.antares.app.generated.resources.run_live_split
 import pt.antares.app.generated.resources.run_pace_unit
 import pt.antares.app.generated.resources.run_summary_splits
 
@@ -38,7 +40,17 @@ fun SplitsTable(splits: List<Split>) {
                 modifier = Modifier.fillMaxWidth().padding(top = Spacing.xs),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text("${s.index}", style = MaterialTheme.typography.bodyMedium)
+                // A origem vai escrita, e não é enfeite: uma volta de 400 m e o quilómetro
+                // 2 apareciam os dois como «2», e a coluna do ritmo ao lado tornava-os
+                // comparáveis quando não são. O número sozinho servia enquanto a lista só
+                // tinha uma coisa lá dentro.
+                Text(
+                    stringResource(
+                        if (s.manual) Res.string.run_live_lap_n else Res.string.run_live_split,
+                        s.index,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
                 Text(
                     RunFormat.pace(s.paceSecPerKm, UnitSystem.METRIC) +
                         " ${stringResource(Res.string.run_pace_unit)}",

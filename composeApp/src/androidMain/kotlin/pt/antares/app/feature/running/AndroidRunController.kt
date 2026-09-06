@@ -8,13 +8,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pt.antares.app.core.database.daos.UserProfileDao
 import pt.antares.app.core.database.daos.WeightLogDao
+import pt.antares.app.core.model.UnitSystem
 import pt.antares.app.feature.running.domain.ActivityType
 import pt.antares.app.feature.running.domain.RunResult
 
 class AndroidRunController(
     private val context: Context,
     private val weightLogDao: WeightLogDao,
+    private val userProfileDao: UserProfileDao,
 ) : RunController {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -25,7 +28,11 @@ class AndroidRunController(
     override fun start(type: ActivityType, autoPause: Boolean) {
         scope.launch {
             val weight = weightLogDao.latest()?.weightKg ?: 70.0
-            RunTrackingState.begin(type, weight, autoPause)
+            // As unidades leem-se **uma vez, aqui**, e viajam no estado até à notificação.
+            // O serviço não tem composição por baixo e não tinha por onde as perguntar —
+            // era essa a razão de escrever quilómetros a quem escolheu milhas.
+            val unidades = userProfileDao.get()?.unitSystem ?: UnitSystem.METRIC
+            RunTrackingState.begin(type, weight, autoPause, unidades)
             val intent = Intent(context, RunTrackerService::class.java)
             ContextCompat.startForegroundService(context, intent)
         }
@@ -34,6 +41,8 @@ class AndroidRunController(
     override fun pausar() = RunTrackingState.pausar()
 
     override fun retomar() = RunTrackingState.retomar()
+
+    override fun volta() = RunTrackingState.volta()
 
     override fun stop() {
         RunTrackingState.finish()

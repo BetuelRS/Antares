@@ -37,6 +37,10 @@ class RunEngine(
         const val ELEV_WINDOW = 5
         const val EARTH_R = 6_371_000.0
 
+        // Abaixo de um metro não há volta que valha: é a mesma margem com que o `finish`
+        // decide se o quilómetro incompleto do fim chega para ser escrito.
+        const val MIN_VOLTA_M = 1.0
+
         // Correr custa cerca de uma caloria por quilo e por quilómetro, quase
         // independentemente do ritmo; andar custa pouco mais de metade. De bicicleta não há
         // regra por distância — a resistência do ar domina —, e por isso essa passa pelo MET
@@ -78,6 +82,23 @@ class RunEngine(
     private val splits = mutableListOf<Split>()
     private var lastSplitDist = 0.0
     private var lastSplitMoving = 0L
+
+    /**
+     * As voltas têm âncoras próprias, e é isso que as impede de estragar os quilómetros.
+     *
+     * Uma volta marcada aos 1,4 km **não** mexe no `lastSplitDist`: o quilómetro 2 continua
+     * a fechar aos 2 000 m e a medir mil metros. Se a volta movesse a âncora dos
+     * quilómetros, o parcial seguinte media 600 m — e o `RunPrCalc`, que só conta parciais
+     * com pelo menos 999 m, deitava fora os recordes de qualquer corrida em que alguém
+     * tivesse tocado no botão.
+     */
+    private var lastVoltaDist = 0.0
+    private var lastVoltaMoving = 0L
+    private var voltas = 0
+
+    // Conta só os automáticos, e por isso o número que sai é o do quilómetro. Antes era a
+    // posição na lista, que dava o mesmo enquanto não houve mais nada lá dentro.
+    private var quilometros = 0
 
     fun onSample(s: GeoSample): RunMetrics {
 
@@ -159,6 +180,50 @@ class RunEngine(
     fun retomar() { pausaManual = false }
 
     /**
+     * Fecha uma volta aqui.
+     *
+     * Serve quem treina por séries — 400 rápidos, 200 lentos — e não tem um quilómetro
+     * redondo onde marcar. Devolve a volta fechada, ou nulo quando não há nada para fechar:
+     * dois toques seguidos no mesmo sítio dariam uma volta de zero metros com um ritmo
+     * inventado, e o motor não escreve números que ninguém correu.
+     *
+     * **Em pausa não se marca.** A pausa existe para o que aconteceu não contar, e uma
+     * volta é exactamente o contrário disso.
+     */
+    fun volta(): Split? {
+        if (pausaManual) return null
+        return fecharVolta()
+    }
+
+    /**
+     * Fecha a volta aberta sem perguntar pela pausa.
+     *
+     * Existe separada da [volta] por uma razão que só apareceu a correr a app: **terminar
+     * uma corrida só é possível com ela em pausa** — foi a 2.29.0 que o decidiu —, e por
+     * isso o `finish` chamava a `volta` sempre com a pausa levantada. A volta que ia a meio
+     * nunca se fechava, e o último troço de uma corrida por séries desaparecia. A guarda da
+     * pausa é do **botão**, e não do fim.
+     */
+    private fun fecharVolta(): Split? {
+        val dist = distanceM - lastVoltaDist
+        if (dist <= MIN_VOLTA_M) return null
+        val dt = movingMs - lastVoltaMoving
+        voltas += 1
+        val s = Split(
+            index = voltas,
+            distanceM = dist,
+            movingMs = dt,
+            paceSecPerKm = paceSecPerKm(dist, dt),
+            kcal = splitKcal(dist, dt).roundToInt(),
+            manual = true,
+        )
+        splits += s
+        lastVoltaDist = distanceM
+        lastVoltaMoving = movingMs
+        return s
+    }
+
+    /**
      * Os quilómetros já fechados, **a meio da corrida**. O ecrã mostra os dois últimos para
      * se saber se se está a acelerar ou a abrandar sem esperar pelo fim.
      *
@@ -168,13 +233,22 @@ class RunEngine(
     fun parciaisAteAgora(): List<Split> = splits.toList()
 
     fun finish(): RunResult {
+        // A volta aberta fecha-se na meta, e **só se houve voltas**: sem esta condição,
+        // toda a corrida ganhava uma «volta 1» do princípio ao fim, igual a si própria, a
+        // quem nunca tocou no botão.
+        //
+        // Pela `fecharVolta` e não pela `volta`: uma corrida termina-se **em pausa**, e a
+        // guarda da pausa deitava fora justamente o troço que faltava fechar.
+        if (voltas > 0) fecharVolta()
+
         // Fecha o quilómetro incompleto do fim. Fica na lista marcado pela distância real,
         // que é como o [RunPrCalc] o distingue dos completos ao calcular recordes.
         val partial = distanceM - lastSplitDist
         if (partial > 1.0) {
             val dt = movingMs - lastSplitMoving
+            quilometros += 1
             splits += Split(
-                index = splits.size + 1,
+                index = quilometros,
                 distanceM = partial,
                 movingMs = dt,
                 paceSecPerKm = paceSecPerKm(partial, dt),
@@ -199,8 +273,9 @@ class RunEngine(
             val movingAtCross = segMovingStart + (f * dtMovingMs).toLong()
             val splitDist = boundary - lastSplitDist
             val splitMoving = movingAtCross - lastSplitMoving
+            quilometros += 1
             splits += Split(
-                index = splits.size + 1,
+                index = quilometros,
                 distanceM = splitDist,
                 movingMs = splitMoving,
                 paceSecPerKm = paceSecPerKm(splitDist, splitMoving),
