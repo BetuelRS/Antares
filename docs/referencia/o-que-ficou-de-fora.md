@@ -1070,6 +1070,115 @@ Riscado no mesmo commit em que a versão saiu, como a regra em baixo manda.
 
 ---
 
+# A varredura depois da 2.29.0 — 2026-09-06
+
+Feita depois de ler o `estudo/` inteiro — os 63 documentos e os dezassete esboços — e de correr
+a **2.29.0 de lançamento** no emulador, a app instalada e navegada separador a separador. Cada
+linha diz onde foi medida.
+
+## O que se confirmou, e não é achado
+
+A `main` local e a do GitHub em `7c0d391`, sem nada por comitar; a etiqueta `v2.29.0` em `34548d6`,
+release com os quatro APKs mais o `catalogo.json` e o `manifesto.json`, **CI verde** nos três
+últimos commits, e o `latest` a responder **HTTP 200** aos dois ficheiros. Localmente, com o
+`verificar.mjs`: **1851 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos,
+nenhum segredo em 1058 ficheiros.
+
+Recontados, e todos certos: esquema **v41**, **35 tabelas**, **38 migrações automáticas** mais
+as duas à mão — contadas na lista de entidades do `AntaresDb.kt` e nos `tableName` do `41.json`,
+que dão o mesmo número · **78 testes-guarda**, 77 classes em Kotlin mais o
+`tools/catalogo/origem-por-nutriente.test.mjs`, e os 78 ficheiros existem · **31 regras** ·
+catálogo **v6**, **7 932 alimentos** (3 329 `ciqual-`, 2 944 `usda-`, 1 372 `tca-`, 274 `ptx`,
+13 `pt-`), **2 090 com porção** · **42 chaves declaradas, 40 em uso, mediana de 25** · **51
+ecrãs** · **873 exercícios**, dos quais **111 `body only`** e **160 com o `namePt` igual ao
+`nameEn`**.
+
+E o `estudo/relatorio.html` está **em dia**: declara a 2.29.0, o esquema v41, o catálogo v6, as
+31 regras e os 78 testes-guarda.
+
+## Um número de documento que tinha derivado
+
+| Documento | Dizia | É |
+|---|---|---|
+| [`testes-guarda.md`](testes-guarda.md), linha do `DeadCodeSweepTest` | «oito dos **quarenta e um** ficheiros [do motor] acabam em `Calc.kt`, e os outros **trinta e três**» | **44** e **36** — eram 41 e 33 quando o guarda foi alargado, na 2.25.0, e a 2.27.0 e a 2.28.0 acrescentaram o `DesempenhoDoExercicio.kt` e o `Progressao.kt` |
+
+Corrigido no mesmo commit, com a data da recontagem escrita ao lado (C4).
+
+## Dois achados novos, e nenhum deles é da 2.29.0
+
+**1 · A água da comida diz a frase errada num dia sem registo nenhum.**
+
+Visto no ecrã, numa instalação com o dia vazio: o cartão da água diz *«The goal is total water.
+How much came from food is not knowable yet: **less than half of what you ate today** has a
+measured water content»* — com **0 / 2539 kcal** dois cartões acima.
+
+Medido no código: o `AguaDaComida.mlDoDia` devolve `null` por **duas** razões distintas —
+`totalKcal <= 0`, que é não ter comido nada, e cobertura abaixo de 50 %, que é ter comido e não
+se saber. O `TodayScreen.kt:313` e o `DiaryNotes.kt:193` desenham a **mesma** frase nos dois
+casos, e a frase descreve só o segundo. Num dia sem registo a app afirma uma coisa sobre comida
+que não existe.
+
+É a mesma família que o `estudo/motor/06-comida-agua-e-padroes.md` §6 louva no
+`EndOfDayProtein`, e com as mesmas palavras: *«dia sem registo nenhum não é dia sem proteína: é
+dia sem app aberta, e avisar seria dar a entender que a app viu o que a pessoa comeu»*. A
+distinção existe num sítio e falta no outro — e este é o primeiro ecrã de quem instala a app.
+
+**2 · A notificação da corrida escreve sempre em quilómetros, e trunca.**
+
+O `RunTrackerService.kt:126-131` tem um `formatKm` próprio: `((km - whole) * 100).toInt()`, com
+a vírgula e o « km» escritos à mão. Três consequências, e a terceira não estava escrita em lado
+nenhum:
+
+- **o separador decimal é fixo** — já estava nesta lista, na linha da 2.29.0;
+- **trunca em vez de arredondar**, e é isso que explica o `0.06` do ecrã contra o `0,05` da
+  notificação: não são só dois separadores, são dois números;
+- **a unidade é sempre o quilómetro.** O ficheiro não tem uma única referência a `UnitSystem` —
+  contado. Quem escolher milhas vê o ecrã em milhas e a notificação em quilómetros, com «km»
+  escrito ao lado. E o KDoc do `RunFormat` diz exactamente porque é que isto não pode acontecer:
+  *«um `= METRIC` aqui deixava cada ecrã esquecido a mostrar quilómetros a quem escolheu milhas,
+  sem erro nenhum a avisar»* — a regra está escrita, e a notificação chega-lhe por fora.
+
+De caminho: o `formatClock` do serviço é uma segunda implementação do `RunFormat.clock`, e as
+duas **não concordam** — a do serviço enche as horas com zero à esquerda e a do ecrã não.
+
+**Nenhum dos dois foi corrigido** (A1): o primeiro é da área 01 e da 02, o segundo é da área 11.
+
+## O que se confirmou por medir, e continua exactamente como o estudo o descreve
+
+Nada mudou nestes desde a última varredura, e cada um foi recontado hoje:
+
+- **160 dos 873 exercícios têm o `namePt` igual ao `nameEn`**, e os nomes dos exercícios saem
+  sempre em português — visto no cartão de destaque do treino com a app **em inglês**:
+  «Supino com Barra · Agachamento com Barra · Remada Curvada com Barra».
+- **O ícone do calendário do diário continua a ser o botão «hoje»** — defeito concreto 1 da
+  `estudo/areas/02-diario.md`. Visto em «Sat, 5 Sep»: o ícone aparece ao lado da data e a
+  descrição dele é `Today`. É a **2.33.0**.
+- **Os cartões vazios do «Hoje» continuam permanentes** — «Fasting · No active fast» e «Run ·
+  No runs yet» num perfil que nunca jejuou nem correu. É a **2.32.0**.
+- **As imagens dos exercícios continuam a sair para o `raw.githubusercontent.com`**
+  (`ExerciseSeeder.kt:136`).
+- **`save(name, "", …)`** no `RunSummaryScreen.kt:119`, com o segundo argumento sempre vazio.
+- **`LoggingStreak.current` continua sem chamador na app** — só os testes.
+- **Os açúcares e a gordura saturada continuam só na coluna**: `sugarsG` em 6 999 alimentos e
+  `satFatG` em 7 374, e **zero** dos dois dentro dos micros, em 7 932 alimentos.
+
+## A medição C1 da 2.30.0, feita antes de a versão abrir
+
+Contra a `estudo/areas/11-corrida.md` e o esboço `11-corrida.html`, secção 1.
+
+| Premissa | O que o código diz |
+|---|---|
+| «falta o `TextToSpeech`» | **confirmada, e é maquinaria nova.** Zero ocorrências de `TextToSpeech` em todo o `composeApp/src` — contadas. Pelo molde do `TravarRecuo` da 2.29.0, é `expect`/`actual`: o Compose Multiplatform não traz TTS no caminho comum |
+| «a app já tem o gatilho no motor de parciais» | **confirmada, e melhor do que a área julga.** O `RunEngine.parciaisAteAgora()` já existe — nasceu na 2.29.0 para os dois últimos parciais — e o `RunTrackingState` já o põe no estado a cada amostra. O que **não** existe é um evento: a lista cresce e ninguém é avisado, portanto o aviso é «a lista cresceu desde o último que anunciei» e vive onde o estado é observado |
+| onde é que o aviso vive | **no serviço, e não no ecrã.** O `RunTrackingState` é um objecto de processo de propósito — *«o ecrã pode morrer e voltar enquanto a corrida continua»* —, e quem corre não tem o ecrã ligado. Falar a partir do ecrã seria calar-se no bolso |
+| «voltas manuais» | **não existe conceito nenhum.** O `Split` tem `index`, `distanceM`, `movingMs`, `paceSecPerKm` e `kcal`, e mais nada — não distingue origem. O esboço pede a tabela a mostrar «ambas as origens» |
+| o custo de um campo novo no `Split` | **não é migração de esquema.** As parciais viajam num `splitsJson` dentro da `RunEntity`, e o leitor tem `ignoreUnknownKeys = true`. Um campo novo **com omissão** é indolor; sem omissão, as corridas já gravadas deixam de abrir |
+| «avisam também na meta?» | a meta já é conhecida do motor, e o ecrã já desenha a barra de progresso dela. É pergunta de conteúdo, não de encanamento |
+
+**Nada começa sem a palavra do dono** (A1). As perguntas de abertura estão no plano.
+
+---
+
 ## Como manter isto honesto
 
 - Uma linha só passa da Parte B para a Parte A **depois de o documento ser aberto**.

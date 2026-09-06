@@ -47,9 +47,31 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 - **Uma diferença medida e por resolver:** o ecrã escreve `0.06 km` e a notificação `0,05 km` —
   separadores decimais diferentes na mesma corrida, porque são dois caminhos de formatação. Está
   em [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md).
+- **A varredura de 2026-09-06, depois da 2.29.0** — o `estudo/` lido inteiro e a 2.29.0 de
+  lançamento corrida no emulador, separador a separador — confirmou os números todos e
+  encontrou **dois defeitos, nenhum deles da 2.29.0**. Estão em
+  [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md), com a medição ao lado.
+- **O primeiro é do eixo mais forte da app, e vê-se no primeiro ecrã de quem a instala:** num
+  dia sem registo nenhum, o cartão da água diz «menos de metade do que **comeste hoje** traz o
+  teor de água medido» — com `0 / 2539 kcal` dois cartões acima. O `AguaDaComida.mlDoDia`
+  devolve `null` por duas razões — não ter comido nada, e ter comido sem cobertura — e os dois
+  ecrãs que o leem só sabem dizer a segunda. É a distinção que o `EndOfDayProtein` faz e esta
+  não faz.
+- **O segundo é a notificação da corrida, e são três numa linha.** O `RunTrackerService` tem um
+  `formatKm` próprio que trunca em vez de arredondar (é isso o `0.06` do ecrã contra o `0,05`
+  da notificação — dois números, e não só dois separadores), escreve a vírgula à mão, e **não
+  tem uma única referência a `UnitSystem`**: quem escolher milhas vê a notificação em
+  quilómetros. O KDoc do `RunFormat` proíbe exactamente isto, e a notificação chega-lhe por
+  fora.
+- **Um número de documento tinha derivado, e foi corrigido:** o `DeadCodeSweepTest` dizia «oito
+  dos quarenta e um ficheiros do motor», e são **44** — a 2.27.0 e a 2.28.0 acrescentaram dois.
 - **A próxima do plano é a 2.30.0**, «Avisos por voz e voltas» — `TextToSpeech` do sistema,
   aviso por km e voltas manuais. O esboço é o mesmo, o `11-corrida`, e as perguntas estão
-  escritas no plano. **Nada começa sem a palavra do dono** (A1).
+  escritas no plano. **A medição C1 está feita** e está na varredura: o `TextToSpeech` não
+  existe em lado nenhum e é `expect`/`actual`; o gatilho **já existe** (`parciaisAteAgora`, da
+  2.29.0) mas não é um evento; o aviso pertence ao serviço e não ao ecrã; e uma volta manual é
+  um campo novo no `Split`, que vive num `splitsJson` e não no esquema — indolor **com**
+  omissão, e a partir as corridas gravadas sem ela. **Nada começa sem a palavra do dono** (A1).
 - *O que se segue é o estado até à 2.28.0.*
 - **2.28.0 é a última fechada**, a 2026-09-06. Esquema **v41** — duas colunas novas na
   `routine`, a regra e o degrau — e catálogo **v6**, inalterado. «Progressão nas rotinas»: uma
