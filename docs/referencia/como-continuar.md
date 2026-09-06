@@ -25,6 +25,10 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   pausa, o cadeado a bloquear o ecrã todo e o recuo do sistema, «ritmo deste km» no lugar do
   ritmo instantâneo, e os dois últimos parciais à vista. **1851 testes Kotlin**, 58 das
   ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A 2.29.0 está publicada e verde**, conferido a 2026-09-06: `main` e a etiqueta `v2.29.0` em
+  `34548d6`, release «2.29.0 — a corrida ganha o botão que toda a gente procura» com os quatro
+  APKs mais o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit**, e o `latest` a
+  responder 200 aos dois ficheiros.
 - **A pausa manual é bandeira própria, e não a do motor.** O `paused` do `RunEngine` é um
   detector — apaga-se sozinho ao primeiro passo, que é o que o faz servir para semáforos. Uma
   pausa manual assente nele desligava-se ao dar dois passos até ao bebedouro.
