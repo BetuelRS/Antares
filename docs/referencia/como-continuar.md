@@ -25,6 +25,10 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   quilómetro, o ritmo desse quilómetro e o tempo total em voz alta, e ganha voltas marcadas à
   mão. **1875 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados
   com o `verificar.mjs`.
+- **A 2.30.0 está publicada e verde**, conferido a 2026-09-06: `main` e a etiqueta `v2.30.0` em
+  `4f37c5a`, release «2.30.0 — a corrida passa a dizer-te o quilómetro em voz alta» com os
+  quatro APKs mais o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit** — oito
+  minutos, não veio da cache —, e o `latest` a responder 200 aos dois ficheiros.
 - **A voz vive no serviço e não no ecrã**, porque quem corre tem o ecrã apagado — é a mesma
   razão do GPS. E **nasce com o serviço e não à primeira frase**: o motor de voz demora perto
   de um segundo a ligar-se, e um locutor criado no instante do aviso responde que ainda não
