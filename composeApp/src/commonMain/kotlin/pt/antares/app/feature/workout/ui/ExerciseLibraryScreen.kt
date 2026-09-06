@@ -3,22 +3,27 @@ package pt.antares.app.feature.workout.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -32,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -41,7 +47,7 @@ import pt.antares.app.core.designsystem.components.LinhaDaLista
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.ListaAdaptavel
-import pt.antares.app.feature.workout.model.Exercise
+import pt.antares.app.core.designsystem.components.linhaInteira
 import pt.antares.app.feature.workout.model.WorkoutTaxonomy
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.*
@@ -53,9 +59,16 @@ fun ExerciseLibraryScreen(
     onCreateCustom: () -> Unit,
     onBack: () -> Unit,
     viewModel: ExerciseLibraryViewModel = koinViewModel(),
+
+    /**
+     * O que já está na rotina que se está a montar. Só marca — **não esconde**: há quem
+     * repita o mesmo exercício de propósito na mesma rotina, e esconder tirava-lhe isso sem
+     * o dizer. É a mesma postura do aviso de alimento duplicado, que avisa e deixa gravar.
+     */
+    jaNaRotina: Set<String> = emptySet(),
 ) {
-    val filters by viewModel.filters.collectAsState()
-    val results by viewModel.results.collectAsState()
+    val state by viewModel.state.collectAsState()
+    val filters = state.filtros
 
     AntaresScaffold(
         topBar = {
@@ -84,37 +97,9 @@ fun ExerciseLibraryScreen(
                 modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
-            ) {
-                FilterDropdown(
-                    label = Res.string.exlib_filter_muscle,
-                    selected = filters.muscle,
-                    options = WorkoutTaxonomy.muscles,
-                    optionLabel = ::muscleLabel,
-                    onSelect = viewModel::setMuscle,
-                    modifier = Modifier.weight(1f),
-                )
-                FilterDropdown(
-                    label = Res.string.exlib_filter_equipment,
-                    selected = filters.equipment,
-                    options = WorkoutTaxonomy.equipment,
-                    optionLabel = ::equipmentLabel,
-                    onSelect = viewModel::setEquipment,
-                    modifier = Modifier.weight(1f),
-                )
-                FilterDropdown(
-                    label = Res.string.exlib_filter_level,
-                    selected = filters.level,
-                    options = WorkoutTaxonomy.levels,
-                    optionLabel = ::levelLabel,
-                    onSelect = viewModel::setLevel,
-                    modifier = Modifier.weight(1f),
-                )
-            }
+            BarraDeFiltros(filters, viewModel)
 
-            if (results.isEmpty()) {
+            if (state.resultados.isEmpty() && !state.mostrarTeus) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
                         stringResource(Res.string.exlib_empty),
@@ -129,12 +114,82 @@ fun ExerciseLibraryScreen(
                     contentPadding = PaddingValues(bottom = FOLGA_DO_BOTAO_DP.dp),
                     espaco = Spacing.xs,
                 ) {
-                    items(results, key = { it.id }) { ex ->
-                        ExerciseListItem(ex, onClick = { onExercise(ex.id) })
+                    if (state.mostrarTeus) {
+                        seccao(Res.string.exlib_favoritos, state.favoritos, "fav", jaNaRotina, viewModel, onExercise)
+                        seccao(Res.string.exlib_mais_feitos, state.maisFeitos, "uso", jaNaRotina, viewModel, onExercise)
+                        linhaInteira(key = "todos-titulo") {
+                            TituloDeSeccao(stringResource(Res.string.exlib_todos))
+                        }
+                    }
+                    items(state.resultados, key = { it.exercicio.id }) { linha ->
+                        LinhaDoExercicio(linha, linha.exercicio.id in jaNaRotina, viewModel, onExercise)
                     }
                 }
             }
         }
+    }
+}
+
+/**
+ * Os três filtros numa linha que **quebra** em vez de cortar.
+ *
+ * Antes eram três chips de largura repartida com o texto a `maxLines = 1` e sem `overflow`:
+ * o valor por omissão é `Clip`, que corta a letra a meio. Lia-se «Equipame» já a 100 % de
+ * escala de letra, e «Mús · Equi · Nível» a 200 %. É a família que o
+ * `estudo/transversal/03-acessibilidade.md` §3.1 nomeia, e a correcção é a mesma das outras
+ * três vezes: tirar a largura fixa, e não afiná-la.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun BarraDeFiltros(filters: LibraryFilters, viewModel: ExerciseLibraryViewModel) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+    ) {
+        FilterDropdown(
+            label = Res.string.exlib_filter_muscle,
+            selected = filters.muscle,
+            options = WorkoutTaxonomy.muscles,
+            optionLabel = ::muscleLabel,
+            onSelect = viewModel::setMuscle,
+        )
+        FilterDropdown(
+            label = Res.string.exlib_filter_equipment,
+            selected = filters.equipment,
+            options = WorkoutTaxonomy.equipment,
+            optionLabel = ::equipmentLabel,
+            onSelect = viewModel::setEquipment,
+        )
+        FilterChip(
+            selected = filters.soMeus,
+            onClick = { viewModel.setSoMeus(!filters.soMeus) },
+            label = { Text(stringResource(Res.string.exlib_filter_mine)) },
+        )
+    }
+}
+
+@Composable
+private fun TituloDeSeccao(texto: String) {
+    Text(
+        texto,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = Spacing.sm, bottom = Spacing.xs),
+    )
+}
+
+private fun LazyGridScope.seccao(
+    titulo: StringResource,
+    linhas: List<ExercicioNaLista>,
+    prefixo: String,
+    jaNaRotina: Set<String>,
+    viewModel: ExerciseLibraryViewModel,
+    onExercise: (String) -> Unit,
+) {
+    if (linhas.isEmpty()) return
+    linhaInteira(key = "$prefixo-titulo") { TituloDeSeccao(stringResource(titulo)) }
+    items(linhas, key = { "$prefixo-${it.exercicio.id}" }) { linha ->
+        LinhaDoExercicio(linha, linha.exercicio.id in jaNaRotina, viewModel, onExercise)
     }
 }
 
@@ -145,10 +200,9 @@ private fun FilterDropdown(
     options: List<String>,
     optionLabel: (String) -> StringResource,
     onSelect: (String?) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var open by remember { mutableStateOf(false) }
-    Box(modifier) {
+    Box {
         FilterChip(
             selected = selected != null,
             onClick = { open = true },
@@ -156,6 +210,9 @@ private fun FilterDropdown(
                 Text(
                     selected?.let { stringResource(optionLabel(it)) } ?: stringResource(label),
                     maxLines = 1,
+                    // Reticências e não corte: um rótulo cortado a meio da letra parece a app
+                    // avariada; um com reticências diz que há mais palavra.
+                    overflow = TextOverflow.Ellipsis,
                 )
             },
             // Decorativo: a seta acompanha um campo que já se apresenta pelo rótulo.
@@ -177,11 +234,17 @@ private fun FilterDropdown(
 }
 
 @Composable
-private fun ExerciseListItem(ex: Exercise, onClick: () -> Unit) {
-
+private fun LinhaDoExercicio(
+    linha: ExercicioNaLista,
+    jaNaRotina: Boolean,
+    viewModel: ExerciseLibraryViewModel,
+    onExercise: (String) -> Unit,
+) {
+    val ex = linha.exercicio
     val muscleText = ex.primaryMuscles.firstOrNull()?.let { stringResource(muscleLabel(it)) }
     val equipText = ex.equipment?.let { stringResource(equipmentLabel(it)) }
-    val subtitle = listOfNotNull(muscleText, equipText).joinToString(" · ")
+    val jaText = if (jaNaRotina) stringResource(Res.string.exlib_ja_na_rotina) else null
+    val subtitle = listOfNotNull(muscleText, equipText, jaText).joinToString(" · ")
 
     LinhaDaLista(
         titulo = ex.displayName,
@@ -197,7 +260,22 @@ private fun ExerciseListItem(ex: Exercise, onClick: () -> Unit) {
                 modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
             )
         },
-        onClick = onClick,
+        aoLado = {
+            IconButton(onClick = { viewModel.alternarFavorito(ex.id, !linha.favorito) }) {
+                Icon(
+                    if (linha.favorito) Icons.Default.Star else Icons.Outlined.StarOutline,
+                    contentDescription = stringResource(
+                        if (linha.favorito) Res.string.exlib_desmarcar else Res.string.exlib_marcar,
+                    ),
+                    tint = if (linha.favorito) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
+            }
+        },
+        onClick = { onExercise(ex.id) },
     )
 }
 

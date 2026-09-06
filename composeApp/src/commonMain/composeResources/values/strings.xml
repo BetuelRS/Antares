@@ -652,8 +652,14 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exlib_search_hint">Procurar exercício</string>
     <string name="exlib_filter_muscle">Músculo</string>
     <string name="exlib_filter_equipment">Equipamento</string>
-    <string name="exlib_filter_level">Nível</string>
     <string name="exlib_filter_all">Todos</string>
+    <string name="exlib_filter_mine">Só os meus</string>
+    <string name="exlib_favoritos">Favoritos</string>
+    <string name="exlib_mais_feitos">O que mais fazes</string>
+    <string name="exlib_todos">Todos os exercícios</string>
+    <string name="exlib_marcar">Marcar como favorito</string>
+    <string name="exlib_desmarcar">Tirar dos favoritos</string>
+    <string name="exlib_ja_na_rotina">já nesta rotina</string>
     <string name="exlib_empty">Sem exercícios para estes filtros.</string>
     <string name="painel_escolhe_da_lista">Escolhe um exercício à esquerda para o ver aqui.</string>
     <string name="painel_escolhe_registo">Escolhe um registo à esquerda para o ver aqui.</string>
@@ -661,6 +667,14 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exlib_create_custom">Criar exercício</string>
     <string name="exlib_pick_title">Escolher exercício</string>
 
+    <string name="exdetail_desempenho">O teu desempenho</string>
+    <string name="exdetail_melhor_serie">Melhor série</string>
+    <string name="exdetail_melhor_serie_valor">%1$s × %2$d</string>
+    <string name="exdetail_um_rm">1RM estimado</string>
+    <string name="exdetail_vezes">Vezes que fizeste</string>
+    <string name="exdetail_ultima">Última vez</string>
+    <string name="excustom_delete_title">Apagar este exercício?</string>
+    <string name="excustom_delete_sem_rotinas">Não está em nenhuma rotina. O que já treinaste com ele fica no histórico.</string>
     <string name="exdetail_primary">Músculos principais</string>
     <string name="exdetail_secondary">Músculos secundários</string>
     <string name="exdetail_instructions">Instruções</string>

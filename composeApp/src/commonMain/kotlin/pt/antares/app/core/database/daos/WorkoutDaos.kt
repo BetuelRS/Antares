@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import pt.antares.app.core.database.entities.ExerciseLoadEntity
+import pt.antares.app.core.database.entities.ExerciseMarkEntity
 import pt.antares.app.core.database.entities.RoutineEntity
 import pt.antares.app.core.database.entities.RoutineItemEntity
 import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
@@ -61,6 +62,21 @@ data class SessionSetRow(
 )
 
 data class RoutineNameRow(val id: String, val name: String)
+
+/**
+ * Quantas vezes um exercício foi feito, e quando foi a última. Alimenta a secção «os teus»
+ * da biblioteca, que a `estudo/areas/09-treino-biblioteca.md` pede ordenada por frequência —
+ * *«toda a gente treina os mesmos 15 a 25 exercícios»*.
+ */
+data class UsoDoExercicioRow(val exerciseId: String, val vezes: Int, val ultima: Long)
+
+/** Uma série de trabalho de um exercício, com o instante do treino a que pertence. */
+data class SerieComInstanteRow(
+    val weightKg: Double,
+    val reps: Int,
+    val sessionId: String,
+    val startedAt: Long,
+)
 
 @Dao
 interface RoutineDao {
@@ -142,6 +158,22 @@ interface RoutineDao {
 
     @Query("SELECT * FROM routine_item WHERE deleted = 0")
     suspend fun exportItems(): List<RoutineItemEntity>
+
+    /**
+     * Em quantas rotinas vivas está este exercício. É o número que a confirmação de apagar um
+     * exercício criado à mão mostra: apagá-lo deixa a linha da rotina a apontar para nada, e
+     * quem apaga tem de saber quantas leva atrás.
+     *
+     * Conta rotinas e não linhas — uma rotina que repita o mesmo exercício continua a ser uma.
+     */
+    @Query(
+        """
+        SELECT COUNT(DISTINCT ri.routineId) FROM routine_item ri
+        JOIN routine r ON r.id = ri.routineId
+        WHERE ri.exerciseId = :exerciseId AND ri.deleted = 0 AND r.deleted = 0
+        """,
+    )
+    suspend fun contarRotinasCom(exerciseId: String): Int
 }
 
 @Dao
@@ -322,6 +354,51 @@ interface WorkoutSetDao {
     )
     suspend fun exerciseProgress(exerciseId: String): List<ExerciseSessionAgg>
 
+    /**
+     * Quantas vezes cada exercício foi feito desde um instante, e quando foi a última.
+     *
+     * Conta **treinos** e não séries: quem faz cinco séries de supino num treino fez supino
+     * uma vez, e contar séries punha no topo da lista quem faz muitas séries do mesmo em vez
+     * de quem treina aquilo com frequência.
+     *
+     * O aquecimento entra aqui de propósito, ao contrário do volume: aquecer um exercício é
+     * tê-lo feito, e é a pergunta que esta lista responde.
+     */
+    @Query(
+        """
+        SELECT s.exerciseId AS exerciseId,
+               COUNT(DISTINCT s.sessionId) AS vezes,
+               MAX(ws.startedAt) AS ultima
+        FROM workout_set s
+        JOIN workout_session ws ON s.sessionId = ws.id
+        WHERE s.deleted = 0 AND ws.deleted = 0 AND ws.status = 'DONE'
+          AND ws.startedAt >= :desde
+        GROUP BY s.exerciseId
+        ORDER BY vezes DESC, ultima DESC
+        """,
+    )
+    fun observeUsoPorExercicio(desde: Long): Flow<List<UsoDoExercicioRow>>
+
+    /**
+     * As séries de trabalho deste exercício, de treinos terminados, com o instante de cada
+     * treino. É o que o cartão de desempenho do detalhe precisa — a melhor série, o 1RM, o
+     * número de vezes e a última — numa consulta só.
+     *
+     * Sem excluir sessão nenhuma, ao contrário do [doneSetsForExercise]: aqui a pergunta é o
+     * melhor de sempre, e o treino de hoje faz parte de sempre.
+     */
+    @Query(
+        """
+        SELECT s.weightKg AS weightKg, s.reps AS reps,
+               s.sessionId AS sessionId, ws.startedAt AS startedAt
+        FROM workout_set s
+        JOIN workout_session ws ON s.sessionId = ws.id
+        WHERE s.exerciseId = :exerciseId AND s.deleted = 0 AND s.isWarmup = 0
+          AND ws.status = 'DONE' AND ws.deleted = 0
+        """,
+    )
+    suspend fun seriesFeitasDoExercicio(exerciseId: String): List<SerieComInstanteRow>
+
     // Junta-se à tabela de exercícios em vez de guardar os músculos na série: o volume por
     // músculo tem de acompanhar o catálogo, e uma cópia de anos atrás nunca se corrigiria.
     @Query(
@@ -474,4 +551,27 @@ interface ExerciseLoadDao {
 
     @Query("SELECT * FROM exercise_load WHERE deleted = 0")
     suspend fun exportRows(): List<ExerciseLoadEntity>
+}
+
+@Dao
+interface ExerciseMarkDao {
+
+    @Upsert
+    suspend fun upsert(marca: ExerciseMarkEntity)
+
+    // Apagar de verdade, como no [ExerciseLoadDao]: a ausência de linha é que quer dizer
+    // «não é favorito», e uma lápide seria uma segunda maneira de dizer o mesmo.
+    @Query("DELETE FROM exercise_marca WHERE exerciseId = :exerciseId")
+    suspend fun delete(exerciseId: String)
+
+    // Todos de uma vez: a lista da biblioteca desenha a estrela em cada linha, e uma
+    // consulta por linha é o custo que a 2.20.0 já tinha tirado das rotinas.
+    @Query("SELECT exerciseId FROM exercise_marca WHERE deleted = 0")
+    fun observeFavoritos(): Flow<List<String>>
+
+    @Query("SELECT COUNT(*) FROM exercise_marca WHERE exerciseId = :exerciseId AND deleted = 0")
+    suspend fun eFavorito(exerciseId: String): Int
+
+    @Query("SELECT * FROM exercise_marca WHERE deleted = 0")
+    suspend fun exportRows(): List<ExerciseMarkEntity>
 }

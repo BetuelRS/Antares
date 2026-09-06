@@ -77,6 +77,25 @@ class RoutineEditViewModel(
 class RoutineItemPickViewModel(
     private val repository: RoutineRepository,
 ) : ViewModel() {
+
+    private val _jaNaRotina = MutableStateFlow<Set<String>>(emptySet())
+
+    /**
+     * O que já está na rotina que se está a montar, para a lista o poder marcar.
+     *
+     * Marca e não esconde: o defeito concreto 2 da `estudo/areas/09-treino-biblioteca.md` é
+     * a lista mostrar os 873 sem dizer que um deles já lá está. Esconder resolvia isso e
+     * tirava a quem repete o mesmo exercício de propósito na mesma rotina a única forma de o
+     * fazer — e sem o dizer, que é pior.
+     */
+    val jaNaRotina: StateFlow<Set<String>> = _jaNaRotina
+
+    fun carregar(routineId: String) {
+        viewModelScope.launch {
+            _jaNaRotina.value = repository.exerciciosDaRotina(routineId)
+        }
+    }
+
     fun add(routineId: String, exerciseId: String, onDone: () -> Unit) {
         viewModelScope.launch {
             repository.addItem(routineId, exerciseId)

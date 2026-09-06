@@ -6,12 +6,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+import pt.antares.app.core.calc.Desempenho
+import pt.antares.app.core.calc.DesempenhoDoExercicio
 import pt.antares.app.core.calc.FrequenciaDeTreino
 import pt.antares.app.core.calc.MuscleVolume
 import pt.antares.app.core.calc.MuscleVolumeInput
 import pt.antares.app.core.calc.OneRepMax
 import pt.antares.app.core.calc.RecordesPorTreino
 import pt.antares.app.core.calc.SerieDeTreino
+import pt.antares.app.core.calc.SerieFeita
 import pt.antares.app.core.calc.SeriesPorMusculo
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
@@ -301,6 +304,31 @@ class WorkoutHistoryRepository(
     suspend fun exerciseVolumeSeries(exerciseId: String): List<Float> = withContext(io) {
         setDao.exerciseProgress(exerciseId).map { it.volume.toFloat() }
     }
+
+    /**
+     * O que a pessoa já fez neste exercício: melhor série, 1RM estimado, quantas vezes e a
+     * última. Nulo quando nunca o fez — o cartão não aparece em vez de aparecer a zeros.
+     *
+     * Conta a história toda e não uma janela: a pergunta do detalhe é «o meu melhor», e um
+     * recorde de há dois anos continua a ser o recorde.
+     */
+    suspend fun desempenhoDoExercicio(exerciseId: String): DesempenhoDoExercicio? =
+        withContext(io) {
+            Desempenho.de(
+                setDao.seriesFeitasDoExercicio(exerciseId).map {
+                    SerieFeita(
+                        weightKg = it.weightKg,
+                        reps = it.reps,
+                        sessionId = it.sessionId,
+                        startedAt = it.startedAt,
+                    )
+                },
+            )
+        }
+
+    /** Em quantas rotinas vivas este exercício está. Ver o [RoutineDao.contarRotinasCom]. */
+    suspend fun rotinasCom(exerciseId: String): Int =
+        withContext(io) { routineDao.contarRotinasCom(exerciseId) }
 
     /**
      * O melhor 1RM estimado de cada exercício, **com o dia em que foi feito**, os mais

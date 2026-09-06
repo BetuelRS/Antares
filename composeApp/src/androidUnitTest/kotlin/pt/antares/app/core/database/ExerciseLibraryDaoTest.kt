@@ -55,7 +55,7 @@ class ExerciseLibraryDaoTest {
     )
 
     @Test
-    fun `filtro combina nome, musculo, equipamento e nivel`() = runTest {
+    fun `filtro combina nome, musculo, equipamento e so os meus`() = runTest {
         val dao = db.exerciseLibraryDao()
         dao.upsertAll(
             listOf(
@@ -64,17 +64,20 @@ class ExerciseLibraryDaoTest {
                 ex("3", "cable fly", listOf("chest"), "cable", "beginner"),
             ),
         )
+        dao.upsert(ex("4", "o meu", listOf("chest"), "barbell", "beginner").copy(isCustom = true))
 
-        assertEquals(2, dao.observeFiltered("", "chest", null, null).first().size)
+        assertEquals(3, dao.observeFiltered("", "chest", null, false).first().size)
 
         assertEquals(
-            listOf("1"),
-            dao.observeFiltered("", "chest", "barbell", null).first().map { it.id },
+            listOf("1", "4"),
+            dao.observeFiltered("", "chest", "barbell", false).first().map { it.id }.sorted(),
         )
 
-        assertEquals(listOf("2"), dao.observeFiltered("squat", null, null, null).first().map { it.id })
+        assertEquals(listOf("2"), dao.observeFiltered("squat", null, null, false).first().map { it.id })
 
-        assertEquals(listOf("2"), dao.observeFiltered("", null, null, "intermediate").first().map { it.id })
+        // O filtro de nível saiu na 2.27.0 e no lugar dele entrou o «só os meus»: o nível é
+        // uma classificação da base de origem, e ninguém procura por ela.
+        assertEquals(listOf("4"), dao.observeFiltered("", null, null, true).first().map { it.id })
     }
 
     @Test

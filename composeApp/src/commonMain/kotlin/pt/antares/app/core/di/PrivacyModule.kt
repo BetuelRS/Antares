@@ -52,9 +52,11 @@ import pt.antares.app.core.database.entities.RoutineScheduleEntity
 import pt.antares.app.core.database.daos.RoutineScheduleDao
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.ExerciseLoadEntity
+import pt.antares.app.core.database.entities.ExerciseMarkEntity
 import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.database.daos.ExerciseLoadDao
+import pt.antares.app.core.database.daos.ExerciseMarkDao
 import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.FastingProtocolEntity
@@ -207,6 +209,15 @@ val privacyModule = module {
                     ExerciseLoadEntity.serializer(),
                     restore = { linhas -> linhas.forEach { get<ExerciseLoadDao>().upsert(it) } },
                 ) { get<ExerciseLoadDao>().exportRows() },
+
+                // Os exercícios marcados como favoritos. Vão na cópia pela mesma razão que
+                // os favoritos de alimentos foram: são meses de escolhas, e uma restauração
+                // que os deitasse fora não daria erro nenhum — só se veria dias depois.
+                ExportSource(
+                    "exercise_marca",
+                    ExerciseMarkEntity.serializer(),
+                    restore = { linhas -> linhas.forEach { get<ExerciseMarkDao>().upsert(it) } },
+                ) { get<ExerciseMarkDao>().exportRows() },
                 ExportSource(
                     "fasting_protocol",
                     FastingProtocolEntity.serializer(),

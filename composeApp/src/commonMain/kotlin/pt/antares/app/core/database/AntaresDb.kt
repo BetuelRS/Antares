@@ -40,6 +40,7 @@ import pt.antares.app.core.database.daos.RoutineScheduleDao
 import pt.antares.app.core.database.daos.UserProfileDao
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.ExerciseLoadDao
+import pt.antares.app.core.database.daos.ExerciseMarkDao
 import pt.antares.app.core.database.daos.SessionExerciseNoteDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.daos.WaterLogDao
@@ -75,6 +76,7 @@ import pt.antares.app.core.database.entities.WeightLogEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
 import pt.antares.app.core.database.entities.ExerciseLoadEntity
+import pt.antares.app.core.database.entities.ExerciseMarkEntity
 import pt.antares.app.core.database.entities.SessionExerciseNoteEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 
@@ -130,6 +132,7 @@ interface DbInfoDao {
         WorkoutSetEntity::class,
         SessionExerciseNoteEntity::class,
         ExerciseLoadEntity::class,
+        ExerciseMarkEntity::class,
         RoutineScheduleEntity::class,
         FastingProtocolEntity::class,
         FastingSessionEntity::class,
@@ -144,7 +147,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 39,
+    version = 40,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -229,6 +232,9 @@ interface DbInfoDao {
         // nenhuma parte daquela carga veio do corpo, que é o que era verdade antes. Nenhum
         // número muda, e por isso a versão é MENOR.
         AutoMigration(from = 38, to = 39),
+        // Acrescenta a `exercise_marca`, tabela nova e vazia: quem actualiza não tem favorito
+        // nenhum, que é o que era verdade antes de ela existir.
+        AutoMigration(from = 39, to = 40),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)
@@ -303,6 +309,7 @@ abstract class AntaresDb : RoomDatabase() {
     abstract fun workoutSetDao(): WorkoutSetDao
     abstract fun sessionExerciseNoteDao(): SessionExerciseNoteDao
     abstract fun exerciseLoadDao(): ExerciseLoadDao
+    abstract fun exerciseMarkDao(): ExerciseMarkDao
     abstract fun routineScheduleDao(): RoutineScheduleDao
     abstract fun fastingProtocolDao(): FastingProtocolDao
     abstract fun fastingSessionDao(): FastingSessionDao

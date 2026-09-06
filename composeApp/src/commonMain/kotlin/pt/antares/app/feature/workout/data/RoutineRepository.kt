@@ -160,6 +160,11 @@ class RoutineRepository(
         scheduleDao.clearDay(dayOfWeek, now())
     }
 
+    /** Os exercícios que já estão nesta rotina, para a biblioteca os poder marcar. */
+    suspend fun exerciciosDaRotina(routineId: String): Set<String> = withContext(io) {
+        routineDao.itemsOf(routineId).map { it.exerciseId }.toSet()
+    }
+
     suspend fun addItem(routineId: String, exerciseId: String) = withContext(io) {
         val position = routineDao.itemsOf(routineId).size
         routineDao.upsertItem(

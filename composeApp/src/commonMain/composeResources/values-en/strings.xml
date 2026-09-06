@@ -651,8 +651,14 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exlib_search_hint">Search exercise</string>
     <string name="exlib_filter_muscle">Muscle</string>
     <string name="exlib_filter_equipment">Equipment</string>
-    <string name="exlib_filter_level">Level</string>
     <string name="exlib_filter_all">All</string>
+    <string name="exlib_filter_mine">Only mine</string>
+    <string name="exlib_favoritos">Favourites</string>
+    <string name="exlib_mais_feitos">What you do most</string>
+    <string name="exlib_todos">All exercises</string>
+    <string name="exlib_marcar">Mark as favourite</string>
+    <string name="exlib_desmarcar">Remove from favourites</string>
+    <string name="exlib_ja_na_rotina">already in this routine</string>
     <string name="exlib_empty">No exercises for these filters.</string>
     <string name="painel_escolhe_da_lista">Pick an exercise on the left to see it here.</string>
     <string name="painel_escolhe_registo">Pick an entry on the left to see it here.</string>
@@ -660,6 +666,14 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="exlib_create_custom">Create exercise</string>
     <string name="exlib_pick_title">Pick exercise</string>
 
+    <string name="exdetail_desempenho">Your performance</string>
+    <string name="exdetail_melhor_serie">Best set</string>
+    <string name="exdetail_melhor_serie_valor">%1$s × %2$d</string>
+    <string name="exdetail_um_rm">Estimated 1RM</string>
+    <string name="exdetail_vezes">Times done</string>
+    <string name="exdetail_ultima">Last time</string>
+    <string name="excustom_delete_title">Delete this exercise?</string>
+    <string name="excustom_delete_sem_rotinas">It is not in any routine. What you already trained with it stays in the history.</string>
     <string name="exdetail_primary">Primary muscles</string>
     <string name="exdetail_secondary">Secondary muscles</string>
     <string name="exdetail_instructions">Instructions</string>

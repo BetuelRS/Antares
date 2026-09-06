@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <plurals name="excustom_delete_em_rotinas">
+        <item quantity="one">Está em %1$d rotina. A linha dela fica a apontar para um exercício que já não existe, e o que já treinaste com ele fica no histórico.</item>
+        <item quantity="other">Está em %1$d rotinas. As linhas delas ficam a apontar para um exercício que já não existe, e o que já treinaste com ele fica no histórico.</item>
+    </plurals>
     <plurals name="workout_hub_exercicios">
         <item quantity="one">%1$d exercício</item>
         <item quantity="other">%1$d exercícios</item>

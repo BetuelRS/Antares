@@ -4,6 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -99,9 +101,18 @@ private fun NavGraphBuilder.rotaDaBibliotecaDeExercicios(navController: NavHostC
         val aoLado = cabeDetalheAoLado() && !route.pickMode && !route.sessionPick
         var escolhido by rememberSaveable { mutableStateOf<String?>(null) }
 
+        // Só se carrega quando se está mesmo a montar uma rotina: a biblioteca abre-se muito
+        // mais vezes do que isso, e uma consulta por abertura para uma marca que ninguém vê
+        // é o custo que a 2.20.0 já tinha tirado das rotinas.
+        LaunchedEffect(route.routineId) {
+            route.routineId?.let { pickVm.carregar(it) }
+        }
+        val jaNaRotina by pickVm.jaNaRotina.collectAsState()
+
         val lista = @Composable {
             ExerciseLibraryScreen(
                 pickMode = route.pickMode,
+                jaNaRotina = if (route.pickMode) jaNaRotina else emptySet(),
                 onExercise = { id ->
                     when {
                         route.pickMode && route.routineId != null -> {

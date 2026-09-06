@@ -196,3 +196,26 @@ data class ExerciseLoadEntity(
     val updatedAt: Long,
     val deleted: Boolean = false,
 )
+
+@Serializable
+@Entity(tableName = "exercise_marca")
+/**
+ * Que exercícios a pessoa marcou. Tabela própria pela mesma razão da [ExerciseLoadEntity] e
+ * da [FoodMarkEntity]: o que é da pessoa não vive dentro de uma linha de catálogo.
+ *
+ * **Só guarda o favorito, e é de propósito.** A outra metade do que a
+ * `estudo/areas/09-treino-biblioteca.md` pede — os usados recentemente, por frequência — já
+ * está na base, na `workout_set` com a sessão a que pertence, e é de lá que sai. Escrevê-la
+ * aqui outra vez era o «mesmo facto em dois sítios» que o `estudo/dados/04` §3 descreve, e
+ * que custou ao sódio e à fibra uma migração para o desfazer.
+ *
+ * **A linha é o facto, e não há coluna nenhuma a repeti-lo.** Desmarcar apaga em vez de
+ * gravar um `false`, como a [ExerciseLoadEntity] faz com os 100 % — e uma coluna que nunca
+ * é falsa seria a segunda maneira de dizer o que a ausência já diz, que é exactamente a
+ * crítica que estas duas tabelas fazem à lápide.
+ */
+data class ExerciseMarkEntity(
+    @PrimaryKey val exerciseId: String,
+    val updatedAt: Long,
+    val deleted: Boolean = false,
+)

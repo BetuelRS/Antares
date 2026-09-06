@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <plurals name="excustom_delete_em_rotinas">
+        <item quantity="one">It is in %1$d routine. That routine will point to an exercise that no longer exists, and what you already trained with it stays in your history.</item>
+        <item quantity="other">It is in %1$d routines. Those routines will point to an exercise that no longer exists, and what you already trained with it stays in your history.</item>
+    </plurals>
     <plurals name="workout_hub_exercicios">
         <item quantity="one">%1$d exercise</item>
         <item quantity="other">%1$d exercises</item>

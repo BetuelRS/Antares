@@ -48,6 +48,11 @@ interface ExerciseLibraryDao {
      * As barras à volta do músculo são o que impede `abs` de encontrar `abductors`: os
      * músculos estão numa string separada por barras, e sem as delimitar o LIKE apanharia
      * qualquer parte de qualquer nome.
+     *
+     * **O filtro de nível saiu na 2.27.0 e no lugar dele entrou o «só os meus».** O nível é
+     * uma classificação da base de origem — 523 iniciante, 293 intermédio, 57 avançado — e
+     * ninguém procura «exercícios de nível intermédio»; quem criou um exercício à mão, esse
+     * procura-o. É o que a `estudo/areas/09-treino-biblioteca.md` propõe nos dois sentidos.
      */
     @Query(
         """
@@ -57,7 +62,7 @@ interface ExerciseLibraryDao {
           AND (:muscle IS NULL OR primaryMuscles LIKE '%|' || :muscle || '|%'
                OR secondaryMuscles LIKE '%|' || :muscle || '|%')
           AND (:equipment IS NULL OR equipment = :equipment)
-          AND (:level IS NULL OR level = :level)
+          AND (:soMeus = 0 OR isCustom = 1)
         ORDER BY nameEn COLLATE NOCASE
         """,
     )
@@ -65,7 +70,7 @@ interface ExerciseLibraryDao {
         query: String,
         muscle: String?,
         equipment: String?,
-        level: String?,
+        soMeus: Boolean,
     ): Flow<List<ExerciseEntity>>
 
     // O `isCustom = 1` na condição é a defesa: sem ele, um identificador enganado apagava
