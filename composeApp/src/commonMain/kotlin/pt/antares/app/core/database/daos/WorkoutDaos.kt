@@ -313,6 +313,32 @@ interface WorkoutSetDao {
     )
     suspend fun ghostSets(exerciseId: String, currentSessionId: String): List<WorkoutSetEntity>
 
+    /**
+     * O mesmo que o [ghostSets], mas para **vários exercícios de uma vez e sem treino em**
+     * **curso** — é o que o editor de rotinas precisa para dizer o que se fez da última vez em
+     * cada linha, e para a regra de progressão saber de onde parte.
+     *
+     * Uma consulta e não uma por exercício: uma rotina de oito exercícios eram oito idas à
+     * base para desenhar oito linhas. A subconsulta é correlacionada com o `s.exerciseId` da
+     * linha de fora, e por isso cada exercício encontra a **sua** última sessão, que não é a
+     * mesma para todos — quem faz supino às segundas e agachamento às quartas tem duas.
+     */
+    @Query(
+        """
+        SELECT s.* FROM workout_set s
+        WHERE s.deleted = 0 AND s.isWarmup = 0 AND s.exerciseId IN (:exerciseIds)
+          AND s.sessionId = (
+            SELECT ws.id FROM workout_session ws
+            JOIN workout_set s2 ON s2.sessionId = ws.id
+            WHERE ws.status = 'DONE' AND ws.deleted = 0 AND s2.deleted = 0
+              AND s2.exerciseId = s.exerciseId
+            ORDER BY ws.startedAt DESC LIMIT 1
+          )
+        ORDER BY s.exerciseId, s.setIndex
+        """,
+    )
+    suspend fun ultimasSeriesDe(exerciseIds: List<String>): List<WorkoutSetEntity>
+
     @Query(
         """
         SELECT s.* FROM workout_set s

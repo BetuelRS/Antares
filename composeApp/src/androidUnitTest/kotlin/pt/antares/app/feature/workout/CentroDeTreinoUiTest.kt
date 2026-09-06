@@ -58,6 +58,7 @@ class CentroDeTreinoUiTest : FluxoUiHarness() {
                 db.routineDao(),
                 db.exerciseLibraryDao(),
                 db.routineScheduleDao(),
+                db.workoutSetDao(),
                 io,
             ),
             hubRepository = WorkoutHubRepository(

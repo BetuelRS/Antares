@@ -10,8 +10,11 @@ import kotlinx.datetime.Clock
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.RoutineScheduleDao
+import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.RoutineEntity
 import pt.antares.app.core.database.entities.RoutineItemEntity
+import pt.antares.app.core.calc.SerieDaUltimaVez
+import pt.antares.app.core.model.RegraDeProgressao
 import pt.antares.app.core.util.Ids
 
 data class RoutineItemView(
@@ -29,6 +32,7 @@ class RoutineRepository(
     private val routineDao: RoutineDao,
     private val exerciseDao: ExerciseLibraryDao,
     private val scheduleDao: RoutineScheduleDao,
+    private val setDao: WorkoutSetDao,
     private val io: CoroutineDispatcher,
 ) {
     private fun now() = Clock.System.now().toEpochMilliseconds()
@@ -183,6 +187,32 @@ class RoutineRepository(
             ),
         )
     }
+
+    /**
+     * A regra por que esta rotina sobe, e de quanto. O incremento nulo quer dizer o degrau da
+     * unidade da pessoa — ver a [RoutineEntity].
+     */
+    suspend fun setProgressao(
+        routineId: String,
+        regra: RegraDeProgressao,
+        incrementoKg: Double?,
+    ) = withContext(io) {
+        val r = routineDao.routineById(routineId) ?: return@withContext
+        routineDao.upsertRoutine(r.copy(progressao = regra, incrementoKg = incrementoKg, updatedAt = now()))
+    }
+
+    /**
+     * O que se fez da última vez em cada exercício desta rotina, por identificador de
+     * exercício. Vazio para quem nunca o fez — e a ausência é a resposta, não um zero.
+     */
+    suspend fun ultimasSeriesDaRotina(routineId: String): Map<String, List<SerieDaUltimaVez>> =
+        withContext(io) {
+            val ids = routineDao.itemsOf(routineId).map { it.exerciseId }.distinct()
+            if (ids.isEmpty()) return@withContext emptyMap()
+            setDao.ultimasSeriesDe(ids)
+                .groupBy { it.exerciseId }
+                .mapValues { (_, series) -> series.map { SerieDaUltimaVez(it.weightKg, it.reps) } }
+        }
 
     suspend fun updateTargets(
         itemId: String,

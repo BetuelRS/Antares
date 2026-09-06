@@ -72,7 +72,7 @@ object Fabricas {
         )
 
     fun routineRepository(db: AntaresDb, io: CoroutineDispatcher) =
-        RoutineRepository(db.routineDao(), db.exerciseLibraryDao(), db.routineScheduleDao(), io)
+        RoutineRepository(db.routineDao(), db.exerciseLibraryDao(), db.routineScheduleDao(), db.workoutSetDao(), io)
 
     /**
      * O Health Connect ligado a nada: escreve na base de teste e nunca lê janelas de fora.

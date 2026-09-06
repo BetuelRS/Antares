@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.RadioButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.MoreVert
@@ -30,9 +32,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pt.antares.app.core.calc.ProximoAlvo
+import pt.antares.app.core.calc.SerieDaUltimaVez
+import pt.antares.app.core.calc.UltimaVez
+import pt.antares.app.core.calc.resumoDaUltimaVez
+import pt.antares.app.core.model.RegraDeProgressao
 import pt.antares.app.core.designsystem.larguraDeLeitura
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.rememberUnitSystem
@@ -67,7 +75,8 @@ fun RoutineEditScreen(
     onOpenRoutine: (String) -> Unit,
     viewModel: RoutineEditViewModel = koinViewModel(),
 ) {
-    val detail by viewModel.detail.collectAsState()
+    val estado by viewModel.estado.collectAsState()
+    val detail = estado?.detalhe
     val deleted by viewModel.deleted.collectAsState()
 
     LaunchedEffect(routineId) { viewModel.start(routineId) }
@@ -76,6 +85,7 @@ fun RoutineEditScreen(
     var editItem by remember { mutableStateOf<RoutineItemView?>(null) }
     var duplicar by remember { mutableStateOf(false) }
     var renomear by remember { mutableStateOf(false) }
+    var progressao by remember { mutableStateOf(false) }
     val apagar = rememberApagarComDesfazer()
     val desfazer = rememberDesfazer()
     val reordenado = stringResource(Res.string.routine_reordered)
@@ -116,6 +126,15 @@ fun RoutineEditScreen(
                 )
             }
 
+            // A regra vive por cima da lista, e não no ⋮: é ela que explica os alvos que as
+            // linhas de baixo mostram, e uma decisão escondida num menu deixava a pessoa a
+            // olhar para um número que subiu sem saber porquê.
+            estado?.let { e ->
+                item {
+                    CartaoDaProgressao(estado = e, aoTocar = { progressao = true })
+                }
+            }
+
             val itemsList = d?.items.orEmpty()
             if (itemsList.isEmpty()) {
                 item {
@@ -146,6 +165,8 @@ fun RoutineEditScreen(
                 ) { row, _ ->
                     RoutineItemCard(
                         row = row,
+                        proposta = estado?.propostas?.get(row.item.id),
+                        ultima = estado?.ultimas?.get(row.item.exerciseId).orEmpty(),
                         onEdit = { editItem = row },
                         onSuperset = { g -> viewModel.setSuperset(row.item.id, g) },
                         onDelete = {
@@ -177,25 +198,66 @@ fun RoutineEditScreen(
         }
     }
 
+    DialogosDoEditor(
+        estado = estado,
+        progressao = progressao,
+        editItem = editItem,
+        renomear = renomear,
+        duplicar = duplicar,
+        viewModel = viewModel,
+        onFechar = { progressao = false; editItem = null; renomear = false; duplicar = false },
+        onOpenRoutine = onOpenRoutine,
+    )
+}
+
+/**
+ * Os cinco diálogos do editor, num sítio só.
+ *
+ * Estavam soltos no fim do ecrã e faziam-no passar do limite de comprimento — que é o aviso
+ * a dizer que já não se lê de um relance. Aqui, o que o ecrã guarda é o que está aberto; o
+ * que cada um faz é problema desta função.
+ */
+@Composable
+private fun DialogosDoEditor(
+    estado: RotinaNoEditor?,
+    progressao: Boolean,
+    editItem: RoutineItemView?,
+    renomear: Boolean,
+    duplicar: Boolean,
+    viewModel: RoutineEditViewModel,
+    onFechar: () -> Unit,
+    onOpenRoutine: (String) -> Unit,
+) {
+    if (progressao && estado != null) {
+        DialogoDeProgressao(
+            estado = estado,
+            onGravar = { regra, degrau ->
+                viewModel.setProgressao(regra, degrau)
+                onFechar()
+            },
+            onDismiss = onFechar,
+        )
+    }
+
     editItem?.let { row ->
         TargetsDialog(
             row = row,
             onSave = { sets, min, max, weight, rest ->
                 viewModel.updateTargets(row.item.id, sets, min, max, weight, rest)
-                editItem = null
+                onFechar()
             },
-            onDismiss = { editItem = null },
+            onDismiss = onFechar,
         )
     }
 
     DialogosDaRotina(
-        nome = detail?.routine?.name.orEmpty(),
+        nome = estado?.detalhe?.routine?.name.orEmpty(),
         renomear = renomear,
         duplicar = duplicar,
-        onFechar = { renomear = false; duplicar = false },
-        onRenomear = { viewModel.rename(it); renomear = false },
+        onFechar = onFechar,
+        onRenomear = { viewModel.rename(it); onFechar() },
         onDuplicar = { nome ->
-            duplicar = false
+            onFechar()
             viewModel.duplicar(nome) { novoId -> onOpenRoutine(novoId) }
         },
     )
@@ -300,6 +362,8 @@ private const val MAX_DESCANSO_S = 600
 @Composable
 private fun RoutineItemCard(
     row: RoutineItemView,
+    proposta: ProximoAlvo?,
+    ultima: List<SerieDaUltimaVez>,
     onEdit: () -> Unit,
     onSuperset: (Int?) -> Unit,
     onDelete: () -> Unit,
@@ -328,12 +392,24 @@ private fun RoutineItemCard(
             Column(Modifier.weight(1f)) {
                 Text(row.exerciseName, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
 
+                // Com regra, o peso da linha é o **proposto**, e o escrito à mão fica onde
+                // estava — na base e no diálogo dos alvos. Mostrar os dois ao lado um do
+                // outro era pôr a pessoa a escolher entre dois números na linha errada.
+                val peso = when {
+                    proposta != null -> stringResource(
+                        Res.string.routine_prog_alvo,
+                        loadWithUnit(proposta.pesoKg, unidades),
+                    )
+                    it.targetWeightKg != null -> loadWithUnit(it.targetWeightKg, unidades)
+                    else -> null
+                }
                 Text(
                     "${it.targetSets}×${it.targetRepsMin}-${it.targetRepsMax} · ${it.restSec}s" +
-                        (it.targetWeightKg?.let { w -> " · " + loadWithUnit(w, unidades) } ?: ""),
+                        (peso?.let { p -> " · $p" } ?: ""),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                LinhaDaUltimaVez(ultima, proposta, unidades)
             }
             // A pega, e não duas setas: as setas moviam uma posição de cada vez e estavam
             // coladas ao menu. O `contentDescription` diz o gesto, que não se vê.
@@ -478,4 +554,197 @@ private fun NumField(
         keyboardOptions = KeyboardOptions(keyboardType = if (decimal) KeyboardType.Decimal else KeyboardType.Number),
         modifier = Modifier.fillMaxWidth(),
     )
+}
+
+/**
+ * A regra da rotina, em cima e à vista.
+ *
+ * Diz o nome **e o que ele faz** — «Dupla · sobe as repetições até ao máximo, depois +2,5 kg e
+ * volta ao mínimo». Só o nome era um rótulo que obrigava a abrir o diálogo para o perceber, e
+ * quem escolheu a regra há três semanas já não se lembra qual delas era.
+ */
+@Composable
+private fun CartaoDaProgressao(estado: RotinaNoEditor, aoTocar: () -> Unit) {
+    val regra = estado.detalhe.routine.progressao
+    val degrau = loadWithUnit(estado.incrementoKg, estado.unidades)
+
+    AntaresCard(modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = aoTocar)) {
+        Text(
+            stringResource(Res.string.routine_progressao),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            when (regra) {
+                RegraDeProgressao.NENHUMA -> stringResource(Res.string.routine_prog_nenhuma_longa)
+                RegraDeProgressao.LINEAR -> stringResource(Res.string.routine_prog_linear_longa, degrau)
+                RegraDeProgressao.DUPLA -> stringResource(Res.string.routine_prog_dupla_longa, degrau)
+            },
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+/**
+ * O que se fez da última vez, por baixo do alvo.
+ *
+ * **Só aparece com regra.** Sem progressão o alvo é o que a pessoa escreveu, e o histórico do
+ * exercício já tem ecrã próprio — a linha aqui seria ruído em todas as rotinas da app para
+ * servir as que ainda não escolheram nada.
+ */
+@Composable
+private fun LinhaDaUltimaVez(
+    ultima: List<SerieDaUltimaVez>,
+    proposta: ProximoAlvo?,
+    unidades: UnitSystem,
+) {
+    if (proposta == null) return
+    val resumo = resumoDaUltimaVez(ultima) ?: return
+
+    val texto = when (resumo) {
+        is UltimaVez.Uniforme -> stringResource(
+            Res.string.routine_prog_ultima_uniforme,
+            resumo.series,
+            resumo.reps,
+            loadWithUnit(resumo.pesoKg, unidades),
+        )
+        is UltimaVez.MesmoPeso -> stringResource(
+            Res.string.routine_prog_ultima_reps,
+            resumo.reps.joinToString(", "),
+            loadWithUnit(resumo.pesoKg, unidades),
+        )
+        is UltimaVez.Mista -> {
+            // Num ciclo e não num `joinToString`: o `loadWithUnit` é `@Composable`, e chamá-lo
+            // de dentro da lambda não compila. É o mesmo padrão do `MuscleRow` da 2.27.0.
+            val partes = mutableListOf<String>()
+            for (s in resumo.series) partes += "${loadWithUnit(s.weightKg, unidades)}×${s.reps}"
+            stringResource(Res.string.routine_prog_ultima_mista, partes.joinToString(" · "))
+        }
+    }
+
+    Text(
+        // A seta é só para quem subiu: pô-la sempre fazia dela decoração, e repetir o peso
+        // também é uma resposta da regra — a de que ainda não se completou o intervalo.
+        if (proposta.subiu) "↑ $texto" else texto,
+        style = MaterialTheme.typography.bodySmall,
+        color = if (proposta.subiu) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+    )
+}
+
+/**
+ * A escolha da regra, e de quanto ela sobe.
+ *
+ * O campo do degrau abre com o valor **em uso** — o escolhido, ou o da unidade —, e deixá-lo
+ * como está grava nulo em vez desse número: gravar 2,5 congelava o degrau métrico na rotina de
+ * quem mudasse para libras no dia seguinte. Ver a [RoutineEntity].
+ */
+@Composable
+private fun DialogoDeProgressao(
+    estado: RotinaNoEditor,
+    onGravar: (RegraDeProgressao, Double?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var regra by remember { mutableStateOf(estado.detalhe.routine.progressao) }
+    val unidades = estado.unidades
+    val porOmissao = ((UnitConversions.weightToDisplay(estado.incrementoKg, unidades) * 100).roundToInt() / 100.0)
+    var degrau by remember {
+        mutableStateOf(
+            estado.detalhe.routine.incrementoKg?.let {
+                ((UnitConversions.weightToDisplay(it, unidades) * 100).roundToInt() / 100.0).toString()
+            } ?: "",
+        )
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.routine_progressao)) },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Spacing.md),
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            ) {
+                RegraDeProgressao.entries.forEach { r ->
+                    OpcaoDeRegra(
+                        regra = r,
+                        escolhida = r == regra,
+                        degrau = loadWithUnit(estado.incrementoKg, unidades),
+                        onEscolher = { regra = r },
+                    )
+                }
+                if (regra != RegraDeProgressao.NENHUMA) {
+                    NumField(
+                        value = degrau,
+                        onChange = { degrau = it },
+                        label = Res.string.routine_prog_degrau,
+                        labelArg = stringResource(weightUnitLabel(unidades)),
+                        decimal = true,
+                    )
+                    Text(
+                        stringResource(Res.string.routine_prog_degrau_ajuda, porOmissao.toString()),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            PrimaryButton(
+                text = stringResource(Res.string.common_save),
+                onClick = {
+                    val escrito = degrau.replace(',', '.').toDoubleOrNull()
+                    onGravar(
+                        regra,
+                        // Vazio ou zero voltam ao degrau da unidade: um incremento de zero
+                        // fazia a regra nunca subir, sem nada no ecrã a dizer porquê.
+                        escrito?.takeIf { it > 0.0 }?.let { v ->
+                            if (unidades == UnitSystem.IMPERIAL) UnitConversions.lbToKg(v) else v
+                        },
+                    )
+                },
+            )
+        },
+        dismissButton = {
+            SecondaryButton(text = stringResource(Res.string.common_cancel), onClick = onDismiss)
+        },
+    )
+}
+
+@Composable
+private fun OpcaoDeRegra(
+    regra: RegraDeProgressao,
+    escolhida: Boolean,
+    degrau: String,
+    onEscolher: () -> Unit,
+) {
+    Row(
+        // O papel é o do botão de rádio e não o de um botão qualquer: a linha inteira faz o
+        // que o círculo à esquerda faz, e o TalkBack tem de dizer qual está escolhido.
+        modifier = Modifier.fillMaxWidth().clickable(role = Role.RadioButton, onClick = onEscolher),
+        verticalAlignment = Alignment.Top,
+    ) {
+        RadioButton(selected = escolhida, onClick = onEscolher)
+        Column(Modifier.weight(1f).padding(top = Spacing.sm)) {
+            Text(
+                when (regra) {
+                    RegraDeProgressao.NENHUMA -> stringResource(Res.string.routine_prog_nenhuma)
+                    RegraDeProgressao.LINEAR -> stringResource(Res.string.routine_prog_linear)
+                    RegraDeProgressao.DUPLA -> stringResource(Res.string.routine_prog_dupla)
+                },
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                when (regra) {
+                    RegraDeProgressao.NENHUMA -> stringResource(Res.string.routine_prog_nenhuma_longa)
+                    RegraDeProgressao.LINEAR -> stringResource(Res.string.routine_prog_linear_longa, degrau)
+                    RegraDeProgressao.DUPLA -> stringResource(Res.string.routine_prog_dupla_longa, degrau)
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
 }

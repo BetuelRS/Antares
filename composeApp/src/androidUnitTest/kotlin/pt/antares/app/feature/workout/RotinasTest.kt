@@ -1,12 +1,17 @@
 package pt.antares.app.feature.workout
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import pt.antares.app.core.calc.Progressao
 import pt.antares.app.core.database.entities.ExerciseEntity
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
+import pt.antares.app.core.model.RegraDeProgressao
+import pt.antares.app.feature.workout.ui.RoutineEditViewModel
 import pt.antares.app.testing.Fabricas
 import pt.antares.app.testing.ViewModelHarness
 import kotlin.test.assertEquals
@@ -150,5 +155,62 @@ class RotinasTest : ViewModelHarness() {
 
         val posicoes = db.routineDao().exportRows().associate { it.id to it.position }
         assertEquals(2, posicoes[copiaId], "a cópia não foi para o fim")
+    }
+
+    /**
+     * O desfazer do arrasto lê a ordem **ao ViewModel**, e não à base — é a lista que estava no
+     * ecrã antes de o dedo lá mexer.
+     *
+     * Nasceu de a ordem ter passado a ser lida de um segundo `StateFlow` que ninguém
+     * coleccionava: ficava parado no `null` inicial, o desfazer gravava uma lista vazia, e nada
+     * no ecrã o dizia. Os testes do repositório não viam nada — o defeito estava entre o ecrã e
+     * o ViewModel, e é por isso que este teste passa pelos dois.
+     */
+    @Test
+    fun `o editor sabe a ordem em que os exercicios estao`() = runTest(dispatcher) {
+        val id = rotinaCom("a", "b", "c")
+        val vm = vivo(RoutineEditViewModel(repo(), profileRepository()))
+        backgroundScope.launch { vm.estado.collect { } }
+
+        vm.start(id)
+        advanceUntilIdle()
+
+        val esperada = db.routineDao().itemsOf(id).sortedBy { it.position }.map { it.id }
+        assertEquals(esperada, vm.ordemActual(), "a ordem que o desfazer iria repor")
+    }
+
+    /** A regra e o degrau chegam ao estado do editor, que é de onde as propostas saem. */
+    @Test
+    fun `a regra escolhida aparece no estado do editor`() = runTest(dispatcher) {
+        val id = rotinaCom("a")
+        val vm = vivo(RoutineEditViewModel(repo(), profileRepository()))
+        backgroundScope.launch { vm.estado.collect { } }
+
+        vm.start(id)
+        advanceUntilIdle()
+        vm.setProgressao(RegraDeProgressao.LINEAR, null)
+        advanceUntilIdle()
+
+        val estado = vm.estado.value!!
+        assertEquals(RegraDeProgressao.LINEAR, estado.detalhe.routine.progressao)
+
+        // Sem número escolhido, o degrau é o da unidade — e o perfil de teste é métrico.
+        assertEquals(Progressao.DEGRAU_KG, estado.incrementoKg)
+    }
+
+    /**
+     * A cópia leva a regra. É o `copy` da entidade que o faz, e por isso ninguém se lembra de
+     * o partir — parte-se sozinho no dia em que alguém escrever os campos à mão.
+     */
+    @Test
+    fun `duplicar leva tambem a regra e o degrau`() = runTest(dispatcher) {
+        val original = rotinaCom("supino")
+        repo().setProgressao(original, RegraDeProgressao.DUPLA, 2.0)
+
+        val copiaId = repo().duplicateRoutine(original, "Empurrar B")!!
+        val copia = db.routineDao().routineById(copiaId)!!
+
+        assertEquals(RegraDeProgressao.DUPLA, copia.progressao)
+        assertEquals(2.0, copia.incrementoKg)
     }
 }

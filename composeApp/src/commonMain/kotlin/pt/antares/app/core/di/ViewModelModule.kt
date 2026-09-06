@@ -89,9 +89,9 @@ val viewModelModule = module {
     viewModel { ExerciseCreateViewModel(get()) }
     viewModel { WorkoutHubViewModel(get(), get()) }
     viewModel { WeeklyScheduleViewModel(get()) }
-    viewModel { RoutineEditViewModel(get()) }
+    viewModel { RoutineEditViewModel(get(), get()) }
     viewModel { RoutineItemPickViewModel(get()) }
-    viewModel { WorkoutSessionViewModel(get(), get(), get(), get(), get()) }
+    viewModel { WorkoutSessionViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { WorkoutSummaryViewModel(get(), get()) }
     viewModel { WorkoutHistoryViewModel(get()) }
     viewModel { WorkoutDetailViewModel(get()) }

@@ -147,7 +147,7 @@ interface DbInfoDao {
         CycleEntity::class,
     ],
 
-    version = 40,
+    version = 41,
     // Os esquemas exportados são o que permite ao Room gerar as migrações automáticas e
     // aos testes verificá-las; sem eles, cada versão seria uma reinstalação.
     exportSchema = true,
@@ -235,6 +235,12 @@ interface DbInfoDao {
         // Acrescenta a `exercise_marca`, tabela nova e vazia: quem actualiza não tem favorito
         // nenhum, que é o que era verdade antes de ela existir.
         AutoMigration(from = 39, to = 40),
+
+        // A v41 acrescenta à `routine` a regra de progressão e o incremento. A regra nasce
+        // `NENHUMA` por omissão e o incremento nulo, portanto **nenhuma rotina existente muda
+        // de comportamento** ao actualizar: quem nunca escolher uma regra continua a ver os
+        // alvos que escreveu. É por isso que a versão é MENOR.
+        AutoMigration(from = 40, to = 41),
     ],
 )
 @ConstructedBy(AntaresDbConstructor::class)

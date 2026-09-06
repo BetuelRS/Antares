@@ -92,6 +92,7 @@ class TreinoSerieUiTest : FluxoUiHarness() {
                 routineDao = db.routineDao(),
                 exerciseDao = db.exerciseLibraryDao(),
                 alerts = NoopWorkoutAlerts(),
+                profileRepository = Fabricas.profileRepository(db, io),
                 pickBus = SessionPickBus(),
             ),
         )

@@ -17,13 +17,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
+import pt.antares.app.core.calc.AlvoDoExercicio
 import pt.antares.app.core.calc.CargaDoCorpo
+import pt.antares.app.core.calc.Progressao
+import pt.antares.app.core.calc.ProximoAlvo
+import pt.antares.app.core.calc.SerieDaUltimaVez
 import pt.antares.app.core.calc.ExercisePr
 import pt.antares.app.core.calc.PrDetector
 import pt.antares.app.core.calc.SetEntry
+import pt.antares.app.core.database.entities.RoutineEntity
 import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.util.Ids
+import pt.antares.app.core.model.RegraDeProgressao
+import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.feature.profile.data.ProfileRepository
 import pt.antares.app.feature.workout.WorkoutAlerts
 import pt.antares.app.feature.workout.data.SessionPickBus
 import pt.antares.app.feature.workout.data.WorkoutSessionRepository
@@ -54,6 +62,13 @@ data class SessionExerciseUi(
     val nota: String = "",
     /** O melhor 1RM estimado de sempre, em kg. Nulo quando nenhuma série o permite estimar. */
     val melhorOneRmKg: Double? = null,
+    /**
+     * O que a regra da rotina propõe para a série seguinte, ou nulo quando não há regra
+     * nem resposta. **Propõe e não reescreve:** o [targetWeightKg] da rotina fica onde
+     * está, e é este número que entra no campo vazio.
+     */
+    val proposta: ProximoAlvo? = null,
+
     /** Uma série de hoje já bateu o melhor de sempre deste exercício. */
     val recordeHoje: Boolean = false,
 ) {
@@ -108,6 +123,7 @@ class WorkoutSessionViewModel(
     private val routineDao: RoutineDao,
     private val exerciseDao: ExerciseLibraryDao,
     private val alerts: WorkoutAlerts,
+    private val profileRepository: ProfileRepository,
     pickBus: SessionPickBus,
 ) : ViewModel() {
 
@@ -148,6 +164,21 @@ class WorkoutSessionViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SessionUiState(loading = true))
 
     /**
+     * De quanto sobe esta rotina, em quilos.
+     *
+     * **O perfil só se lê quando há regra.** O estado da sessão remonta-se a cada série
+     * gravada, e sem esta guarda cada série pagava uma leitura à base para calcular um degrau
+     * que uma rotina sem progressão — que são todas as que já existiam — nunca usa.
+     */
+    private suspend fun degrauDa(rotina: RoutineEntity?, regra: RegraDeProgressao): Double = when {
+        regra == RegraDeProgressao.NENHUMA -> 0.0
+        rotina?.incrementoKg != null -> rotina.incrementoKg
+        else -> Progressao.incrementoPorOmissao(
+            profileRepository.profileOnce()?.unitSystem ?: UnitSystem.METRIC,
+        )
+    }
+
+    /**
      * Monta a lista de exercícios do treino em curso, juntando três origens: o plano da
      * rotina, o que se acrescentou a meio, e o que já tem séries escritas.
      */
@@ -165,6 +196,13 @@ class WorkoutSessionViewModel(
         // `LinkedHashSet` porque a ordem é o plano e as repetições têm de desaparecer: um
         // exercício da rotina que já tem séries não pode aparecer duas vezes. A ordem de
         // inserção é a que a pessoa espera — primeiro o planeado, depois o improvisado.
+        val rotina = routineId?.let { routineDao.routineById(it) }
+
+        // A regra da rotina, e o degrau que ela usa mesmo. Lidos uma vez por montagem e não
+        // por exercício: são os mesmos para a lista toda.
+        val regra = rotina?.progressao ?: RegraDeProgressao.NENHUMA
+        val incremento = degrauDa(rotina, regra)
+
         val routineItems = routineId?.let { routineDao.itemsOf(it) }.orEmpty()
         val orderedIds = LinkedHashSet<String>()
         routineItems.forEach { orderedIds.add(it.exerciseId) }
@@ -185,6 +223,18 @@ class WorkoutSessionViewModel(
             val item = itemByEx[exId]
             val hoje = setsByEx[exId].orEmpty().map { SetEntry(it.weightKg, it.reps, it.isWarmup) }
             val antes = anteriores[exId]
+            val fantasma = repository.ghostSets(exId, sessionId)
+
+            // A proposta sai do fantasma, que é exactamente o que a regra precisa de saber:
+            // as séries de trabalho da última vez que este exercício foi feito.
+            val proposta = item?.let {
+                Progressao.proximo(
+                    alvo = AlvoDoExercicio(it.targetSets, it.targetRepsMin, it.targetRepsMax, it.targetWeightKg),
+                    ultima = fantasma.map { g -> SerieDaUltimaVez(g.weightKg, g.reps) },
+                    regra = regra,
+                    incrementoKg = incremento,
+                )
+            }
             SessionExerciseUi(
                 exerciseId = exId,
                 name = names[exId] ?: exId,
@@ -196,7 +246,7 @@ class WorkoutSessionViewModel(
                 targetWeightKg = item?.targetWeightKg,
                 restSec = item?.restSec ?: 90,
                 supersetGroup = item?.supersetGroup,
-                ghost = repository.ghostSets(exId, sessionId),
+                ghost = fantasma,
                 sets = setsByEx[exId].orEmpty().sortedBy { it.setIndex },
                 equipamento = equipamentos[exId],
                 dePesoDoCorpo = CargaDoCorpo.eDePesoDoCorpo(equipamentos[exId]),
@@ -206,6 +256,7 @@ class WorkoutSessionViewModel(
                 // quem está a decidir o peso da série seguinte, e não o de antes de começar.
                 melhorOneRmKg = listOfNotNull(antes?.bestOneRm, PrDetector.best(hoje)?.bestOneRm)
                     .maxOrNull(),
+                proposta = proposta,
                 recordeHoje = PrDetector.detect(antes, hoje).any,
             )
         }
@@ -234,7 +285,7 @@ class WorkoutSessionViewModel(
             sessionId = sessionId,
             startedAt = session.startedAt,
             pesoDoCorpoKg = repository.pesoDoCorpoKg(),
-            routineName = routineId?.let { routineDao.routineById(it)?.name },
+            routineName = rotina?.name,
             exercises = exercises,
             currentExerciseId = current,
             abertos = abertos,

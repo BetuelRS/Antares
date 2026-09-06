@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import pt.antares.app.core.model.RegraDeProgressao
 import pt.antares.app.core.model.SessionStatus
 
 @Serializable
@@ -48,6 +49,13 @@ data class ExerciseEntity(
 
 )
 
+/**
+ * Uma rotina, e **a regra por que ela sobe de peso**.
+ *
+ * A regra e o incremento vivem aqui e não na linha de cada exercício: a pergunta que a
+ * `estudo/areas/09` fez ao catálogo não se põe: uma rotina é da pessoa de uma ponta à outra,
+ * e não há catálogo nenhum que a substitua por baixo.
+ */
 @Serializable
 @Entity(tableName = "routine")
 data class RoutineEntity(
@@ -55,6 +63,18 @@ data class RoutineEntity(
     val name: String,
     val note: String?,
     val position: Int,
+
+    // Guardada pelo nome, e com omissão: uma rotina que já existia não começa a subir de peso
+    // por a app ter actualizado. A regra do `docs/referencia/base-de-dados.md` — uma coluna
+    // nova nasce anulável ou com omissão — é o que faz esta migração ser automática.
+    @ColumnInfo(defaultValue = "NENHUMA")
+    val progressao: RegraDeProgressao = RegraDeProgressao.NENHUMA,
+
+    // Em quilos, como tudo o que é carga nesta base. Nulo quer dizer **o degrau da unidade da
+    // pessoa** — 2,5 kg ou 5 lb —, e não zero: quem nunca mexeu nisto não tem número escolhido,
+    // e gravar o de hoje congelava-o se a pessoa mudasse de unidade amanhã.
+    val incrementoKg: Double? = null,
+
     val updatedAt: Long,
     val deleted: Boolean = false,
 )

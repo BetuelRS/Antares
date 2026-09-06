@@ -40,6 +40,7 @@ class PesoDoCorpoNaSessaoTest : ViewModelHarness() {
         routineDao = db.routineDao(),
         exerciseDao = db.exerciseLibraryDao(),
         alerts = NoopWorkoutAlerts(),
+        profileRepository = Fabricas.profileRepository(db, dispatcher),
         pickBus = SessionPickBus(),
     ),
     )
@@ -87,7 +88,7 @@ class PesoDoCorpoNaSessaoTest : ViewModelHarness() {
 
     private suspend fun flexao() {
         exercicio("flexao", pt = "Flexão", equipamento = CargaDoCorpo.EQUIPAMENTO_DO_CORPO)
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Casa", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Casa", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "flexao"))
     }
 
@@ -208,7 +209,7 @@ class PesoDoCorpoNaSessaoTest : ViewModelHarness() {
     @Test
     fun `uma serie de barra continua sem parte nenhuma do corpo`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino", equipamento = "barbell")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino"))
 
         val vm = viewModel()

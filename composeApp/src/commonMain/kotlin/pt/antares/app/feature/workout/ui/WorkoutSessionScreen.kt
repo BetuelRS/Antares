@@ -299,10 +299,15 @@ private fun ExerciseBlock(
             )
         } else {
             NewSetRow(
-                prefill = ex.ghost.getOrNull(ex.setsDone),
-                // O peso planeado entra quando não há fantasma nenhum: um exercício novo com
-                // alvo definido abria o campo vazio, apesar de a rotina saber o número.
-                alvoKg = ex.targetWeightKg,
+                // Com regra de progressão, o fantasma não entra no campo: ele é o que se fez
+                // da última vez, e a regra existe justamente para não se repetir. Continua a
+                // aparecer a cinzento por baixo, que é o sítio dele.
+                prefill = if (ex.proposta != null) null else ex.ghost.getOrNull(ex.setsDone),
+                // Sem proposta, o peso planeado entra quando não há fantasma nenhum: um
+                // exercício novo com alvo definido abria o campo vazio, apesar de a rotina
+                // saber o número.
+                alvoKg = ex.proposta?.pesoKg ?: ex.targetWeightKg,
+                alvoReps = ex.proposta?.reps,
                 warmup = warmup,
                 unidades = unidades,
                 comBarra = ex.equipamento == EQUIPAMENTO_BARRA,
@@ -368,7 +373,15 @@ private fun LinhaDoAlvo(
         // ficava sem peso e comia a largura toda: a 200 % de escala de letra o segundo saía
         // uma letra por linha, «1 R M e s t .» na vertical — visto a correr. Num texto só,
         // o que não cabe muda de linha por palavras.
-        val alvo = "${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s"
+        val base = "${ex.targetSets}×${ex.repsMin}-${ex.repsMax} · ${ex.restSec}s"
+        // Com regra, o alvo desta vez entra aqui: é o mesmo número que já está no campo, e
+        // vê-lo escrito é o que explica porque é que ele não é o da última vez.
+        val alvo = ex.proposta?.let {
+            base + " · " + stringResource(
+                Res.string.routine_prog_alvo,
+                loadWithUnit(it.pesoKg, unidades),
+            )
+        } ?: base
         Text(
             text = ex.melhorOneRmKg?.let {
                 "$alvo · " + stringResource(Res.string.session_one_rm, loadWithUnit(it, unidades))
@@ -727,6 +740,7 @@ private fun ExerciseRecolhido(ex: SessionExerciseUi, onSelect: () -> Unit) {
 private fun NewSetRow(
     prefill: WorkoutSetEntity?,
     alvoKg: Double?,
+    alvoReps: Int?,
     warmup: Boolean,
     unidades: UnitSystem,
     comBarra: Boolean,
@@ -749,7 +763,7 @@ private fun NewSetRow(
             } ?: "",
         )
     }
-    var reps by remember(prefill) { mutableStateOf(prefill?.reps?.toString() ?: "") }
+    var reps by remember(prefill, alvoReps) { mutableStateOf((prefill?.reps ?: alvoReps)?.toString() ?: "") }
 
     val noDisplay = weight.replace(',', '.').toDoubleOrNull()
     val w = noDisplay?.let(paraKg)

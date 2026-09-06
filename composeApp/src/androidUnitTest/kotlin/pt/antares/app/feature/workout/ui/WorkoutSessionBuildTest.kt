@@ -16,6 +16,7 @@ import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.database.entities.WeightLogEntity
 import pt.antares.app.core.database.entities.WorkoutSetEntity
 import pt.antares.app.core.model.SessionStatus
+import pt.antares.app.testing.Fabricas
 import pt.antares.app.core.calc.CargaDoCorpo
 import pt.antares.app.core.calc.SetEntry
 import pt.antares.app.core.calc.VolumeCalc
@@ -66,6 +67,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
         routineDao = db.routineDao(),
         exerciseDao = db.exerciseLibraryDao(),
         alerts = alerts,
+        profileRepository = Fabricas.profileRepository(db, dispatcher),
         pickBus = bus,
     ),
     )
@@ -532,7 +534,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     @Test
     fun `a nota e do treino de hoje e nao da rotina`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino", 0))
 
         val vm = viewModel()
@@ -557,7 +559,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     @Test
     fun `um treino novo comeca sem a nota do anterior`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino", 0))
 
         val primeiro = viewModel()
@@ -583,7 +585,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     @Test
     fun `apagar o texto da nota apaga a linha`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino", 0))
 
         val vm = viewModel()
@@ -612,7 +614,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     @Test
     fun `o recorde aparece na serie que o bate, e nao antes`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino", 0))
         sessaoAntiga("antiga", "supino", listOf(100.0 to 5))
 
@@ -642,7 +644,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     @Test
     fun `o 1RM estimado sobe com a serie que se acaba de gravar`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino", 0))
         sessaoAntiga("antiga", "supino", listOf(100.0 to 5))
 
@@ -669,7 +671,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     @Test
     fun `o RPE escreve-se depois da serie estar gravada`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino", 0))
 
         val vm = viewModel()
@@ -696,7 +698,7 @@ class WorkoutSessionBuildTest : ViewModelHarness() {
     @Test
     fun `o estado leva o instante em que o treino comecou e o nome da rotina`() = runTest(dispatcher) {
         exercicio("supino", pt = "Supino")
-        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar A", null, 0, 0L))
+        db.routineDao().upsertRoutine(RoutineEntity("r1", "Empurrar A", null, 0, updatedAt = 0L))
         db.routineDao().upsertItem(item("r1", "supino", 0))
 
         val vm = viewModel()
