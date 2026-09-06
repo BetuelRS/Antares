@@ -16,6 +16,7 @@
     <string name="notif_channel_run_name">Corrida em curso</string>
     <string name="notif_channel_run_desc">Mostra as métricas enquanto gravas uma corrida.</string>
     <string name="notif_run_title">Antares — a gravar corrida</string>
+    <string name="notif_run_paused">Em pausa</string>
 
     <string name="notif_channel_meal_name">Lembretes de refeição</string>
     <string name="notif_channel_meal_desc">Lembra-te de registar uma refeição que ainda não anotaste.</string>

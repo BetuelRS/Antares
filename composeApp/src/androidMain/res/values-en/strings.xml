@@ -15,6 +15,7 @@
     <string name="notif_channel_run_name">Run in progress</string>
     <string name="notif_channel_run_desc">Shows your metrics while recording a run.</string>
     <string name="notif_run_title">Antares — recording run</string>
+    <string name="notif_run_paused">Paused</string>
 
     <string name="notif_channel_meal_name">Meal reminders</string>
     <string name="notif_channel_meal_desc">Reminds you to log a meal you haven\'t recorded yet.</string>

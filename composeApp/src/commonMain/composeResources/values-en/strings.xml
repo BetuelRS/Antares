@@ -146,9 +146,14 @@
     <string name="run_live_distance">Distance</string>
     <string name="run_live_time">Time</string>
     <string name="run_live_pace_avg">Avg pace</string>
-    <string name="run_live_pace_cur">Current pace</string>
+    <string name="run_live_pace_km">This km's pace</string>
+    <string name="run_live_pause">Pause</string>
+    <string name="run_live_resume">Resume</string>
+    <string name="run_live_split">Km %1$d</string>
+    <string name="run_live_paused_manual">Paused — time and distance have stopped</string>
+    <string name="run_live_locked">Locked. Press and hold the padlock to unlock.</string>
     <string name="run_live_kcal">kcal</string>
-    <string name="run_live_paused">Paused</string>
+    <string name="run_live_paused">Auto-paused — you stopped moving</string>
     <string name="run_live_lock">Lock</string>
     <string name="run_live_unlock">Unlock</string>
     <string name="run_live_finish">Finish (hold)</string>

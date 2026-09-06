@@ -62,6 +62,15 @@ class RunEngine(
     private var kcalRide = 0.0
     private var paused = false
 
+    /**
+     * A pausa que a pessoa pediu, e que é **outra coisa** do que a [paused].
+     *
+     * A automática é um detector: apaga-se sozinha assim que há movimento, e é isso que a faz
+     * servir para semáforos. Uma pausa manual com esse comportamento desligava-se ao dar dois
+     * passos até ao bebedouro — que é exactamente o momento em que ela existe para servir.
+     */
+    private var pausaManual = false
+
     private val elevWindow = ArrayDeque<Double>()
     private var smoothedAlt: Double? = null
     private var elevGainM = 0.0
@@ -85,6 +94,18 @@ class RunEngine(
         // Amostra fora de ordem ou repetida: os fornecedores de localização entregam-nas
         // assim de vez em quando, e um intervalo negativo estragava tempo e velocidade.
         if (s.tMs <= lastT) return metrics()
+
+        // Em pausa manual a amostra **entra e não conta**: o relógio de parede continua a
+        // andar — é isso que o tempo decorrido é —, e a distância, o tempo em movimento, as
+        // calorias e o desnível ficam onde estavam.
+        //
+        // A âncora anda com a pessoa, de propósito. Sem isso, os cem metros até ao bebedouro
+        // apareciam como um segmento no instante em que ela retomasse.
+        if (pausaManual) {
+            lastT = s.tMs
+            anchorLat = s.lat; anchorLon = s.lon; anchorT = s.tMs
+            return metrics()
+        }
 
         val dFromAnchor = haversine(anchorLat, anchorLon, s.lat, s.lon)
         val dtFromAnchorMs = s.tMs - anchorT
@@ -131,6 +152,20 @@ class RunEngine(
         }
         return metrics()
     }
+
+    /** A pessoa pediu para parar. Ver a [pausaManual]. */
+    fun pausar() { pausaManual = true }
+
+    fun retomar() { pausaManual = false }
+
+    /**
+     * Os quilómetros já fechados, **a meio da corrida**. O ecrã mostra os dois últimos para
+     * se saber se se está a acelerar ou a abrandar sem esperar pelo fim.
+     *
+     * Cópia e não a lista viva: quem a recebe está noutra linha de execução — o ecrã lê o
+     * que o serviço escreve — e uma lista a crescer debaixo de um `forEach` rebenta.
+     */
+    fun parciaisAteAgora(): List<Split> = splits.toList()
 
     fun finish(): RunResult {
         // Fecha o quilómetro incompleto do fim. Fica na lista marcado pela distância real,
@@ -244,6 +279,11 @@ class RunEngine(
             kcal = totalKcal(moving),
             elevGainM = elevGainM,
             paused = paused,
+            pausaManual = pausaManual,
+            // O ritmo do quilómetro que vai a meio, e não a velocidade do último segmento
+            // entre âncoras: essa salta de 4:10 para 6:50 e volta de poucos em poucos
+            // segundos, e um número que oscila assim não se lê a correr.
+            ritmoDoKmSecPerKm = paceSecPerKm(distanceM - lastSplitDist, movingMs - lastSplitMoving),
         )
     }
 

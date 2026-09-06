@@ -33,12 +33,32 @@ internal object RunTrackingState {
         // desenhado é guardado à parte das métricas: um ponto mau desenharia um risco a
         // atravessar o mapa mesmo sem contar para a distância.
         val usable = sample.accM <= 30.0
-        if (usable) path.add(sample.lat to sample.lon)
+
+        // Em pausa o percurso **não cresce**, e o mapa fica com o traço onde a corrida
+        // parou. O ponto continua a ser lido — é assim que o mapa continua a mostrar onde
+        // a pessoa está —, mas o caminho até ao bebedouro não é caminho de corrida.
+        if (usable && !metrics.pausaManual) path.add(sample.lat to sample.lon)
         live.value = live.value.copy(
             metrics = metrics,
             path = path.toList(),
             hasFix = live.value.hasFix || usable,
+            parciais = e.parciaisAteAgora(),
         )
+    }
+
+    fun pausar() {
+        val e = engine ?: return
+        e.pausar()
+
+        // O estado do ecrã tem de mudar já, e não à próxima amostra: entre duas leituras
+        // do GPS passam segundos, e um botão que só muda daqui a três parece avariado.
+        live.value = live.value.copy(metrics = live.value.metrics.copy(pausaManual = true))
+    }
+
+    fun retomar() {
+        val e = engine ?: return
+        e.retomar()
+        live.value = live.value.copy(metrics = live.value.metrics.copy(pausaManual = false))
     }
 
     fun finish() {

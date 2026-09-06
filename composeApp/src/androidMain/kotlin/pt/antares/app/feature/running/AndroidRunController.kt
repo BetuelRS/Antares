@@ -31,6 +31,10 @@ class AndroidRunController(
         }
     }
 
+    override fun pausar() = RunTrackingState.pausar()
+
+    override fun retomar() = RunTrackingState.retomar()
+
     override fun stop() {
         RunTrackingState.finish()
         stopService()

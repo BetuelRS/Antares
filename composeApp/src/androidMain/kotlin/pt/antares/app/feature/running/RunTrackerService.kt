@@ -87,7 +87,11 @@ class RunTrackerService : Service() {
         val m = RunTrackingState.live.value.metrics
         val km = m.distanceM / 1000.0
         val sec = m.movingMs / 1000
-        val text = "${formatKm(km)} · ${formatClock(sec)}"
+        // Em pausa, a notificação **diz que está em pausa**. É a cara da app com o ecrã
+        // apagado: sem isto, quem pausou e guardou o telemóvel via dois números parados sem
+        // nada que explicasse porquê — e o mais provável era pensar que a gravação morreu.
+        val base = "${formatKm(km)} · ${formatClock(sec)}"
+        val text = if (m.pausaManual) "$base · ${getString(R.string.notif_run_paused)}" else base
         val tap = PendingIntent.getActivity(
             this, 0, Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,

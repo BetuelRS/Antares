@@ -34,7 +34,18 @@ data class RunMetrics(
     val curSpeedMps: Double = 0.0,
     val kcal: Int = 0,
     val elevGainM: Double = 0.0,
+
+    /** A pausa automática: dez segundos parado. Apaga-se sozinha ao primeiro passo. */
     val paused: Boolean = false,
+
+    /** A pausa que a pessoa pediu, que só ela desfaz. */
+    val pausaManual: Boolean = false,
+
+    /**
+     * O ritmo do quilómetro que vai a meio, em segundos por quilómetro. Zero enquanto não
+     * houver um metro andado desde o último parcial — o ecrã trata o zero como «ainda não».
+     */
+    val ritmoDoKmSecPerKm: Int = 0,
 )
 
 data class RunResult(
