@@ -26,6 +26,11 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   a linha «↑ da última vez» em cada exercício, e um degrau que nasce da unidade da pessoa.
   **1842 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o
   `verificar.mjs`.
+- **A 2.28.0 está publicada e verde**, conferido a 2026-09-06: `main` e a etiqueta `v2.28.0` em
+  `f4c2ca6`, release «2.28.0 — uma rotina passa a poder subir sozinha» com os quatro APKs mais
+  o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit**, e o `latest` a responder
+  200 aos dois ficheiros. O APK de lançamento foi corrido no emulador por cima dos dados
+  migrados, antes de a etiqueta sair.
 - **A app propõe e não reescreve, e foi decisão do dono.** As duas hipóteses que reescreviam o
   `targetWeightKg` no fim do treino foram recusadas. É por isso que esta versão **não tem
   desfazer**: nada é alterado.
