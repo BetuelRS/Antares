@@ -555,7 +555,7 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **O recorde sem o número de onde veio** — o esboço 10 §3 escreve «1RM estimado subiu de 76 para 78 kg», e a app escreve «novo recorde» | 2.26.0, decidido | é uma leitura a mais por recorde; cabe onde os recordes forem trabalhados |
 | **«O teu maior volume de sempre»** — o «o que está mal» ponto 5 da `estudo/areas/10` | 2.26.0, decidido | é comparação com a história toda e não com a rotina; casa com os recordes |
 | **Os nomes dos exercícios saem em inglês** quando o catálogo não tem `namePt` — «Alternating Floor Press» nos recordes, com a app em português | 2.20.0 nomeia a convenção `namePt.ifBlank { nameEn }`; visto nos recordes a 2026-09-05 | é conteúdo do `seed_exercises.json`, e o `estudo/areas/09` trata da biblioteca — **2.27.0**. Contados a 2026-09-06: são **160 dos 873** |
-| **Os três filtros da biblioteca cortam o rótulo sem reticências** — «Equipame» a 100 %, «Mús · Equi · Nível» a 200 % | visto a correr a 2026-09-06, nas duas escalas | é o ecrã da **2.27.0**, e o `Text` do `FilterChip` tem `maxLines = 1` sem `overflow`. Quarta aparição da família do `estudo/transversal/03` §3.1, e a primeira que se vê sem subir a escala |
+| ~~**Os três filtros da biblioteca cortam o rótulo sem reticências** — «Equipame» a 100 %, «Mús · Equi · Nível» a 200 %~~ | visto a correr a 2026-09-06, nas duas escalas | **fechado na 2.27.0**: a barra passou a `FlowRow`, que quebra em vez de cortar, e o texto ganhou `TextOverflow.Ellipsis`. Entrou em troca da contagem nos filtros |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e
 a regra A5 continua a valer: o que entra a meio é troca, não adição.
@@ -981,6 +981,37 @@ versão:
 **E um número novo, contado hoje:** **160 dos 873 exercícios têm o `namePt` igual ao `nameEn`** —
 são eles os nomes ingleses que esta tabela nomeia («Alternating Floor Press» nos recordes). Não é
 uma falta da app: é conteúdo do `seed_exercises.json`.
+
+
+## O que a 2.27.0 fechou, e o que deixou aberto
+
+Riscado no mesmo commit em que a versão saiu, como a regra em baixo manda.
+
+**Fechado:**
+
+- **O corte dos rótulos dos filtros.** A barra passou a `FlowRow`, que **quebra** em vez de
+  cortar, e o texto ganhou `TextOverflow.Ellipsis`. Visto no aparelho a 100 % e a 200 %: a
+  200 % os três chips ocupam duas linhas e lêem-se inteiros. Entrou por decisão do dono, em
+  **troca** da contagem nos filtros — que por isso continua aberta.
+- **Os três defeitos concretos da área 09.** O `stringResource` dentro do `map` do `MuscleRow`
+  (passou a um ciclo), o modo de escolha que mostrava os 873 sem avisar (a linha diz agora «já
+  está nesta rotina», e continua a poder tocar-se, por decisão do dono), e o apagar sem
+  confirmação (passou a perguntar, e a pergunta diz em quantas rotinas o exercício está e que o
+  histórico fica).
+- **«Não há favoritos nem usados recentemente».** Tabela `exercise_marca`, esquema **v40**,
+  migração automática 39 → 40 provada no aparelho por cima da 2.26.0 com dados lá dentro.
+- **«O detalhe não diz nada sobre o teu desempenho».** Cartão com melhor série, 1RM estimado,
+  número de vezes e última vez, por cima do gráfico — e ausente quando não há nada feito.
+- **O filtro de nível saiu**, e no lugar dele ficou «só os meus».
+
+**Continua aberto, e passa a ter razão escrita:**
+
+- **A contagem de resultados nos filtros e o «limpar»** (proposta 4 da área 09). Trocados pela
+  correcção do corte, por decisão do dono a 2026-09-06. Custo baixo, e o ecrã já está feito.
+- **Os 160 nomes ingleses** — a linha em cima mantém-se: é conteúdo do `seed_exercises.json`,
+  trabalho de catálogo e não de interface.
+- **A descarga de imagens em bloco** (proposta 7). É o que falta para a promessa de que nada sai
+  do telemóvel ser verdadeira na biblioteca, e é um ecrã de definições, não este.
 
 ---
 

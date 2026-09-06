@@ -13,6 +13,53 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.27.0] — 2026-09-06
+
+**A biblioteca de exercícios.** São 873, com imagens, músculos e instruções — o dobro do que a
+Strong dá de graça —, e a lista tratava-os **todos por igual, todas as vezes**: por ordem
+alfabética, sem saber quais são os teus. Toda a gente treina os mesmos quinze ou vinte.
+
+**Esquema da base: v39 → v40**, uma tabela nova para os exercícios marcados. A actualização é
+indolor: quem actualiza não tem favoritos nenhuns, que é o que era verdade antes de ela existir.
+Catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **Uma secção «os teus» no topo da lista**, com duas partes: os que marcaste, e **os que mais
+  fazes** — contados nas últimas doze semanas, do mais feito para o menos. Contam-se **treinos e
+  não séries**: cinco séries de supino num treino são uma vez que fizeste supino. Só aparece
+  antes de se procurar, como os recentes do ecrã de exercício avulso.
+- **Uma estrela em cada linha.** Os favoritos vivem em tabela própria e **vão na cópia de
+  segurança** — na linha do catálogo ficariam de fora dela, que é a lição que os favoritos de
+  alimentos já pagaram uma vez.
+- **O detalhe diz o que já fizeste naquele exercício**: a melhor série, o 1RM estimado, quantas
+  vezes e a última. Os quatro números já eram calculados noutros ecrãs. A melhor série é a de
+  maior peso × repetições — 80 kg × 8 descreve mais trabalho do que 100 kg × 1 —, e o 1RM é o
+  melhor de **todas** as séries e não o da melhor: são duas perguntas diferentes.
+- **Sem nunca teres feito o exercício, o cartão não aparece.** «Nunca fizeste isto» e «fizeste e
+  deu zero» são coisas diferentes, e a segunda não acontece.
+- **A escolher um exercício para uma rotina, a linha diz «já nesta rotina».** Marca e **não
+  esconde**: há quem repita o mesmo exercício de propósito, e esconder tirava-lhe isso sem o
+  dizer.
+
+### Alterado
+
+- **O filtro de nível saiu, e no lugar dele entrou «só os meus».** O nível vem da base de origem
+  — 523 iniciante, 293 intermédio, 57 avançado — e ninguém procura exercícios de nível
+  intermédio; quem criou um à mão procura-o.
+- **Apagar um exercício criado por ti passa a pedir confirmação, e diz em quantas rotinas ele
+  está — e que o que já treinaste com ele fica no histórico.** Era a única coisa da app que se
+  apagava sem confirmação e sem desfazer. Conta rotinas e não linhas: uma rotina que o repita
+  continua a ser uma.
+
+### Corrigido
+
+- **Os nomes dos filtros eram cortados a meio das letras.** Três chips a dividir a largura, com
+  o texto limitado a uma linha e sem reticências: lia-se **«Equipame»** já com a letra no
+  tamanho normal, e **«Mús»**, **«Equi»** com a letra a 200 %. Passam a quebrar de linha, e o
+  que não couber leva reticências — uma linha cortada diz que a app se avariou, reticências
+  dizem que há mais palavra.
+
 ## [2.26.0] — 2026-09-05
 
 **O resumo pós-treino.** Depois de uma hora de treino, o ecrã mostrava **três números

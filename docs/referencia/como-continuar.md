@@ -20,6 +20,41 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **2.27.0 é a última fechada**, a 2026-09-06. Esquema **v40** — tabela nova `exercise_marca`,
+  migração automática 39 → 40 — e catálogo **v6**, inalterado. «A biblioteca de exercícios»:
+  secção «os teus» no topo com favoritos e o que mais se faz, estrela na linha e no detalhe,
+  cartão de desempenho no detalhe, o filtro de nível substituído por «só os meus», aviso de «já
+  está nesta rotina» no modo de escolha, e confirmação ao apagar um exercício criado à mão.
+  **1811 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o
+  `verificar.mjs`.
+- **A migração v40 foi provada no aparelho, e à segunda.** A primeira prova não valia: a revisão
+  1 tirou uma coluna da tabela nova **depois** de a app estar instalada, e a base ficou com uma
+  identidade que já não existia — a app rebentava com `Room cannot verify the data integrity`, e
+  a causa não era a migração, era a tabela velha que o `CREATE TABLE IF NOT EXISTS` não toca. E
+  o `pm clear` não chegou: foi preciso `adb uninstall`. Refeita de raiz — 2.26.0 de lançamento,
+  perfil e um treino registado, depois a 2.27.0 por cima — e os dados sobreviveram todos.
+- **A tabela nova guarda só o favorito, e é de propósito.** O que mais se faz sai da
+  `workout_set`, que já sabe a sessão de cada série: escrevê-lo também na tabela nova era o
+  «mesmo facto em dois sítios» do `estudo/dados/04` §3.
+- **A D7 apanhou quatro defeitos na primeira passagem e dois na segunda.** Na primeira: um
+  `StateFlow` público sem quem o lesse, os «mais feitos» com `favorito = false` escrito à mão, a
+  coluna `isFavorite` que nunca era falsa — e é a que obrigou a refazer a prova da migração — e
+  um `if` redundante no diálogo.
+- **E a segunda passagem apanhou-me a construir o que o dono tinha tirado.** A proposta 4 da área
+  09 — contagem nos filtros e «limpar» — foi **trocada** pela correcção do corte dos rótulos, por
+  decisão dele (A5: o que entra a meio é troca e não adição). Escrevi-a na mesma, sem ir ver a
+  resposta que já estava dada, e foi desfeita. **A resposta às perguntas de abertura vale para a
+  versão inteira, e relê-se antes de cada acrescento.**
+- **O corte dos rótulos dos filtros ficou corrigido**, e é a quarta aparição da família do
+  `estudo/transversal/03` §3.1: a barra passou a `FlowRow`, que quebra em vez de cortar. A 200 %
+  os três chips ocupam duas linhas e lêem-se inteiros.
+- **A área 09 não tem esboço**, e por isso a segunda revisão da D7 foi feita contra a proposta
+  escrita, ponto a ponto. O que ficou de fora e porquê está no registo da versão no plano e em
+  [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md).
+- **A próxima do plano é a 2.28.0**, «Progressão nas rotinas» — **conceito novo**, e portanto
+  pode escorregar para MAIOR. As perguntas de abertura estão escritas no plano, e **nada começa
+  sem a palavra do dono** (A1).
+- *O que se segue é o estado até à 2.26.0.*
 - **2.26.0 é a última fechada**, a 2026-09-05. Esquema **v39** e catálogo **v6**, inalterados, e
   **nenhuma coluna é nova**. «O resumo pós-treino»: comparação com a última vez que se fez a
   rotina e com a média das últimas três, partilha do resumo como imagem, e a secção dos recordes

@@ -23,9 +23,48 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.26.0"
+    const val CURRENT = "2.27.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.27.0",
+            title = "A biblioteca deixa de tratar 873 exercícios por igual",
+            titleEn = "The library stops treating 873 exercises the same",
+            highlights = listOf(
+                "**Os teus exercícios ficam no topo** — os que marcaste, e os que mais " +
+                    "fazes. Toda a gente treina os mesmos quinze ou vinte, e a lista " +
+                    "mostrava-os todos por ordem alfabética, todas as vezes",
+                "**Uma estrela em cada linha** para marcares os teus. Vão na cópia de " +
+                    "segurança, como tudo o resto que escolhes",
+                "**O detalhe diz o que já fizeste** — a melhor série, o 1RM estimado, " +
+                    "quantas vezes e a última. A app sabia os quatro e mostrava-os noutros ecrãs",
+                "**O filtro de nível saiu e entrou «só os meus».** Ninguém procura exercícios " +
+                    "de nível intermédio; quem criou um à mão procura-o",
+                "**Apagar um exercício teu passa a perguntar**, e diz em quantas rotinas ele " +
+                    "está. Era a única coisa que se apagava sem confirmação nem volta atrás",
+                "**A escolher um exercício para uma rotina, a lista diz o que já lá está.** " +
+                    "Mostrava os 873 sem distinguir, e acrescentar o mesmo duas vezes era fácil",
+                "**Os nomes dos filtros deixam de ser cortados a meio.** Lia-se «Equipame», " +
+                    "e com a letra grande «Mús» e «Equi»",
+            ),
+            highlightsEn = listOf(
+                "**Your exercises come first** — the ones you starred, and the ones you do " +
+                    "most. Everyone trains the same fifteen or twenty, and the list showed " +
+                    "all of them alphabetically, every time",
+                "**A star on every line** to mark your own. They travel in the backup, like " +
+                    "everything else you choose",
+                "**The detail says what you have already done** — best set, estimated 1RM, " +
+                    "how many times and the last one. The app knew all four and showed them elsewhere",
+                "**The level filter is gone and “only mine” took its place.** Nobody searches " +
+                    "for intermediate-level exercises; someone who made one by hand searches for it",
+                "**Deleting one of your exercises now asks**, and says how many routines it " +
+                    "is in. It was the only thing deleted with no confirmation and no undo",
+                "**Picking an exercise for a routine, the list says what is already there.** " +
+                    "It showed all 873 without distinction, and adding the same one twice was easy",
+                "**Filter labels stop being cut in half.** It read “Equipame”, and with large " +
+                    "text “Mús” and “Equi”",
+            ),
+        ),
         AppVersion(
             name = "2.26.0",
             title = "O fim de um treino passa a dizer se ele foi melhor",
@@ -371,38 +410,7 @@ object AppChangelog {
                     "changes numbers already on your phone, and your basal metabolism follows",
             ),
         ),
-        AppVersion(
-            name = "2.18.1",
-            title = "As refeições guardadas, e a preparação",
-            titleEn = "Saved meals, and the method",
-            highlights = listOf(
-                "**Vês a refeição guardada antes de ela entrar no diário** — o que lá está, " +
-                    "com as gramas e as calorias de cada item",
-                "**Meia refeição, ou duas.** Um campo diz quantas vezes, e o total muda à vista",
-                "**Desfazer ao aplicar.** Ao dia errado eram sete linhas para apagar à mão",
-                "A linha diz **quantos itens e quantas calorias**, em vez de dizer só «Almoço»",
-                "**Acrescentar ingredientes sem sair da receita** — a folha não se fecha a cada " +
-                    "escolha, e faz-se a lista de uma vez",
-                "**A app avisa quando o peso final não bate com os ingredientes**, e nunca o " +
-                    "corrige: quem pesou o tacho ganha à tabela",
-                "**Passos de preparação**, por ordem, com subir e descer — e a lê-los no ecrã " +
-                    "da receita, com o tacho ao lume",
-            ),
-            highlightsEn = listOf(
-                "**You see a saved meal before it enters the diary** — what is in it, with the " +
-                    "grams and calories of each item",
-                "**Half a meal, or two.** A field says how many times, and the total follows",
-                "**Undo when applying.** To the wrong day it was seven rows to delete by hand",
-                "The row says **how many items and how many calories**, instead of just \"Lunch\"",
-                "**Add ingredients without leaving the recipe** — the sheet stays open, so you " +
-                    "build the list in one go",
-                "**The app warns when the final weight does not match the ingredients**, and " +
-                    "never corrects it: whoever weighed the pan beats the table",
-                "**Method steps**, in order, with move up and down — and readable on the recipe " +
-                    "screen, with the pan on the stove",
-            ),
-        ),
-        // Da 2.2.0 à 2.16.0 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.18.1 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )
