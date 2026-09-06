@@ -27,6 +27,11 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   está nesta rotina» no modo de escolha, e confirmação ao apagar um exercício criado à mão.
   **1811 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o
   `verificar.mjs`.
+- **A 2.27.0 está publicada e verde**, conferido a 2026-09-06: `main` e a etiqueta `v2.27.0` em
+  `e0d945d`, release «2.27.0 — a biblioteca deixa de tratar 873 exercícios por igual» com os
+  quatro APKs mais o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit**, e o
+  `latest` a responder 200 aos dois ficheiros. O APK de lançamento foi corrido no emulador por
+  cima dos dados migrados, antes de a etiqueta sair.
 - **A migração v40 foi provada no aparelho, e à segunda.** A primeira prova não valia: a revisão
   1 tirou uma coluna da tabela nova **depois** de a app estar instalada, e a base ficou com uma
   identidade que já não existia — a app rebentava com `Room cannot verify the data integrity`, e
