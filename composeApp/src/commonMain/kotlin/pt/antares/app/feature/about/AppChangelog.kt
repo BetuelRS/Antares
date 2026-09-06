@@ -23,9 +23,40 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.27.0"
+    const val CURRENT = "2.28.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.28.0",
+            title = "Uma rotina passa a poder subir sozinha",
+            titleEn = "A routine can now go up on its own",
+            highlights = listOf(
+                "**Cada rotina escolhe uma regra de progressão** — nenhuma, linear, ou " +
+                    "dupla. Uma rotina era 3×8-12 hoje e 3×8-12 daqui a três meses",
+                "**A linear sobe o peso** quando fizeste o topo do intervalo em todas as " +
+                    "séries. A **dupla** sobe primeiro as repetições até ao máximo, e só " +
+                    "depois o peso, voltando ao mínimo",
+                "**A app propõe e não reescreve.** O alvo aparece no editor e no campo da " +
+                    "sessão; o peso que escreveste na rotina fica exactamente onde estava",
+                "**Cada linha diz o que fizeste da última vez** — «↑ da última vez: 3×10 a " +
+                    "60 kg» —, que é de onde a proposta saiu",
+                "**Sobe 2,5 kg, ou 5 lb** se contas em libras. Não são o mesmo número, e " +
+                    "não podiam ser: são os discos que existem em cada ginásio",
+            ),
+            highlightsEn = listOf(
+                "**Every routine picks a progression rule** — none, linear, or double. A " +
+                    "routine was 3×8-12 today and 3×8-12 three months from now",
+                "**Linear adds weight** when you hit the top of the range on every set. " +
+                    "**Double** takes reps to the maximum first, and only then adds weight, " +
+                    "going back to the minimum",
+                "**The app suggests, it does not rewrite.** The target shows up in the " +
+                    "editor and in the session field; the weight you wrote stays put",
+                "**Every line says what you did last time** — \"↑ last time: 3×10 at " +
+                    "60 kg\" — which is where the suggestion came from",
+                "**It goes up by 2.5 kg, or 5 lb** if you count in pounds. They are not the " +
+                    "same number, and they could not be: they are the plates that exist",
+            ),
+        ),
         AppVersion(
             name = "2.27.0",
             title = "A biblioteca deixa de tratar 873 exercícios por igual",
@@ -365,52 +396,7 @@ object AppChangelog {
                     "\"minus five\", without saying five of what",
             ),
         ),
-        AppVersion(
-            name = "2.18.2",
-            title = "A app passa a dizer de onde vêm os números",
-            titleEn = "The app starts saying where its numbers come from",
-            highlights = listOf(
-                "**Cada nutriente diz de onde veio**, quando não veio de onde veio o " +
-                    "alimento: um alimento medido em Portugal pode levar o iodo da tabela " +
-                    "francesa, e a app dizia uma origem só",
-                "**A ficha de um alimento diz de quanto é o «cerca de»** dos números dele — " +
-                    "uma tabela publica a média de umas amostras, um rótulo tem tolerâncias, " +
-                    "uma estimativa é um palpite",
-                "**O dia reparte a margem pelas origens.** Saber que 120 das 150 kcal de " +
-                    "margem vêm do prato que a AI adivinhou diz o que fazer; «±150» não diz",
-                "**A procura abre em Tudo · Favoritos · Meus**, com as tuas refeições em " +
-                    "primeiro, a tua porção habitual na linha, e o microfone e a câmara " +
-                    "dentro do campo",
-                "**Os botões dizem onde é que o registo cai** — «Registar no almoço», " +
-                    "«Registar 2 doses no jantar»",
-                "**«As minhas refeições» é um ecrã**, alcançável do «Eu» e do diário",
-                "**A app ganhou a cor que sempre disse ter**: cartões quase pretos em vez de " +
-                    "cinzentos, texto branco quente, e um ar por trás de tudo",
-                "**A massa gorda medida à fita é corrigida do desvio por sexo** — isto muda " +
-                    "números que já estavam no telemóvel, e o basal acompanha",
-            ),
-            highlightsEn = listOf(
-                "**Every nutrient says where it came from**, when it did not come from where " +
-                    "the food did: a food measured in Portugal can carry its iodine from the " +
-                    "French table, and the app used to name a single source",
-                "**A food now says how wide its \"about\" is** — a table publishes the average " +
-                    "of a handful of samples, a label has legal tolerances, an estimate is a " +
-                    "guess",
-                "**The day splits its margin by source.** Knowing that 120 of the 150 kcal of " +
-                    "margin come from the plate the AI guessed tells you what to do; \"±150\" " +
-                    "does not",
-                "**Search opens in All · Favourites · Mine**, with your meals first, your " +
-                    "usual portion on the row, and the mic and camera inside the field",
-                "**Buttons say where the entry lands** — \"Log to lunch\", \"Log 2 servings " +
-                    "to dinner\"",
-                "**\"Your meals\" is a screen**, reachable from \"Me\" and from the diary",
-                "**The app got the colour it always said it had**: near-black cards instead " +
-                    "of grey, warm white text, and air behind everything",
-                "**Body fat measured with a tape is corrected for the bias by sex** — this " +
-                    "changes numbers already on your phone, and your basal metabolism follows",
-            ),
-        ),
-        // Da 2.2.0 à 2.18.1 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.18.2 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

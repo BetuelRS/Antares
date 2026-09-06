@@ -13,6 +13,41 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.28.0] — 2026-09-06
+
+**A rotina passa a poder subir sozinha.** Era estática: 3×8-12 hoje, 3×8-12 daqui a três
+meses. A app tinha o histórico todo — o que se levantou, quantas repetições, em que dia — e
+não usava nada disso para dizer o que fazer na semana seguinte.
+
+**Esquema da base: v40 → v41**, duas colunas novas na rotina — a regra e o degrau. A
+actualização é indolor: todas as rotinas que já existem nascem com a regra a «nenhuma», que é
+o que era verdade antes. Catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **Uma regra de progressão por rotina**, escolhida de três: **nenhuma**, **linear** e **dupla**.
+  - **Linear**: fizeste o topo do intervalo em **todas** as séries? Sobe o peso. As repetições
+    ficam onde estavam.
+  - **Dupla**: sobe primeiro as repetições até ao máximo, e só depois o peso — voltando ao
+    mínimo do intervalo. Uma repetição a mais do que a **pior** série, e não do que a melhor:
+    o alvo é o número que todas têm de alcançar.
+- **O alvo proposto aparece no editor e na sessão** — «alvo 62,5 kg» —, e é ele que entra no
+  campo em vez do peso da última vez.
+- **Cada linha do editor diz o que fizeste da última vez**, que é de onde a proposta saiu:
+  «↑ da última vez: 3×10 a 60 kg». A seta é só para quem subiu.
+- **O degrau é da tua unidade**: 2,5 kg em métrico, **5 lb** em imperial. Não são o mesmo
+  número — 2,5 kg seriam 5,51 lb, um peso que não se monta com os discos que existem. Quem
+  treina com halteres escreve o seu, uma vez, para a rotina toda.
+
+### Alterado
+
+- **A app propõe e não reescreve.** O peso que escreveste na rotina fica exactamente onde
+  estava — nada é alterado no fim do treino, e por isso não há nada para desfazer.
+- **Sem um peso que se tenha aguentado, não há proposta.** Se as séries da última vez foram a
+  pesos diferentes — séries descendentes, ou o dia em que se baixou a meio —, a app cala-se em
+  vez de inventar uma média. «Não sei» e «fica na mesma» são coisas diferentes.
+- **Um treino abandonado a meio não conta como a última vez**, e o aquecimento também não.
+
 ## [2.27.0] — 2026-09-06
 
 **A biblioteca de exercícios.** São 873, com imagens, músculos e instruções — o dobro do que a

@@ -1,6 +1,6 @@
 # Base de dados
 
-Room, no telemóvel e mais lado nenhum. Esquema na **versão 40**, com **35 tabelas**, **37
+Room, no telemóvel e mais lado nenhum. Esquema na **versão 41**, com **35 tabelas**, **38
 migrações automáticas** e **duas escritas à mão** — a 26→27 e a 27→28.
 
 > **Este cabeçalho esteve onze versões de esquema atrasado** — dizia v26, 30 tabelas e 25
@@ -73,6 +73,7 @@ que a app foi construída.
 | 38 | `session_exercise_note` | `note` — a nota de um exercício **neste** treino |
 | 39 | `exercise_load` | `bodyweightPercent`, e a coluna `workout_set.bodyweightKg` — quanto da carga veio do corpo |
 | 40 | `exercise_marca` | `exerciseId` — a estrela de favorito, fora da linha de catálogo |
+| 41 | | `routine.progressao` e `routine.incrementoKg` — a regra por que a rotina sobe de peso, e de quanto |
 
 *Da v27 à v37 esta tabela foi reconstruída a 2026-08-31 comparando os esquemas exportados uns
 com os outros, e não a partir do `CHANGELOG.md`: é o que a v27 tem e a v26 não, linha a linha.*

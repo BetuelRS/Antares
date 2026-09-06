@@ -1013,6 +1013,29 @@ Riscado no mesmo commit em que a versão saiu, como a regra em baixo manda.
 - **A descarga de imagens em bloco** (proposta 7). É o que falta para a promessa de que nada sai
   do telemóvel ser verdadeira na biblioteca, e é um ecrã de definições, não este.
 
+
+## O que a 2.28.0 fechou, e o que deixou aberto
+
+**Fechado:**
+
+- **«Não há progressão»** — o buraco conceptual da área 07. Uma regra por rotina, gravada na
+  `routine`, com o alvo proposto no editor e no campo da sessão. Esquema **v41**, migração
+  automática provada no aparelho por cima da 2.27.0 com dados lá dentro.
+- **A linha «↑ da última vez»**, que o esboço 07 desenha e não existia.
+
+**Continua aberto, e passa a ter razão escrita:**
+
+- **Notas por exercício na rotina** (proposta 6 da área 07). É do editor, não da progressão, e
+  o esboço desenha-as (📝 «pegada mais fechada»).
+- **O horário a alimentar o centro de treino** (proposta 7). É o mesmo dado noutro sítio, e o
+  sítio é a área 06.
+- **A supersérie agrupada visualmente.** O grupo existe e a etiqueta aparece em todas as linhas
+  desde a 2.23.0, mas os exercícios do grupo continuam a não ficar juntos na lista.
+- **Ciclos, semanas de descarga e percentagens de 1RM** — recusados, e não adiados: o
+  `estudo/ausencias/01-o-que-a-app-nao-faz.md` §13 manda fazer a regra e recusar os programas.
+- **A app não reescreve a rotina.** Foi decisão do dono a 2026-09-06, contra as duas hipóteses
+  que o faziam no fim do treino. Reabre-se se ele o quiser; não se reabre por iniciativa minha.
+
 ---
 
 ## Como manter isto honesto

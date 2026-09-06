@@ -20,6 +20,33 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **2.28.0 é a última fechada**, a 2026-09-06. Esquema **v41** — duas colunas novas na
+  `routine`, a regra e o degrau — e catálogo **v6**, inalterado. «Progressão nas rotinas»: uma
+  regra por rotina (nenhuma · linear · dupla), o alvo proposto no editor e no campo da sessão,
+  a linha «↑ da última vez» em cada exercício, e um degrau que nasce da unidade da pessoa.
+  **1842 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o
+  `verificar.mjs`.
+- **A app propõe e não reescreve, e foi decisão do dono.** As duas hipóteses que reescreviam o
+  `targetWeightKg` no fim do treino foram recusadas. É por isso que esta versão **não tem
+  desfazer**: nada é alterado.
+- **O degrau é 2,5 kg ou 5 lb, e não os dois convertidos um no outro.** O `PlateMath` já sabia
+  qual é o disco mais pequeno de cada conjunto, e é de lá que vem — 2,5 kg seriam 5,51 lb, um
+  peso que não se monta.
+- **Sem um peso que se tenha aguentado não há proposta.** Séries a pesos diferentes devolvem
+  `null` e não uma média: «não sei» e «fica na mesma» são coisas diferentes, e só a segunda
+  merece aparecer no ecrã.
+- **A D7 apanhou cinco defeitos na primeira passagem e um na segunda.** O mais grave foi meu e
+  desta versão: **o desfazer do arrastar deixou de fazer nada**, porque o `ordemActual()`
+  passou a ler um `StateFlow` derivado que ninguém coleccionava — ficava no `null` inicial e o
+  desfazer gravava uma ordem vazia, em silêncio. **Os testes do repositório não o viam**: o
+  defeito estava entre o ecrã e o ViewModel, e o teste que faltava é o que passa pelos dois.
+- **Uma coluna nova numa entidade exportada tem de nascer com omissão**, ou o restauro de uma
+  cópia feita antes dela rebenta. O importador ignora o campo a mais; o campo a menos só se
+  resolve pela omissão. Ficou guardado no `RotinaDeCopiaAntigaTest`.
+- **A próxima do plano é a 2.29.0**, «Pausa e controlo» — abre o bloco **G · A corrida**. Tem
+  esboço (`estudo/esbocos/11-corrida.html`) e as perguntas escritas no plano, e **nada começa sem a
+  palavra do dono** (A1).
+- *O que se segue é o estado até à 2.27.0.*
 - **2.27.0 é a última fechada**, a 2026-09-06. Esquema **v40** — tabela nova `exercise_marca`,
   migração automática 39 → 40 — e catálogo **v6**, inalterado. «A biblioteca de exercícios»:
   secção «os teus» no topo com favoritos e o que mais se faz, estrela na linha e no detalhe,
