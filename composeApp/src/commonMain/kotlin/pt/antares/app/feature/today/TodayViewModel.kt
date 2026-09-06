@@ -247,11 +247,11 @@ class TodayViewModel(
      * A água que veio da comida. Fica fora do [state] de propósito: não é para somar ao
      * contador, é para aparecer ao lado dele — a meta fala do que se bebe.
      */
-    val aguaDaComidaMl: StateFlow<Int?> = todayFlow.flatMapLatest { today ->
+    val aguaDaComida: StateFlow<AguaDaComida.Resultado> = todayFlow.flatMapLatest { today ->
         diaryRepository.observeDayTotals(today).map {
-            AguaDaComida.mlDoDia(statsRepository.totals(today, today))
+            AguaDaComida.doDia(statsRepository.totals(today, today))
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AguaDaComida.Resultado.SemRegisto)
 
     val state: StateFlow<TodayState> = todayFlow.flatMapLatest { today ->
         combine(

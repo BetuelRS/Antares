@@ -135,11 +135,11 @@ class DiaryViewModel(
      * de hoje já o fazia, e ter os dois a mostrar números diferentes para a mesma meta era o
      * pior dos dois mundos.
      */
-    val aguaDaComidaMl: StateFlow<Int?> = selectedDay.flatMapLatest { day ->
+    val aguaDaComida: StateFlow<AguaDaComida.Resultado> = selectedDay.flatMapLatest { day ->
         diaryRepository.observeDayTotals(day).map {
-            AguaDaComida.mlDoDia(statsRepository.totals(day, day))
+            AguaDaComida.doDia(statsRepository.totals(day, day))
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AguaDaComida.Resultado.SemRegisto)
 
     private val _templateSaved = MutableStateFlow<String?>(null)
     val templateSaved: StateFlow<String?> = _templateSaved

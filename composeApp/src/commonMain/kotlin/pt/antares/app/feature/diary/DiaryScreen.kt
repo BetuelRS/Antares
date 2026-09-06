@@ -86,7 +86,7 @@ fun DiaryScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val repeatable by viewModel.repeatable.collectAsState()
-    val aguaDaComidaMl by viewModel.aguaDaComidaMl.collectAsState()
+    val aguaDaComida by viewModel.aguaDaComida.collectAsState()
     val folhas = remember { DiarySheets() }
     DiaryDialogHost(
         folhas = folhas,
@@ -183,7 +183,7 @@ fun DiaryScreen(
         item {
             WaterCard(
                 bebidaMl = state.waterMl,
-                daComidaMl = aguaDaComidaMl,
+                daComida = aguaDaComida,
                 metaMl = state.waterGoalMl,
                 onAdd = viewModel::addWater,
             )

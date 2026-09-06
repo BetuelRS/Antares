@@ -591,6 +591,7 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="today_workout_active">Treino em curso — toca para retomar</string>
     <string name="today_water_parts">%1$d ml bebidos + %2$d ml da comida. A meta é de água total, como a da EFSA.</string>
     <string name="today_water_food_unknown">A meta é de água total. A que vem da comida ainda não dá para saber: menos de metade do que comeste hoje traz o teor de água medido.</string>
+    <string name="today_water_food_no_log">A meta é de água total. Ainda não registaste nada hoje: quando registares, a app diz quanta água veio da comida.</string>
     <string name="today_workout_last">Último treino: %1$s de volume</string>
     <string name="today_workout_none">Sem treinos ainda. Bora começar!</string>
     <string name="today_workout_scheduled">Plano de hoje: %1$s</string>

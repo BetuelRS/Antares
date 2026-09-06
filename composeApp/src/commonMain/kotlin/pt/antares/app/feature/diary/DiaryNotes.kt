@@ -1,5 +1,6 @@
 package pt.antares.app.feature.diary
 
+import pt.antares.app.core.calc.AguaDaComida
 import androidx.compose.foundation.layout.Arrangement
 import pt.antares.app.core.designsystem.Spacing
 import androidx.compose.foundation.layout.Row
@@ -166,7 +167,7 @@ internal fun LazyListScope.exerciseSection(
 @Composable
 internal fun WaterCard(
     bebidaMl: Int,
-    daComidaMl: Int?,
+    daComida: AguaDaComida.Resultado,
     metaMl: Int,
     onAdd: (Int) -> Unit,
 ) {
@@ -178,7 +179,8 @@ internal fun WaterCard(
         ) {
             Column {
                 Text(stringResource(Res.string.diary_water), style = MaterialTheme.typography.titleMedium)
-                val total = bebidaMl + (daComidaMl ?: 0)
+                val medida = (daComida as? AguaDaComida.Resultado.Medida)?.ml
+                val total = bebidaMl + (medida ?: 0)
                 Text(
                     "$total / $metaMl ml",
                     style = MaterialTheme.typography.bodyMedium,
@@ -189,8 +191,16 @@ internal fun WaterCard(
                     },
                 )
                 Text(
-                    daComidaMl?.let { stringResource(Res.string.today_water_parts, bebidaMl, it) }
-                        ?: stringResource(Res.string.today_water_food_unknown),
+                    // As duas ausências não se dizem com a mesma frase — ver o
+                    // `AguaDaComida`. Num dia sem registo não há comida por medir.
+                    when (daComida) {
+                        is AguaDaComida.Resultado.Medida ->
+                            stringResource(Res.string.today_water_parts, bebidaMl, daComida.ml)
+                        AguaDaComida.Resultado.SemCobertura ->
+                            stringResource(Res.string.today_water_food_unknown)
+                        AguaDaComida.Resultado.SemRegisto ->
+                            stringResource(Res.string.today_water_food_no_log)
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

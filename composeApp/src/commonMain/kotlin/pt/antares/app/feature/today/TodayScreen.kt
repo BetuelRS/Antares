@@ -44,6 +44,7 @@ import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.nutrition.DailyGap
 import pt.antares.app.core.nutrition.Nutrients
 import pt.antares.app.core.nutrition.microLabelRes
+import pt.antares.app.core.calc.AguaDaComida
 import pt.antares.app.core.designsystem.virgulaDecimal
 import pt.antares.app.core.designsystem.AntaresColors
 import pt.antares.app.core.designsystem.cascadeIn
@@ -92,7 +93,7 @@ fun TodayScreen(
     val celebration by viewModel.celebration.collectAsState()
     val weeklyBudget by viewModel.weeklyBudget.collectAsState()
     val dailyGap by viewModel.dailyGap.collectAsState()
-    val aguaDaComidaMl by viewModel.aguaDaComidaMl.collectAsState()
+    val aguaDaComida by viewModel.aguaDaComida.collectAsState()
     val porResponder by viewModel.porResponder.collectAsState()
     val haptic = LocalHapticFeedback.current
 
@@ -187,7 +188,7 @@ fun TodayScreen(
         dailyGap?.let { folga -> cartao { DailyGapCard(folga, onOpenGap) } }
 
         cartao {
-            CartaoDaAgua(state = state, aguaDaComidaMl = aguaDaComidaMl, onAbrirDiario = destinos.refeicao)
+            CartaoDaAgua(state = state, aguaDaComida = aguaDaComida, onAbrirDiario = destinos.refeicao)
         }
 
         cartao {
@@ -283,7 +284,11 @@ private fun CartaoDaMeta(targets: Targets, state: TodayState, onAddMeal: () -> U
 }
 
 @Composable
-private fun CartaoDaAgua(state: TodayState, aguaDaComidaMl: Int?, onAbrirDiario: () -> Unit) {
+private fun CartaoDaAgua(
+    state: TodayState,
+    aguaDaComida: AguaDaComida.Resultado,
+    onAbrirDiario: () -> Unit,
+) {
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -294,7 +299,8 @@ private fun CartaoDaAgua(state: TodayState, aguaDaComidaMl: Int?, onAbrirDiario:
                 Text(stringResource(Res.string.diary_water), style = MaterialTheme.typography.titleMedium)
                 // A meta é de água total, e por isso a da comida conta para ela. Sem
                 // isto pedia-se de copo o que a EFSA conta de tudo.
-                val total = state.waterMl + (aguaDaComidaMl ?: 0)
+                val daComida = (aguaDaComida as? AguaDaComida.Resultado.Medida)?.ml
+                val total = state.waterMl + (daComida ?: 0)
                 Text(
                     "$total / ${state.waterGoalMl} ml",
                     style = MaterialTheme.typography.bodyMedium,
@@ -308,9 +314,19 @@ private fun CartaoDaAgua(state: TodayState, aguaDaComidaMl: Int?, onAbrirDiario:
                     // A parcela da comida só se sabe quando metade das calorias do dia
                     // trouxeram teor de água medido — ver `AguaDaComida`. Sem ela a
                     // meta fica injusta, e o texto diz isso em vez de fingir zero.
-                    aguaDaComidaMl?.let { daComida ->
-                        stringResource(Res.string.today_water_parts, state.waterMl, daComida)
-                    } ?: stringResource(Res.string.today_water_food_unknown),
+                    //
+                    // **E as duas ausências não se dizem com a mesma frase.** Quem não
+                    // registou nada não tem comida por medir: tem um dia por registar, e
+                    // dizer-lhe «menos de metade do que comeste» é afirmar uma coisa sobre
+                    // comida que não existe.
+                    when (aguaDaComida) {
+                        is AguaDaComida.Resultado.Medida ->
+                            stringResource(Res.string.today_water_parts, state.waterMl, aguaDaComida.ml)
+                        AguaDaComida.Resultado.SemCobertura ->
+                            stringResource(Res.string.today_water_food_unknown)
+                        AguaDaComida.Resultado.SemRegisto ->
+                            stringResource(Res.string.today_water_food_no_log)
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
