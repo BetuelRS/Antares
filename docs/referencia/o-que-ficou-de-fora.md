@@ -1177,6 +1177,41 @@ Contra a `estudo/areas/11-corrida.md` e o esboço `11-corrida.html`, secção 1.
 
 **Nada começa sem a palavra do dono** (A1). As perguntas de abertura estão no plano.
 
+## O que a 2.30.0 fechou, e o que deixou aberto
+
+Riscado no mesmo commit em que a versão saiu, como a regra em baixo manda.
+
+**Fechado:**
+
+- **«Sem avisos por voz»** — a proposta 5 da área 11, e a que ela chama «o que faz voltar».
+  `TextToSpeech` do sistema, a cada quilómetro, com a frase que o esboço escreve à letra.
+- **«Sem voltas manuais»** — a proposta 7, com a tabela a mostrar **ambas as origens**.
+- **A notificação da corrida em quilómetros para quem escolheu milhas**, na língua do
+  telemóvel e com contas próprias que truncavam. Eram as três linhas desta lista, e eram
+  **quatro** defeitos: o quarto era não passar pelo `appLocalized()`, coisa que os cinco
+  trabalhadores, o aviso do treinador, o do jejum e o widget já faziam.
+- **«Menos de metade do que comeste hoje» num dia sem registo nenhum.** O `AguaDaComida`
+  passou a devolver a razão de não haver número, e o `mlDoDia` foi **apagado** — mantê-lo
+  deixava dois caminhos para o mesmo facto, e o `DeadCodeSweepTest` cobrou-o.
+
+**Aberto, e com razão escrita:**
+
+- **O aviso na meta.** É uma pergunta de abertura do plano que **não foi feita ao dono** — e
+  fica escrito assim, porque não perguntar não é o mesmo que ter sido recusado.
+- **Escolher o que a voz diz**, nas definições. Era uma hipótese da pergunta 2 e o dono
+  escolheu outra; abrir a primeira secção de preferências de corrida é meia versão.
+- **O tempo decorrido ao lado do tempo em movimento**, **o traço do mapa a atravessar a
+  pausa**, **a caixa de descrição que nunca é usada** e **a frequência cardíaca** continuam
+  onde a 2.29.0 os deixou.
+- **O hub da corrida** é a **2.31.0**, e continua a ser um formulário sem um único número —
+  visto a correr nesta sessão.
+
+**E uma armadilha do emulador, que custou tempo e fica escrita:** num arranque limpo o GNSS
+do emulador **não entrega posições**, e o `adb emu geo fix` responde `OK` na mesma. O
+`FusedLocationSource` pede `setWaitForAccurateLocation(true)` e fica à espera de uma primeira
+posição boa que nunca chega — a corrida marca 0,00 km sem erro nenhum. Destrava-se abrindo um
+ecrã com mapa, que força um pedido de localização; a partir daí os fixes entram.
+
 ---
 
 ## Como manter isto honesto

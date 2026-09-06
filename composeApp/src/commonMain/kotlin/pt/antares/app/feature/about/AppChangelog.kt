@@ -23,9 +23,47 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.29.0"
+    const val CURRENT = "2.30.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.30.0",
+            title = "A corrida passa a dizer-te o quilómetro em voz alta",
+            titleEn = "Your run now calls out each kilometre",
+            highlights = listOf(
+                "**Avisos por voz a cada quilómetro** — o número, o ritmo desse quilómetro " +
+                    "e o tempo total. Quem corre não olha para o telemóvel: ouve",
+                "**A voz baixa a música em vez de a cortar**, e deixa-a voltar ao volume " +
+                    "quando acaba de falar",
+                "**Voltas marcadas à mão**, para quem treina por séries e não tem um " +
+                    "quilómetro redondo onde marcar. Um botão ao lado da pausa",
+                "**Uma volta não estraga os teus quilómetros.** Continuam a fechar aos mil " +
+                    "metros, e os recordes continuam a sair deles — a volta é uma série à " +
+                    "parte, e a tabela diz qual é qual",
+                "**A notificação da corrida passa a mostrar a tua unidade e a tua língua**, " +
+                    "e os mesmos números do ecrã — arredondava para menos e escrevia sempre " +
+                    "em quilómetros",
+                "**E a app deixa de dizer «menos de metade do que comeste hoje» nos dias em " +
+                    "que não comeste nada.** Não ter registado e ter registado sem se saber " +
+                    "são coisas diferentes, e o cartão da água dizia-as com a mesma frase",
+            ),
+            highlightsEn = listOf(
+                "**Voice alerts every kilometre** — the number, that kilometre's pace and " +
+                    "your total time. Runners don't look at the phone: they listen",
+                "**The voice ducks your music instead of cutting it**, and lets it back up " +
+                    "when it's done talking",
+                "**Manual laps**, for interval training where there is no round kilometre " +
+                    "to mark. A button next to pause",
+                "**A lap doesn't spoil your kilometres.** They still close at a thousand " +
+                    "metres and your records still come from them — a lap is a separate " +
+                    "series, and the table says which is which",
+                "**The run notification now shows your unit and your language**, and the " +
+                    "same numbers as the screen — it rounded down and always said kilometres",
+                "**And the app stops saying \"less than half of what you ate today\" on " +
+                    "days you ate nothing.** Not logging and logging without knowing are " +
+                    "different things, and the water card said both with one sentence",
+            ),
+        ),
         AppVersion(
             name = "2.29.0",
             title = "A corrida ganha o botão que toda a gente procura",
@@ -364,43 +402,7 @@ object AppChangelog {
                     "narrow phone — a period that does not exist",
             ),
         ),
-        AppVersion(
-            name = "2.20.0",
-            title = "O separador do treino passa a dizer alguma coisa",
-            titleEn = "The workout tab starts telling you something",
-            highlights = listOf(
-                "**O treino de hoje em primeiro**, vindo do teu plano da semana — e um " +
-                    "toque para o começar. Antes eram três toques e um percorrer até ao fundo",
-                "**Sem plano, o cartão mostra a última rotina que fizeste.** Sem plano e sem " +
-                    "histórico, leva-te a marcar a semana em vez de escolher uma por ti",
-                "**A semana em sete pontos**, com o volume e as séries que já lá vão",
-                "**Cada rotina diz quantos exercícios tem e quando foi feita**, e tem um ▶ " +
-                    "que a começa. Tocar no nome continua a abrir o editor",
-                "**Os últimos treinos passam a ter quatro dados** — rotina, data, duração e " +
-                    "séries. Tinham dois, e dois treinos diferentes ficavam iguais",
-                "**Com um treino a decorrer, o ecrã diz há quanto tempo** e oferece retomá-lo " +
-                    "— e mais nada: começar outro levava ao que já estava aberto",
-                "A biblioteca, as estatísticas, o histórico e o plano da semana passam para " +
-                    "o menu do canto: eram cinco botões cinzentos a ocupar metade do ecrã",
-            ),
-            highlightsEn = listOf(
-                "**Today's workout comes first**, from your weekly plan — and one tap starts " +
-                    "it. It used to be three taps and a scroll to the bottom",
-                "**With no plan, the card shows the last routine you did.** With no plan and " +
-                    "no history it takes you to plan the week instead of picking one for you",
-                "**The week as seven dots**, with the volume and sets so far",
-                "**Every routine says how many exercises it has and when you last did it**, " +
-                    "and has a ▶ that starts it. Tapping the name still opens the editor",
-                "**Recent workouts now carry four facts** — routine, date, duration and " +
-                    "sets. They carried two, and two different workouts looked identical",
-                "**With a workout running, the screen says how long it has been going** and " +
-                    "offers to resume it — and nothing else: starting another took you to " +
-                    "the one already open",
-                "The library, statistics, history and weekly plan move into the corner menu: " +
-                    "they were five grey buttons taking up half the screen",
-            ),
-        ),
-        // Da 2.2.0 à 2.19.0 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.20.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

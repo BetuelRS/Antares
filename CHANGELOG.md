@@ -13,6 +13,43 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.30.0] — 2026-09-06
+
+**A corrida passa a dizer-te o quilómetro em voz alta.** Quem corre não olha para o
+telemóvel — ouve —, e a app tinha o gatilho no motor de parciais desde a versão anterior e
+nada que o dissesse. E ganha voltas marcadas à mão, para quem treina por séries e não tem um
+quilómetro redondo onde marcar.
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**. **Nenhuma coluna é nova** —
+as voltas viajam no mesmo sítio dos quilómetros, e o campo que as distingue nasce com
+omissão: uma cópia de segurança feita antes desta versão continua a abrir.
+
+### Adicionado
+
+- **Avisos por voz ao fim de cada quilómetro**: o número, o ritmo desse quilómetro e o tempo
+  total. *«Quilómetro 3. Ritmo 5 e 42 por quilómetro. Tempo total 17 minutos.»* É o
+  `TextToSpeech` do sistema — não sai nada do telemóvel, não custa nada e funciona sem rede.
+- **A voz pede o áudio a baixar a música em vez de a cortar**, e devolve-lha ao acabar de
+  falar. Uma frase de quatro segundos que cale a música e a reponha a seguir é pior do que o
+  silêncio.
+- **Voltas marcadas à mão**, num botão ao lado da pausa. Serve os 400 rápidos e os 200 lentos,
+  onde não há quilómetro redondo onde marcar — e a volta é anunciada como o quilómetro é.
+- **A tabela de parciais diz qual é qual**: «Km 2» e «Volta 2» são coisas diferentes, e
+  passam a ler-se como tal em vez de serem os dois um «2».
+
+### Corrigido
+
+- **A notificação da corrida mostrava a distância em quilómetros a quem escolheu milhas**, e
+  não seguia o idioma da app. Era o único aviso da app fora dessas duas regras — os cinco
+  lembretes, o do treinador, o do jejum e o widget já as seguiam.
+- **E os números dela não eram os do ecrã.** Truncava os decimais em vez de os arredondar: na
+  mesma corrida e quase no mesmo instante, o ecrã dizia `0.06 km` e a notificação `0,05 km`.
+  Passam os dois pelas mesmas contas.
+- **A app dizia «menos de metade do que comeste hoje traz o teor de água medido» em dias em
+  que não tinhas comido nada.** São duas ausências diferentes — não ter registado, e ter
+  registado sem se saber — e o cartão da água dizia-as com a mesma frase, no «Hoje» e no
+  diário. Passam a ser duas frases, e a de quem não registou fala do que falta registar.
+
 ## [2.29.0] — 2026-09-06
 
 **A corrida ganha o botão que toda a gente procura.** Não havia pausa. Nem no ecrã, nem no

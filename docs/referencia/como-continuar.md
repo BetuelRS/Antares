@@ -20,7 +20,39 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.29.0 é a última fechada**, a 2026-09-06. Esquema **v41** e catálogo **v6**, inalterados, e
+- **2.30.0 é a última fechada**, a 2026-09-06. Esquema **v41** e catálogo **v6**,
+  inalterados, e **nenhuma coluna é nova**. «Avisos por voz e voltas»: a corrida diz o
+  quilómetro, o ritmo desse quilómetro e o tempo total em voz alta, e ganha voltas marcadas à
+  mão. **1875 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados
+  com o `verificar.mjs`.
+- **A voz vive no serviço e não no ecrã**, porque quem corre tem o ecrã apagado — é a mesma
+  razão do GPS. E **nasce com o serviço e não à primeira frase**: o motor de voz demora perto
+  de um segundo a ligar-se, e um locutor criado no instante do aviso responde que ainda não
+  está pronto — calava exactamente o quilómetro 1.
+- **Uma volta não mexe na âncora dos quilómetros, e é a coisa mais importante desta versão.**
+  Se mexesse, o parcial a seguir a uma volta aos 1,4 km media 600 m — e o `RunPrCalc` só
+  conta parciais com 999 m ou mais, portanto **qualquer corrida com uma volta ficava sem
+  recordes**, em silêncio.
+- **A voz fala em quilómetros mesmo a quem escolheu milhas, e di-lo em voz alta.** É a mesma
+  decisão que a tabela de parciais já tinha tomado, com a mesma razão: são medidos por
+  quilómetro, e passá-los a milhas é recalculá-los, não mudar um rótulo.
+- **A corrida no aparelho apanhou o defeito que os testes não viam:** o `finish()` fecha a
+  volta aberta chamando o `volta()`, que recusa marcar em pausa — e **uma corrida só se
+  termina em pausa** desde a 2.29.0. O último troço desaparecia. A guarda da pausa é do
+  **botão**, e não do fim.
+- **A D7 apanhou quatro defeitos na primeira passagem**, todos meus e todos desta versão, e o
+  pior deles calava o primeiro quilómetro (acima). Os outros: o `onDestroy` a criar o locutor
+  só para o fechar, um contexto localizado novo por cada posição do GPS, e o ouvinte do fim
+  da frase registado a cada frase — que deixava **a música baixa até ao fim da corrida**.
+- **As duas correcções que o dono mandou entrar entraram, e é adição e não troca** (A5): a
+  notificação da corrida e a frase da água. Nada saiu para lhes dar lugar, e está escrito
+  assim no registo da versão.
+- **A próxima do plano é a 2.31.0**, «O hub da corrida» — quilómetros da semana, últimas
+  corridas, recordes, e as opções recolhidas para uma folha. Visto a correr nesta sessão, o
+  hub continua a ser um formulário com zero informação. **Nada começa sem a palavra do dono**
+  (A1).
+- *O que se segue é o estado até à 2.29.0.*
+- **2.29.0**, a 2026-09-06. Esquema **v41** e catálogo **v6**, inalterados, e
   **nenhum dado é novo**. «Pausa e controlo»: pausar e retomar, terminar só com a corrida em
   pausa, o cadeado a bloquear o ecrã todo e o recuo do sistema, «ritmo deste km» no lugar do
   ritmo instantâneo, e os dois últimos parciais à vista. **1851 testes Kotlin**, 58 das
