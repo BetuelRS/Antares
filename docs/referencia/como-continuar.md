@@ -20,6 +20,33 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **2.29.0 é a última fechada**, a 2026-09-06. Esquema **v41** e catálogo **v6**, inalterados, e
+  **nenhum dado é novo**. «Pausa e controlo»: pausar e retomar, terminar só com a corrida em
+  pausa, o cadeado a bloquear o ecrã todo e o recuo do sistema, «ritmo deste km» no lugar do
+  ritmo instantâneo, e os dois últimos parciais à vista. **1851 testes Kotlin**, 58 das
+  ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A pausa manual é bandeira própria, e não a do motor.** O `paused` do `RunEngine` é um
+  detector — apaga-se sozinho ao primeiro passo, que é o que o faz servir para semáforos. Uma
+  pausa manual assente nele desligava-se ao dar dois passos até ao bebedouro.
+- **Em pausa o GPS continua a ler e nada conta**, por decisão do dono. Ao retomar, a âncora
+  está onde a pessoa está — os metros andados em pausa não entram. Provado no emulador com
+  posições simuladas: 120 m andados em pausa não mexeram no número.
+- **O tempo decorrido não pára em pausa, e isso não é um detalhe de ecrã.** O `RunRepository`
+  grava `startedAt = agora − elapsedMs`, porque a corrida só vai à base quando termina —
+  congelar o decorrido punha a hora de início de todas as corridas pausadas à frente do que foi
+  verdade. Está guardado num teste.
+- **A app não tinha um único `BackHandler`.** Agora tem um, no `TravarRecuo` — `expect`/`actual`,
+  porque o `BackHandler` do Compose Multiplatform 1.8.1 não está no caminho de compilação comum.
+- **A D7 apanhou quatro defeitos na primeira passagem e um na segunda**, e a corrida apanhou um
+  quinto que nenhuma delas via: **o aviso da pausa automática dizia «Paused» por cima de um
+  botão que dizia «Pause»**. A app a contradizer-se em duas linhas, e só se vê a correr.
+- **Uma diferença medida e por resolver:** o ecrã escreve `0.06 km` e a notificação `0,05 km` —
+  separadores decimais diferentes na mesma corrida, porque são dois caminhos de formatação. Está
+  em [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md).
+- **A próxima do plano é a 2.30.0**, «Avisos por voz e voltas» — `TextToSpeech` do sistema,
+  aviso por km e voltas manuais. O esboço é o mesmo, o `11-corrida`, e as perguntas estão
+  escritas no plano. **Nada começa sem a palavra do dono** (A1).
+- *O que se segue é o estado até à 2.28.0.*
 - **2.28.0 é a última fechada**, a 2026-09-06. Esquema **v41** — duas colunas novas na
   `routine`, a regra e o degrau — e catálogo **v6**, inalterado. «Progressão nas rotinas»: uma
   regra por rotina (nenhuma · linear · dupla), o alvo proposto no editor e no campo da sessão,

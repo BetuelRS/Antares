@@ -13,6 +13,37 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.29.0] — 2026-09-06
+
+**A corrida ganha o botão que toda a gente procura.** Não havia pausa. Nem no ecrã, nem no
+`RunViewModel`, nem no `RunController` — só começar, terminar e descartar. Atar o sapato
+obrigava a esperar dez segundos pela pausa automática, ou a acabar a corrida.
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**. **Nenhum dado é novo** — a
+pausa é uma bandeira no motor, e os parciais que passam a ver-se a meio já eram calculados.
+
+### Adicionado
+
+- **Pausar e retomar.** Botão grande, no lugar onde estava o de terminar. Em pausa, o tempo em
+  movimento e a distância ficam parados; o tempo decorrido, que é de relógio, continua.
+- **O GPS continua a ler em pausa**, para o mapa continuar a mostrar onde estás — mas o
+  percurso não cresce, e o caminho até ao bebedouro não entra na corrida. Ao retomar, a
+  contagem parte de onde estás e não de onde pausaste.
+- **Os dois últimos quilómetros à vista**, com o ritmo de cada um. É o que diz se estás a
+  acelerar ou a abrandar sem esperar pelo fim.
+
+### Alterado
+
+- **Terminar só aparece com a corrida em pausa.** A correr, o sítio mais premido do ecrã
+  deixa de ser um botão vermelho que acaba tudo. Continua a exigir toque longo: são duas
+  fechaduras, e nenhuma delas se abre no bolso.
+- **«Ritmo deste km» substitui o «ritmo atual».** O antigo era a velocidade do último troço
+  entre âncoras: ia de 4:10 a 6:50 e voltava de poucos em poucos segundos. Um número que
+  oscila assim não se lê a correr.
+- **O cadeado bloqueia o ecrã todo**, incluindo o gesto de voltar do sistema — antes só
+  desactivava o botão de terminar, e o recuo saía da corrida com o cadeado fechado. Abre-se
+  mantendo o dedo no próprio cadeado; um toque simples abria-se dentro do bolso.
+
 ## [2.28.0] — 2026-09-06
 
 **A rotina passa a poder subir sozinha.** Era estática: 3×8-12 hoje, 3×8-12 daqui a três

@@ -1036,6 +1036,38 @@ Riscado no mesmo commit em que a versão saiu, como a regra em baixo manda.
 - **A app não reescreve a rotina.** Foi decisão do dono a 2026-09-06, contra as duas hipóteses
   que o faziam no fim do treino. Reabre-se se ele o quiser; não se reabre por iniciativa minha.
 
+
+## O que a 2.29.0 fechou, e o que deixou aberto
+
+**Fechado:**
+
+- **«Não há botão de pausa»** — a falha mais visível da área 11, e a que se nota aos 200 metros.
+  Pausar e retomar, com o GPS a continuar a ler e nada a contar.
+- **«O ritmo atual não se lê»** — ia de 4:10 a 6:50 e voltava. Dá lugar ao ritmo do quilómetro
+  em curso, que o motor já sabia calcular.
+- **«O cadeado é meio cadeado»** — passa a bloquear o ecrã todo e o gesto de voltar do sistema.
+  A app não tinha um único `BackHandler`; agora tem um, no `TravarRecuo`.
+- **Terminar deixou de ocupar o sítio mais premido do ecrã durante a corrida toda.**
+
+**Aberto, e com razão escrita:**
+
+- **O tempo decorrido ao lado do tempo em movimento** (defeito concreto 3 da área 11). Esta
+  versão **alarga a diferença**: uma pausa de dez minutos deixa o «Tempo» parado enquanto o
+  relógio anda. O aviso di-lo em palavras, mas o número não está no ecrã — e um sexto número
+  ali é outra decisão.
+- **O traço do mapa atravessa a pausa em linha recta.** Consequência aceite: o percurso não
+  cresce em pausa, e os dois extremos ficam ligados. Desenhá-lo a tracejado foi a hipótese
+  recusada na pergunta.
+- **O ecrã e a notificação escrevem o decimal de maneiras diferentes.** Medido a correr, na
+  mesma corrida e quase no mesmo instante: o ecrã `0.06 km`, a notificação `0,05 km`. São dois
+  caminhos de formatação, e só um deles segue a preferência da app.
+- **A caixa de descrição que nunca é usada** — `save(name, "", …)`, com o segundo argumento
+  sempre vazio. A área nomeia-a em «o que é inútil», e não estava prometida nesta versão.
+- **Avisos por voz, voltas manuais e o hub** — são a 2.30.0 e a 2.31.0, e o esboço 11 desenha
+  as duas primeiras no mesmo ecrã.
+- **Frequência cardíaca do Health Connect** — a própria área lhe chama «depois, se houver
+  vontade».
+
 ---
 
 ## Como manter isto honesto

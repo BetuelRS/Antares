@@ -23,9 +23,40 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.28.0"
+    const val CURRENT = "2.29.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.29.0",
+            title = "A corrida ganha o botão que toda a gente procura",
+            titleEn = "Running gets the button everyone looks for",
+            highlights = listOf(
+                "**Pausar e retomar.** Não havia. Atar o sapato obrigava a esperar dez " +
+                    "segundos pela pausa automática, ou a terminar a corrida",
+                "**Terminar só aparece com a corrida em pausa** — que é quando a decisão " +
+                    "faz sentido. A correr, o sítio mais premido do ecrã deixa de ser um " +
+                    "botão vermelho que acaba tudo",
+                "**O cadeado passa a bloquear o ecrã todo**, incluindo o gesto de voltar do " +
+                    "sistema. Abre-se com o dedo em cima dele, sem pressa",
+                "**«Ritmo deste km» em vez de «ritmo atual».** O antigo vinha da velocidade " +
+                    "do último bocado e saltava de 4:10 para 6:50 e de volta. Não se lia",
+                "**Os dois últimos quilómetros à vista**, para saberes se estás a acelerar " +
+                    "ou a abrandar sem esperar pelo fim",
+            ),
+            highlightsEn = listOf(
+                "**Pause and resume.** There was none. Tying a shoelace meant waiting ten " +
+                    "seconds for auto-pause, or ending the run",
+                "**Finish only shows up while paused** — which is when the decision makes " +
+                    "sense. While running, the most-pressed spot on the screen is no longer " +
+                    "a red button that ends everything",
+                "**The padlock now locks the whole screen**, including the system back " +
+                    "gesture. Press and hold it to unlock",
+                "**\"This km's pace\" instead of \"current pace\".** The old one came from " +
+                    "the speed of the last stretch and jumped from 4:10 to 6:50 and back",
+                "**The last two kilometres in view**, so you know whether you are speeding " +
+                    "up or slowing down without waiting for the end",
+            ),
+        ),
         AppVersion(
             name = "2.28.0",
             title = "Uma rotina passa a poder subir sozinha",
@@ -369,34 +400,7 @@ object AppChangelog {
                     "they were five grey buttons taking up half the screen",
             ),
         ),
-        AppVersion(
-            name = "2.19.0",
-            title = "Registar exercício deixa de andar de cinco em cinco",
-            titleEn = "Logging exercise stops moving five minutes at a time",
-            highlights = listOf(
-                "**A duração escreve-se**, com atalhos de 15, 30, 45 e 60 minutos. Uma aula " +
-                    "de 50 minutos custava dez toques, e um treino de 22 não se registava",
-                "**As atividades que fazes mais aparecem em cima**, antes de procurares",
-                "**Tocar num exercício do diário abre-o para corrigir** a duração e a hora, " +
-                    "como já acontecia com a comida",
-                "**Um exercício passa a guardar a hora a que começou** — a corrida, o treino " +
-                    "e o que vem do Health Connect trazem-na de origem",
-                "**Os botões de mais e menos passam a dizer de quê** a quem usa leitor de " +
-                    "ecrã: diziam «menos cinco», sem dizer cinco de quê",
-            ),
-            highlightsEn = listOf(
-                "**Duration is typed**, with 15, 30, 45 and 60 minute shortcuts. A 50 minute " +
-                    "class took ten taps, and a 22 minute workout could not be logged at all",
-                "**The activities you do most show up on top**, before you search",
-                "**Tapping an exercise in the diary opens it** so you can fix the duration " +
-                    "and the time, the way food already worked",
-                "**An exercise now keeps the time it started** — runs, workouts and anything " +
-                    "from Health Connect bring it along",
-                "**The plus and minus buttons now say what of** to screen readers: they said " +
-                    "\"minus five\", without saying five of what",
-            ),
-        ),
-        // Da 2.2.0 à 2.18.2 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.19.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )
