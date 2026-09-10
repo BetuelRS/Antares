@@ -17,11 +17,9 @@ internal object RunTrackingState {
     val last = MutableStateFlow<RunResult?>(null)
 
     private var engine: RunEngine? = null
-    private val path = mutableListOf<Pair<Double, Double>>()
 
     fun begin(type: ActivityType, weightKg: Double, autoPause: Boolean, unidades: UnitSystem) {
         engine = RunEngine(type, weightKg, autoPause)
-        path.clear()
         last.value = null
         live.value = RunLiveState(active = true, type = type, autoPause = autoPause, unidades = unidades)
     }
@@ -30,18 +28,14 @@ internal object RunTrackingState {
         val e = engine ?: return
         val metrics = e.onSample(sample)
 
-        // O mesmo limite de erro do [RunEngine], aplicado aqui outra vez porque o percurso
-        // desenhado é guardado à parte das métricas: um ponto mau desenharia um risco a
-        // atravessar o mapa mesmo sem contar para a distância.
+        // Só para o «a apanhar sinal» do ecrã. O percurso já não se decide aqui: vem do motor,
+        // feito só das posições que ele aceitou — em pausa não cresce, e um salto descartado
+        // não entra. Aqui guardava-se tudo o que tivesse precisão aceitável, saltos incluídos.
         val usable = sample.accM <= 30.0
 
-        // Em pausa o percurso **não cresce**, e o mapa fica com o traço onde a corrida
-        // parou. O ponto continua a ser lido — é assim que o mapa continua a mostrar onde
-        // a pessoa está —, mas o caminho até ao bebedouro não é caminho de corrida.
-        if (usable && !metrics.pausaManual) path.add(sample.lat to sample.lon)
         live.value = live.value.copy(
             metrics = metrics,
-            path = path.toList(),
+            path = e.percurso(),
             hasFix = live.value.hasFix || usable,
             parciais = e.parciaisAteAgora(),
         )
@@ -81,7 +75,6 @@ internal object RunTrackingState {
 
     fun discard() {
         engine = null
-        path.clear()
         last.value = null
         live.value = RunLiveState()
     }

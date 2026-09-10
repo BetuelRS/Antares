@@ -37,6 +37,12 @@ class RunEngine(
         const val ELEV_WINDOW = 5
         const val EARTH_R = 6_371_000.0
 
+        // Cinco saltos seguidos que concordam entre si já não são um pico do GPS: são a
+        // pessoa, e quem estava errada era a âncora. Um pico isolado não chega a dois, e cinco
+        // segundos perdidos no arranque custam menos do que um pico aceite a meio.
+        const val REANCORAR_APOS = 5
+        const val MS_POR_SEGUNDO = 1000.0
+
         // Abaixo de um metro não há volta que valha: é a mesma margem com que o `finish`
         // decide se o quilómetro incompleto do fim chega para ser escrito.
         const val MIN_VOLTA_M = 1.0
@@ -100,6 +106,29 @@ class RunEngine(
     // posição na lista, que dava o mesmo enquanto não houve mais nada lá dentro.
     private var quilometros = 0
 
+    /**
+     * O percurso que o mapa desenha, feito **só** das posições que o motor aceitou.
+     *
+     * Vivia no estado da corrida e guardava tudo o que tivesse precisão aceitável — incluindo
+     * as posições descartadas como saltos. Um pico de GPS desenhava um risco a atravessar o
+     * mapa, e na 2.31.0 uma posição velha de Lisboa desenhou uma linha até ao Porto.
+     */
+    private val percurso = mutableListOf<Pair<Double, Double>>()
+
+    /**
+     * Os saltos descartados seguidos, e o último deles.
+     *
+     * A primeira amostra vira âncora sem condição, e cada uma a seguir é comparada com ela.
+     * Se a primeira for velha — a última posição que o telemóvel guardou, a centenas de
+     * quilómetros —, todas as verdadeiras parecem saltos: a 12 m/s, de Lisboa ao Porto, o
+     * motor só voltava a aceitar posições ao fim de seis horas. Contar os saltos que concordam
+     * **uns com os outros** é o que distingue um pico, que fica sozinho, de uma âncora errada.
+     */
+    private var saltosSeguidos = 0
+    private var saltoLat = 0.0
+    private var saltoLon = 0.0
+    private var saltoT = 0L
+
     fun onSample(s: GeoSample): RunMetrics {
 
         if (s.accM > MAX_ACC_M) return metrics()
@@ -109,6 +138,7 @@ class RunEngine(
             firstT = s.tMs; lastT = s.tMs
             anchorLat = s.lat; anchorLon = s.lon; anchorT = s.tMs
             pushElevation(s.altM)
+            percurso += s.lat to s.lon
             return metrics()
         }
 
@@ -135,9 +165,11 @@ class RunEngine(
         // Salto impossível: descarta-se a amostra sem mexer na âncora, para a seguinte ser
         // comparada com o último ponto bom em vez de com o salto.
         if (segSpeed > maxSpeed) {
-
+            registarSalto(s)
             return metrics()
         }
+        saltosSeguidos = 0
+        percurso += s.lat to s.lon
 
         val dtSample = s.tMs - lastT
         val movingBefore = movingMs
@@ -173,6 +205,35 @@ class RunEngine(
         }
         return metrics()
     }
+
+    /**
+     * Um salto descartado. Ao quinto seguido que concorda com o anterior, a âncora muda-se
+     * para ele — sem somar a distância do salto, que ninguém correu.
+     *
+     * O desnível recomeça a janela, porque a altitude da âncora errada não é o sítio de onde
+     * a pessoa subiu: sem isto, a corrida da 2.31.0 ganhou 90 m de uma subida que não houve.
+     * E o percurso recomeça quando ainda não se contou nada — o ponto velho sai do mapa. A meio
+     * de uma corrida não se apaga o que já se correu: fica o salto, como fica o de um túnel.
+     */
+    private fun registarSalto(s: GeoSample) {
+        val dt = s.tMs - saltoT
+        val concorda = saltosSeguidos > 0 && dt > 0 &&
+            haversine(saltoLat, saltoLon, s.lat, s.lon) / (dt / MS_POR_SEGUNDO) <= maxSpeed
+        saltosSeguidos = if (concorda) saltosSeguidos + 1 else 1
+        saltoLat = s.lat; saltoLon = s.lon; saltoT = s.tMs
+        if (saltosSeguidos < REANCORAR_APOS) return
+
+        anchorLat = s.lat; anchorLon = s.lon; anchorT = s.tMs
+        elevWindow.clear()
+        smoothedAlt = null
+        pushElevation(s.altM)
+        if (distanceM == 0.0) percurso.clear()
+        percurso += s.lat to s.lon
+        saltosSeguidos = 0
+    }
+
+    /** Cópia, pela mesma razão da [parciaisAteAgora]: quem a lê está noutra linha de execução. */
+    fun percurso(): List<Pair<Double, Double>> = percurso.toList()
 
     /** A pessoa pediu para parar. Ver a [pausaManual]. */
     fun pausar() { pausaManual = true }
