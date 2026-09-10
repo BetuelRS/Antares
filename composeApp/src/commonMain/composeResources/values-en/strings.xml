@@ -179,6 +179,7 @@
     <string name="run_detail_no_gpx">This run has no recorded route, so there is no GPX to export.</string>
     <string name="run_time_total">Total time %1$s</string>
     <string name="run_detail_export">Export GPX</string>
+    <string name="run_summary_splits_laps">Splits per km and laps</string>
     <string name="run_oem_title">Battery optimization</string>
     <string name="run_oem_body">Some manufacturers (Xiaomi, Huawei, etc.) may stop recording with the screen off. If that happens, allow unrestricted background use in the app battery settings.</string>
     <string name="run_oem_ok">Got it</string>

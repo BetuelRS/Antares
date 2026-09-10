@@ -20,6 +20,7 @@ import pt.antares.app.generated.resources.run_live_lap_n
 import pt.antares.app.generated.resources.run_live_split
 import pt.antares.app.generated.resources.run_pace_unit
 import pt.antares.app.generated.resources.run_summary_splits
+import pt.antares.app.generated.resources.run_summary_splits_laps
 
 /**
  * Os parciais ficam em quilómetros mesmo com o imperial escolhido, e o título di-lo.
@@ -34,7 +35,15 @@ fun SplitsTable(splits: List<Split>) {
     // nada por baixo é pior do que não haver tabela.
     if (splits.isEmpty()) return
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
-        Text(stringResource(Res.string.run_summary_splits), style = MaterialTheme.typography.titleSmall)
+        // Com voltas lá dentro, «por km» era mentira no título da própria tabela. Ficou assim
+        // desde a 2.30.0, que meteu as voltas na lista e não mexeu no cabeçalho — visto a
+        // correr na 2.31.0, e não por nenhum teste.
+        Text(
+            stringResource(
+                if (splits.any { it.manual }) Res.string.run_summary_splits_laps else Res.string.run_summary_splits,
+            ),
+            style = MaterialTheme.typography.titleSmall,
+        )
         splits.forEach { s ->
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = Spacing.xs),

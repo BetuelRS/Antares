@@ -179,6 +179,7 @@
     <string name="run_detail_no_gpx">Esta corrida não tem percurso gravado, e por isso não há GPX para exportar.</string>
     <string name="run_time_total">Tempo total %1$s</string>
     <string name="run_detail_export">Exportar GPX</string>
+    <string name="run_summary_splits_laps">Parciais por km e voltas</string>
     <string name="run_oem_title">Otimização de bateria</string>
     <string name="run_oem_body">Alguns fabricantes (Xiaomi, Huawei, etc.) podem parar a gravação com o ecrã desligado. Se isso acontecer, permite a execução sem restrições nas definições de bateria da app.</string>
     <string name="run_oem_ok">Entendido</string>
