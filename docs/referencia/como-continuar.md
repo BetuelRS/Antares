@@ -24,6 +24,10 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   catálogo **v6**, inalterados. «O Hoje»: a meta sempre primeiro, a linha de «a seguir», os
   cartões vazios fora, e o toque no treino agendado a começá-lo. **1904 testes Kotlin**, 58 das
   ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A 2.32.0 está publicada e verde**, conferido a 2026-09-10: a etiqueta `v2.32.0` em
+  `6388edd`, release «2.32.0 — o Hoje abre pela tua meta» com os quatro APKs mais o
+  `catalogo.json` e o `manifesto.json`, **CI verde nesse commit** — oito minutos —, e o `latest`
+  a responder 200 aos dois ficheiros.
 - **As respostas de abertura da 2.32.0 são minhas**, e estão escritas como tal no plano: a
   regra do «a seguir», os cartões vazios a saírem de vez, e a ordem fixa. As duas alturas de
   cartão e o cartão de passos foram para uma **2.32.1** — a premissa de que a grelha já sabia
