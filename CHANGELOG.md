@@ -13,6 +13,28 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.32.0] — 2026-09-10
+
+**O Hoje abre pela tua meta.** Doze cartões com o mesmo peso, e a meta do dia em quinto — num
+telemóvel, abaixo da dobra. A ordem passa a ser por importância, e é fixa.
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**. Nenhum dado novo.
+
+### Adicionado
+
+- **Uma linha de «a seguir»**, a primeira frase que se aplicar: o treino agendado para hoje, se
+  ainda não se treinou; ou, a partir do meio-dia, a maior falta entre proteína e água, se faltar
+  pelo menos um quarto da meta. Com o botão que o resolve. Sem nada, não há linha.
+- **O jejum no «Mais»**, na secção do corpo.
+
+### Mudado
+
+- **A ordem do Hoje**, por degraus: a meta · o «a seguir» · o que exige decisão (a cópia
+  atrasada, as respostas em falta, o treinador, a folga) · o que está a acontecer · o resto.
+- **Os cartões vazios desaparecem** — o jejum sem jejum, a corrida sem corrida, o treino sem
+  nada feito nem agendado.
+- **Tocar no treino agendado começa-o**, em vez de levar ao painel de treino.
+
 ## [2.31.1] — 2026-09-10
 
 **A corrida deixa de se perder no arranque.** Três defeitos que a corrida no aparelho da 2.31.0

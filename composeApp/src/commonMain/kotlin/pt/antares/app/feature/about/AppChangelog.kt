@@ -23,9 +23,38 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.31.1"
+    const val CURRENT = "2.32.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.32.0",
+            title = "O Hoje abre pela tua meta",
+            titleEn = "Today opens with your target",
+            highlights = listOf(
+                "**A meta do dia é sempre o primeiro cartão.** Era o quinto, e num telemóvel " +
+                    "ficava abaixo da dobra",
+                "**Uma linha de «a seguir»** diz o que falta — o treino de hoje, ou a proteína " +
+                    "ou a água que ficaram por fazer — com o botão que o resolve",
+                "**Os cartões vazios desaparecem.** Sem jejum a decorrer, sem corrida, sem " +
+                    "treino: deixa de haver um cartão a dizê-lo todos os dias",
+                "**O jejum passa a ter porta no «Mais»**, para quem não está a jejuar o poder " +
+                    "começar",
+                "**Tocar no treino agendado começa-o.** Levava ao painel de treino, a três " +
+                    "toques da rotina",
+            ),
+            highlightsEn = listOf(
+                "**Your daily target is always the first card.** It was the fifth, and on a " +
+                    "phone it sat below the fold",
+                "**An «up next» line** says what is left — today's workout, or the protein or " +
+                    "water still to go — with the button that sorts it",
+                "**Empty cards disappear.** No fast running, no run, no workout: no more card " +
+                    "saying so every day",
+                "**Fasting now has its own door in «More»**, so you can start one when you are " +
+                    "not fasting",
+                "**Tapping the scheduled workout starts it.** It took you to the workout hub, " +
+                    "three taps away from the routine",
+            ),
+        ),
         AppVersion(
             name = "2.31.1",
             title = "A corrida deixa de se perder no arranque",
@@ -367,35 +396,7 @@ object AppChangelog {
                 "Undo on move, and the superset actually grouping what it says it groups",
             ),
         ),
-        AppVersion(
-            name = "2.22.0",
-            title = "Uma flexão passa a poder registar-se",
-            titleEn = "A push-up can finally be logged",
-            highlights = listOf(
-                "**Cento e onze exercícios do catálogo não se conseguiam registar** — flexões, " +
-                    "dominadas, fundos, prancha. A série exigia um peso, e uma flexão não tem " +
-                    "peso para escrever",
-                "**O teu peso entra como carga**, e a conta fica à vista: «O teu peso: 78 kg»",
-                "**Carga extra para quem usa cinto**, somada por cima",
-                "**Dizes quanto do teu peso conta em cada exercício.** Uma flexão levanta menos " +
-                    "do que uma dominada — e o número é teu, porque não é um número que a app " +
-                    "possa medir por ti",
-                "Sem peso registado, a app diz que falta em vez de assumir um",
-            ),
-            highlightsEn = listOf(
-                "**A hundred and eleven exercises in the catalogue could not be logged** — " +
-                    "push-ups, pull-ups, dips, planks. A set required a weight, and a push-up " +
-                    "has no weight to type",
-                "**Your weight becomes the load**, and the sum is in plain sight: " +
-                    "«Your weight: 78 kg»",
-                "**Added load for anyone using a belt**, on top of your weight",
-                "**You say how much of your weight counts on each exercise.** A push-up lifts " +
-                    "less than a pull-up — and the number is yours, because it is not one the " +
-                    "app can measure for you",
-                "With no weight logged, the app says so instead of assuming one",
-            ),
-        ),
-        // Da 2.2.0 à 2.21.0 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.22.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

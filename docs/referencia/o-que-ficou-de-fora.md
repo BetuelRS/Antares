@@ -1267,6 +1267,29 @@ Os três da secção de cima, por decisão do dono — *«resolve todos ainda ne
   desenhava o risco no mapa.
 - **O «0 m» de desnível no detalhe.**
 
+## O que a 2.32.0 fechou, e o que deixou para a 2.32.1
+
+**Fechado** — da área 01 e do esboço 01: a meta sempre primeiro (era a quinta) · a linha de
+«a seguir» · os cartões vazios · o toque no treino agendado a começá-lo (defeito concreto 1).
+E três que outras versões já tinham fechado, e só se confirmou: a voz vai para a IA, o
+treinador esconde o foco vazio, e o ecrã sem perfil tem saída.
+
+**Partido para a 2.32.1, por tamanho (B1):**
+
+- **Duas alturas de cartão.** A premissa do esboço — *«a `GrelhaDeCartoes` já sabe fazê-lo»* —
+  era falsa: a API só tem `cartao { }`, sem meia largura. É uma API nova.
+- **O cartão de passos a sério**, com anel e meta. Não há meta de passos em lado nenhum da app.
+- **As barras dos macros no cartão da meta**, em vez das três colunas de números — o esboço
+  pede-as para o que falta se ler pela forma. É da mesma arrumação visual.
+- **O treinador a «cair nos números» quando o foco vem vazio.** Hoje o cartão esconde a linha
+  vazia e fica só com o título e o botão; o esboço quer os números da semana no lugar dela.
+
+*Estas duas últimas não estavam na lista do plano e escaparam à primeira leitura: foi a segunda
+revisão, a conferir com o esboço proposta a proposta, que as apanhou.*
+
+**E fica aberto, com razão:** o convite semanal dos cartões que desapareceram — guardar quando
+se convidou é outra versão —, e escolher a ordem dos cartões, que o estudo marca «talvez».
+
 ---
 
 ## Como manter isto honesto

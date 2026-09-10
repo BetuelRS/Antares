@@ -20,7 +20,18 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.31.1 é a última fechada**, a 2026-09-10. Esquema **v41** e catálogo **v6**, inalterados.
+- **2.32.0 é a última fechada**, a 2026-09-10, **aberta e fechada sem o dono**. Esquema **v41** e
+  catálogo **v6**, inalterados. «O Hoje»: a meta sempre primeiro, a linha de «a seguir», os
+  cartões vazios fora, e o toque no treino agendado a começá-lo. **1904 testes Kotlin**, 58 das
+  ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **As respostas de abertura da 2.32.0 são minhas**, e estão escritas como tal no plano: a
+  regra do «a seguir», os cartões vazios a saírem de vez, e a ordem fixa. As duas alturas de
+  cartão e o cartão de passos foram para uma **2.32.1** — a premissa de que a grelha já sabia
+  fazer meia largura era falsa.
+- **O jejum ganhou porta no «Mais» antes de o cartão vazio sair**: era a única entrada para o
+  jejum em toda a app. O `OrdemDoHojeTest` guarda as duas coisas.
+- *O que se segue é o estado até à 2.31.1.*
+- **2.31.1**, a 2026-09-10. Esquema **v41** e catálogo **v6**, inalterados.
   Correcção: os três defeitos que a corrida no aparelho da 2.31.0 encontrou fora da área dela.
   **1897 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o
   `verificar.mjs`.
