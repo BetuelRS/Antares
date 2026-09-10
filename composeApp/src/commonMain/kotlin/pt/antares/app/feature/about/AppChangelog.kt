@@ -23,9 +23,30 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.31.0"
+    const val CURRENT = "2.31.1"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.31.1",
+            title = "A corrida deixa de se perder no arranque",
+            titleEn = "Your run no longer gets lost at the start",
+            highlights = listOf(
+                "**Uma posição de GPS velha no arranque já não deixa a corrida em zero.** A app " +
+                    "tomava-a pelo sítio onde estavas e descartava as verdadeiras durante horas",
+                "**O mapa deixa de desenhar os saltos do GPS** — só as posições que contaram. Um " +
+                    "salto de Lisboa ao Porto desenhava a linha e dava 90 m de subida",
+                "**O cartão da corrida no Hoje lê só a última corrida**, e o detalhe deixa de " +
+                    "escrever «0 m» de desnível num percurso plano",
+            ),
+            highlightsEn = listOf(
+                "**A stale GPS position at the start no longer leaves the run at zero.** The app " +
+                    "took it for where you were and discarded the real ones for hours",
+                "**The map stops drawing GPS jumps** — only the positions that counted. A jump " +
+                    "from Lisbon to Porto drew the line and added 90 m of climb",
+                "**The run card on Today reads only the last run**, and the detail stops " +
+                    "writing «0 m» of elevation on a flat route",
+            ),
+        ),
         AppVersion(
             name = "2.31.0",
             title = "A corrida passa a mostrar o que já correste",
@@ -374,41 +395,7 @@ object AppChangelog {
                 "With no weight logged, the app says so instead of assuming one",
             ),
         ),
-        AppVersion(
-            name = "2.21.0",
-            title = "A sessão de treino deixa de pedir tantos toques",
-            titleEn = "The workout session stops asking for so many taps",
-            highlights = listOf(
-                "**O relógio do treino na barra**, ao segundo. A duração só se sabia no fim",
-                "**A calculadora de discos**: que discos pôr de cada lado, por baixo do peso. " +
-                    "Em libras são discos de libras, e não os métricos convertidos",
-                "**O teclado salta de peso para repetições e grava** — eram dois toques por " +
-                    "série só para mudar de campo",
-                "**O RPE sai da linha e passa para o menu da série.** Era um campo permanente " +
-                    "para um número que a maioria não escreve",
-                "**Notas por exercício**, do treino de hoje e não da rotina",
-                "**O 1RM estimado à vista**, já com as séries de hoje dentro, e o **recorde " +
-                    "dito no momento** em que acontece",
-                "O título passa a ser o nome da rotina, e o chip de supersérie deixa de " +
-                    "fingir que é tocável",
-            ),
-            highlightsEn = listOf(
-                "**The workout clock in the top bar**, to the second. You only knew the " +
-                    "duration at the end",
-                "**The plate calculator**: what to load on each side, under the weight. In " +
-                    "pounds it uses pound plates, not converted metric ones",
-                "**The keyboard jumps from weight to reps and saves** — it was two taps per " +
-                    "set just to change field",
-                "**RPE leaves the row and moves into the set's menu.** It was a permanent " +
-                    "field for a number most people never fill in",
-                "**Notes per exercise**, belonging to today's workout and not to the routine",
-                "**The estimated 1RM in sight**, today's sets included, and the **record " +
-                    "announced the moment** it happens",
-                "The title becomes the routine's name, and the superset chip stops pretending " +
-                    "to be tappable",
-            ),
-        ),
-        // Da 2.2.0 à 2.20.1 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.21.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

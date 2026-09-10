@@ -13,6 +13,29 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.31.1] — 2026-09-10
+
+**A corrida deixa de se perder no arranque.** Três defeitos que a corrida no aparelho da 2.31.0
+encontrou fora da área dela, e que entram aqui por decisão do dono.
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**.
+
+### Corrigido
+
+- **Uma posição de GPS velha no arranque deixava a corrida em zero.** A primeira posição virava
+  a âncora sem condição; se fosse a última guardada pelo telemóvel, a centenas de quilómetros,
+  todas as verdadeiras pareciam saltos impossíveis — e, de Lisboa ao Porto, a app só voltaria a
+  aceitá-las ao fim de seis horas. Cinco saltos seguidos que concordam uns com os outros passam
+  a mudar a âncora para eles; um salto isolado continua a ser descartado.
+- **O mapa desenhava os saltos do GPS.** O percurso guardava tudo o que tivesse precisão
+  aceitável, incluindo as posições que a distância descartava: um pico desenhava um risco a
+  atravessar o mapa, e a posição velha desenhou uma linha de Lisboa ao Porto, com 90 m de
+  desnível que ninguém subiu. O percurso passa a ter só as posições que contaram.
+- **O cartão da corrida no Hoje lia a história inteira** — percurso e parciais de todas as
+  corridas — para mostrar a última. Passa a ler uma linha.
+- **O detalhe da corrida escrevia «0 m» de desnível** num percurso plano, que o resumo da mesma
+  corrida já escondia.
+
 ## [2.31.0] — 2026-09-10
 
 **A corrida passa a mostrar o que já correste.** O ecrã da corrida era um formulário — três grupos

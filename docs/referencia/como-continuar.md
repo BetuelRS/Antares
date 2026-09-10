@@ -20,7 +20,21 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.31.0 é a última fechada**, a 2026-09-10. Esquema **v41** e catálogo **v6**, inalterados, e
+- **2.31.1 é a última fechada**, a 2026-09-10. Esquema **v41** e catálogo **v6**, inalterados.
+  Correcção: os três defeitos que a corrida no aparelho da 2.31.0 encontrou fora da área dela.
+  **1897 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o
+  `verificar.mjs`.
+- **Uma primeira posição de GPS velha segurava a corrida durante horas**, e não minutos: a
+  âncora era comparada a 12 m/s com cada posição nova. A corrida da 2.31.0 só se recompôs por
+  ter sido posta em pausa. **Cinco saltos seguidos que concordam entre si mudam a âncora**; um
+  pico isolado continua descartado, e o `AncoraDaCorridaTest` guarda os dois lados.
+- **O percurso vive no motor**, só com as posições que contaram. Guardava os saltos descartados.
+- **A produção corre sem o dono desde 2026-09-10**, por decisão dele: *«pode tomar as decisões,
+  mas sempre priorizando resolver um problema assim que o encontra; finalizando essa update, já
+  inicia a próxima»*. As respostas de abertura das versões seguintes são minhas, e cada uma está
+  escrita como tal no plano, para ele as refazer se quiser.
+- *O que se segue é o estado até à 2.31.0.*
+- **2.31.0**, a 2026-09-10. Esquema **v41** e catálogo **v6**, inalterados, e
   **nenhuma coluna é nova**. «O hub da corrida»: a semana em primeiro, as últimas corridas e os
   recordes à vista, as opções numa folha, a frequência cardíaca de cada corrida se houver
   relógio, e as quatro correcções que o dono mandou entrar. **1894 testes Kotlin**, 58 das

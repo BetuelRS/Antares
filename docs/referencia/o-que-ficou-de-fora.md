@@ -1256,6 +1256,17 @@ Riscado no mesmo commit em que a versão saiu, como a regra em baixo manda.
   «0 m» num percurso plano é ruído»*, diz o comentário dele — e o detalhe da mesma corrida
   mostra-o. Anterior a esta versão; não entrou (A5).
 
+## O que a 2.31.1 fechou
+
+Os três da secção de cima, por decisão do dono — *«resolve todos ainda nela, no caso, na
+2.31.1»*:
+
+- **O cartão da corrida no Hoje** passou à consulta estreita.
+- **A posição velha que segurava a âncora** — e, com ela, um defeito maior que a medição
+  encontrou por baixo: **o percurso guardava os saltos descartados**. Um pico isolado também
+  desenhava o risco no mapa.
+- **O «0 m» de desnível no detalhe.**
+
 ---
 
 ## Como manter isto honesto
