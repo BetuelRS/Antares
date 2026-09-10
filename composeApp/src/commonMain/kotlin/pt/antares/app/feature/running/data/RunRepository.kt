@@ -48,7 +48,6 @@ class RunRepository(
         path: List<Pair<Double, Double>>,
         splits: List<Split>,
         name: String,
-        note: String,
     ): String = withContext(io) {
         val now = Clock.System.now().toEpochMilliseconds()
         // O percurso é reduzido antes de ser codificado: uma hora de GPS a um ponto por
@@ -74,7 +73,10 @@ class RunRepository(
                 polyline = poly,
                 splitsJson = splitsJson,
                 name = name,
-                note = note,
+                // A descrição saiu dos parâmetros na 2.31.0: o ecrã passava-lhe sempre "" e nenhum
+                // ecrã a mostrava. A coluna fica — tirá-la era uma migração e mudava o formato
+                // das cópias de segurança por uma coisa que ninguém escreveu.
+                note = "",
                 status = pt.antares.app.feature.running.domain.RunStatus.DONE,
                 updatedAt = now,
             ),

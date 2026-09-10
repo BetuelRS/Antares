@@ -42,6 +42,7 @@ fun RunDetailScreen(
     runId: String,
     onBack: () -> Unit,
     viewModel: RunDetailViewModel = koinViewModel(),
+import pt.antares.app.generated.resources.run_time_total
 ) {
     val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
@@ -79,17 +80,37 @@ fun RunDetailScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = Spacing.xs),
+                if (RunFormat.tempoTotalAParte(run.elapsedS * MS_POR_SEGUNDO, run.movingS * MS_POR_SEGUNDO)) {
+                    Text(
+                        stringResource(Res.string.run_time_total, RunFormat.clock(run.elapsedS * MS_POR_SEGUNDO)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.xs),
+                    )
+                }
                 )
             }
             SplitsTable(state.splits)
-            SecondaryButton(
-                stringResource(Res.string.run_detail_export),
-                {
-                    val gpx = GpxWriter.write(run.name, run.type, run.startedAt, state.path)
-                    shareFile("antares-${run.id}.gpx", "application/gpx+xml", gpx)
-                },
-                Modifier.fillMaxWidth(),
-            )
+            if (state.path.isNotEmpty()) {
+                SecondaryButton(
+                    stringResource(Res.string.run_detail_export),
+                    {
+                        val gpx = GpxWriter.write(run.name, run.type, run.startedAt, state.path)
+                        shareFile("antares-${run.id}.gpx", "application/gpx+xml", gpx)
+                    },
+                    Modifier.fillMaxWidth(),
+                )
+            } else {
+                // Sem percurso, o botão exportava um GPX sem pontos — um ficheiro que o Strava
+                // e o Garmin abrem e mostram vazio, sem dizer porquê.
+                Text(
+                    stringResource(Res.string.run_detail_no_gpx),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
+
+private const val MS_POR_SEGUNDO = 1000L

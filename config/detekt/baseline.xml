@@ -416,7 +416,6 @@
     <ID>MaxLineLength:RunHistoryScreen.kt$PrTile(stringResource(Res.string.run_pr_5k), state.pr5kMs?.let { RunFormat.clock(it) } ?: "--", Modifier.weight(1f))</ID>
     <ID>MaxLineLength:RunHistoryScreen.kt$PrTile(stringResource(Res.string.run_totals_time), RunFormat.clock(state.totalMovingS * 1000), Modifier.weight(1f))</ID>
     <ID>MaxLineLength:RunLiveScreen.kt$contentDescription = stringResource(if (locked) Res.string.run_live_unlock else Res.string.run_live_lock)</ID>
-    <ID>MaxLineLength:RunSummaryScreen.kt$PrimaryButton(stringResource(Res.string.run_summary_save), { viewModel.save(name, "", onSaved) }, Modifier.fillMaxWidth())</ID>
     <ID>MaxLineLength:RunSummaryScreen.kt$Row</ID>
     <ID>MaxLineLength:RunSummaryScreen.kt$SecondaryButton(stringResource(Res.string.run_summary_discard), { viewModel.discard(onDiscarded) }, Modifier.fillMaxWidth())</ID>
     <ID>MaxLineLength:RunSummaryScreen.kt$modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(Spacing.lg)</ID>

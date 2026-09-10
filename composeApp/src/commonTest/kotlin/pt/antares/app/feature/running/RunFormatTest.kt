@@ -34,4 +34,21 @@ class RunFormatTest {
         assertEquals("5.10", RunFormat.distance(5_100.0, UnitSystem.METRIC, comma = false))
         assertEquals("0.00", RunFormat.distance(0.0, UnitSystem.METRIC, comma = false))
     }
+
+    @Test
+    fun `a distancia da semana e um total, e le-se com uma casa`() {
+        // «8.30 km esta semana» dizia um centésimo que ninguém procura num total.
+        assertEquals("8.3", RunFormat.distanciaDaSemana(8_300.0, UnitSystem.METRIC, comma = false))
+        assertEquals("8,3", RunFormat.distanciaDaSemana(8_300.0, UnitSystem.METRIC, comma = true))
+        assertEquals("6.2", RunFormat.distanciaDaSemana(10_000.0, UnitSystem.IMPERIAL, comma = false))
+    }
+
+    @Test
+    fun `o tempo total so aparece quando e outro numero`() {
+        val meiaHora = 30 * 60_000L
+        assertEquals(false, RunFormat.tempoTotalAParte(meiaHora, meiaHora))
+        // Menos de um minuto de diferença é o arredondamento das amostras.
+        assertEquals(false, RunFormat.tempoTotalAParte(meiaHora + 59_000L, meiaHora))
+        assertEquals(true, RunFormat.tempoTotalAParte(meiaHora + 60_000L, meiaHora))
+    }
 }

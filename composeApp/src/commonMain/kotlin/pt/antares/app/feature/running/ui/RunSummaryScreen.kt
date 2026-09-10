@@ -39,8 +39,10 @@ import pt.antares.app.generated.resources.run_summary_discard
 import pt.antares.app.generated.resources.run_summary_elev
 import pt.antares.app.generated.resources.run_summary_name_hint
 import pt.antares.app.generated.resources.run_summary_save
+import pt.antares.app.generated.resources.run_summary_no_gpx
 import pt.antares.app.generated.resources.run_summary_no_map
 import pt.antares.app.generated.resources.run_summary_title
+import pt.antares.app.generated.resources.run_time_total
 
 @Composable
 fun RunSummaryScreen(
@@ -78,6 +80,15 @@ fun RunSummaryScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    // A mensagem explicava o ecrã e calava a perda: sem percurso, o GPX desta
+                    // corrida sai vazio. É o defeito concreto 5 da área 11 — dizê-lo aqui, antes
+                    // de guardar, e não descobri-lo no Strava.
+                    Text(
+                        stringResource(Res.string.run_summary_no_gpx),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.xs),
+                    )
                 }
             }
             AntaresCard(modifier = Modifier.fillMaxWidth()) {
@@ -93,6 +104,14 @@ fun RunSummaryScreen(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text("${m.kcal} kcal", style = MaterialTheme.typography.bodyLarge)
+                }
+                if (RunFormat.tempoTotalAParte(m.elapsedMs, m.movingMs)) {
+                    Text(
+                        stringResource(Res.string.run_time_total, RunFormat.clock(m.elapsedMs)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.xs),
+                    )
                 }
                 // O desnível era medido, gravado e mostrado no detalhe — e faltava aqui,
                 // que é o único ecrã que se vê logo a seguir a correr. Só aparece quando
@@ -116,7 +135,11 @@ fun RunSummaryScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
             )
-            PrimaryButton(stringResource(Res.string.run_summary_save), { viewModel.save(name, "", onSaved) }, Modifier.fillMaxWidth())
+            PrimaryButton(
+                stringResource(Res.string.run_summary_save),
+                { viewModel.save(name, onSaved) },
+                Modifier.fillMaxWidth(),
+            )
             SecondaryButton(stringResource(Res.string.run_summary_discard), { viewModel.discard(onDiscarded) }, Modifier.fillMaxWidth())
         }
     }

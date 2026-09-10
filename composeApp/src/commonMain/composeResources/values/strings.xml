@@ -144,7 +144,7 @@
     <string name="run_hub_start">Começar</string>
     <string name="run_history_title">Histórico de corridas</string>
     <string name="run_live_distance">Distância</string>
-    <string name="run_live_time">Tempo</string>
+    <string name="run_live_time">Tempo em movimento</string>
     <string name="run_live_pace_avg">Ritmo médio</string>
     <string name="run_live_pace_km">Ritmo deste km</string>
     <string name="run_live_pause">Pausar</string>
@@ -175,6 +175,9 @@
     <string name="run_pr_1k">1 km</string>
     <string name="run_pr_5k">5 km</string>
     <string name="run_pr_10k">10 km</string>
+    <string name="run_summary_no_gpx">E o GPX desta corrida vai sair sem percurso: não há pontos para exportar.</string>
+    <string name="run_detail_no_gpx">Esta corrida não tem percurso gravado, e por isso não há GPX para exportar.</string>
+    <string name="run_time_total">Tempo total %1$s</string>
     <string name="run_detail_export">Exportar GPX</string>
     <string name="run_oem_title">Otimização de bateria</string>
     <string name="run_oem_body">Alguns fabricantes (Xiaomi, Huawei, etc.) podem parar a gravação com o ecrã desligado. Se isso acontecer, permite a execução sem restrições nas definições de bateria da app.</string>

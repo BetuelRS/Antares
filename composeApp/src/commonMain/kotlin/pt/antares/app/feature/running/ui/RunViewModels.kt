@@ -28,7 +28,7 @@ class RunSummaryViewModel(
 
     fun splits(): List<Split> = controller.lastResult.value?.splits ?: emptyList()
 
-    fun save(name: String, note: String, onSaved: () -> Unit) {
+    fun save(name: String, onSaved: () -> Unit) {
         val s = state.value
         viewModelScope.launch {
             repository.save(
@@ -37,7 +37,6 @@ class RunSummaryViewModel(
                 path = s.path,
                 splits = splits(),
                 name = name.ifBlank { "" },
-                note = note,
             )
             controller.discard()
             onSaved()

@@ -493,7 +493,7 @@ private fun LinhaDaCorrida(
         titulo = if (corrida.metrosNaSemana > 0) {
             stringResource(
                 Res.string.workout_hub_run_week,
-                "${RunFormat.distance(corrida.metrosNaSemana, unidades, virgula)} $unidade",
+                "${RunFormat.distanciaDaSemana(corrida.metrosNaSemana, unidades, virgula)} $unidade",
             )
         } else {
             stringResource(Res.string.workout_hub_run_none_week)

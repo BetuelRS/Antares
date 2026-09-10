@@ -144,7 +144,7 @@
     <string name="run_hub_start">Start</string>
     <string name="run_history_title">Run history</string>
     <string name="run_live_distance">Distance</string>
-    <string name="run_live_time">Time</string>
+    <string name="run_live_time">Moving time</string>
     <string name="run_live_pace_avg">Avg pace</string>
     <string name="run_live_pace_km">This km's pace</string>
     <string name="run_live_pause">Pause</string>
@@ -175,6 +175,9 @@
     <string name="run_pr_1k">1 km</string>
     <string name="run_pr_5k">5 km</string>
     <string name="run_pr_10k">10 km</string>
+    <string name="run_summary_no_gpx">This run’s GPX will have no route either: there are no points to export.</string>
+    <string name="run_detail_no_gpx">This run has no recorded route, so there is no GPX to export.</string>
+    <string name="run_time_total">Total time %1$s</string>
     <string name="run_detail_export">Export GPX</string>
     <string name="run_oem_title">Battery optimization</string>
     <string name="run_oem_body">Some manufacturers (Xiaomi, Huawei, etc.) may stop recording with the screen off. If that happens, allow unrestricted background use in the app battery settings.</string>

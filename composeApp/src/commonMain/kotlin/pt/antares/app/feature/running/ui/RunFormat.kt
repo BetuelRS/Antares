@@ -2,6 +2,7 @@ package pt.antares.app.feature.running.ui
 
 import kotlin.math.roundToInt
 import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.designsystem.oneDecimal
 import pt.antares.app.core.designsystem.twoDecimals
 import pt.antares.app.core.util.UnitConversions
 
@@ -22,6 +23,17 @@ object RunFormat {
         twoDecimals(UnitConversions.distanceToDisplay(distanceM / 1000.0, system), comma)
 
     /**
+     * A distância de uma semana, com uma casa decimal.
+     *
+     * Um total lê-se arredondado: «8.30 km esta semana» dizia um centésimo que ninguém
+     * procura num total. A 2.20.1 deixou-o escrito para decidir com o hub, porque mudá-lo só
+     * num sítio dava duas maneiras de escrever a mesma semana — por isso o hub e o painel de
+     * treino passam os dois por aqui. As corridas soltas continuam a duas casas.
+     */
+    fun distanciaDaSemana(distanceM: Double, system: UnitSystem, comma: Boolean): String =
+        oneDecimal(UnitConversions.distanceToDisplay(distanceM / 1000.0, system), comma)
+
+    /**
      * O desnível acumulado, arredondado à unidade: uma subida não se lê às décimas. Em
      * imperial vai em pés, como o resto da corrida.
      */
@@ -31,6 +43,17 @@ object RunFormat {
         } else {
             m.roundToInt().toString()
         }
+
+    /**
+     * Se o tempo total merece linha própria ao lado do tempo em movimento.
+     *
+     * Sem pausa automática os dois são o mesmo número, e parar a meio inflaciona o tempo sem
+     * o ecrã o dizer — era o defeito concreto 3 da área 11. Abaixo de um minuto de
+     * diferença é o arredondamento das amostras, e uma segunda linha a repetir o mesmo
+     * relógio é ruído.
+     */
+    fun tempoTotalAParte(elapsedMs: Long, movingMs: Long): Boolean =
+        elapsedMs - movingMs >= MS_POR_MINUTO
 
     fun clock(ms: Long): String {
         val total = ms / 1000
@@ -56,4 +79,5 @@ object RunFormat {
 
     // Abaixo disto é passo parado, e o ritmo dava números de três dígitos por minuto.
     private const val MIN_SPEED_MPS = 0.3
+    private const val MS_POR_MINUTO = 60_000L
 }

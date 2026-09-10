@@ -64,6 +64,7 @@ import pt.antares.app.generated.resources.run_live_locked
 import pt.antares.app.generated.resources.run_live_paused
 import pt.antares.app.generated.resources.run_live_paused_manual
 import pt.antares.app.generated.resources.run_live_time
+import pt.antares.app.generated.resources.run_time_total
 import pt.antares.app.generated.resources.run_live_unlock
 import pt.antares.app.generated.resources.run_unit_km
 
@@ -153,6 +154,18 @@ fun RunLiveScreen(
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 Metric(RunFormat.clock(m.movingMs), stringResource(Res.string.run_live_time))
                 Metric(RunFormat.pace(m.avgPaceSecPerKm, unidades), stringResource(Res.string.run_live_pace_avg))
+            }
+            // O relógio grande é o tempo em movimento, e passou a dizê-lo. O total só aparece
+            // quando é outro número: sem pausa automática eram iguais, e parar a meio fazia
+            // o tempo crescer sem o ecrã distinguir porquê.
+            if (RunFormat.tempoTotalAParte(m.elapsedMs, m.movingMs)) {
+                Text(
+                    stringResource(Res.string.run_time_total, RunFormat.clock(m.elapsedMs)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                )
             }
             Spacer(Modifier.height(Spacing.sm))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
