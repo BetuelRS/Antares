@@ -24,6 +24,11 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   Correcção: os três defeitos que a corrida no aparelho da 2.31.0 encontrou fora da área dela.
   **1897 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o
   `verificar.mjs`.
+- **A 2.31.1 está publicada e verde**, conferido a 2026-09-10: a etiqueta `v2.31.1` em
+  `1fad49d`, release «2.31.1 — a corrida deixa de se perder no arranque» com os quatro APKs mais o
+  `catalogo.json` e o `manifesto.json`, **CI verde nesse commit** — oito minutos —, e o `latest`
+  a responder 200 aos dois ficheiros. Os quatro commits dela levam cada ficheiro inteiro: nenhum
+  foi partido entre tarefas, e cada um é o código que se testou.
 - **Uma primeira posição de GPS velha segurava a corrida durante horas**, e não minutos: a
   âncora era comparada a 12 m/s com cada posição nova. A corrida da 2.31.0 só se recompôs por
   ter sido posta em pausa. **Cinco saltos seguidos que concordam entre si mudam a âncora**; um
