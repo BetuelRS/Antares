@@ -187,6 +187,8 @@
     <string name="today_run_last">Last: %1$s · %2$d kcal</string>
 
     <string name="today_streak_freeze">🧊 One miss forgiven this week</string>
+    <string name="run_detail_hr">Average heart rate: %1$d bpm</string>
+    <string name="run_detail_hr_ask">Read heart rate from Health Connect</string>
     <string name="today_streak_keep">Log today to keep your streak</string>
     <string name="today_streak_record_now">New personal record! Keep it up</string>
 

@@ -17,12 +17,26 @@ class HealthPermissionsParityTest {
     private fun gateway(): HealthConnectGateway =
         HealthConnectGateway(ApplicationProvider.getApplicationContext<Context>())
 
-    private fun pedidas(): Set<String> = gateway().let { it.readPermissions + it.writePermissions }
+    private fun pedidas(): Set<String> =
+        gateway().let { it.readPermissions + it.writePermissions + it.heartRatePermissions }
 
     @Test
     fun `o gateway pede alguma coisa`() {
 
         assertTrue(pedidas().isNotEmpty(), "o gateway não pede permissão nenhuma")
+    }
+
+    /**
+     * A frequência cardíaca entrou na 2.31.0 com conjunto próprio, e este teste guarda que
+     * continua fora do da importação. O `hasReadPermissions` exige o conjunto todo: com ela
+     * lá dentro, quem já tinha concedido as seis de antes deixava de importar peso e treinos,
+     * em silêncio, até ir às definições conceder uma permissão que nunca lhe foi pedida.
+     */
+    @Test
+    fun `a frequencia cardiaca nao entra no conjunto da importacao`() {
+        val g = gateway()
+        assertTrue(g.heartRatePermissions.isNotEmpty(), "a frequência cardíaca não pede permissão nenhuma")
+        assertEquals(emptySet(), g.heartRatePermissions intersect g.readPermissions)
     }
 
     @Test

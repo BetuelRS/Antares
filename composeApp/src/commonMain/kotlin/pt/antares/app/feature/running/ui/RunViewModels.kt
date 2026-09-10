@@ -14,6 +14,11 @@ import pt.antares.app.core.calc.Mes
 import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.feature.running.RunController
 import pt.antares.app.feature.running.RunLiveState
+import pt.antares.app.core.health.HealthAvailability
+import pt.antares.app.core.health.HealthGateway
+import pt.antares.app.core.util.inicioDoDiaMs
+import pt.antares.app.core.util.todayEpochDay
+import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.feature.running.data.RunRepository
 import pt.antares.app.feature.running.domain.ActivityType
 import pt.antares.app.feature.running.domain.RunPrCalc
@@ -130,3 +135,34 @@ class RunDetailViewModel(
         }
     }
 }
+
+    /** A média que o Health Connect tiver para a janela da corrida. Nula sem relógio. */
+    val fcMedia: Int? = null,
+
+    /** O Health Connect existe e a leitura da frequência cardíaca ainda não foi concedida. */
+    val podePedirFc: Boolean = false,
+/**
+ * O detalhe de uma corrida, e a frequência cardíaca dela se houver.
+ *
+ * A frequência cardíaca **lê-se ao abrir e não se grava**, por decisão do dono — «só a ler o
+ * que houver». Um relógio sincroniza com o Health Connect quando lhe apetece, às vezes horas
+ * depois da corrida: gravada no fim, ficava nula para sempre em metade delas. Lida aqui,
+ * aparece assim que o relógio a entregar, e sem uma coluna nova na base.
+ */
+    private val saude: HealthGateway,
+    val permissoesDaFc: Set<String> get() = saude.heartRatePermissions
+
+            lerFc(run)
+
+    /** Depois de a pessoa responder ao pedido de permissão — concedida ou não. */
+    fun lerFcOutraVez() {
+        val run = _state.value.run ?: return
+        viewModelScope.launch { lerFc(run) }
+    }
+
+    private suspend fun lerFc(run: RunEntity) {
+        val disponivel = saude.availability() == HealthAvailability.AVAILABLE
+        val concedida = disponivel && saude.hasHeartRatePermission()
+        val media = if (concedida) saude.heartRateAvg(run.startedAt, run.endedAt) else null
+        _state.value = _state.value.copy(fcMedia = media, podePedirFc = disponivel && !concedida)
+    }

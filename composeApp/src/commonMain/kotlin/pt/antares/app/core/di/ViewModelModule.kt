@@ -8,6 +8,7 @@ import pt.antares.app.feature.diary.DiaryViewModel
 import pt.antares.app.feature.exercise.AddExerciseViewModel
 import pt.antares.app.feature.fasting.ui.FastingHistoryViewModel
 import pt.antares.app.feature.fasting.ui.FastingViewModel
+import pt.antares.app.core.health.NoHealthGateway
 import pt.antares.app.feature.running.ui.RunDetailViewModel
 import pt.antares.app.feature.running.ui.RunHistoryViewModel
 import pt.antares.app.feature.running.ui.RunSummaryViewModel
@@ -103,7 +104,8 @@ val viewModelModule = module {
     viewModel { RunViewModel(get(), get()) }
     viewModel { RunSummaryViewModel(get(), get()) }
     viewModel { RunHistoryViewModel(get()) }
-    viewModel { RunDetailViewModel(get()) }
+    viewModel { RunHubViewModel(get()) }
+    viewModel { RunDetailViewModel(get(), getOrNull() ?: NoHealthGateway) }
 
     viewModel {
         val catalogo: pt.antares.app.feature.fooddata.FoodRepository = get()

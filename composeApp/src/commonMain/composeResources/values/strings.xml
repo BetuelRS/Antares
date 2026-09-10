@@ -187,6 +187,8 @@
     <string name="today_run_last">Última: %1$s · %2$d kcal</string>
 
     <string name="today_streak_freeze">🧊 Falha perdoada esta semana</string>
+    <string name="run_detail_hr">Frequência cardíaca média: %1$d bpm</string>
+    <string name="run_detail_hr_ask">Ler a frequência cardíaca do Health Connect</string>
     <string name="today_streak_keep">Regista hoje para manter a sequência</string>
     <string name="today_streak_record_now">Novo recorde pessoal! Continua assim</string>
 

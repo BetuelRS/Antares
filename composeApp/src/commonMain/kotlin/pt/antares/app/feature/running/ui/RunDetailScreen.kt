@@ -2,6 +2,7 @@ package pt.antares.app.feature.running.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,9 +33,13 @@ import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresScaffold
 import pt.antares.app.core.designsystem.components.AntaresTopBar
 import pt.antares.app.core.designsystem.components.SecondaryButton
+import pt.antares.app.feature.health.rememberHealthPermissionRequest
 import pt.antares.app.feature.running.domain.GpxWriter
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.generated.resources.run_detail_export
+import pt.antares.app.generated.resources.run_detail_hr
+import pt.antares.app.generated.resources.run_detail_hr_ask
+import pt.antares.app.generated.resources.run_detail_no_gpx
 import pt.antares.app.generated.resources.run_summary_elev
 import pt.antares.app.generated.resources.run_summary_title
 
@@ -49,6 +55,7 @@ import pt.antares.app.generated.resources.run_time_total
     val virgula = virgulaDecimal()
     LaunchedEffect(runId) { viewModel.load(runId) }
     val shareFile = rememberFileSharer()
+    val pedirFc = rememberHealthPermissionRequest(viewModel.permissoesDaFc, onResult = viewModel::lerFcOutraVez)
 
     AntaresScaffold(
         topBar = { AntaresTopBar(title = state.run?.name?.ifBlank { null } ?: stringResource(Res.string.run_summary_title), onBack = onBack) },
@@ -80,9 +87,11 @@ import pt.antares.app.generated.resources.run_time_total
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = Spacing.xs),
-                if (RunFormat.tempoTotalAParte(run.elapsedS * MS_POR_SEGUNDO, run.movingS * MS_POR_SEGUNDO)) {
+                )
+                // Só o que houver: sem relógio não há linha nenhuma, e não um «-- bpm» para sempre.
+                state.fcMedia?.let { bpm ->
                     Text(
-                        stringResource(Res.string.run_time_total, RunFormat.clock(run.elapsedS * MS_POR_SEGUNDO)),
+                        stringResource(Res.string.run_detail_hr, bpm),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = Spacing.xs),
@@ -99,7 +108,13 @@ import pt.antares.app.generated.resources.run_time_total
                         shareFile("antares-${run.id}.gpx", "application/gpx+xml", gpx)
                     },
                     Modifier.fillMaxWidth(),
-                )
+                if (state.podePedirFc) {
+                    // Sem o recheio lateral, para o texto alinhar com as linhas de cima: com ele o
+                    // pedido ficava recuado e parecia pertencer a outro bloco.
+                    TextButton(onClick = pedirFc, contentPadding = PaddingValues(vertical = Spacing.xs)) {
+                        Text(stringResource(Res.string.run_detail_hr_ask))
+                    }
+                }
             } else {
                 // Sem percurso, o botão exportava um GPX sem pontos — um ficheiro que o Strava
                 // e o Garmin abrem e mostram vazio, sem dizer porquê.

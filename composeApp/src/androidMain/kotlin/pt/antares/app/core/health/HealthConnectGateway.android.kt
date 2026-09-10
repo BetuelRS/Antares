@@ -6,6 +6,7 @@ import androidx.health.connect.client.aggregate.AggregationResult
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.NutritionRecord
 import pt.antares.app.core.nutrition.Nutrients
 import androidx.health.connect.client.records.StepsRecord
@@ -84,6 +85,29 @@ class HealthConnectGateway(private val context: Context) : HealthGateway {
         val granted = runCatching { c.permissionController.getGrantedPermissions() }
             .getOrDefault(emptySet())
         return granted.containsAll(required)
+    }
+
+    override val heartRatePermissions: Set<String> = setOf(
+        HealthPermission.getReadPermission(HeartRateRecord::class),
+    )
+
+    override suspend fun hasHeartRatePermission(): Boolean = hasAll(heartRatePermissions)
+
+    /**
+     * A média pela agregação do próprio Health Connect, e não lendo as amostras: um relógio
+     * grava uma por segundo, e uma hora de corrida são milhares de registos para dar um número.
+     */
+    override suspend fun heartRateAvg(startMs: Long, endMs: Long): Int? {
+        val c = client ?: return null
+        val result: AggregationResult = runCatching {
+            c.aggregate(
+                AggregateRequest(
+                    metrics = setOf(HeartRateRecord.BPM_AVG),
+                    timeRangeFilter = range(startMs, endMs),
+                ),
+            )
+        }.getOrNull() ?: return null
+        return result[HeartRateRecord.BPM_AVG]?.toInt()
     }
 
     override suspend fun steps(startMs: Long, endMs: Long): Long? {

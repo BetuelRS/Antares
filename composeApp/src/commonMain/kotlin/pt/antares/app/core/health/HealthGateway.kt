@@ -23,6 +23,24 @@ interface HealthGateway {
 
     suspend fun sessions(sinceMs: Long): List<HealthSession>
 
+    /**
+     * A leitura da frequência cardíaca tem conjunto próprio, e **não** entra no
+     * [readPermissions].
+     *
+     * O [hasReadPermissions] exige o conjunto todo: juntar-lhe esta fazia a importação de peso
+     * e de treinos parar a quem já tinha concedido as outras seis, sem erro nenhum a dizê-lo.
+     * Pede-se só a quem abre uma corrida e quer ver a frequência cardíaca dela.
+     *
+     * Com omissão, e não só no [NoHealthGateway]: os duplos dos testes não leem frequência
+     * cardíaca, e «não sei» é a resposta certa para eles também.
+     */
+    val heartRatePermissions: Set<String> get() = emptySet()
+
+    suspend fun hasHeartRatePermission(): Boolean = false
+
+    /** A média do que houver na janela. Nula sem relógio, sem permissão ou sem serviço. */
+    suspend fun heartRateAvg(startMs: Long, endMs: Long): Int? = null
+
     val writePermissions: Set<String>
 
     suspend fun hasWritePermissions(): Boolean
