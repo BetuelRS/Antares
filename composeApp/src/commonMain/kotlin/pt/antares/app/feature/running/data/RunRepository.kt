@@ -2,12 +2,15 @@ package pt.antares.app.feature.running.data
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import pt.antares.app.core.database.daos.CorridaNaListaRow
 import pt.antares.app.core.database.daos.ExerciseLogDao
 import pt.antares.app.core.database.daos.RunDao
+import pt.antares.app.core.database.daos.SemanaDaCorridaRow
 import pt.antares.app.core.database.entities.ExerciseLogEntity
 import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.model.ExerciseOrigin
@@ -29,6 +32,28 @@ class RunRepository(
     private val json = Json { ignoreUnknownKeys = true }
 
     fun observeHistory(): Flow<List<RunEntity>> = runDao.observeHistory()
+
+    /**
+     * As três leituras estreitas que o hub e o histórico usam.
+     *
+     * Nenhuma delas traz a `polyline` nem o `splitsJson` de cada corrida — o `observeHistory`
+     * acima traz os dois, e continua a existir só para quem precise da corrida inteira.
+     */
+    fun observeSemana(deMs: Long, ateMs: Long): Flow<SemanaDaCorridaRow> =
+        runDao.observeSemana(deMs, ateMs)
+
+    fun observeUltimas(quantas: Int): Flow<List<CorridaNaListaRow>> = runDao.observeUltimas(quantas)
+
+    fun observeCorridas(): Flow<List<CorridaNaListaRow>> = runDao.observeCorridas()
+
+    /**
+     * Os parciais de todas as corridas, e mais nada, para os recordes.
+     *
+     * A descodificação acontece aqui e não no ecrã porque é ela que sabe do formato: um
+     * `splitsJson` vazio é uma corrida gravada antes de haver parciais, e não um erro.
+     */
+    fun observeParciais(): Flow<List<List<Split>>> =
+        runDao.observeSplitsJson().map { linhas -> linhas.map(::parciaisDe) }
 
     suspend fun byId(id: String): RunEntity? = withContext(io) { runDao.byId(id) }
 
@@ -107,7 +132,9 @@ class RunRepository(
 
     fun decodePath(entity: RunEntity): List<Pair<Double, Double>> = PolylineCodec.decode(entity.polyline)
 
-    fun splitsOf(entity: RunEntity): List<Split> =
-        if (entity.splitsJson.isBlank()) emptyList()
-        else json.decodeFromString(ListSerializer(Split.serializer()), entity.splitsJson)
+    fun splitsOf(entity: RunEntity): List<Split> = parciaisDe(entity.splitsJson)
+
+    private fun parciaisDe(splitsJson: String): List<Split> =
+        if (splitsJson.isBlank()) emptyList()
+        else json.decodeFromString(ListSerializer(Split.serializer()), splitsJson)
 }

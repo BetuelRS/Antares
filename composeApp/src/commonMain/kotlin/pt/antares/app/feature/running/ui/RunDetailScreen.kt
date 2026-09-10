@@ -42,13 +42,13 @@ import pt.antares.app.generated.resources.run_detail_hr_ask
 import pt.antares.app.generated.resources.run_detail_no_gpx
 import pt.antares.app.generated.resources.run_summary_elev
 import pt.antares.app.generated.resources.run_summary_title
+import pt.antares.app.generated.resources.run_time_total
 
 @Composable
 fun RunDetailScreen(
     runId: String,
     onBack: () -> Unit,
     viewModel: RunDetailViewModel = koinViewModel(),
-import pt.antares.app.generated.resources.run_time_total
 ) {
     val state by viewModel.state.collectAsState()
     val unidades = rememberUnitSystem()
@@ -80,6 +80,14 @@ import pt.antares.app.generated.resources.run_time_total
                     Text("${RunFormat.pace(run.avgPaceSecPerKm, unidades)} ${stringResource(paceUnitLabel(unidades))}")
                     Text("${run.kcal} kcal")
                 }
+                if (RunFormat.tempoTotalAParte(run.elapsedS * MS_POR_SEGUNDO, run.movingS * MS_POR_SEGUNDO)) {
+                    Text(
+                        stringResource(Res.string.run_time_total, RunFormat.clock(run.elapsedS * MS_POR_SEGUNDO)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.xs),
+                    )
+                }
                 Text(
                     "${stringResource(Res.string.run_summary_elev)}: " +
                         "${RunFormat.elevation(run.elevGainM, unidades)} " +
@@ -97,7 +105,13 @@ import pt.antares.app.generated.resources.run_time_total
                         modifier = Modifier.padding(top = Spacing.xs),
                     )
                 }
-                )
+                if (state.podePedirFc) {
+                    // Sem o recheio lateral, para o texto alinhar com as linhas de cima: com ele o
+                    // pedido ficava recuado e parecia pertencer a outro bloco.
+                    TextButton(onClick = pedirFc, contentPadding = PaddingValues(vertical = Spacing.xs)) {
+                        Text(stringResource(Res.string.run_detail_hr_ask))
+                    }
+                }
             }
             SplitsTable(state.splits)
             if (state.path.isNotEmpty()) {
@@ -108,13 +122,7 @@ import pt.antares.app.generated.resources.run_time_total
                         shareFile("antares-${run.id}.gpx", "application/gpx+xml", gpx)
                     },
                     Modifier.fillMaxWidth(),
-                if (state.podePedirFc) {
-                    // Sem o recheio lateral, para o texto alinhar com as linhas de cima: com ele o
-                    // pedido ficava recuado e parecia pertencer a outro bloco.
-                    TextButton(onClick = pedirFc, contentPadding = PaddingValues(vertical = Spacing.xs)) {
-                        Text(stringResource(Res.string.run_detail_hr_ask))
-                    }
-                }
+                )
             } else {
                 // Sem percurso, o botão exportava um GPX sem pontos — um ficheiro que o Strava
                 // e o Garmin abrem e mostram vazio, sem dizer porquê.

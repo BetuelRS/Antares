@@ -137,12 +137,19 @@
     <string name="run_goal_time">Tempo</string>
     <string name="run_goal_min">min</string>
     <string name="run_goal_reached">Objetivo atingido!</string>
-    <string name="run_totals_title">Totais</string>
-    <string name="run_totals_runs">Corridas</string>
-    <string name="run_totals_distance">Distância total</string>
-    <string name="run_totals_time">Tempo total</string>
     <string name="run_hub_start">Começar</string>
     <string name="run_history_title">Histórico de corridas</string>
+    <string name="run_hub_week">Esta semana</string>
+    <string name="run_hub_week_line">%1$s · %2$s · ritmo médio %3$s</string>
+    <string name="run_hub_options_title">Opções da corrida</string>
+    <string name="run_hub_options_change">Alterar</string>
+    <string name="run_hub_autopause_on">pausa automática</string>
+    <string name="run_hub_autopause_off">sem pausa automática</string>
+    <string name="run_hub_goal_none">sem objetivo</string>
+    <string name="run_hub_goal_value">objetivo de %1$s</string>
+    <string name="run_hub_recent">Últimas corridas</string>
+    <string name="run_hub_see_history">Ver o histórico todo</string>
+    <string name="run_hub_run_line">%1$s · %2$s · %3$s</string>
     <string name="run_live_distance">Distância</string>
     <string name="run_live_time">Tempo em movimento</string>
     <string name="run_live_pace_avg">Ritmo médio</string>
@@ -168,18 +175,20 @@
     <string name="run_summary_discard">Descartar</string>
     <string name="run_summary_name_hint">Nome da corrida</string>
     <string name="run_summary_no_map">Sem mapa desta vez: o GPS deu sinal que chegou para medir a distância e o ritmo, mas não para desenhar o percurso. Acontece dentro de edifícios e entre prédios altos.</string>
+    <string name="run_summary_no_gpx">E o GPX desta corrida vai sair sem percurso: não há pontos para exportar.</string>
+    <string name="run_detail_no_gpx">Esta corrida não tem percurso gravado, e por isso não há GPX para exportar.</string>
+    <string name="run_time_total">Tempo total %1$s</string>
     <string name="run_summary_splits">Parciais por km</string>
+    <string name="run_summary_splits_laps">Parciais por km e voltas</string>
     <string name="run_summary_elev">Elevação</string>
     <string name="run_history_empty">Ainda não gravaste nenhuma corrida.</string>
     <string name="run_pr_title">Recordes</string>
     <string name="run_pr_1k">1 km</string>
     <string name="run_pr_5k">5 km</string>
     <string name="run_pr_10k">10 km</string>
-    <string name="run_summary_no_gpx">E o GPX desta corrida vai sair sem percurso: não há pontos para exportar.</string>
-    <string name="run_detail_no_gpx">Esta corrida não tem percurso gravado, e por isso não há GPX para exportar.</string>
-    <string name="run_time_total">Tempo total %1$s</string>
     <string name="run_detail_export">Exportar GPX</string>
-    <string name="run_summary_splits_laps">Parciais por km e voltas</string>
+    <string name="run_detail_hr">Frequência cardíaca média: %1$d bpm</string>
+    <string name="run_detail_hr_ask">Ler a frequência cardíaca do Health Connect</string>
     <string name="run_oem_title">Otimização de bateria</string>
     <string name="run_oem_body">Alguns fabricantes (Xiaomi, Huawei, etc.) podem parar a gravação com o ecrã desligado. Se isso acontecer, permite a execução sem restrições nas definições de bateria da app.</string>
     <string name="run_oem_ok">Entendido</string>
@@ -188,8 +197,6 @@
     <string name="today_run_last">Última: %1$s · %2$d kcal</string>
 
     <string name="today_streak_freeze">🧊 Falha perdoada esta semana</string>
-    <string name="run_detail_hr">Frequência cardíaca média: %1$d bpm</string>
-    <string name="run_detail_hr_ask">Ler a frequência cardíaca do Health Connect</string>
     <string name="today_streak_keep">Regista hoje para manter a sequência</string>
     <string name="today_streak_record_now">Novo recorde pessoal! Continua assim</string>
 

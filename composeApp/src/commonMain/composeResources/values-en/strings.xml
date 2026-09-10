@@ -137,12 +137,19 @@
     <string name="run_goal_time">Time</string>
     <string name="run_goal_min">min</string>
     <string name="run_goal_reached">Goal reached!</string>
-    <string name="run_totals_title">Totals</string>
-    <string name="run_totals_runs">Runs</string>
-    <string name="run_totals_distance">Total distance</string>
-    <string name="run_totals_time">Total time</string>
     <string name="run_hub_start">Start</string>
     <string name="run_history_title">Run history</string>
+    <string name="run_hub_week">This week</string>
+    <string name="run_hub_week_line">%1$s · %2$s · avg pace %3$s</string>
+    <string name="run_hub_options_title">Run options</string>
+    <string name="run_hub_options_change">Change</string>
+    <string name="run_hub_autopause_on">auto-pause</string>
+    <string name="run_hub_autopause_off">no auto-pause</string>
+    <string name="run_hub_goal_none">no goal</string>
+    <string name="run_hub_goal_value">%1$s goal</string>
+    <string name="run_hub_recent">Recent runs</string>
+    <string name="run_hub_see_history">See full history</string>
+    <string name="run_hub_run_line">%1$s · %2$s · %3$s</string>
     <string name="run_live_distance">Distance</string>
     <string name="run_live_time">Moving time</string>
     <string name="run_live_pace_avg">Avg pace</string>
@@ -168,18 +175,20 @@
     <string name="run_summary_discard">Discard</string>
     <string name="run_summary_name_hint">Run name</string>
     <string name="run_summary_no_map">No map this time: GPS was good enough to measure distance and pace, but not to draw the route. It happens indoors and between tall buildings.</string>
+    <string name="run_summary_no_gpx">This run’s GPX will have no route either: there are no points to export.</string>
+    <string name="run_detail_no_gpx">This run has no recorded route, so there is no GPX to export.</string>
+    <string name="run_time_total">Total time %1$s</string>
     <string name="run_summary_splits">Splits per km</string>
+    <string name="run_summary_splits_laps">Splits per km and laps</string>
     <string name="run_summary_elev">Elevation</string>
     <string name="run_history_empty">You haven't recorded any run yet.</string>
     <string name="run_pr_title">Records</string>
     <string name="run_pr_1k">1 km</string>
     <string name="run_pr_5k">5 km</string>
     <string name="run_pr_10k">10 km</string>
-    <string name="run_summary_no_gpx">This run’s GPX will have no route either: there are no points to export.</string>
-    <string name="run_detail_no_gpx">This run has no recorded route, so there is no GPX to export.</string>
-    <string name="run_time_total">Total time %1$s</string>
     <string name="run_detail_export">Export GPX</string>
-    <string name="run_summary_splits_laps">Splits per km and laps</string>
+    <string name="run_detail_hr">Average heart rate: %1$d bpm</string>
+    <string name="run_detail_hr_ask">Read heart rate from Health Connect</string>
     <string name="run_oem_title">Battery optimization</string>
     <string name="run_oem_body">Some manufacturers (Xiaomi, Huawei, etc.) may stop recording with the screen off. If that happens, allow unrestricted background use in the app battery settings.</string>
     <string name="run_oem_ok">Got it</string>
@@ -188,8 +197,6 @@
     <string name="today_run_last">Last: %1$s · %2$d kcal</string>
 
     <string name="today_streak_freeze">🧊 One miss forgiven this week</string>
-    <string name="run_detail_hr">Average heart rate: %1$d bpm</string>
-    <string name="run_detail_hr_ask">Read heart rate from Health Connect</string>
     <string name="today_streak_keep">Log today to keep your streak</string>
     <string name="today_streak_record_now">New personal record! Keep it up</string>
 

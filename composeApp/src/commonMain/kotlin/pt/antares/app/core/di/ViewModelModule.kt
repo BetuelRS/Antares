@@ -11,6 +11,7 @@ import pt.antares.app.feature.fasting.ui.FastingViewModel
 import pt.antares.app.core.health.NoHealthGateway
 import pt.antares.app.feature.running.ui.RunDetailViewModel
 import pt.antares.app.feature.running.ui.RunHistoryViewModel
+import pt.antares.app.feature.running.ui.RunHubViewModel
 import pt.antares.app.feature.running.ui.RunSummaryViewModel
 import pt.antares.app.feature.running.ui.RunViewModel
 import pt.antares.app.feature.fooddata.FoodDetailViewModel
