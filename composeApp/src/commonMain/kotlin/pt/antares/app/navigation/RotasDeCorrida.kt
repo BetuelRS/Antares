@@ -20,6 +20,7 @@ internal fun NavGraphBuilder.rotasDeCorrida(navController: NavHostController) {
             onBack = { navController.popBackStack() },
             onOpenLive = { navController.navigate(Route.RunLive) },
             onOpenHistory = { navController.navigate(Route.RunHistory) },
+            onRun = { id -> navController.navigate(Route.RunDetail(id)) },
         )
     }
     composable<Route.RunLive> {

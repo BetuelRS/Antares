@@ -7,12 +7,37 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import pt.antares.app.core.database.entities.RunEntity
 import pt.antares.app.core.database.entities.TrackPointEntity
+import pt.antares.app.feature.running.domain.ActivityType
 
-/** A última corrida, sem o percurso: a linha do painel de treino precisa de três campos. */
-data class UltimaCorridaRow(
+/**
+ * Uma corrida como as listas a mostram: sem a `polyline` e sem os parciais.
+ *
+ * Serve o painel de treino, o hub e o histórico — os três desenham nome, data, distância,
+ * tempo e ritmo, e nenhum deles desenha o percurso. A `RunEntity` inteira traz o traço do
+ * mapa e o `splitsJson` de cada corrida, e ler cem corridas para escrever duas linhas era o
+ * defeito que a revisão da 2.20.1 tirou do painel de treino e deixou intacto ao lado.
+ */
+data class CorridaNaListaRow(
+    val id: String,
     val name: String,
+    val type: ActivityType,
     val startedAt: Long,
     val distanceM: Double,
+    val movingS: Long,
+    val avgPaceSecPerKm: Int,
+)
+
+/**
+ * A semana somada pela base: três números e nenhuma corrida lida.
+ *
+ * Substitui a soma só da distância que a 2.20.1 tinha criado para o painel de treino. Duas
+ * consultas para a mesma semana davam dois caminhos para o mesmo facto, e o esboço do hub
+ * pede os três juntos.
+ */
+data class SemanaDaCorridaRow(
+    val corridas: Int,
+    val metros: Double,
+    val movimentoS: Long,
 )
 
 @Dao
@@ -27,20 +52,36 @@ interface RunDao {
     @Query("SELECT * FROM run WHERE status = 'DONE' AND deleted = 0 ORDER BY startedAt ASC")
     suspend fun allDone(): List<RunEntity>
 
-    // Duas leituras estreitas para o painel de treino, e não o `observeHistory`: a
-    // `RunEntity` traz a `polyline` e os parciais de cada corrida, e ali mostram-se uma
-    // distância e um nome. É a mesma escolha das três contagens do treino — somar na base.
+    // Leituras estreitas para o painel de treino e para o hub, e não o `observeHistory`: a
+    // `RunEntity` traz a `polyline` e os parciais de cada corrida, e nenhum destes ecrãs
+    // desenha o percurso. É a mesma escolha das três contagens do treino — somar na base.
     @Query(
-        "SELECT COALESCE(SUM(distanceM), 0) FROM run WHERE status = 'DONE' AND deleted = 0 " +
-            "AND startedAt >= :deMs AND startedAt < :ateMs",
+        "SELECT COUNT(*) AS corridas, COALESCE(SUM(distanceM), 0) AS metros, " +
+            "COALESCE(SUM(movingS), 0) AS movimentoS FROM run " +
+            "WHERE status = 'DONE' AND deleted = 0 AND startedAt >= :deMs AND startedAt < :ateMs",
     )
-    fun observeDistanceBetween(deMs: Long, ateMs: Long): Flow<Double>
+    fun observeSemana(deMs: Long, ateMs: Long): Flow<SemanaDaCorridaRow>
+
+    // As últimas e todas são a mesma linha em consultas diferentes, de propósito: o hub
+    // mostra duas e o histórico mostra a lista inteira. Um `LIMIT` gigante a fazer de «sem
+    // limite» seria uma consulta a fingir que é duas.
+    @Query(
+        "SELECT id, name, type, startedAt, distanceM, movingS, avgPaceSecPerKm FROM run " +
+            "WHERE status = 'DONE' AND deleted = 0 ORDER BY startedAt DESC LIMIT :quantas",
+    )
+    fun observeUltimas(quantas: Int): Flow<List<CorridaNaListaRow>>
 
     @Query(
-        "SELECT name, startedAt, distanceM FROM run WHERE status = 'DONE' AND deleted = 0 " +
-            "ORDER BY startedAt DESC LIMIT 1",
+        "SELECT id, name, type, startedAt, distanceM, movingS, avgPaceSecPerKm FROM run " +
+            "WHERE status = 'DONE' AND deleted = 0 ORDER BY startedAt DESC",
     )
-    fun observeLast(): Flow<UltimaCorridaRow?>
+    fun observeCorridas(): Flow<List<CorridaNaListaRow>>
+
+    // Só os parciais, e é o que tira aos recordes o custo do histórico inteiro: o
+    // `RunPrCalc` precisa deles e de mais nada, e a `polyline` de uma corrida de uma hora é
+    // a maior coluna da tabela.
+    @Query("SELECT splitsJson FROM run WHERE status = 'DONE' AND deleted = 0")
+    fun observeSplitsJson(): Flow<List<String>>
 
     @Query(
         "SELECT * FROM run WHERE status = 'DONE' AND deleted = 0 " +

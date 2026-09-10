@@ -5,6 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.TimeZone
@@ -101,6 +102,16 @@ fun weekStartEpochDay(epochDay: Long): Long {
 
 fun epochMillisToLocalDate(ms: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
     Instant.fromEpochMilliseconds(ms).toLocalDateTime(timeZone).date
+
+/**
+ * A meia-noite desse dia, em milissegundos.
+ *
+ * É o inverso do [epochMillisToLocalDate], e existe aqui em vez de em cada repositório
+ * porque é o que traduz um limite de semana — que a app conta em dias — para o formato em
+ * que a corrida guarda a hora a que começou.
+ */
+fun inicioDoDiaMs(epochDay: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): Long =
+    epochDayToLocalDate(epochDay).atStartOfDayIn(timeZone).toEpochMilliseconds()
 
 /**
  * O minuto do dia daquele instante, no fuso do telemóvel.

@@ -4,13 +4,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.isoDayNumber
 import pt.antares.app.core.database.daos.ExerciseLibraryDao
 import pt.antares.app.core.database.daos.RoutineDao
 import pt.antares.app.core.database.daos.RoutineScheduleDao
+import pt.antares.app.core.database.daos.CorridaNaListaRow
 import pt.antares.app.core.database.daos.RunDao
-import pt.antares.app.core.database.daos.UltimaCorridaRow
+import pt.antares.app.core.database.daos.SemanaDaCorridaRow
 import pt.antares.app.core.database.daos.WorkoutSessionDao
 import pt.antares.app.core.database.daos.WorkoutSetDao
 import pt.antares.app.core.database.entities.RoutineScheduleEntity
@@ -18,6 +18,7 @@ import pt.antares.app.core.database.entities.WorkoutSessionEntity
 import pt.antares.app.core.model.SessionStatus
 import pt.antares.app.core.util.epochDayToLocalDate
 import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.inicioDoDiaMs
 import pt.antares.app.core.util.toEpochDay
 import pt.antares.app.core.util.todayEpochDay
 import pt.antares.app.core.util.weekStartEpochDay
@@ -158,12 +159,14 @@ class WorkoutHubRepository(
         // milissegundos porque é assim que a corrida guarda a hora a que começou.
         val semanaDaCorrida = weekStartEpochDay(hoje)
         val corridaDaSemana = combine(
-            runDao.observeDistanceBetween(
-                deMs = inicioDoDia(semanaDaCorrida, zona),
-                ateMs = inicioDoDia(semanaDaCorrida + DIAS_DA_SEMANA, zona),
+            runDao.observeSemana(
+                deMs = inicioDoDiaMs(semanaDaCorrida, zona),
+                ateMs = inicioDoDiaMs(semanaDaCorrida + DIAS_DA_SEMANA, zona),
             ),
-            runDao.observeLast(),
-        ) { metros, ultima -> metros to ultima }
+            // Uma só, e da mesma consulta que o hub usa para duas: a linha do painel mostra
+            // a última corrida e mais nada.
+            runDao.observeUltimas(quantas = 1),
+        ) { semana, ultimas -> semana to ultimas.firstOrNull() }
 
         return combine(
             rotinasComContagem,
@@ -301,10 +304,10 @@ class WorkoutHubRepository(
      * formatador de datas do ecrã recebe.
      */
     private fun corrida(
-        semana: Pair<Double, UltimaCorridaRow?>,
+        semana: Pair<SemanaDaCorridaRow, CorridaNaListaRow?>,
         zona: TimeZone,
     ): CorridaNaSemana = CorridaNaSemana(
-        metrosNaSemana = semana.first,
+        metrosNaSemana = semana.first.metros,
         ultima = semana.second?.let {
             UltimaCorrida(
                 nome = it.name,
@@ -316,9 +319,6 @@ class WorkoutHubRepository(
 
     private fun diaDe(ms: Long, zona: TimeZone): Long =
         epochMillisToLocalDate(ms, zona).toEpochDay()
-
-    private fun inicioDoDia(dia: Long, zona: TimeZone): Long =
-        epochDayToLocalDate(dia).atStartOfDayIn(zona).toEpochMilliseconds()
 
     private fun duracaoMin(s: WorkoutSessionEntity): Int =
         (((s.endedAt ?: s.startedAt) - s.startedAt) / MS_POR_MINUTO).toInt().coerceAtLeast(0)
