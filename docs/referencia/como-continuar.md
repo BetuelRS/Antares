@@ -25,6 +25,13 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   recordes à vista, as opções numa folha, a frequência cardíaca de cada corrida se houver
   relógio, e as quatro correcções que o dono mandou entrar. **1894 testes Kotlin**, 58 das
   ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A 2.31.0 está publicada e verde**, conferido a 2026-09-10: a etiqueta `v2.31.0` em
+  `97f68d9`, release «2.31.0 — a corrida passa a mostrar o que já correste» com os quatro APKs
+  mais o `catalogo.json` e o `manifesto.json`, **CI verde nesse commit** — oito minutos, não veio
+  da cache —, e o `latest` a responder 200 aos dois ficheiros. **O commit `e8792a4`, logo antes,
+  tem o CI vermelho**: os commits da versão foram partidos por um script que pôs pedaços nas
+  linhas erradas, e o `97f68d9` repô-los como estavam na árvore verificada. O histórico não foi
+  reescrito.
 - **Os recordes deixaram de custar o histórico inteiro.** Liam a `polyline` e o `splitsJson` de
   todas as corridas de sempre; passaram a ler só o `splitsJson`. E há um terceiro ecrã com o
   mesmo defeito, o cartão da corrida no «Hoje» — escrito em `o-que-ficou-de-fora.md`, para a
