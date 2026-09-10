@@ -12,8 +12,8 @@ import pt.antares.app.feature.running.domain.ActivityType
 /**
  * Uma corrida como as listas a mostram: sem a `polyline` e sem os parciais.
  *
- * Serve o painel de treino, o hub e o histórico — os três desenham nome, data, distância,
- * tempo e ritmo, e nenhum deles desenha o percurso. A `RunEntity` inteira traz o traço do
+ * Serve o painel de treino, o hub, o histórico e o cartão do Hoje — desenham nome, data,
+ * distância, tempo, ritmo e kcal, e nenhum deles desenha o percurso. A `RunEntity` inteira traz o traço do
  * mapa e o `splitsJson` de cada corrida, e ler cem corridas para escrever duas linhas era o
  * defeito que a revisão da 2.20.1 tirou do painel de treino e deixou intacto ao lado.
  */
@@ -25,6 +25,7 @@ data class CorridaNaListaRow(
     val distanceM: Double,
     val movingS: Long,
     val avgPaceSecPerKm: Int,
+    val kcal: Int,
 )
 
 /**
@@ -66,13 +67,13 @@ interface RunDao {
     // mostra duas e o histórico mostra a lista inteira. Um `LIMIT` gigante a fazer de «sem
     // limite» seria uma consulta a fingir que é duas.
     @Query(
-        "SELECT id, name, type, startedAt, distanceM, movingS, avgPaceSecPerKm FROM run " +
+        "SELECT id, name, type, startedAt, distanceM, movingS, avgPaceSecPerKm, kcal FROM run " +
             "WHERE status = 'DONE' AND deleted = 0 ORDER BY startedAt DESC LIMIT :quantas",
     )
     fun observeUltimas(quantas: Int): Flow<List<CorridaNaListaRow>>
 
     @Query(
-        "SELECT id, name, type, startedAt, distanceM, movingS, avgPaceSecPerKm FROM run " +
+        "SELECT id, name, type, startedAt, distanceM, movingS, avgPaceSecPerKm, kcal FROM run " +
             "WHERE status = 'DONE' AND deleted = 0 ORDER BY startedAt DESC",
     )
     fun observeCorridas(): Flow<List<CorridaNaListaRow>>

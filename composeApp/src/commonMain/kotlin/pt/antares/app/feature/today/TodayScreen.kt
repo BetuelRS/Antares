@@ -40,7 +40,7 @@ import pt.antares.app.core.calc.DailyBudgetCalc
 import pt.antares.app.core.calc.Targets
 import pt.antares.app.core.calc.WeeklyBudget
 import pt.antares.app.core.database.entities.FastingSessionEntity
-import pt.antares.app.core.database.entities.RunEntity
+import pt.antares.app.core.database.daos.CorridaNaListaRow
 import pt.antares.app.core.nutrition.DailyGap
 import pt.antares.app.core.nutrition.Nutrients
 import pt.antares.app.core.nutrition.microLabelRes
@@ -421,7 +421,7 @@ private fun CartaoDoJejum(sessao: FastingSessionEntity?, agoraMs: Long, onAbrir:
 }
 
 @Composable
-private fun CartaoDaCorrida(corrida: RunEntity?, unidades: UnitSystem, onAbrir: () -> Unit) {
+private fun CartaoDaCorrida(corrida: CorridaNaListaRow?, unidades: UnitSystem, onAbrir: () -> Unit) {
     val virgula = virgulaDecimal()
     AntaresCard(
         modifier = Modifier.fillMaxWidth().cascadeIn(2)

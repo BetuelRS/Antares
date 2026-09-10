@@ -24,7 +24,7 @@ import pt.antares.app.core.calc.WeeklyBudget
 import pt.antares.app.core.calc.WeightTrend
 import pt.antares.app.core.database.daos.DayTotals
 import pt.antares.app.core.database.entities.FastingSessionEntity
-import pt.antares.app.core.database.entities.RunEntity
+import pt.antares.app.core.database.daos.CorridaNaListaRow
 import pt.antares.app.core.datastore.AppPreferences
 import pt.antares.app.core.health.HealthPublisher
 import pt.antares.app.core.model.Sex
@@ -147,7 +147,9 @@ class TodayViewModel(
     val fasting: StateFlow<FastingSessionEntity?> = fastingRepository.observeActive()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
-    val lastRun: StateFlow<RunEntity?> = runRepository.observeHistory()
+    // Uma corrida, pela consulta estreita: o `observeHistory` trazia o percurso e os parciais
+    // de todas as corridas de sempre para o cartão escrever uma distância e umas kcal.
+    val lastRun: StateFlow<CorridaNaListaRow?> = runRepository.observeUltimas(quantas = 1)
         .map { it.firstOrNull() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
