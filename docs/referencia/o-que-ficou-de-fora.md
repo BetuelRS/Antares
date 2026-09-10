@@ -1212,6 +1212,50 @@ do emulador **não entrega posições**, e o `adb emu geo fix` responde `OK` na 
 posição boa que nunca chega — a corrida marca 0,00 km sem erro nenhum. Destrava-se abrindo um
 ecrã com mapa, que força um pedido de localização; a partir daí os fixes entram.
 
+## O que a 2.31.0 fechou, e o que deixou aberto
+
+Riscado no mesmo commit em que a versão saiu, como a regra em baixo manda.
+
+**Fechado:**
+
+- **«O hub é uma lista de opções, não um ecrã de corrida»** — a proposta 8 da área 11. A semana
+  em primeiro, as últimas corridas e os recordes à vista, e as opções numa folha.
+- **O tempo decorrido ao lado do tempo em movimento** — o defeito concreto 3 da área 11, que a
+  2.29.0 e a 2.30.0 deixaram aberto.
+- **O GPX vazio sem aviso** — o defeito concreto 5.
+- **A caixa de descrição que nunca é usada** — saiu do código. A coluna `note` fica: tirá-la era
+  uma migração e mudava o formato das cópias de segurança.
+- **A frequência cardíaca**, só a ler o que houver.
+- **A distância da semana com duas casas**, que a 2.20.1 deixou escrita para decidir aqui.
+- **«Splits per km» por cima de uma volta**, que era da 2.30.0.
+
+**Aberto, e com razão escrita:**
+
+- **O aviso por voz na meta** e **escolher o que a voz diz** continuam onde a 2.30.0 os deixou.
+- **O traço do mapa a atravessar a pausa** continua aberto.
+- **As calorias de bicicleta pela frequência cardíaca** — era a hipótese cara da pergunta 1, e o
+  dono escolheu a outra.
+
+## O que a 2.31.0 encontrou fora da área dela
+
+- **O cartão da corrida no «Hoje» lê o histórico inteiro para mostrar uma corrida.** O
+  `TodayViewModel.lastRun` chama o `RunRepository.observeHistory()` — a `RunEntity` de todas
+  as corridas de sempre, cada uma com a `polyline` e o `splitsJson` — e fica com a primeira. É
+  o **terceiro** ecrã com o mesmo defeito: a 2.20.1 tirou-o do painel de treino, a 2.31.0 do
+  hub e do histórico, e este ficou. A consulta estreita já existe (`observeUltimas(1)`). É da
+  área 01, que abre na **2.32.0**; não entrou aqui porque não foi pedido (A5).
+- **Uma primeira posição velha segura a âncora da corrida durante minutos.** Visto a correr
+  a 2.31.0 no emulador: a primeira posição que chegou foi a última da sessão anterior —
+  Lisboa —, e as seguintes vinham do Porto. O `RunEngine` fez da primeira a âncora e
+  descartou as outras como saltos impossíveis, **sem mexer na âncora**, que é o que ele faz de
+  propósito; a distância ficou em 0,00 km durante mais de dois minutos. E o percurso guardou
+  o ponto velho: o mapa do resumo desenha uma linha de Lisboa ao Porto, e o desnível saiu com
+  90 m de uma subida que não houve. Num telemóvel verdadeiro isto acontece a quem aterra e
+  começa a correr. É do motor (área 11), anterior a esta versão, e não entrou (A5).
+- **«Elevation: 0 m» no detalhe da corrida.** O resumo esconde o zero de propósito — *«um
+  «0 m» num percurso plano é ruído»*, diz o comentário dele — e o detalhe da mesma corrida
+  mostra-o. Anterior a esta versão; não entrou (A5).
+
 ---
 
 ## Como manter isto honesto

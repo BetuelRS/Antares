@@ -13,6 +13,47 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.31.0] — 2026-09-10
+
+**A corrida passa a mostrar o que já correste.** O ecrã da corrida era um formulário — três grupos
+de opções e dois botões —, e o que se tinha corrido estava atrás de um botão chamado «Histórico».
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**. **Nenhuma coluna é nova.** Uma
+permissão nova, `READ_HEART_RATE`, pedida só a quem abre uma corrida e toca no pedido — e num
+conjunto à parte do da importação, para não a interromper a quem já a tinha concedido.
+
+### Adicionado
+
+- **A semana em primeiro**: quilómetros, quantas corridas, tempo e ritmo médio. O ritmo sai dos
+  totais, e não da média dos ritmos de cada corrida.
+- **As três últimas corridas e os recordes de 1, 5 e 10 km** no próprio ecrã.
+- **A frequência cardíaca média de cada corrida**, lida do Health Connect ao abrir o detalhe, se
+  houver um relógio a gravá-la. Sem relógio, não aparece nada.
+- **O tempo total ao lado do tempo em movimento**, quando são números diferentes — a correr, no
+  resumo e no detalhe. Sem pausa automática eram o mesmo número e o ecrã não dizia porquê.
+
+### Mudado
+
+- **As opções da corrida recolhem-se numa linha** — «Corrida · pausa automática · sem objetivo» —
+  com um «Alterar» que as abre numa folha.
+- **Sem permissão de localização, o ecrã mostra o que já correste**, com o pedido dentro do
+  cartão da semana. Antes, o pedido era o ecrã inteiro.
+- **O histórico passa a ser a lista**, com os filtros. Os totais e os recordes foram para o ecrã
+  da corrida: um facto num sítio só.
+- **A distância da semana escreve-se com uma casa decimal**, no ecrã da corrida e no painel de
+  treino — «8.3 km esta semana», e não «8.30».
+- **As listas de corridas dizem a data como o resto da app** — «dom, 6 set» e não «2026-09-06» — e
+  mostram o ritmo.
+
+### Corrigido
+
+- **Uma corrida sem percurso gravava um GPX vazio sem avisar.** O resumo passa a dizê-lo antes de
+  guardar, e o detalhe deixa de oferecer um ficheiro sem pontos.
+- **A tabela de parciais chamava-se «por km» com voltas lá dentro** — desde a 2.30.0, que meteu as
+  voltas na tabela e não mudou o título.
+- **O ecrã da corrida lia a história inteira — percurso e parciais de cada corrida — para mostrar
+  três recordes.** Passou a ler só os parciais, e a lista só as colunas que desenha.
+
 ## [2.30.0] — 2026-09-06
 
 **A corrida passa a dizer-te o quilómetro em voz alta.** Quem corre não olha para o

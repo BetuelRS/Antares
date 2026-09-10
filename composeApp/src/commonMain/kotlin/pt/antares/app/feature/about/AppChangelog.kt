@@ -23,9 +23,42 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.30.0"
+    const val CURRENT = "2.31.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.31.0",
+            title = "A corrida passa a mostrar o que já correste",
+            titleEn = "Running now shows what you have done",
+            highlights = listOf(
+                "**O ecrã da corrida abre com a tua semana** — quilómetros, quantas corridas, " +
+                    "tempo e ritmo médio. Era um formulário de opções sem um único número",
+                "**As últimas corridas e os recordes à vista**, e não atrás de um botão. As " +
+                    "opções recolhem-se numa linha, com um «Alterar» que as abre",
+                "**Sem permissão de localização continuas a ver o que correste.** O pedido passa " +
+                    "para dentro do cartão da semana, em vez de tapar o ecrã inteiro",
+                "**A frequência cardíaca média de cada corrida, se tiveres relógio**, lida do " +
+                    "Health Connect. Pede só essa permissão, e não mexe nas da importação",
+                "**O tempo total aparece ao lado do tempo em movimento** quando são números " +
+                    "diferentes — a correr, no resumo e no detalhe",
+                "**Uma corrida sem percurso diz que o GPX vai sair vazio**, e o detalhe deixa de " +
+                    "oferecer um ficheiro sem pontos. A tabela de parciais diz «e voltas» quando as tem",
+            ),
+            highlightsEn = listOf(
+                "**The run screen opens with your week** — distance, number of runs, time and " +
+                    "average pace. It was a form of options without a single number",
+                "**Your recent runs and records in sight**, not behind a button. The options fold " +
+                    "into one line, with a «Change» that opens them",
+                "**Without location permission you can still see what you ran.** The request " +
+                    "moves inside the week card instead of covering the whole screen",
+                "**The average heart rate of each run, if you wear a watch**, read from Health " +
+                    "Connect. It asks for that permission only and leaves the import ones alone",
+                "**Total time shows next to moving time** when they are different numbers — " +
+                    "while running, in the summary and in the detail",
+                "**A run without a route says its GPX will be empty**, and the detail stops " +
+                    "offering a file with no points. The splits table says «and laps» when it has them",
+            ),
+        ),
         AppVersion(
             name = "2.30.0",
             title = "A corrida passa a dizer-te o quilómetro em voz alta",
@@ -375,34 +408,7 @@ object AppChangelog {
                     "to be tappable",
             ),
         ),
-        AppVersion(
-            name = "2.20.1",
-            title = "A barra de baixo muda, e a corrida passa para o treino",
-            titleEn = "The bottom bar changes, and running moves into Train",
-            highlights = listOf(
-                "**O progresso ganha separador próprio.** Era a primeira coisa dentro do " +
-                    "«Perfil», atrás de um ícone de pessoa — e é o melhor ecrã da app",
-                "**A corrida sai da barra e vive dentro do Treino**, com os quilómetros da " +
-                    "semana e a última corrida. São os dois atividade, e ela ocupava um " +
-                    "quinto da barra para uma coisa que se faz umas vezes por mês",
-                "**O «Perfil» passa a «Mais»**, e junta num sítio só o que estava em dois: " +
-                    "os atalhos do corpo e o menu da app, que vivia atrás de uma engrenagem",
-                "**Os períodos do progresso deixam de se cortar.** «3 meses» lia-se «3» num " +
-                    "telemóvel estreito — um período que não existe",
-            ),
-            highlightsEn = listOf(
-                "**Progress gets its own tab.** It was the first thing inside «Profile», " +
-                    "behind a person icon — and it is the best screen in the app",
-                "**Running leaves the bar and lives inside Train**, with this week's " +
-                    "distance and your last run. Both are activity, and it took up a fifth " +
-                    "of the bar for something you do a few times a month",
-                "**«Profile» becomes «More»**, and gathers in one place what was in two: " +
-                    "the body shortcuts and the app menu, which lived behind a gear icon",
-                "**The progress periods stop being clipped.** «3 months» read as «3» on a " +
-                    "narrow phone — a period that does not exist",
-            ),
-        ),
-        // Da 2.2.0 à 2.20.0 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.20.1 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

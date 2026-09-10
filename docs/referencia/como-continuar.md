@@ -20,7 +20,25 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.30.0 é a última fechada**, a 2026-09-06. Esquema **v41** e catálogo **v6**,
+- **2.31.0 é a última fechada**, a 2026-09-10. Esquema **v41** e catálogo **v6**, inalterados, e
+  **nenhuma coluna é nova**. «O hub da corrida»: a semana em primeiro, as últimas corridas e os
+  recordes à vista, as opções numa folha, a frequência cardíaca de cada corrida se houver
+  relógio, e as quatro correcções que o dono mandou entrar. **1894 testes Kotlin**, 58 das
+  ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **Os recordes deixaram de custar o histórico inteiro.** Liam a `polyline` e o `splitsJson` de
+  todas as corridas de sempre; passaram a ler só o `splitsJson`. E há um terceiro ecrã com o
+  mesmo defeito, o cartão da corrida no «Hoje» — escrito em `o-que-ficou-de-fora.md`, para a
+  2.32.0.
+- **A frequência cardíaca tem conjunto de permissão à parte**, e não pode deixar de ter: o
+  `hasReadPermissions` exige o conjunto todo, e juntar-lha parava a importação a quem já a
+  tinha concedido. Guardado no `HealthPermissionsParityTest`.
+- **A corrida no aparelho apanhou dois defeitos que os testes não viam**, e um deles era da
+  2.30.0: a tabela a dizer «por km» com voltas dentro. E mostrou um do motor, anterior a tudo
+  isto — uma primeira posição velha segura a âncora durante minutos.
+- **A próxima do plano é a 2.32.0**, «O Hoje» — o primeiro dos dois ecrãs de todos os dias.
+  **Nada começa sem a palavra do dono** (A1).
+- *O que se segue é o estado até à 2.30.0.*
+- **2.30.0**, a 2026-09-06. Esquema **v41** e catálogo **v6**,
   inalterados, e **nenhuma coluna é nova**. «Avisos por voz e voltas»: a corrida diz o
   quilómetro, o ritmo desse quilómetro e o tempo total em voz alta, e ganha voltas marcadas à
   mão. **1875 testes Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados
