@@ -88,14 +88,18 @@ fun RunDetailScreen(
                         modifier = Modifier.padding(top = Spacing.xs),
                     )
                 }
-                Text(
-                    "${stringResource(Res.string.run_summary_elev)}: " +
-                        "${RunFormat.elevation(run.elevGainM, unidades)} " +
-                        stringResource(elevationUnitLabel(unidades)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = Spacing.xs),
-                )
+                // A mesma regra do resumo: abaixo de um metro não houve subida, e «0 m» num
+                // percurso plano é ruído. O detalhe mostrava-o, e o resumo da mesma corrida não.
+                if (run.elevGainM >= 1.0) {
+                    Text(
+                        "${stringResource(Res.string.run_summary_elev)}: " +
+                            "${RunFormat.elevation(run.elevGainM, unidades)} " +
+                            stringResource(elevationUnitLabel(unidades)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.xs),
+                    )
+                }
                 // Só o que houver: sem relógio não há linha nenhuma, e não um «-- bpm» para sempre.
                 state.fcMedia?.let { bpm ->
                     Text(
