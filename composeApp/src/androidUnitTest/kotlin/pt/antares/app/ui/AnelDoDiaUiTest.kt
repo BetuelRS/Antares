@@ -66,7 +66,7 @@ class AnelDoDiaUiTest : FluxoUiHarness() {
         setContent {
             TodayScreen(
                 destinos = DestinosDoHoje(
-                    peso = {}, refeicao = {}, treino = {}, jejum = {},
+                    peso = {}, refeicao = {}, treino = {}, comecarRotina = {}, jejum = {},
                     corrida = {}, treinador = {}, perfil = {}, arranque = {},
                 ),
                 onQuickLog = { _, _, _, _ -> },

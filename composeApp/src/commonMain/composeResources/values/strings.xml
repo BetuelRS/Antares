@@ -193,7 +193,6 @@
     <string name="run_oem_body">Alguns fabricantes (Xiaomi, Huawei, etc.) podem parar a gravação com o ecrã desligado. Se isso acontecer, permite a execução sem restrições nas definições de bateria da app.</string>
     <string name="run_oem_ok">Entendido</string>
     <string name="today_run_title">Corrida</string>
-    <string name="today_run_none">Sem corridas ainda</string>
     <string name="today_run_last">Última: %1$s · %2$d kcal</string>
 
     <string name="today_streak_freeze">🧊 Falha perdoada esta semana</string>
@@ -953,7 +952,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_delete_cta">Apagar definitivamente</string>
     <string name="privacy_error">Não foi possível apagar no servidor: %1$s. Nada foi apagado no telemóvel.</string>
     <string name="today_fasting_title">Jejum</string>
-    <string name="today_fasting_none">Sem jejum ativo</string>
+    <string name="today_next_label">A seguir</string>
+    <string name="today_next_workout">O treino de hoje é %1$s</string>
+    <string name="today_next_protein">Faltam %1$d g de proteína</string>
+    <string name="today_next_water">Faltam %1$d ml de água</string>
+    <string name="today_next_start">Começar</string>
+    <string name="today_next_log">Registar</string>
 
     <string name="ai_describe">Descrever</string>
     <string name="ai_photo">Foto</string>

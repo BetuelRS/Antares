@@ -193,7 +193,6 @@
     <string name="run_oem_body">Some manufacturers (Xiaomi, Huawei, etc.) may stop recording with the screen off. If that happens, allow unrestricted background use in the app battery settings.</string>
     <string name="run_oem_ok">Got it</string>
     <string name="today_run_title">Run</string>
-    <string name="today_run_none">No runs yet</string>
     <string name="today_run_last">Last: %1$s · %2$d kcal</string>
 
     <string name="today_streak_freeze">🧊 One miss forgiven this week</string>
@@ -952,7 +951,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="privacy_delete_cta">Delete permanently</string>
     <string name="privacy_error">Could not delete on the server: %1$s. Nothing was deleted on the phone.</string>
     <string name="today_fasting_title">Fasting</string>
-    <string name="today_fasting_none">No active fast</string>
+    <string name="today_next_label">Up next</string>
+    <string name="today_next_workout">Today’s workout is %1$s</string>
+    <string name="today_next_protein">%1$d g of protein to go</string>
+    <string name="today_next_water">%1$d ml of water to go</string>
+    <string name="today_next_start">Start</string>
+    <string name="today_next_log">Log</string>
 
     <string name="ai_describe">Describe</string>
     <string name="ai_photo">Photo</string>

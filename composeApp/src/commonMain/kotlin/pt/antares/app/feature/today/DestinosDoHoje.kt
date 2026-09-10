@@ -11,6 +11,9 @@ class DestinosDoHoje(
     val peso: () -> Unit,
     val refeicao: () -> Unit,
     val treino: () -> Unit,
+
+    /** Começa a rotina agendada para hoje — o cartão do treino levava ao painel, a três toques dela. */
+    val comecarRotina: (String) -> Unit,
     val jejum: () -> Unit,
     val corrida: () -> Unit,
     val treinador: () -> Unit,

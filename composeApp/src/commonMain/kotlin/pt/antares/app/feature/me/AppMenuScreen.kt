@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
@@ -64,6 +65,10 @@ fun AppMenuScreen(
         MenuItem(Res.string.more_nutrition_stats, Icons.Default.BarChart, corpo.estatisticas)
         MenuItem(Res.string.rich_title, Icons.Default.Search, corpo.ricoEm)
         MenuItem(Res.string.coach_history_title, Icons.Default.AutoAwesome, corpo.treinador)
+        // Aqui desde a 2.32.0, quando o cartão do jejum deixou de aparecer no Hoje a quem não
+        // está a jejuar. Até aí o cartão era a única porta para o jejum em toda a app, e
+        // escondê-lo sem esta linha tirava o jejum a quem ainda não o tinha começado.
+        MenuItem(Res.string.fasting_title, Icons.Default.Timer, corpo.jejum)
 
         SectionHeader(title = stringResource(Res.string.more_group_app))
         MenuItem(Res.string.settings_general_title, Icons.Default.Settings, app.definicoes)
@@ -100,6 +105,7 @@ class DestinosDoCorpo(
     val estatisticas: () -> Unit,
     val ricoEm: () -> Unit,
     val treinador: () -> Unit,
+    val jejum: () -> Unit,
 )
 
 class DestinosDaApp(

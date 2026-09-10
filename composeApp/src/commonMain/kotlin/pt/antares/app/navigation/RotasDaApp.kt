@@ -31,6 +31,9 @@ internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
                 peso = { navController.navigate(Route.WeightHistory) },
                 refeicao = { navController.navigateToTab(Route.Diary) },
                 treino = { navController.navigateToTab(Route.Workout) },
+                // O mesmo caminho do ▶ do painel de treino: começa a rotina, ou retoma a que já
+                // estiver a decorrer — o `startOrResume` da sessão decide isso, e não o Hoje.
+                comecarRotina = { routineId -> navController.navigate(Route.WorkoutSession(routineId)) },
                 jejum = { navController.navigate(Route.Fasting) { launchSingleTop = true } },
                 // Um `navigate` e não um `navigateToTab`: a corrida deixou de ser separador, e
                 // saltar para ela pelo caminho dos separadores apagava a pilha até ao Hoje.
@@ -56,6 +59,7 @@ internal fun NavGraphBuilder.rotasDaApp(navController: NavHostController) {
                 estatisticas = { navController.navigate(Route.NutritionStats) },
                 ricoEm = { navController.navigate(Route.RichIn()) },
                 treinador = { navController.navigate(Route.CoachHistory) },
+                jejum = { navController.navigate(Route.Fasting) { launchSingleTop = true } },
             ),
             app = DestinosDaApp(
                 definicoes = { navController.navigate(Route.Settings) },

@@ -32,6 +32,8 @@ import pt.antares.app.core.nutrition.DailyGap
 import pt.antares.app.core.health.HealthRepository
 import pt.antares.app.core.util.DayTicker
 import pt.antares.app.core.util.epochDayToLocalDate
+import pt.antares.app.core.util.epochMillisToLocalDate
+import pt.antares.app.core.util.toEpochDay
 import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.feature.diary.DiaryRepository
 import pt.antares.app.feature.exercise.ExerciseRepository
@@ -73,6 +75,12 @@ data class TodayWorkout(
     val lastVolume: Double? = null,
 
     val scheduledRoutineName: String? = null,
+
+    /** O id da rotina do dia. Era encontrado e deitado fora, e é o que o toque precisa para a começar. */
+    val scheduledRoutineId: String? = null,
+
+    /** Se já houve um treino hoje. Sem isto, o «a seguir» mandava treinar quem já treinou. */
+    val treinouHoje: Boolean = false,
 )
 
 /**
@@ -208,6 +216,8 @@ class TodayViewModel(
                 hasActive = active != null,
                 lastVolume = history.firstOrNull()?.volume,
                 scheduledRoutineName = scheduledName,
+                scheduledRoutineId = routineId.takeIf { scheduledName != null },
+                treinouHoje = history.any { epochMillisToLocalDate(it.startedAt).toEpochDay() == today },
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayWorkout())

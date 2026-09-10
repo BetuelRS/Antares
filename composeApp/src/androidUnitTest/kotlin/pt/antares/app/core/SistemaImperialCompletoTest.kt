@@ -116,6 +116,7 @@ class SistemaImperialCompletoTest {
         "attrib_coverage" to "também é percentagem",
         "today_water_parts" to "a água regista-se e mostra-se em mililitros nos dois sistemas",
         "profile_goal_water" to "a mesma água, na lista de metas",
+        "today_next_water" to "a mesma água, na linha de «a seguir» do Hoje",
         "show_maths_lean" to
             "a Katch-McArdle é definida em quilos de massa magra; mostrar a fórmula em " +
                 "libras seria mostrar uma conta que ninguém publicou",

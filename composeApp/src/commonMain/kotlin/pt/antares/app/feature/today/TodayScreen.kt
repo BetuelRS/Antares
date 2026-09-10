@@ -52,7 +52,9 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.feature.backup.AvisoDeCopiaAtrasada
 import pt.antares.app.core.designsystem.distanceUnitLabel
 import pt.antares.app.core.model.UnitSystem
+import pt.antares.app.core.util.MINUTES_PER_HOUR
 import pt.antares.app.core.util.UnitConversions
+import pt.antares.app.core.util.epochMillisToMinuteOfDay
 import pt.antares.app.core.designsystem.success
 import pt.antares.app.core.designsystem.fmtG
 import pt.antares.app.core.designsystem.weightWithUnit
@@ -139,6 +141,20 @@ fun TodayScreen(
         )
     }
 
+    val proximoPasso = ProximoPassoCalc.escolher(
+        hora = epochMillisToMinuteOfDay(nowMin) / MINUTES_PER_HOUR,
+        treinoAgendado = workout.scheduledRoutineId?.let { id ->
+            ProximoPasso.Treino(id, workout.scheduledRoutineName.orEmpty())
+        },
+        treinouHoje = workout.treinouHoje,
+        treinoActivo = workout.hasActive,
+        proteinaMetaG = targets.proteinG,
+        proteinaConsumidaG = state.consumed.proteinG,
+        aguaMetaMl = state.waterGoalMl,
+        // A água da comida conta, porque a meta é de água total — é a mesma soma do cartão.
+        aguaBebidaMl = state.waterMl + ((aguaDaComida as? AguaDaComida.Resultado.Medida)?.ml ?: 0),
+    )
+
     GrelhaDeCartoes(
         modifier = Modifier
             .fillMaxSize()
@@ -160,16 +176,25 @@ fun TodayScreen(
         },
     ) {
 
-        // Em primeiro e não em último: o cartão só existe quando a cópia está atrasada, e
-        // quando existe é a coisa mais urgente do ecrã — todo o resto se volta a registar,
-        // três anos de diário não.
-        cartao { AvisoDeCopiaAtrasada() }
+        // A ordem é a do esboço 01, por degraus, e é fixa (2.32.0). Até aqui a meta era o
+        // quinto cartão — abaixo do aviso da cópia, do treinador, da sequência e das respostas
+        // em falta —, e num telemóvel ficava abaixo da dobra: a coisa que a pessoa abriu a app
+        // para ver estava fora do ecrã.
+        //
+        // Degrau 1: a meta do dia. Nunca abaixo de nada.
+        cartao { CartaoDaMeta(targets = targets, state = state, onAddMeal = destinos.refeicao) }
 
-        cartao { CoachTeaserCard(onOpen = destinos.treinador) }
-
-        if (streak.current >= 1) {
-            cartao { StreakCard(streak = streak) }
+        // Degrau 2: o que fazer a seguir. Só quando há — ver o `ProximoPassoCalc`.
+        proximoPasso?.let { passo ->
+            cartao {
+                CartaoDoProximoPasso(passo, onComecar = destinos.comecarRotina, onRegistar = destinos.refeicao)
+            }
         }
+
+        // Degrau 3: o que exige decisão. O aviso da cópia à cabeça dele: quando existe é a
+        // coisa mais urgente depois da meta — todo o resto se volta a registar, três anos de
+        // diário não.
+        cartao { AvisoDeCopiaAtrasada() }
 
         if (porResponder.isNotEmpty()) {
             cartao {
@@ -181,37 +206,45 @@ fun TodayScreen(
             }
         }
 
-        cartao { CartaoDaMeta(targets = targets, state = state, onAddMeal = destinos.refeicao) }
-
-        weeklyBudget?.let { orcamento -> cartao { WeeklyBudgetCard(orcamento) } }
+        cartao { CoachTeaserCard(onOpen = destinos.treinador) }
 
         dailyGap?.let { folga -> cartao { DailyGapCard(folga, onOpenGap) } }
 
+        // Degrau 4: o que está a acontecer agora. **Os cartões vazios deixaram de existir**
+        // (2.32.0): quem não está a jejuar deixou de ter um cartão a dizê-lo todos os dias. O
+        // jejum começa-se agora pelo «Mais», que ganhou a porta antes de este cartão a perder.
+        fasting?.let { sessao ->
+            cartao { CartaoDoJejum(sessao = sessao, agoraMs = nowMin, onAbrir = destinos.jejum) }
+        }
+        if (workout.hasActive) {
+            cartao { CartaoDoTreino(workout, state.unitSystem, destinos) }
+        }
+
+        // Degrau 5: o estado.
         cartao {
             CartaoDaAgua(state = state, aguaDaComida = aguaDaComida, onAbrirDiario = destinos.refeicao)
         }
 
-        cartao {
-            CartaoDoTreino(
-                treino = workout,
-                unidades = state.unitSystem,
-                onAbrir = destinos.treino,
-            )
-        }
-
-        cartao { CartaoDoJejum(sessao = fasting, agoraMs = nowMin, onAbrir = destinos.jejum) }
-
-        cartao {
-            CartaoDaCorrida(
-                corrida = lastRun,
-                unidades = state.unitSystem,
-                onAbrir = destinos.corrida,
-            )
-        }
+        cartao { CartaoDoPeso(state = state, onRegistarPeso = destinos.peso) }
 
         steps?.let { passos -> cartao { CartaoDosPassos(passos) } }
 
-        cartao { CartaoDoPeso(state = state, onRegistarPeso = destinos.peso) }
+        weeklyBudget?.let { orcamento -> cartao { WeeklyBudgetCard(orcamento) } }
+
+        if (streak.current >= 1) {
+            cartao { StreakCard(streak = streak) }
+        }
+
+        // O treino sem sessão a decorrer só aparece se tiver alguma coisa para dizer — um
+        // treino feito ou um agendado. A corrida, só se houver corrida. Os dois têm outra porta
+        // no separador Treino, e por isso podem calar-se aqui.
+        if (!workout.hasActive && (workout.lastVolume != null || workout.scheduledRoutineName != null)) {
+            cartao { CartaoDoTreino(workout, state.unitSystem, destinos) }
+        }
+
+        lastRun?.let { corrida ->
+            cartao { CartaoDaCorrida(corrida = corrida, unidades = state.unitSystem, onAbrir = destinos.corrida) }
+        }
     }
 }
 
@@ -337,10 +370,14 @@ private fun CartaoDaAgua(
 }
 
 @Composable
-private fun CartaoDoTreino(treino: TodayWorkout, unidades: UnitSystem, onAbrir: () -> Unit) {
+private fun CartaoDoTreino(treino: TodayWorkout, unidades: UnitSystem, destinos: DestinosDoHoje) {
+    // Com um treino agendado por fazer, o toque começa-o: era o defeito concreto 1 da área 01 —
+    // «Hoje: Peito e tríceps» levava ao painel de treino, a três toques da rotina.
+    val agendado = treino.scheduledRoutineId?.takeIf { !treino.hasActive && !treino.treinouHoje }
     AntaresCard(
-        modifier = Modifier.fillMaxWidth().cascadeIn(0)
-            .clickable(role = Role.Button, onClick = onAbrir),
+        modifier = Modifier.fillMaxWidth().cascadeIn(0).clickable(role = Role.Button) {
+            if (agendado != null) destinos.comecarRotina(agendado) else destinos.treino()
+        },
     ) {
         Text(stringResource(Res.string.today_workout_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(Spacing.xs))
@@ -377,14 +414,14 @@ private fun CartaoDoTreino(treino: TodayWorkout, unidades: UnitSystem, onAbrir: 
 }
 
 @Composable
-private fun CartaoDoJejum(sessao: FastingSessionEntity?, agoraMs: Long, onAbrir: () -> Unit) {
+private fun CartaoDoJejum(sessao: FastingSessionEntity, agoraMs: Long, onAbrir: () -> Unit) {
     AntaresCard(
         modifier = Modifier.fillMaxWidth().cascadeIn(1)
             .clickable(role = Role.Button, onClick = onAbrir),
     ) {
         Text(stringResource(Res.string.today_fasting_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(Spacing.sm))
-        if (sessao != null) {
+        run {
             val progress = FastingMachine.progress(sessao.toSnapshot(), agoraMs)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -410,18 +447,12 @@ private fun CartaoDoJejum(sessao: FastingSessionEntity?, agoraMs: Long, onAbrir:
                     )
                 }
             }
-        } else {
-            Text(
-                stringResource(Res.string.today_fasting_none),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }
 
 @Composable
-private fun CartaoDaCorrida(corrida: CorridaNaListaRow?, unidades: UnitSystem, onAbrir: () -> Unit) {
+private fun CartaoDaCorrida(corrida: CorridaNaListaRow, unidades: UnitSystem, onAbrir: () -> Unit) {
     val virgula = virgulaDecimal()
     AntaresCard(
         modifier = Modifier.fillMaxWidth().cascadeIn(2)
@@ -429,7 +460,7 @@ private fun CartaoDaCorrida(corrida: CorridaNaListaRow?, unidades: UnitSystem, o
     ) {
         Text(stringResource(Res.string.today_run_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(Spacing.xs))
-        if (corrida != null) {
+        run {
             Text(
                 // A distância aqui vinha sem unidade nenhuma — «Última: 3,50 · 250 kcal».
                 stringResource(
@@ -438,12 +469,6 @@ private fun CartaoDaCorrida(corrida: CorridaNaListaRow?, unidades: UnitSystem, o
                         stringResource(distanceUnitLabel(unidades)),
                     corrida.kcal,
                 ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        } else {
-            Text(
-                stringResource(Res.string.today_run_none),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -671,5 +696,42 @@ private fun MacroChip(label: String, consumedG: Double, targetG: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text("${consumedG.toInt()}/${targetG}g", style = MaterialTheme.typography.titleMedium)
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+/**
+ * A linha de «a seguir»: uma frase e o botão que a resolve. A regra está no [ProximoPassoCalc].
+ */
+@Composable
+private fun CartaoDoProximoPasso(passo: ProximoPasso, onComecar: (String) -> Unit, onRegistar: () -> Unit) {
+    AntaresCard(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    stringResource(Res.string.today_next_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    when (passo) {
+                        is ProximoPasso.Treino -> stringResource(Res.string.today_next_workout, passo.nome)
+                        is ProximoPasso.Proteina -> stringResource(Res.string.today_next_protein, passo.faltamG)
+                        is ProximoPasso.Agua -> stringResource(Res.string.today_next_water, passo.faltamMl)
+                    },
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            TextButton(onClick = { if (passo is ProximoPasso.Treino) onComecar(passo.routineId) else onRegistar() }) {
+                Text(
+                    stringResource(
+                        if (passo is ProximoPasso.Treino) Res.string.today_next_start else Res.string.today_next_log,
+                    ),
+                )
+            }
+        }
     }
 }
