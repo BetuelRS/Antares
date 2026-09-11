@@ -13,6 +13,28 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.32.1] — 2026-09-10
+
+**O Hoje ganha forma.** A segunda metade da 2.32.0: a ordem já estava certa, e faltava que o
+tamanho de cada cartão dissesse a importância dele.
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **Os passos com meta**: 8 000 por dia — onde a meta-análise de Paluch e colegas (2022) vê o
+  benefício estabilizar para todas as idades — com uma barra até lá, e a distância estimada pela
+  passada da tua altura, com «≈». Sem altura no perfil, a distância não aparece.
+
+### Mudado
+
+- **Os macros do cartão da meta passam a barras**, as mesmas do diário.
+- **Peso, passos, sequência, treino e corrida passam a cartões pequenos**, de dois em dois. A
+  água e a semana continuam grandes: a água diz quando não se sabe a água da comida, e a semana
+  avisa quando a conta está incompleta.
+- **O cartão do treinador mostra os números da semana** quando o relatório não tem foco — o mesmo
+  resumo que o histórico já mostrava.
+
 ## [2.32.0] — 2026-09-10
 
 **O Hoje abre pela tua meta.** Doze cartões com o mesmo peso, e a meta do dia em quinto — num

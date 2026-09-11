@@ -1290,6 +1290,19 @@ revisão, a conferir com o esboço proposta a proposta, que as apanhou.*
 **E fica aberto, com razão:** o convite semanal dos cartões que desapareceram — guardar quando
 se convidou é outra versão —, e escolher a ordem dos cartões, que o estudo marca «talvez».
 
+## O que a 2.32.1 fechou
+
+As quatro que a 2.32.0 lhe passou: **duas alturas de cartão**, com uma API nova na grelha · **o
+cartão de passos com meta e distância** · **as barras dos macros** no cartão da meta · **o
+treinador com os números da semana** quando o foco vem vazio.
+
+**Contra o esboço, e com razão escrita no código:** a água e a semana ficaram grandes. Em meia
+largura não cabiam a frase da água da comida por medir nem o aviso de semana incompleta.
+
+**Aberto:** escolher a meta de passos — hoje é 8 000 fixos, com a fonte escrita; a app não tem
+nenhum sítio onde a pessoa escolha uma meta que ela calcula, e abrir o primeiro é trabalho
+próprio. E, da 2.32.0, o convite semanal dos cartões que saíram e a ordem escolhível.
+
 ---
 
 ## Como manter isto honesto

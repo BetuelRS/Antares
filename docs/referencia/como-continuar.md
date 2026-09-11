@@ -20,7 +20,14 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
-- **2.32.0 é a última fechada**, a 2026-09-10, **aberta e fechada sem o dono**. Esquema **v41** e
+- **2.32.1 é a última fechada**, a 2026-09-10, também sem o dono. Esquema **v41** e catálogo
+  **v6**, inalterados. «A forma do Hoje»: cartões pequenos de dois em dois, barras dos macros,
+  passos com meta de 8 000 e distância estimada, e o treinador com números. **1911 testes
+  Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A `GrelhaDeCartoes` ganhou `pequeno { }`**, e as colunas alternam por blocos — um par de
+  pequenos é um bloco. A premissa do esboço, de que ela já sabia fazer meia largura, era falsa.
+- *O que se segue é o estado até à 2.32.0.*
+- **2.32.0**, a 2026-09-10, **aberta e fechada sem o dono**. Esquema **v41** e
   catálogo **v6**, inalterados. «O Hoje»: a meta sempre primeiro, a linha de «a seguir», os
   cartões vazios fora, e o toque no treino agendado a começá-lo. **1904 testes Kotlin**, 58 das
   ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
