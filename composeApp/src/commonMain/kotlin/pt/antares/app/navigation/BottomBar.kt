@@ -1,5 +1,6 @@
 package pt.antares.app.navigation
 
+import pt.antares.app.core.designsystem.components.AutoShrinkText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -70,7 +71,10 @@ fun AntaresBottomBar(navController: NavHostController) {
                 onClick = { navController.navigateToTab(item.route) },
                 // Decorativo: cada separador tem o seu nome por baixo do ícone.
                 icon = { Icon(item.icon, contentDescription = null) },
-                label = { Text(stringResource(item.label)) },
+                // Encolhe em vez de partir: a 200 % de letra, «Progress» partia-se a meio da
+                // palavra — «Progr / ess» —, visto a correr a 2.32.1. Uma palavra partida numa
+                // barra de cinco lê-se como duas coisas.
+                label = { AutoShrinkText(stringResource(item.label)) },
             )
         }
     }
@@ -95,7 +99,10 @@ fun AntaresNavigationRail(navController: NavHostController) {
                 onClick = { navController.navigateToTab(item.route) },
                 // Decorativo: o nome do separador está logo por baixo do ícone.
                 icon = { Icon(item.icon, contentDescription = null) },
-                label = { Text(stringResource(item.label)) },
+                // Encolhe em vez de partir: a 200 % de letra, «Progress» partia-se a meio da
+                // palavra — «Progr / ess» —, visto a correr a 2.32.1. Uma palavra partida numa
+                // barra de cinco lê-se como duas coisas.
+                label = { AutoShrinkText(stringResource(item.label)) },
             )
         }
     }
