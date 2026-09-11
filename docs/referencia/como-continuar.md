@@ -20,10 +20,26 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **A produção está em pausa desde 2026-09-11, por decisão do dono**, depois de fechada a 2.32.1:
+  *«fecha completamente a 2.32 (…) e depois faz uma pausa na produção direta»*. A próxima do plano
+  seria a **2.33.0**, «O Diário», e **não começa sem a palavra dele** (A1). A produção sem o dono,
+  que ele autorizou a 2026-09-10, fica suspensa com ela.
+- **O plano ficou zerado e foi reconstruído.** A 2026-09-10 às 22:39 a máquina caiu a meio de uma
+  escrita no `estudo/PLANO-DE-PRODUCAO.md`, e ele ficou com 319 197 bytes nulos e nenhum de texto.
+  A pasta `estudo/` está fora do git, e não havia cópia. Foi reconstruído a 2026-09-11 a partir da
+  transcrição da sessão: a última leitura completa (2026-09-06, 4 485 linhas) mais as 30 escritas
+  posteriores, reaplicadas pela ordem, e conferido contra 372 linhas que tinham sido impressas ao
+  longo do trabalho — as que não bateram eram todas linhas corrigidas depois ou texto de outro
+  ficheiro. Foi o único ficheiro estragado, em 933 varridos. **Pôr o `estudo/` num repositório, ou
+  numa cópia regular, é decisão do dono**, e fica-lhe proposta.
 - **2.32.1 é a última fechada**, a 2026-09-10, também sem o dono. Esquema **v41** e catálogo
   **v6**, inalterados. «A forma do Hoje»: cartões pequenos de dois em dois, barras dos macros,
   passos com meta de 8 000 e distância estimada, e o treinador com números. **1911 testes
   Kotlin**, 58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A 2.32.1 está publicada e verde**, conferido a 2026-09-11: a etiqueta `v2.32.1` em
+  `4ed102e`, release «2.32.1 — o Hoje ganha forma» com os quatro APKs mais o `catalogo.json` e o
+  `manifesto.json`, **CI verde nesse commit** — oito minutos —, e o `latest` a responder 200 aos
+  dois ficheiros. Os APKs foram recompilados a partir do `HEAD` antes de os anexar.
 - **A `GrelhaDeCartoes` ganhou `pequeno { }`**, e as colunas alternam por blocos — um par de
   pequenos é um bloco. A premissa do esboço, de que ela já sabia fazer meia largura, era falsa.
 - *O que se segue é o estado até à 2.32.0.*
