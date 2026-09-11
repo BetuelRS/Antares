@@ -40,8 +40,15 @@ class WeightDisplayTest {
 
     @Test
     fun `o cartao do peso no Hoje troca rotulo e valor`() {
-        val hoje = File("src/commonMain/kotlin/pt/antares/app/feature/today/TodayScreen.kt").readText()
-        val cartao = hoje.substringAfter("today_weight_title").substringBefore("today_weight_log_cta")
+        // Os fins de linha normalizados antes de procurar o fim da função: com CRLF, o `"\n}\n"`
+        // não aparecia, a janela passava a ser o resto do ficheiro, e o teste passava sempre.
+        val hoje = File("src/commonMain/kotlin/pt/antares/app/feature/today/TodayScreen.kt")
+            .readText().replace("\r\n", "\n")
+        // O corpo da função do cartão, e não o texto entre o título e o convite de registo.
+        // Olhava para essa janela até à 2.32.1, que passou o peso a cartão pequeno e calcula a
+        // unidade antes de escrever o título: a decisão continuava cumprida, e o teste deixou de
+        // a ver. Uma âncora que depende da ordem das linhas guarda a ordem, não a decisão.
+        val cartao = hoje.substringAfter("private fun PequenoDoPeso").substringBefore("\n}\n")
         assertTrue(cartao.isNotEmpty(), "não encontrei o cartão do peso — o teste deixou de olhar para o sítio certo")
 
         assertTrue(

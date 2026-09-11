@@ -193,7 +193,6 @@
     <string name="run_oem_body">Alguns fabricantes (Xiaomi, Huawei, etc.) podem parar a gravação com o ecrã desligado. Se isso acontecer, permite a execução sem restrições nas definições de bateria da app.</string>
     <string name="run_oem_ok">Entendido</string>
     <string name="today_run_title">Corrida</string>
-    <string name="today_run_last">Última: %1$s · %2$d kcal</string>
 
     <string name="today_streak_freeze">🧊 Falha perdoada esta semana</string>
     <string name="today_streak_keep">Regista hoje para manter a sequência</string>
@@ -958,6 +957,12 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="today_next_water">Faltam %1$d ml de água</string>
     <string name="today_next_start">Começar</string>
     <string name="today_next_log">Registar</string>
+    <string name="today_steps_title">Passos</string>
+    <string name="today_steps_detail">de %1$s · ≈ %2$s</string>
+    <string name="today_steps_goal">de %1$s</string>
+    <string name="today_streak_title">Sequência</string>
+    <string name="today_small_workout_today">agendado para hoje</string>
+    <string name="today_small_workout_last">último treino</string>
 
     <string name="ai_describe">Descrever</string>
     <string name="ai_photo">Foto</string>
@@ -1007,7 +1012,6 @@ Instituto Nacional de Saúde Doutor Ricardo Jorge, I. P. — INSA. Tabela da Com
     <string name="health_imported_nothing">Nada de novo para importar.</string>
     <string name="health_not_supported">Este telemóvel não tem Health Connect. A Antares funciona na mesma — isto é só um extra.</string>
     <string name="health_update_required">O Health Connect precisa de ser atualizado antes de a Antares o poder usar.</string>
-    <string name="health_steps">%1$s passos</string>
     <string name="health_rationale_title">Porque é que a Antares pede dados de saúde</string>
     <string name="health_rationale_body">A Antares lê os teus passos, pesagens e sessões de exercício para te poupar o trabalho de os escrever à mão. Esses dados ficam no teu telemóvel, na base de dados da app, e não saem daqui — a Antares não tem servidor nem conta. Podes revogar estas permissões a qualquer momento no Health Connect, e a Antares continua a funcionar sem elas.</string>
     <string name="ai_error_offline">Sem internet. A AI precisa de ligação — o resto da app não.</string>

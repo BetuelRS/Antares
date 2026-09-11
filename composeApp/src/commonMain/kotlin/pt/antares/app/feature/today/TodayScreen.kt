@@ -1,5 +1,8 @@
 package pt.antares.app.feature.today
 
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.foundation.layout.fillMaxHeight
+import pt.antares.app.core.designsystem.components.MacroBar
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -220,30 +223,33 @@ fun TodayScreen(
             cartao { CartaoDoTreino(workout, state.unitSystem, destinos) }
         }
 
-        // Degrau 5: o estado.
+        // Degrau 5: o estado. A água e a semana ficam grandes, contra o esboço, e com razão: a
+        // da água diz quando não se sabe a água da comida, e a da semana avisa quando a conta
+        // está incompleta — duas das coisas que o estudo mais elogia na app, e que em meia
+        // largura não cabiam. Os outros cinco são pequenos, de dois em dois (2.32.1).
         cartao {
             CartaoDaAgua(state = state, aguaDaComida = aguaDaComida, onAbrirDiario = destinos.refeicao)
         }
 
-        cartao { CartaoDoPeso(state = state, onRegistarPeso = destinos.peso) }
-
-        steps?.let { passos -> cartao { CartaoDosPassos(passos) } }
-
         weeklyBudget?.let { orcamento -> cartao { WeeklyBudgetCard(orcamento) } }
 
+        pequeno { PequenoDoPeso(state, onAbrir = destinos.peso) }
+
+        steps?.let { passos -> pequeno { PequenoDosPassos(passos, state) } }
+
         if (streak.current >= 1) {
-            cartao { StreakCard(streak = streak) }
+            pequeno { PequenoDaSequencia(streak) }
         }
 
         // O treino sem sessão a decorrer só aparece se tiver alguma coisa para dizer — um
         // treino feito ou um agendado. A corrida, só se houver corrida. Os dois têm outra porta
         // no separador Treino, e por isso podem calar-se aqui.
         if (!workout.hasActive && (workout.lastVolume != null || workout.scheduledRoutineName != null)) {
-            cartao { CartaoDoTreino(workout, state.unitSystem, destinos) }
+            pequeno { PequenoDoTreino(workout, state.unitSystem, destinos) }
         }
 
         lastRun?.let { corrida ->
-            cartao { CartaoDaCorrida(corrida = corrida, unidades = state.unitSystem, onAbrir = destinos.corrida) }
+            pequeno { PequenoDaCorrida(corrida, state.unitSystem, onAbrir = destinos.corrida) }
         }
     }
 }
@@ -297,14 +303,30 @@ private fun CartaoDaMeta(targets: Targets, state: TodayState, onAddMeal: () -> U
                 )
             }
 
+            // As barras do diário, e não três colunas de números: o que falta lê-se pela forma, e
+            // não pela subtração «62/140g». É o mesmo componente, com as mesmas cores de
+            // categoria e o excesso pela forma — dois cartões do mesmo dia não podiam desenhar os
+            // mesmos macros de duas maneiras.
             Spacer(Modifier.height(Spacing.md))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                MacroChip(stringResource(Res.string.onb_plan_protein), state.consumed.proteinG, targets.proteinG)
-                MacroChip(stringResource(Res.string.onb_plan_carbs), state.consumed.carbsG, targets.carbsG)
-                MacroChip(stringResource(Res.string.onb_plan_fat), state.consumed.fatG, targets.fatG)
+            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                MacroBar(
+                    label = stringResource(Res.string.onb_plan_protein),
+                    grams = state.consumed.proteinG,
+                    targetGrams = targets.proteinG,
+                    color = AntaresColors.macroProtein,
+                )
+                MacroBar(
+                    label = stringResource(Res.string.onb_plan_carbs),
+                    grams = state.consumed.carbsG,
+                    targetGrams = targets.carbsG,
+                    color = AntaresColors.macroCarbs,
+                )
+                MacroBar(
+                    label = stringResource(Res.string.onb_plan_fat),
+                    grams = state.consumed.fatG,
+                    targetGrams = targets.fatG,
+                    color = AntaresColors.macroFat,
+                )
             }
             Spacer(Modifier.height(Spacing.md))
             PrimaryButton(
@@ -452,70 +474,6 @@ private fun CartaoDoJejum(sessao: FastingSessionEntity, agoraMs: Long, onAbrir: 
 }
 
 @Composable
-private fun CartaoDaCorrida(corrida: CorridaNaListaRow, unidades: UnitSystem, onAbrir: () -> Unit) {
-    val virgula = virgulaDecimal()
-    AntaresCard(
-        modifier = Modifier.fillMaxWidth().cascadeIn(2)
-            .clickable(role = Role.Button, onClick = onAbrir),
-    ) {
-        Text(stringResource(Res.string.today_run_title), style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(Spacing.xs))
-        run {
-            Text(
-                // A distância aqui vinha sem unidade nenhuma — «Última: 3,50 · 250 kcal».
-                stringResource(
-                    Res.string.today_run_last,
-                    "${RunFormat.distance(corrida.distanceM, unidades, virgula)} " +
-                        stringResource(distanceUnitLabel(unidades)),
-                    corrida.kcal,
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-@Composable
-private fun CartaoDosPassos(passos: Long) {
-    AntaresCard(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            stringResource(Res.string.health_steps, passos.toString()),
-            style = MaterialTheme.typography.titleMedium,
-        )
-    }
-}
-
-@Composable
-private fun CartaoDoPeso(state: TodayState, onRegistarPeso: () -> Unit) {
-    AntaresCard(modifier = Modifier.fillMaxWidth()) {
-        Text(stringResource(Res.string.today_weight_title), style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(Spacing.sm))
-
-        val imperial = state.unitSystem == UnitSystem.IMPERIAL
-        val kgLabel = stringResource(if (imperial) Res.string.common_lb else Res.string.common_kg)
-
-        val latest = state.latestWeightKg?.let { UnitConversions.weightToDisplay(it, state.unitSystem) }
-        val trend = state.trendWeightKg?.let { UnitConversions.weightToDisplay(it, state.unitSystem) }
-        if (latest != null) {
-            Text("${fmtG(latest)} $kgLabel", style = MaterialTheme.typography.headlineMedium)
-            trend?.let { t ->
-                Text(
-                    "${stringResource(Res.string.today_weight_trend)}: ${fmtG(t)} $kgLabel",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        Spacer(Modifier.height(Spacing.md))
-        SecondaryButton(
-            text = stringResource(Res.string.today_weight_log_cta),
-            onClick = onRegistarPeso,
-        )
-    }
-}
-
-@Composable
 private fun WeeklyBudgetCard(budget: WeeklyBudget) {
     AntaresCard(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -635,42 +593,6 @@ private fun nomeDoPasso(step: OnboardingStep) = when (step) {
 }
 
 @Composable
-private fun StreakCard(streak: TodayStreak) {
-    AntaresCard(modifier = Modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
-            Text("🔥", style = MaterialTheme.typography.headlineMedium)
-            Column {
-                Text(
-                    pluralStringResource(Res.plurals.today_streak_days, streak.current, streak.current),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                val subtitle = when {
-
-                    !streak.loggedToday -> stringResource(Res.string.today_streak_keep)
-
-                    streak.current >= streak.longest -> stringResource(Res.string.today_streak_record_now)
-
-                    else -> pluralStringResource(Res.plurals.today_streak_record, streak.longest, streak.longest)
-                }
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                if (streak.freezeThisWeek) {
-                    Text(
-                        stringResource(Res.string.today_streak_freeze),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun MiniRing(fraction: Float, reachedGoal: Boolean) {
     val track = MaterialTheme.colorScheme.surfaceVariant
     val color = if (reachedGoal) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
@@ -688,14 +610,6 @@ private fun MiniRing(fraction: Float, reachedGoal: Boolean) {
                 style = stroke,
             )
         }
-    }
-}
-
-@Composable
-private fun MacroChip(label: String, consumedG: Double, targetG: Int) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("${consumedG.toInt()}/${targetG}g", style = MaterialTheme.typography.titleMedium)
-        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -734,4 +648,127 @@ private fun CartaoDoProximoPasso(passo: ProximoPasso, onComecar: (String) -> Uni
             }
         }
     }
+}
+
+/**
+ * Um cartão de meia largura: o nome em pequeno, o número grande, e uma linha. É o molde dos
+ * cinco cartões de estado do Hoje (2.32.1) — um componente só, para os cinco terem a mesma
+ * altura e se lerem como uma fila, e não como cinco ideias diferentes de cartão.
+ */
+@Composable
+private fun CartaoPequeno(
+    titulo: String,
+    valor: String,
+    detalhe: String?,
+    onClick: (() -> Unit)? = null,
+    rodape: (@Composable () -> Unit)? = null,
+) {
+    val base = Modifier.fillMaxWidth().fillMaxHeight()
+    AntaresCard(modifier = if (onClick != null) base.clickable(role = Role.Button, onClick = onClick) else base) {
+        Text(
+            titulo,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(valor, style = MaterialTheme.typography.titleLarge)
+        detalhe?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        rodape?.invoke()
+    }
+}
+
+@Composable
+private fun PequenoDoPeso(state: TodayState, onAbrir: () -> Unit) {
+    val kg = stringResource(if (state.unitSystem == UnitSystem.IMPERIAL) Res.string.common_lb else Res.string.common_kg)
+    val ultimo = state.latestWeightKg?.let { UnitConversions.weightToDisplay(it, state.unitSystem) }
+    val tendencia = state.trendWeightKg?.let { UnitConversions.weightToDisplay(it, state.unitSystem) }
+    CartaoPequeno(
+        titulo = stringResource(Res.string.today_weight_title),
+        // Sem pesagem, o número grande é o convite: o cartão inteiro leva ao registo.
+        valor = ultimo?.let { "${fmtG(it)} $kg" } ?: stringResource(Res.string.today_weight_log_cta),
+        detalhe = tendencia?.let { "${stringResource(Res.string.today_weight_trend)}: ${fmtG(it)} $kg" },
+        onClick = onAbrir,
+    )
+}
+
+@Composable
+private fun PequenoDosPassos(passos: Long, state: TodayState) {
+    val virgula = virgulaDecimal()
+    val meta = "${PassosCalc.META}"
+    // A distância é uma estimativa pela passada, e escreve-se com «≈». Sem altura não aparece.
+    val distancia = PassosCalc.distanciaM(passos, state.alturaCm?.toDouble())?.let { m ->
+        "${RunFormat.distance(m, state.unitSystem, virgula)} ${stringResource(distanceUnitLabel(state.unitSystem))}"
+    }
+    CartaoPequeno(
+        titulo = stringResource(Res.string.today_steps_title),
+        valor = "$passos",
+        detalhe = if (distancia != null) {
+            stringResource(Res.string.today_steps_detail, meta, distancia)
+        } else {
+            stringResource(Res.string.today_steps_goal, meta)
+        },
+        rodape = {
+            LinearProgressIndicator(
+                progress = { PassosCalc.fracao(passos).coerceAtMost(1f) },
+                modifier = Modifier.fillMaxWidth().padding(top = Spacing.xs),
+            )
+        },
+    )
+}
+
+@Composable
+private fun PequenoDaSequencia(streak: TodayStreak) {
+    val detalhe = when {
+        !streak.loggedToday -> stringResource(Res.string.today_streak_keep)
+        streak.current >= streak.longest -> stringResource(Res.string.today_streak_record_now)
+        else -> pluralStringResource(Res.plurals.today_streak_record, streak.longest, streak.longest)
+    }
+    CartaoPequeno(
+        titulo = stringResource(Res.string.today_streak_title),
+        valor = "🔥 " + pluralStringResource(Res.plurals.today_streak_days, streak.current, streak.current),
+        detalhe = detalhe,
+        rodape = if (streak.freezeThisWeek) {
+            {
+                Text(
+                    stringResource(Res.string.today_streak_freeze),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+            }
+        } else {
+            null
+        },
+    )
+}
+
+/** O treino em estado: o agendado por fazer primeiro, e o toque começa-o; senão, o último. */
+@Composable
+private fun PequenoDoTreino(treino: TodayWorkout, unidades: UnitSystem, destinos: DestinosDoHoje) {
+    val agendado = treino.scheduledRoutineId?.takeIf { !treino.treinouHoje }
+    val nome = treino.scheduledRoutineName
+    CartaoPequeno(
+        titulo = stringResource(Res.string.today_workout_title),
+        valor = when {
+            agendado != null && nome != null -> nome
+            treino.lastVolume != null -> weightWithUnit(treino.lastVolume, unidades)
+            else -> nome.orEmpty()
+        },
+        detalhe = stringResource(
+            if (agendado != null) Res.string.today_small_workout_today else Res.string.today_small_workout_last,
+        ),
+        onClick = { if (agendado != null) destinos.comecarRotina(agendado) else destinos.treino() },
+    )
+}
+
+@Composable
+private fun PequenoDaCorrida(corrida: CorridaNaListaRow, unidades: UnitSystem, onAbrir: () -> Unit) {
+    val virgula = virgulaDecimal()
+    CartaoPequeno(
+        titulo = stringResource(Res.string.today_run_title),
+        valor = "${RunFormat.distance(corrida.distanceM, unidades, virgula)} " +
+            stringResource(distanceUnitLabel(unidades)),
+        detalhe = "${corrida.kcal} ${stringResource(Res.string.common_kcal)}",
+        onClick = onAbrir,
+    )
 }

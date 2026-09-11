@@ -246,17 +246,7 @@ fun CoachHistoryScreen(
                         ),
                         style = MaterialTheme.typography.titleMedium,
                     )
-                    // O `focus` é sempre vazio enquanto o relatório for determinístico
-                    // (AdaptiveTargetsOfflineTest exige-o), por isso a linha cai nos
-                    // números da semana — sem isto o cartão fica só com a data.
-                    val resumo = report.focus.takeIf { it.isNotBlank() }
-                        ?: report.aggregate?.let { agg ->
-                            stringResource(
-                                Res.string.coach_row_summary,
-                                agg.loggedDays,
-                                agg.avgKcal,
-                            )
-                        }
+                    val resumo = resumoDoRelatorio(report)
                     if (resumo != null) {
                         Text(
                             text = resumo,
@@ -270,6 +260,20 @@ fun CoachHistoryScreen(
         }
     }
 }
+
+/**
+ * O que um relatório diz numa linha: o foco, ou, sem foco, os números da semana.
+ *
+ * O `focus` é sempre vazio enquanto o relatório for determinístico (o
+ * `AdaptiveTargetsOfflineTest` exige-o), e por isso a linha cai nos números. Vive aqui, e
+ * não em cada cartão, porque o histórico e o Hoje diziam coisas diferentes do mesmo relatório.
+ */
+@Composable
+internal fun resumoDoRelatorio(report: CoachReportUi): String? =
+    report.focus.takeIf { it.isNotBlank() }
+        ?: report.aggregate?.let { agg ->
+            stringResource(Res.string.coach_row_summary, agg.loggedDays, agg.avgKcal)
+        }
 
 @Composable
 fun CoachTeaserCard(
@@ -292,12 +296,12 @@ fun CoachTeaserCard(
                     text = stringResource(Res.string.coach_teaser_title),
                     style = MaterialTheme.typography.titleMedium,
                 )
-                // O foco pode vir vazio — há semanas em que o treinador não tem nada de
-                // novo a apontar. Sem esta condição ficava uma linha em branco com espaço
-                // por cima, que se lê como um texto que não carregou.
-                if (report.focus.isNotBlank()) {
+                // Com o foco vazio, os números da semana — como o histórico já fazia. Até à
+                // 2.32.1 o cartão escondia só a linha, e ficava com o título e o botão: um
+                // cartão do treinador que não dizia nada sobre a semana.
+                resumoDoRelatorio(report)?.let { resumo ->
                     Text(
-                        text = report.focus,
+                        text = resumo,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2,

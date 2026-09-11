@@ -58,6 +58,9 @@ data class TodayState(
     val waterMl: Int = 0,
     val waterGoalMl: Int = 2000,
     val exerciseKcal: Int = 0,
+
+    /** Para a distância dos passos, que se estima da passada. Nula sem perfil. */
+    val alturaCm: Int? = null,
 )
 
 data class TodayStreak(
@@ -303,6 +306,7 @@ class TodayViewModel(
                 waterGoalMl = waterGoal,
                 exerciseKcal = exerciseKcal,
                 unitSystem = perfil?.unitSystem ?: UnitSystem.METRIC,
+                alturaCm = perfil?.heightCm,
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
