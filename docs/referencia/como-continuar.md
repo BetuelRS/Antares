@@ -32,6 +32,23 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   longo do trabalho — as que não bateram eram todas linhas corrigidas depois ou texto de outro
   ficheiro. Foi o único ficheiro estragado, em 933 varridos. **Pôr o `estudo/` num repositório, ou
   numa cópia regular, é decisão do dono**, e fica-lhe proposta.
+- **2.32.2**, a 2026-09-12, **por ordem do dono**, com a produção em pausa. Esquema **v41** e
+  catálogo **v6**, inalterados. «O ruído do ecrã de exercício»: o chip «Todas» só aparece com
+  categoria escolhida, e o MET sai da lista para o cartão de registo. **1916 testes Kotlin**, 58
+  das ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **Nasceu como 2.19.1 no plano e sai como 2.32.2**: o `versionCode` deriva do nome, e 21901
+  ficava abaixo dos 23201 da 2.32.1 — o Android recusa instalar por cima, e a única saída era
+  desinstalar, que apaga os dados. **Uma versão do plano com número mais baixo do que a última
+  publicada tem de mudar de número.**
+- **A segunda revisão da D7 apanhou cinco defeitos**, e o pior é da família que só se vê a correr:
+  o chip «Todas» voltava ao início da fila e levava para fora do ecrã **a categoria que se acabou
+  de tocar**, quando era uma do fim — e a corrida no aparelho só tinha escolhido a primeira. Os
+  outros: o número de testes-guarda era o da versão anterior (são **88**), o registo dizia
+  `FlowRow` onde o código tem `LazyRow`, uma referência à 2.19.1 sem o número publicado, e a
+  margem de um MET que já não existia. A revisão está em `estudo/revisoes/2.19.1-d7.txt`.
+- **A produção continua em pausa** depois dela: a próxima do plano é a **2.33.0**, e não começa
+  sem a palavra do dono (A1).
+- *O que se segue é o estado até à 2.32.1.*
 - **2.32.1 é a última fechada**, a 2026-09-10, também sem o dono. Esquema **v41** e catálogo
   **v6**, inalterados. «A forma do Hoje»: cartões pequenos de dois em dois, barras dos macros,
   passos com meta de 8 000 e distância estimada, e o treinador com números. **1911 testes

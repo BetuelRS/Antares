@@ -292,7 +292,8 @@ ficou por decisão, não por omissão. Ver as respostas de abertura no plano.
   ~150** — é um número do estudo, e o estudo não se reescreve a partir do código.
 - **O que a área 13 propõe e continua aberto:** o chip «Todas», que está sempre lá por ser o
   estado por omissão, e o `MET 7,0` em cada linha da lista, que o documento diz ser ruído
-  fora do detalhe. Nenhum dos dois estava no conteúdo desta versão — **ganharam a 2.19.1**, e
+  fora do detalhe. Nenhum dos dois estava no conteúdo desta versão — **ganharam a 2.19.1**, que saiu como
+  **2.32.2** a 2026-09-12, e
   os favoritos e a importação de saúde em fundo ganharam a 2.49.0 e a 2.50.0.
 - **Uma proposta do estudo que se mediu e não se aguenta.** O `estudo/transversal/03-acessibilidade.md` §4 pede *«testes
   a 200 % de escala de letra (Robolectric com `fontScale`) — custo baixo, vale sim»*.
@@ -544,7 +545,6 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **2 909 alimentos em inglês** | 2.13.0 | trabalho de meses, na oficina |
 | **73,7 % do catálogo sem porção** | 2.14.0 | idem |
 | **A retenção do ciclo não sai do ecrã** | dez do estudo, #8 | 2.34.0, já no plano |
-| **O chip «Todas» e o `MET 7,0` em cada linha** | dez do estudo — não; `estudo/areas/13`, «o que é inútil» | **2.19.1**, que está no plano e não saiu |
 | **A frase do arranque** | 2.2.0, adiada pelo dono | 2.40.0, com data — e envelheceu bem: hoje está menos errada do que quando foi adiada |
 | **O `food_cache` sem expiração, o custo invisível, o modelo fixado no código** | `estudo/sistema/02` | são do servidor, e o modelo fixado é o ponto fraco da longevidade |
 | **A confiança e o intervalo publicado por alimento** — «confiança A · 124–136» | esboço 22, terceira passagem | **não se faz**: nenhuma das três fontes o publica de forma que o oleoduto traga, e inventá-lo é o contrário do que este catálogo faz |
@@ -555,6 +555,7 @@ Cada linha precisa de autorização para virar trabalho (A1).
 | **O recorde sem o número de onde veio** — o esboço 10 §3 escreve «1RM estimado subiu de 76 para 78 kg», e a app escreve «novo recorde» | 2.26.0, decidido | é uma leitura a mais por recorde; cabe onde os recordes forem trabalhados |
 | **«O teu maior volume de sempre»** — o «o que está mal» ponto 5 da `estudo/areas/10` | 2.26.0, decidido | é comparação com a história toda e não com a rotina; casa com os recordes |
 | **Os nomes dos exercícios saem em inglês** quando o catálogo não tem `namePt` — «Alternating Floor Press» nos recordes, com a app em português | 2.20.0 nomeia a convenção `namePt.ifBlank { nameEn }`; visto nos recordes a 2026-09-05 | é conteúdo do `seed_exercises.json`, e o `estudo/areas/09` trata da biblioteca — **2.27.0**. Contados a 2026-09-06: são **160 dos 873** |
+| ~~**O chip «Todas» e o `MET 7,0` em cada linha**~~ | dez do estudo — não; `estudo/areas/13`, «o que é inútil» | **feito na 2.32.2** — o chip só aparece com categoria escolhida, e o MET saiu da lista para o cartão de registo |
 | ~~**Os três filtros da biblioteca cortam o rótulo sem reticências** — «Equipame» a 100 %, «Mús · Equi · Nível» a 200 %~~ | visto a correr a 2026-09-06, nas duas escalas | **fechado na 2.27.0**: a barra passou a `FlowRow`, que quebra em vez de cortar, e o texto ganhou `TextOverflow.Ellipsis`. Entrou em troca da contagem nos filtros |
 
 **Não se corrige nada desta tabela por iniciativa minha.** Ela existe para o dono escolher, e
