@@ -58,6 +58,7 @@ import pt.antares.app.core.designsystem.components.MacroBar
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
 import pt.antares.app.core.designsystem.components.StatRing
+import pt.antares.app.core.designsystem.components.rememberDesfazer
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.core.util.dayShort
@@ -163,9 +164,20 @@ fun DiaryScreen(
 
         if (state.logsBySlot.isEmpty()) {
             item {
+                // A mesma cópia do «Copiar dia inteiro» do menu, com o mesmo desfazer: duas
+                // portas para a mesma acção não podem ter redes diferentes.
+                val desfazer = rememberDesfazer()
+                val mensagem = stringResource(Res.string.diary_copy_day_undo)
                 SecondaryButton(
                     text = stringResource(Res.string.diary_copy_yesterday),
-                    onClick = viewModel::copyYesterday,
+                    onClick = {
+                        viewModel.copyDayFrom(state.epochDay - 1) { criados ->
+                            // Ontem vazio não copia nada, e um desfazer de nada seria mentir.
+                            if (criados.isNotEmpty()) {
+                                desfazer(mensagem) { viewModel.desfazerCopiaDoDia(criados) }
+                            }
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

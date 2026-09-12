@@ -301,11 +301,6 @@ class DiaryViewModel(
     fun duplicateLog(logId: String) = viewModelScope.launch { diaryRepository.duplicate(logId) }
     fun moveLog(logId: String, slot: MealSlot) = viewModelScope.launch { diaryRepository.move(logId, slot) }
 
-    fun copyYesterday() {
-        val day = selectedDay.value
-        viewModelScope.launch { diaryRepository.copyDay(day - 1, day) }
-    }
-
     private val _copyDayCandidates = MutableStateFlow<List<DayCopyCandidate>?>(null)
     val copyDayCandidates: StateFlow<List<DayCopyCandidate>?> = _copyDayCandidates
 
@@ -323,6 +318,9 @@ class DiaryViewModel(
     /**
      * Copia o dia escolhido para o dia aberto, e devolve os ids criados a quem chamou — é o
      * ecrã que mostra o desfazer, e o desfazer precisa de saber exatamente o que apagar.
+     *
+     * É a única porta para copiar um dia: o «Copiar dia de ontem» do dia vazio também passa
+     * aqui. Tinha um `copyYesterday` próprio, sem desfazer, ao lado desta com ele.
      */
     fun copyDayFrom(fromEpochDay: Long, onDone: (List<String>) -> Unit) {
         val day = selectedDay.value
