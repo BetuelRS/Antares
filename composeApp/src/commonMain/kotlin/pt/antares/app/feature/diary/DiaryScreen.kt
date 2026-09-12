@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.foundation.layout.Box
@@ -115,7 +114,18 @@ fun DiaryScreen(
                 epochDay = state.epochDay,
                 onPrevious = viewModel::previousDay,
                 onNext = viewModel::nextDay,
-                onToday = viewModel::goToToday,
+                onPickDate = { folhas.pickDateOpen = true },
+                onCopyDay = { folhas.copyDayOpen = true; viewModel.loadCopyDayCandidates() },
+                onSearch = { folhas.searchOpen = true },
+            )
+        }
+
+        item(key = "week-strip") {
+            val diasDaSemana by viewModel.diasDaSemana.collectAsState()
+            DiaryWeekStrip(
+                epochDay = state.epochDay,
+                diasRegistados = diasDaSemana,
+                onDiaClick = viewModel::goToDay,
             )
         }
 
@@ -148,7 +158,7 @@ fun DiaryScreen(
         }
 
         item(key = "day-summary") {
-            DaySummaryCard(state)
+            DaySummaryCard(state, aguaDaComida)
         }
 
         if (state.logsBySlot.isEmpty()) {

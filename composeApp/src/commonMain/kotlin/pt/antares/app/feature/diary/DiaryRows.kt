@@ -1,8 +1,10 @@
 package pt.antares.app.feature.diary
 
 import androidx.compose.foundation.layout.height
+import pt.antares.app.core.calc.AguaDaComida
 import pt.antares.app.core.calc.DailyBudgetCalc
 import pt.antares.app.core.designsystem.AntaresColors
+import pt.antares.app.core.designsystem.macroInitials
 import pt.antares.app.core.designsystem.components.MacroBar
 import pt.antares.app.core.designsystem.components.StatRing
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -54,11 +56,16 @@ import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.designsystem.porcaoComUnidade
 import pt.antares.app.core.designsystem.components.AntaresCard
 import pt.antares.app.core.designsystem.components.AntaresHeroCard
+import pt.antares.app.core.designsystem.components.AutoShrinkText
+import pt.antares.app.core.designsystem.components.DeslizarParaApagar
+import pt.antares.app.core.designsystem.components.SemanaEmPontos
 import pt.antares.app.core.designsystem.components.rememberApagarComDesfazer
 import pt.antares.app.core.designsystem.components.AntaresGhostCard
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.core.util.dayShort
+import pt.antares.app.core.util.todayEpochDay
+import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.generated.resources.Res
 import pt.antares.app.core.nutrition.IncertezaDaComida
 import pt.antares.app.core.nutrition.provenanceResCurto
@@ -78,6 +85,9 @@ import kotlin.math.roundToInt
 internal fun MealHeader(
     slot: MealSlot,
     totalKcal: Int,
+    proteinG: Double,
+    carbsG: Double,
+    fatG: Double,
     hasLogs: Boolean,
     onOpenDetail: (() -> Unit)?,
     onAdd: () -> Unit,
@@ -90,7 +100,20 @@ internal fun MealHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(slotLabel(slot), style = MaterialTheme.typography.titleMedium)
+        Column {
+            Text(slotLabel(slot), style = MaterialTheme.typography.titleMedium)
+            // Só com registos: sem eles não há macro nenhum para dizer, e «P 0 H 0 G 0»
+            // é ruído numa refeição vazia.
+            if (totalKcal > 0) {
+                val m = macroInitials()
+                Text(
+                    "${m.p} ${proteinG.roundToInt()} · ${m.c} ${carbsG.roundToInt()} · " +
+                        "${m.f} ${fatG.roundToInt()}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (totalKcal > 0) {
 
@@ -378,6 +401,9 @@ internal fun LazyListScope.mealSection(
         MealHeader(
             slot = slot,
             totalKcal = logs.sumOf { it.kcalSnapshot },
+            proteinG = logs.sumOf { it.proteinSnapshot },
+            carbsG = logs.sumOf { it.carbsSnapshot },
+            fatG = logs.sumOf { it.fatSnapshot },
             hasLogs = logs.isNotEmpty(),
             onOpenDetail = if (logs.isNotEmpty()) ({ folhas.detailMeal = slot }) else null,
             onAdd = { folhas.addSheetSlot = slot },
@@ -399,24 +425,28 @@ internal fun LazyListScope.mealSection(
 
     items(logs, key = { it.id }) { log ->
         val apagar = rememberApagarComDesfazer()
-        LogRow(
-            log = log,
-            onOpen = { folhas.detailLog = log },
-            onEdit = { folhas.editLog = log },
-            onDuplicate = { viewModel.duplicateLog(log.id) },
-            onMove = { newSlot -> viewModel.moveLog(log.id, newSlot) },
-            onDelete = {
-                apagar({ viewModel.deleteLog(log.id) }, { viewModel.restoreLog(log.id) })
-            },
-        )
+        val onDelete = { apagar({ viewModel.deleteLog(log.id) }, { viewModel.restoreLog(log.id) }) }
+        DeslizarParaApagar(onApagar = onDelete) {
+            LogRow(
+                log = log,
+                onOpen = { folhas.detailLog = log },
+                onEdit = { folhas.editLog = log },
+                onDuplicate = { viewModel.duplicateLog(log.id) },
+                onMove = { newSlot -> viewModel.moveLog(log.id, newSlot) },
+                onDelete = onDelete,
+            )
+        }
     }
 }
 
 /**
- * A barra do dia: setas para trás e para a frente, e o dia ao meio.
+ * A barra do dia: setas para trás e para a frente, o dia ao meio, o calendário e o menu.
  *
- * O botão de voltar a hoje só aparece quando não se está em hoje — é o que impede a barra de
- * ter um botão que não faz nada em quatro dias de cada cinco.
+ * **O calendário abre um calendário.** Até à 2.32.2 o mesmo ícone só aparecia fora de hoje e
+ * chamava `onToday` — um calendário que não abria calendário nenhum, e que devolvia a hoje
+ * quem o tocasse à espera de escolher uma data. Agora está sempre à vista e abre sempre o
+ * `DateDialog`; o atalho de voltar a hoje passou para o dia realçado na tira de semana, logo
+ * abaixo — é o mesmo toque, só que agora também mostra a semana.
  */
 @Composable
 internal fun DayHeader(
@@ -424,8 +454,11 @@ internal fun DayHeader(
     epochDay: Long,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
-    onToday: () -> Unit,
+    onPickDate: () -> Unit,
+    onCopyDay: () -> Unit,
+    onSearch: () -> Unit,
 ) {
+    var menuOpen by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -437,18 +470,33 @@ internal fun DayHeader(
                 contentDescription = stringResource(Res.string.cd_previous_day),
             )
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                if (isToday) stringResource(Res.string.diary_today) else dayShort(epochDay),
-                style = MaterialTheme.typography.titleLarge,
+        AutoShrinkText(
+            if (isToday) stringResource(Res.string.diary_today) else dayShort(epochDay),
+            modifier = Modifier.weight(1f).padding(horizontal = Spacing.xs),
+            style = MaterialTheme.typography.titleLarge,
+        )
+        IconButton(onClick = onPickDate) {
+            Icon(
+                Icons.Default.CalendarToday,
+                contentDescription = stringResource(Res.string.diary_pick_date),
             )
-            if (!isToday) {
-                IconButton(onClick = onToday) {
-                    Icon(
-                        Icons.Default.CalendarToday,
-                        contentDescription = stringResource(Res.string.diary_today),
-                    )
-                }
+        }
+        Box {
+            IconButton(onClick = { menuOpen = true }) {
+                Icon(
+                    Icons.Default.MoreVert,
+                    contentDescription = stringResource(Res.string.diary_day_menu),
+                )
+            }
+            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.diary_copy_day)) },
+                    onClick = { menuOpen = false; onCopyDay() },
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.diary_search)) },
+                    onClick = { menuOpen = false; onSearch() },
+                )
             }
         }
         IconButton(onClick = onNext) {
@@ -458,6 +506,22 @@ internal fun DayHeader(
             )
         }
     }
+}
+
+/**
+ * A tira de semana do diário: sete dias, o registado a cheio, o de hoje realçado, e um toque
+ * salta para lá — é o `SemanaEmPontos` do treinador e do Progresso, com o toque que só o
+ * diário precisa.
+ */
+@Composable
+internal fun DiaryWeekStrip(epochDay: Long, diasRegistados: List<Long>, onDiaClick: (Long) -> Unit) {
+    SemanaEmPontos(
+        inicioEpochDay = weekStartEpochDay(epochDay),
+        diasMarcados = diasRegistados,
+        hoje = todayEpochDay(),
+        onDiaClick = onDiaClick,
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 /**
@@ -553,13 +617,20 @@ private const val MUITO_ADIVINHADO = 0.34
 private const val CEM = 100.0
 
 /**
- * O resumo do dia: o anel das calorias, as três barras de macros, e a janela alimentar.
+ * O resumo do dia: o anel das calorias, as três barras de macros, a água, e a janela
+ * alimentar.
  *
  * As barras mantêm a cor do macro em qualquer valor — a cor aqui é categoria e não estado, e
  * o excesso vê-se pela forma. Ver o `MacroBar`.
+ *
+ * **A água subiu para aqui na 2.33.0**, como quarta barra — mas o `WaterCard` do fim do
+ * diário não saiu: é onde se regista um copo, e um número que só se lê não substitui um
+ * botão que se toca. O esboço 02 desenha só a barra; ficam as duas, como a 2.32.1 já tinha
+ * decidido para a água e a semana do Hoje, com a mesma razão — perder o registo rápido
+ * custava mais do que a duplicação do número.
  */
 @Composable
-internal fun DaySummaryCard(state: DiaryState) {
+internal fun DaySummaryCard(state: DiaryState, aguaDaComida: AguaDaComida.Resultado) {
     AntaresHeroCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -616,6 +687,15 @@ internal fun DaySummaryCard(state: DiaryState) {
                     grams = state.totals.fatG,
                     targetGrams = t.fatG,
                     color = AntaresColors.macroFat,
+                )
+                Spacer(Modifier.height(Spacing.xs))
+                val daComida = (aguaDaComida as? AguaDaComida.Resultado.Medida)?.ml ?: 0
+                MacroBar(
+                    label = stringResource(Res.string.diary_water),
+                    grams = (state.waterMl + daComida).toDouble(),
+                    targetGrams = state.waterGoalMl,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    unit = stringResource(Res.string.common_ml),
                 )
             }
 

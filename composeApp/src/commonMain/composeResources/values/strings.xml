@@ -344,6 +344,14 @@
     <string name="diary_fast_clash_title">Jejum a decorrer</string>
     <string name="diary_fast_clash_body">Começou às %1$s. Depois disso ficaram %2$d registos no diário — o contador continua a subir na mesma.</string>
     <string name="diary_copy_yesterday">Copiar dia de ontem</string>
+    <string name="diary_pick_date">Escolher data</string>
+    <string name="diary_day_menu">Mais opções do dia</string>
+    <string name="diary_copy_day">Copiar dia inteiro</string>
+    <string name="diary_copy_day_undo">Dia copiado</string>
+    <string name="diary_copy_day_empty">Ainda não há nenhum dia registado para copiar.</string>
+    <string name="diary_search">Pesquisar no diário</string>
+    <string name="diary_search_hint">O que procuras?</string>
+    <string name="diary_search_empty">Nada encontrado.</string>
 
     <string name="meal_breakfast">Pequeno-almoço</string>
     <string name="meal_lunch">Almoço</string>

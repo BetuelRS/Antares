@@ -33,8 +33,10 @@ import pt.antares.app.core.designsystem.portionUnitLabel
 import pt.antares.app.core.designsystem.rememberUnitSystem
 import pt.antares.app.core.util.UnitConversions
 import pt.antares.app.feature.fooddata.paraCampo
+import pt.antares.app.core.designsystem.components.DateDialog
 import pt.antares.app.core.designsystem.components.PrimaryButton
 import pt.antares.app.core.designsystem.components.SecondaryButton
+import pt.antares.app.core.designsystem.components.rememberDesfazer
 import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.model.mealSlotLabel
 import pt.antares.app.core.util.dayShort
@@ -135,6 +137,102 @@ internal fun CopyFromDayDialog(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 2,
                             )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.common_cancel)) }
+        },
+    )
+}
+
+/**
+ * «Copiar dia inteiro»: escolhe-se o dia de origem, e os registos dele somam-se aos que já
+ * estiverem no dia aberto — como o [CopyFromDayDialog] já faz por refeição.
+ */
+@Composable
+internal fun CopyDayDialog(
+    candidates: List<DayCopyCandidate>?,
+    onPick: (Long) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.diary_copy_day)) },
+        text = {
+            when {
+                candidates == null -> Text(stringResource(Res.string.common_loading))
+                candidates.isEmpty() -> Text(stringResource(Res.string.diary_copy_day_empty))
+                else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                    items(candidates, key = { it.epochDay }) { dia ->
+                        Text(
+                            "${dayShort(dia.epochDay)} · ${dia.kcal} ${stringResource(Res.string.common_kcal)}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onPick(dia.epochDay) }
+                                .padding(vertical = Spacing.sm),
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.common_cancel)) }
+        },
+    )
+}
+
+/** Pesquisar pelo nome no histórico inteiro — não só no dia aberto. */
+@Composable
+internal fun DiarySearchDialog(
+    results: List<FoodLogEntity>,
+    onQueryChange: (String) -> Unit,
+    onPick: (FoodLogEntity) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var termo by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.diary_search)) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = termo,
+                    onValueChange = { termo = it; onQueryChange(it) },
+                    label = { Text(stringResource(Res.string.diary_search_hint)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                when {
+                    termo.isBlank() -> {}
+                    results.isEmpty() -> Text(
+                        stringResource(Res.string.diary_search_empty),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.sm),
+                    )
+                    else -> LazyColumn(
+                        modifier = Modifier.padding(top = Spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+                    ) {
+                        items(results, key = { it.id }) { log ->
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onPick(log) }
+                                    .padding(vertical = Spacing.sm),
+                            ) {
+                                Text(log.nameSnapshot, style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    "${dayShort(log.epochDay)} · ${log.kcalSnapshot} " +
+                                        stringResource(Res.string.common_kcal),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
                     }
                 }
@@ -460,6 +558,9 @@ internal class DiarySheets {
     var quickAddSlot by mutableStateOf<MealSlot?>(null)
     var copyIntoSlot by mutableStateOf<MealSlot?>(null)
     var clearMealSlot by mutableStateOf<MealSlot?>(null)
+    var pickDateOpen by mutableStateOf(false)
+    var copyDayOpen by mutableStateOf(false)
+    var searchOpen by mutableStateOf(false)
 
     // Não abre folha nenhuma: leva à pesquisa, no separador das refeições. Vive aqui na
     // mesma porque é o sítio onde os pedidos de uma secção do diário se juntam.
@@ -523,6 +624,39 @@ internal fun DiaryDialogHost(
             candidates = copyCandidates,
             onPick = { dia -> viewModel.copyMealFrom(dia, slot); folhas.copyIntoSlot = null },
             onDismiss = { folhas.copyIntoSlot = null; viewModel.closeCopyCandidates() },
+        )
+    }
+
+    if (folhas.pickDateOpen) {
+        DateDialog(
+            title = stringResource(Res.string.diary_pick_date),
+            initialEpochDay = epochDay,
+            onPick = { dia -> viewModel.goToDay(dia) },
+            onDismiss = { folhas.pickDateOpen = false },
+        )
+    }
+
+    if (folhas.copyDayOpen) {
+        val copyDayCandidates by viewModel.copyDayCandidates.collectAsState()
+        val desfazer = rememberDesfazer()
+        val mensagem = stringResource(Res.string.diary_copy_day_undo)
+        CopyDayDialog(
+            candidates = copyDayCandidates,
+            onPick = { dia ->
+                folhas.copyDayOpen = false
+                viewModel.copyDayFrom(dia) { criados -> desfazer(mensagem) { viewModel.desfazerCopiaDoDia(criados) } }
+            },
+            onDismiss = { folhas.copyDayOpen = false; viewModel.closeCopyDayCandidates() },
+        )
+    }
+
+    if (folhas.searchOpen) {
+        val resultados by viewModel.resultadosDaPesquisa.collectAsState()
+        DiarySearchDialog(
+            results = resultados,
+            onQueryChange = viewModel::pesquisar,
+            onPick = { log -> viewModel.goToDay(log.epochDay); folhas.searchOpen = false },
+            onDismiss = { folhas.searchOpen = false },
         )
     }
 

@@ -344,6 +344,14 @@
     <string name="diary_fast_clash_title">Fast in progress</string>
     <string name="diary_fast_clash_body">It started at %1$s. Since then %2$d entries were logged — the counter keeps running all the same.</string>
     <string name="diary_copy_yesterday">Copy yesterday</string>
+    <string name="diary_pick_date">Choose date</string>
+    <string name="diary_day_menu">More day options</string>
+    <string name="diary_copy_day">Copy whole day</string>
+    <string name="diary_copy_day_undo">Day copied</string>
+    <string name="diary_copy_day_empty">No day has been logged yet to copy from.</string>
+    <string name="diary_search">Search the diary</string>
+    <string name="diary_search_hint">What are you looking for?</string>
+    <string name="diary_search_empty">Nothing found.</string>
 
     <string name="meal_breakfast">Breakfast</string>
     <string name="meal_lunch">Lunch</string>
