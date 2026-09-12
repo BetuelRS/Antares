@@ -398,6 +398,35 @@ interface FoodLogDao {
     @Query("SELECT DISTINCT epochDay FROM food_log WHERE deleted = 0 AND epochDay >= :fromEpochDay")
     fun observeLoggedDaysSince(fromEpochDay: Long): Flow<List<Long>>
 
+    /** Os dias registados só dentro de uma janela — a tira de semana do diário, que é sete. */
+    @Query("SELECT DISTINCT epochDay FROM food_log WHERE deleted = 0 AND epochDay BETWEEN :from AND :to")
+    fun observeLoggedDaysBetween(from: Long, to: Long): Flow<List<Long>>
+
+    /** Os dias com registo, mais recente primeiro — a lista de onde «copiar o dia inteiro». */
+    @Query(
+        """
+        SELECT DISTINCT epochDay FROM food_log
+        WHERE deleted = 0 AND epochDay < :beforeDay
+        ORDER BY epochDay DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun recentDaysWithLogs(beforeDay: Long, limit: Int = 14): List<Long>
+
+    /**
+     * Pesquisa no histórico pelo nome do registo. Sem FTS próprio: o `food_log` não é o
+     * catálogo, e o histórico de uma pessoa não é grande o suficiente para custar um `LIKE`.
+     */
+    @Query(
+        """
+        SELECT * FROM food_log
+        WHERE deleted = 0 AND nameSnapshot LIKE '%' || :query || '%'
+        ORDER BY epochDay DESC, updatedAt DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun searchByName(query: String, limit: Int = 50): List<FoodLogEntity>
+
     @Query(
         """
         SELECT COALESCE(SUM(kcalSnapshot), 0) AS kcal,

@@ -156,4 +156,86 @@ class DiaryViewModelTest : ViewModelHarness() {
         assertEquals(null, porRefeicao.logsBySlot[MealSlot.LUNCH]?.firstOrNull())
         assertEquals(600, porRefeicao.logsBySlot[MealSlot.DINNER]?.first()?.kcalSnapshot)
     }
+
+    // ---- a tira de semana ------------------------------------------------------------
+
+    @Test
+    fun `a tira de semana so ve os dias registados dentro dela`() = runTest(dispatcher) {
+        val vm = diaryViewModel()
+        val inicioDaSemana = pt.antares.app.core.util.weekStartEpochDay(hoje)
+        db.foodLogDao().upsert(registo(kcal = 300, dia = inicioDaSemana))
+        db.foodLogDao().upsert(registo(kcal = 400, dia = inicioDaSemana - 1, id = "fora-da-semana"))
+        advanceUntilIdle()
+
+        val dias = vm.diasDaSemana.first { it.isNotEmpty() }
+        assertEquals(listOf(inicioDaSemana), dias)
+    }
+
+    // ---- pesquisar no historico -------------------------------------------------------
+
+    @Test
+    fun `pesquisar encontra pelo nome em qualquer dia`() = runTest(dispatcher) {
+        val vm = diaryViewModel()
+        db.foodLogDao().upsert(
+            registo(kcal = 500, dia = hoje - 40, id = "bacalhau").copy(nameSnapshot = "Bacalhau à Gomes de Sá"),
+        )
+        advanceUntilIdle()
+
+        vm.pesquisar("bacalhau")
+        advanceUntilIdle()
+
+        val achado = vm.resultadosDaPesquisa.first { it.isNotEmpty() }
+        assertEquals("bacalhau", achado.single().id)
+    }
+
+    // ---- copiar o dia inteiro ----------------------------------------------------------
+
+    @Test
+    fun `copiar o dia inteiro acrescenta aos registos que ja la estao`() = runTest(dispatcher) {
+        val vm = diaryViewModel()
+        db.foodLogDao().upsert(registo(kcal = 300, dia = hoje - 2, id = "a"))
+        db.foodLogDao().upsert(registo(kcal = 400, dia = hoje - 2, id = "b"))
+        db.foodLogDao().upsert(registo(kcal = 100, dia = hoje, id = "ja-la-estava"))
+        advanceUntilIdle()
+
+        var criados: List<String>? = null
+        vm.copyDayFrom(hoje - 2) { criados = it }
+        advanceUntilIdle()
+
+        assertEquals(2, criados?.size)
+        assertEquals(800, vm.state.first { it.totals.kcal == 800 }.totals.kcal)
+    }
+
+    @Test
+    fun `desfazer a copia do dia apaga so o que ela criou`() = runTest(dispatcher) {
+        val vm = diaryViewModel()
+        db.foodLogDao().upsert(registo(kcal = 300, dia = hoje - 2, id = "a"))
+        db.foodLogDao().upsert(registo(kcal = 100, dia = hoje, id = "ja-la-estava"))
+        advanceUntilIdle()
+
+        var criados: List<String>? = null
+        vm.copyDayFrom(hoje - 2) { criados = it }
+        advanceUntilIdle()
+
+        vm.desfazerCopiaDoDia(requireNotNull(criados))
+        advanceUntilIdle()
+
+        val estado = vm.state.first { it.totals.kcal == 100 }
+        assertEquals(listOf("ja-la-estava"), estado.logsBySlot.values.flatten().map { it.id })
+    }
+
+    @Test
+    fun `os candidatos a copiar vem do mais recente e sem o dia de hoje`() = runTest(dispatcher) {
+        val vm = diaryViewModel()
+        db.foodLogDao().upsert(registo(kcal = 300, dia = hoje - 3, id = "a"))
+        db.foodLogDao().upsert(registo(kcal = 200, dia = hoje - 1, id = "b"))
+        db.foodLogDao().upsert(registo(kcal = 900, dia = hoje, id = "hoje-mesmo"))
+        advanceUntilIdle()
+
+        vm.loadCopyDayCandidates()
+        advanceUntilIdle()
+
+        val candidatos = vm.copyDayCandidates.first { it != null }
+        assertEquals(listOf(hoje - 1, hoje - 3), candidatos?.map { it.epochDay })
+    }
 }

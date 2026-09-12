@@ -3,14 +3,17 @@ package pt.antares.app.feature.diary
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pt.antares.app.core.util.weekStartEpochDay
 import pt.antares.app.core.calc.AguaDaComida
 import pt.antares.app.core.calc.DailyGoals
 import pt.antares.app.core.calc.Targets
@@ -104,7 +107,7 @@ private data class ExerciseInfo(
     val jejum: pt.antares.app.core.database.entities.FastingSessionEntity?,
 )
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class DiaryViewModel(
     private val diaryRepository: DiaryRepository,
     private val profileRepository: ProfileRepository,
@@ -140,6 +143,32 @@ class DiaryViewModel(
             AguaDaComida.doDia(statsRepository.totals(day, day))
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AguaDaComida.Resultado.SemRegisto)
+
+    /**
+     * Os dias com registo dentro da semana do dia aberto — a tira de semana do cabeçalho.
+     *
+     * A semana muda com o dia selecionado, e não só com hoje: ver a segunda passada, com o
+     * dia aberto lá dentro, mostra a semana dela e não a de agora.
+     */
+    val diasDaSemana: StateFlow<List<Long>> = selectedDay.flatMapLatest { day ->
+        val inicio = weekStartEpochDay(day)
+        diaryRepository.observeLoggedDaysBetween(inicio, inicio + 6)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    private val _termoDePesquisa = MutableStateFlow("")
+
+    /**
+     * Pesquisa pelo nome no histórico inteiro, com o mesmo atraso da pesquisa local de
+     * alimentos — não dispara uma consulta por tecla.
+     */
+    val resultadosDaPesquisa: StateFlow<List<FoodLogEntity>> = _termoDePesquisa
+        .debounce(300)
+        .map { diaryRepository.searchLogs(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    fun pesquisar(termo: String) {
+        _termoDePesquisa.value = termo
+    }
 
     private val _templateSaved = MutableStateFlow<String?>(null)
     val templateSaved: StateFlow<String?> = _templateSaved
@@ -277,6 +306,36 @@ class DiaryViewModel(
         val day = selectedDay.value
         viewModelScope.launch { diaryRepository.copyDay(day - 1, day) }
     }
+
+    private val _copyDayCandidates = MutableStateFlow<List<DayCopyCandidate>?>(null)
+    val copyDayCandidates: StateFlow<List<DayCopyCandidate>?> = _copyDayCandidates
+
+    fun loadCopyDayCandidates() {
+        val day = selectedDay.value
+        viewModelScope.launch {
+            _copyDayCandidates.value = diaryRepository.recentDaysWithLogs(day)
+        }
+    }
+
+    fun closeCopyDayCandidates() {
+        _copyDayCandidates.value = null
+    }
+
+    /**
+     * Copia o dia escolhido para o dia aberto, e devolve os ids criados a quem chamou — é o
+     * ecrã que mostra o desfazer, e o desfazer precisa de saber exatamente o que apagar.
+     */
+    fun copyDayFrom(fromEpochDay: Long, onDone: (List<String>) -> Unit) {
+        val day = selectedDay.value
+        viewModelScope.launch {
+            val criados = diaryRepository.copyDay(fromEpochDay, day)
+            _copyDayCandidates.value = null
+            onDone(criados)
+        }
+    }
+
+    fun desfazerCopiaDoDia(logIds: List<String>) =
+        viewModelScope.launch { diaryRepository.desfazerCopiaDoDia(logIds) }
 
     val repeatable: StateFlow<Map<MealSlot, pt.antares.app.feature.diary.RepeatableMeal>> =
         selectedDay.flatMapLatest { day ->

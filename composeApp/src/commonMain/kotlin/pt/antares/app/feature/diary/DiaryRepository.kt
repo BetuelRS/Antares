@@ -34,6 +34,9 @@ data class RepeatableMeal(
     val kcal: Int,
 )
 
+/** Um dia candidato a «copiar o dia inteiro», para escolher na lista. */
+data class DayCopyCandidate(val epochDay: Long, val kcal: Int)
+
 class DiaryRepository(
     private val foodLogDao: FoodLogDao,
     private val waterDao: WaterLogDao,
@@ -74,6 +77,10 @@ class DiaryRepository(
 
     fun observeLoggedDaysSince(fromEpochDay: Long): Flow<List<Long>> =
         foodLogDao.observeLoggedDaysSince(fromEpochDay)
+
+    /** Os dias registados só dentro da semana da tira — sete dias, não o histórico todo. */
+    fun observeLoggedDaysBetween(from: Long, to: Long): Flow<List<Long>> =
+        foodLogDao.observeLoggedDaysBetween(from, to)
 
     fun observeWater(epochDay: Long): Flow<WaterLogEntity?> = waterDao.observeDay(epochDay)
 
@@ -204,12 +211,36 @@ class DiaryRepository(
         foodLogDao.restore(logId, now())
     }
 
-    suspend fun copyDay(fromEpochDay: Long, toEpochDay: Long) = withContext(io) {
-        foodLogDao.dayLogs(fromEpochDay).forEach { log ->
-            foodLogDao.upsert(
-                log.copy(id = Ids.newUuid(), epochDay = toEpochDay, updatedAt = now()),
-            )
+    /**
+     * Copia o dia inteiro, acrescentando aos registos que já lá estiverem — como o
+     * [copyMeal] já faz. Devolve os ids criados, no molde do `applyTemplate`: é o que
+     * permite ao desfazer apagar exactamente estes, e não «o que está no dia».
+     */
+    suspend fun copyDay(fromEpochDay: Long, toEpochDay: Long): List<String> = withContext(io) {
+        foodLogDao.dayLogs(fromEpochDay).map { log ->
+            val novo = log.copy(id = Ids.newUuid(), epochDay = toEpochDay, updatedAt = now())
+            foodLogDao.upsert(novo)
+            novo.id
         }
+    }
+
+    /** Desfaz uma cópia de dia: apaga (com marca) só os registos que ela criou. */
+    suspend fun desfazerCopiaDoDia(logIds: List<String>) = withContext(io) {
+        val ts = now()
+        logIds.forEach { foodLogDao.softDelete(it, ts) }
+    }
+
+    /** Dias com registo antes de `beforeDay`, mais recente primeiro — para «copiar de». */
+    suspend fun recentDaysWithLogs(beforeDay: Long, limit: Int = 14): List<DayCopyCandidate> =
+        withContext(io) {
+            foodLogDao.recentDaysWithLogs(beforeDay, limit).map { dia ->
+                DayCopyCandidate(dia, foodLogDao.dayTotals(dia).kcal)
+            }
+        }
+
+    /** Pesquisa pelo nome no histórico inteiro — não só no dia aberto. */
+    suspend fun searchLogs(query: String, limit: Int = 50): List<FoodLogEntity> = withContext(io) {
+        if (query.isBlank()) emptyList() else foodLogDao.searchByName(query.trim(), limit)
     }
 
     suspend fun copyMeal(fromEpochDay: Long, toEpochDay: Long, slot: MealSlot) = withContext(io) {
