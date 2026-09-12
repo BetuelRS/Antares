@@ -567,15 +567,55 @@ internal class DiarySheets {
     var aplicarModeloSlot by mutableStateOf<MealSlot?>(null)
 }
 
+/**
+ * Os três diálogos do menu do cabeçalho do dia: escolher data, copiar o dia inteiro, e
+ * pesquisar. Separados do `DiaryDialogHost` para ele não crescer — é a mesma razão que
+ * tirou a fila de categorias do `AddExerciseScreen` na 2.32.2.
+ */
 @Composable
-internal fun DiaryDialogHost(
+private fun DiaryDayToolsDialogs(folhas: DiarySheets, viewModel: DiaryViewModel, epochDay: Long) {
+    if (folhas.pickDateOpen) {
+        DateDialog(
+            title = stringResource(Res.string.diary_pick_date),
+            initialEpochDay = epochDay,
+            onPick = { dia -> viewModel.goToDay(dia) },
+            onDismiss = { folhas.pickDateOpen = false },
+        )
+    }
+
+    if (folhas.copyDayOpen) {
+        val copyDayCandidates by viewModel.copyDayCandidates.collectAsState()
+        val desfazer = rememberDesfazer()
+        val mensagem = stringResource(Res.string.diary_copy_day_undo)
+        CopyDayDialog(
+            candidates = copyDayCandidates,
+            onPick = { dia ->
+                folhas.copyDayOpen = false
+                viewModel.copyDayFrom(dia) { criados -> desfazer(mensagem) { viewModel.desfazerCopiaDoDia(criados) } }
+            },
+            onDismiss = { folhas.copyDayOpen = false; viewModel.closeCopyDayCandidates() },
+        )
+    }
+
+    if (folhas.searchOpen) {
+        val resultados by viewModel.resultadosDaPesquisa.collectAsState()
+        DiarySearchDialog(
+            results = resultados,
+            onQueryChange = viewModel::pesquisar,
+            onPick = { log -> viewModel.goToDay(log.epochDay); folhas.searchOpen = false },
+            onDismiss = { folhas.searchOpen = false },
+        )
+    }
+}
+
+/** Os diálogos de acrescentar depressa: registo pendente, folha de adicionar, kcal soltas. */
+@Composable
+private fun DiaryQuickAddDialogs(
     folhas: DiarySheets,
-    viewModel: DiaryViewModel,
     epochDay: Long,
-    logsBySlot: Map<MealSlot, List<FoodLogEntity>>,
     onAddFood: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode) -> Unit,
     onQuickLog: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -> Unit,
-    onOpenFood: (String, MealSlot, Long) -> Unit,
+    viewModel: DiaryViewModel,
 ) {
     folhas.quickLogPendente?.let { pedido ->
         EscolherRefeicaoDialog(
@@ -617,46 +657,21 @@ internal fun DiaryDialogHost(
             onDismiss = { folhas.quickAddSlot = null },
         )
     }
+}
 
+/** Os diálogos do menu de uma refeição: copiar de outro dia, limpar, guardar como modelo, detalhe. */
+@Composable
+private fun DiaryMealActionDialogs(
+    folhas: DiarySheets,
+    viewModel: DiaryViewModel,
+    logsBySlot: Map<MealSlot, List<FoodLogEntity>>,
+) {
     folhas.copyIntoSlot?.let { slot ->
         val copyCandidates by viewModel.copyCandidates.collectAsState()
         CopyFromDayDialog(
             candidates = copyCandidates,
             onPick = { dia -> viewModel.copyMealFrom(dia, slot); folhas.copyIntoSlot = null },
             onDismiss = { folhas.copyIntoSlot = null; viewModel.closeCopyCandidates() },
-        )
-    }
-
-    if (folhas.pickDateOpen) {
-        DateDialog(
-            title = stringResource(Res.string.diary_pick_date),
-            initialEpochDay = epochDay,
-            onPick = { dia -> viewModel.goToDay(dia) },
-            onDismiss = { folhas.pickDateOpen = false },
-        )
-    }
-
-    if (folhas.copyDayOpen) {
-        val copyDayCandidates by viewModel.copyDayCandidates.collectAsState()
-        val desfazer = rememberDesfazer()
-        val mensagem = stringResource(Res.string.diary_copy_day_undo)
-        CopyDayDialog(
-            candidates = copyDayCandidates,
-            onPick = { dia ->
-                folhas.copyDayOpen = false
-                viewModel.copyDayFrom(dia) { criados -> desfazer(mensagem) { viewModel.desfazerCopiaDoDia(criados) } }
-            },
-            onDismiss = { folhas.copyDayOpen = false; viewModel.closeCopyDayCandidates() },
-        )
-    }
-
-    if (folhas.searchOpen) {
-        val resultados by viewModel.resultadosDaPesquisa.collectAsState()
-        DiarySearchDialog(
-            results = resultados,
-            onQueryChange = viewModel::pesquisar,
-            onPick = { log -> viewModel.goToDay(log.epochDay); folhas.searchOpen = false },
-            onDismiss = { folhas.searchOpen = false },
         )
     }
 
@@ -700,7 +715,15 @@ internal fun DiaryDialogHost(
             onDismiss = { folhas.detailMeal = null },
         )
     }
+}
 
+/** Os diálogos de um registo ou exercício já feito: detalhe e edição. */
+@Composable
+private fun DiaryLogEditDialogs(
+    folhas: DiarySheets,
+    viewModel: DiaryViewModel,
+    onOpenFood: (String, MealSlot, Long) -> Unit,
+) {
     folhas.detailLog?.let { log ->
         val ref by viewModel.nutritionRef.collectAsState()
         LogDetailSheet(
@@ -738,4 +761,20 @@ internal fun DiaryDialogHost(
             onDismiss = { folhas.editExercise = null },
         )
     }
+}
+
+@Composable
+internal fun DiaryDialogHost(
+    folhas: DiarySheets,
+    viewModel: DiaryViewModel,
+    epochDay: Long,
+    logsBySlot: Map<MealSlot, List<FoodLogEntity>>,
+    onAddFood: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode) -> Unit,
+    onQuickLog: (MealSlot, Long, pt.antares.app.feature.fooddata.AddMode, String) -> Unit,
+    onOpenFood: (String, MealSlot, Long) -> Unit,
+) {
+    DiaryQuickAddDialogs(folhas, epochDay, onAddFood, onQuickLog, viewModel)
+    DiaryMealActionDialogs(folhas, viewModel, logsBySlot)
+    DiaryDayToolsDialogs(folhas, viewModel, epochDay)
+    DiaryLogEditDialogs(folhas, viewModel, onOpenFood)
 }
