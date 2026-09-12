@@ -628,6 +628,10 @@ private const val CEM = 100.0
  * botão que se toca. O esboço 02 desenha só a barra; ficam as duas, como a 2.32.1 já tinha
  * decidido para a água e a semana do Hoje, com a mesma razão — perder o registo rápido
  * custava mais do que a duplicação do número.
+ *
+ * O número da barra é o mesmo do cartão da água do Hoje e do `WaterCard` — a bebida mais a da
+ * comida quando ela se sabe. Das duas frases desses cartões só uma sobe para aqui, a de quando
+ * se comeu sem cobertura: é a única em que o número da barra fica aquém do que ela diz medir.
  */
 @Composable
 internal fun DaySummaryCard(state: DiaryState, aguaDaComida: AguaDaComida.Resultado) {
@@ -697,6 +701,17 @@ internal fun DaySummaryCard(state: DiaryState, aguaDaComida: AguaDaComida.Result
                     color = MaterialTheme.colorScheme.tertiary,
                     unit = stringResource(Res.string.common_ml),
                 )
+                // Comeu-se e a parcela da comida não se sabe: a barra está a mostrar só o que se
+                // bebeu, e a meta é de água total. Sem esta linha o número lia-se como a água
+                // toda do dia. Sem nada comido não há parcela por medir, e cala-se.
+                if (aguaDaComida == AguaDaComida.Resultado.SemCobertura) {
+                    Text(
+                        stringResource(Res.string.diary_water_food_unknown),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
 
             state.janela?.let { janela ->
