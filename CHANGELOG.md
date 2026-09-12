@@ -13,6 +13,22 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.32.2] — 2026-09-12
+
+**O ruído do ecrã de exercício.** Nasceu como 2.19.1 no plano, e sai com este número: o
+`versionCode` deriva do nome e o de `2.19.1` (21901) ficava abaixo do da 2.32.1 já publicada
+(23201) — o Android recusa instalar por cima de um código mais baixo. Só tira, e é por isso
+CORREÇÃO e não MENOR.
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**.
+
+### Removido
+
+- **O chip «Todas»** deixou de estar sempre visível no ecrã de registar exercício: só aparece
+  quando há uma categoria escolhida, para a poderes desmarcar.
+- **O `MET` saiu da lista de atividades.** Continua à vista depois de escolheres uma, no cartão
+  de registo — era ruído repetido em noventa linhas antes disso.
+
 ## [2.32.1] — 2026-09-10
 
 **O Hoje ganha forma.** A segunda metade da 2.32.0: a ordem já estava certa, e faltava que o

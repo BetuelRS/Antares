@@ -1,5 +1,6 @@
 package pt.antares.app.feature.exercise
 
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.CircularProgressIndicator
@@ -91,25 +93,11 @@ fun AddExerciseScreen(
                 )
             }
 
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
-                modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm),
-            ) {
-                item {
-                    FilterChip(
-                        selected = state.category == null,
-                        onClick = { viewModel.setCategory(null) },
-                        label = { Text(stringResource(Res.string.exercise_cat_all)) },
-                    )
-                }
-                items(state.categories, key = { it }) { cat ->
-                    FilterChip(
-                        selected = state.category == cat,
-                        onClick = { viewModel.setCategory(cat) },
-                        label = { Text(stringResource(categoryLabel(cat))) },
-                    )
-                }
-            }
+            FilaDeCategorias(
+                categorias = state.categories,
+                escolhida = state.category,
+                onCategoria = viewModel::setCategory,
+            )
 
             ListaAdaptavel(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -174,6 +162,59 @@ fun AddExerciseScreen(
     }
 }
 
+@Composable
+private fun FilaDeCategorias(
+    categorias: List<String>,
+    escolhida: String?,
+    onCategoria: (String?) -> Unit,
+) {
+    val listState = rememberLazyListState()
+    // A `LazyRow` ancora ao item que já estava visível: sem isto, o chip «Todas» nasce à
+    // esquerda de quem já lá estava e fica fora do ecrã, invisível. Mas voltar ao início não
+    // pode levar o chip escolhido — é ele que diz o que filtra a lista — e com as categorias do
+    // fim da fila os dois não cabem juntos: aí ganha o escolhido, encostado à direita, e o
+    // «Todas» fica a uma rolagem.
+    LaunchedEffect(escolhida) {
+        val cat = escolhida ?: return@LaunchedEffect
+        val alvo = categorias.indexOf(cat) + 1
+        listState.scrollToItem(0)
+        val vista = listState.layoutInfo
+        val cabe = vista.visibleItemsInfo.any {
+            it.index == alvo && it.offset + it.size <= vista.viewportEndOffset
+        }
+        if (!cabe) {
+            listState.scrollToItem(alvo)
+            val depois = listState.layoutInfo
+            val item = depois.visibleItemsInfo.firstOrNull { it.index == alvo } ?: return@LaunchedEffect
+            listState.scrollBy((item.offset + item.size - depois.viewportEndOffset).toFloat())
+        }
+    }
+    LazyRow(
+        state = listState,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm),
+    ) {
+        // Só aparece com categoria escolhida: sem ela é o estado por omissão, e um chip que
+        // está sempre lá e nunca faz nada é ruído — estudo/areas/13.
+        if (escolhida != null) {
+            item(key = "todas") {
+                FilterChip(
+                    selected = false,
+                    onClick = { onCategoria(null) },
+                    label = { Text(stringResource(Res.string.exercise_cat_all)) },
+                )
+            }
+        }
+        items(categorias, key = { it }) { cat ->
+            FilterChip(
+                selected = escolhida == cat,
+                onClick = { onCategoria(cat) },
+                label = { Text(stringResource(categoryLabel(cat))) },
+            )
+        }
+    }
+}
+
 /**
  * O que se vai registar: a duração, as calorias que ela dá, e o botão.
  *
@@ -188,6 +229,15 @@ private fun CartaoDeRegisto(
     onSave: () -> Unit,
 ) {
     AntaresCard(modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.sm)) {
+        state.selected?.let { activity ->
+            // No detalhe é útil — diz de onde vem o número; na lista inteira era ruído
+            // para quem não sabe o que é um MET. estudo/areas/13, «o que é inútil».
+            Text(
+                "MET ${activity.met}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         CampoDeDuracao(durationMin = state.durationMin, onDuration = onDuration, onStep = onStep)
         Text(
             "${stringResource(Res.string.exercise_burned)}: ${state.previewKcal} " +
@@ -212,19 +262,13 @@ private fun ActivityRow(activity: MetActivity, selected: Boolean, onClick: () ->
             .selectable(selected = selected, onClick = onClick)
             .padding(vertical = Spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             activity.namePt,
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(1f, fill = false).padding(end = Spacing.md),
-        )
-        Text(
-            "MET ${activity.met}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f),
         )
     }
 }

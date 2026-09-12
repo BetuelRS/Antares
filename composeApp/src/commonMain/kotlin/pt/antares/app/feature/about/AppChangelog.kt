@@ -23,9 +23,26 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.32.1"
+    const val CURRENT = "2.32.2"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.32.2",
+            title = "O ruído do ecrã de exercício",
+            titleEn = "Less noise when logging exercise",
+            highlights = listOf(
+                "**O chip «Todas» só aparece depois de escolheres uma categoria** — sem ela, " +
+                    "estava sempre lá sem nada para desmarcar",
+                "**O MET sai da lista** e passa a ver-se só depois de escolheres a atividade, " +
+                    "no cartão de registo",
+            ),
+            highlightsEn = listOf(
+                "**The «All» chip only shows up once you pick a category** — without one, it " +
+                    "sat there with nothing to clear",
+                "**MET leaves the list** and now shows only after you pick the activity, on " +
+                    "the log card",
+            ),
+        ),
         AppVersion(
             name = "2.32.1",
             title = "O Hoje ganha forma",
@@ -373,26 +390,7 @@ object AppChangelog {
                     "exercise",
             ),
         ),
-        AppVersion(
-            name = "2.23.1",
-            title = "O horário passa a avisar, e uma supersérie passa a ser uma supersérie",
-            titleEn = "The schedule starts reminding you, and a superset becomes a superset",
-            highlights = listOf(
-                "**O treino marcado no horário avisa-te**, à hora que escolheres. Desligado " +
-                    "por omissão, e nunca avisa se já treinaste nesse dia",
-                "**Uma supersérie abre os dois exercícios ao mesmo tempo** — que é o que ela " +
-                    "é. Antes só um podia registar, e a app trocava de exercício sozinha a " +
-                    "meio da supersérie",
-            ),
-            highlightsEn = listOf(
-                "**The workout on your schedule reminds you**, at the time you choose. Off by " +
-                    "default, and never if you already trained that day",
-                "**A superset opens both exercises at once** — which is what a superset is. " +
-                    "Before, only one could be logged, and the app switched exercises on its " +
-                    "own halfway through",
-            ),
-        ),
-        // Da 2.2.0 à 2.23.0 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.23.1 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )
