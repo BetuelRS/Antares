@@ -98,7 +98,7 @@ class DiaryViewModelTest : ViewModelHarness() {
 
         vm.previousDay()
         advanceUntilIdle()
-        vm.goToToday()
+        vm.goToDay(hoje)
         advanceUntilIdle()
 
         assertTrue(vm.state.first { it.epochDay == hoje }.isToday)

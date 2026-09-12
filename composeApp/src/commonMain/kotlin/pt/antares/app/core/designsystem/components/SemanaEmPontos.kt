@@ -86,7 +86,7 @@ fun SemanaEmPontos(
                             .background(if (dia in diasMarcados) marcado else vazio),
                     )
                     Text(
-                        dayShort(dia).take(INICIAL_DO_DIA),
+                        rotulo.take(INICIAL_DO_DIA),
                         style = MaterialTheme.typography.labelSmall,
                         // O dia de hoje escreve-se na cor da app: sem isto, sete iniciais
                         // iguais não dizem em que ponto da semana se está.

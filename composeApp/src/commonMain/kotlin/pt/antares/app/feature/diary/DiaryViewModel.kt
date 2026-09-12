@@ -274,7 +274,6 @@ class DiaryViewModel(
 
     fun previousDay() = goToDay(selectedDay.value - 1)
     fun nextDay() = goToDay(selectedDay.value + 1)
-    fun goToToday() = goToDay(todayEpochDay())
 
     // Todas as ações leem o dia selecionado antes de lançar a corrotina. Lê-lo lá dentro
     // deixava a escrita cair no dia errado se a pessoa mudasse de data entretanto.
