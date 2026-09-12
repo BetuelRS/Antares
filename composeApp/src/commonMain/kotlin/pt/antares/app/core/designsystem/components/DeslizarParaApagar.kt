@@ -10,16 +10,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.stringResource
+import androidx.compose.ui.platform.LocalDensity
 import pt.antares.app.core.designsystem.Spacing
-import pt.antares.app.generated.resources.Res
-import pt.antares.app.generated.resources.common_delete
 
 /**
  * Uma linha que se apaga a deslizar, para qualquer um dos dois lados.
@@ -32,9 +32,15 @@ import pt.antares.app.generated.resources.common_delete
  * corre durante o próprio gesto — a confirmar o alvo a cada âncora que se cruza — e chamava
  * o apagar duas vezes por um deslizar só. O assentar acontece uma vez por gesto completo.
  *
+ * **O estado do gesto não é guardável, e é de propósito.** O `rememberSwipeToDismissBoxState`
+ * guarda-o com `rememberSaveable`, e uma lista com chave guarda o estado de cada item mesmo
+ * depois de ele sair. A linha reposta pelo desfazer tem a mesma chave, voltava **deslizada** —
+ * fora do ecrã — e o efeito de baixo apagava-a outra vez: o desfazer de um deslizar nunca
+ * funcionava. Perde-se o gesto a meio numa rotação, que não faz falta a ninguém.
+ *
  * **O gesto não se prova por `adb`** — nenhuma das formas de o injetar reproduz um deslizar
  * a sério, é a mesma lição do `ListaArrastavel` — e por isso vive coberto por um teste de
- * interface que constrói o gesto passo a passo.
+ * interface que constrói o gesto passo a passo, um deles dentro de uma lista.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +49,11 @@ fun DeslizarParaApagar(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val estado = rememberSwipeToDismissBoxState()
+    val densidade = LocalDensity.current
+    val limiar = SwipeToDismissBoxDefaults.positionalThreshold
+    val estado = remember(densidade) {
+        SwipeToDismissBoxState(SwipeToDismissBoxValue.Settled, densidade, { true }, limiar)
+    }
 
     LaunchedEffect(estado.currentValue) {
         if (estado.currentValue != SwipeToDismissBoxValue.Settled) onApagar()
@@ -66,7 +76,10 @@ fun DeslizarParaApagar(
             ) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.common_delete),
+                    // Decorativo: o fundo está sempre composto por baixo da linha, e com
+                    // descrição o leitor de ecrã anunciava um «Apagar» que não se toca em cada
+                    // registo. Quem usa o leitor apaga pelo menu da linha, que chama o mesmo.
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onErrorContainer,
                 )
             }
