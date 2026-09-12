@@ -35,6 +35,9 @@ fun MacroBar(
     targetGrams: Int,
     color: Color,
     modifier: Modifier = Modifier,
+    // Por omissão gramas, que é o que os três macros sempre foram. A água do diário passa
+    // "ml" — é a mesma barra, e o número já não fala de peso.
+    unit: String = "g",
 ) {
     val ratio = if (targetGrams > 0) (grams / targetGrams).toFloat() else 0f
     val passou = ratio > 1f
@@ -48,7 +51,7 @@ fun MacroBar(
             leading = { Text(label, style = MaterialTheme.typography.labelSmall) },
             trailing = {
                 Text(
-                    "${grams.roundToInt()} / $targetGrams g",
+                    "${grams.roundToInt()} / $targetGrams $unit",
                     style = MaterialTheme.typography.labelSmall,
                     // Negrito e não vermelho: chama a atenção sem dizer que é mau.
                     fontWeight = if (passou) FontWeight.Bold else null,
