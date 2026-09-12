@@ -1,6 +1,7 @@
 package pt.antares.app.core.designsystem.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import pt.antares.app.core.designsystem.Spacing
 import pt.antares.app.core.util.dayShort
@@ -31,6 +35,9 @@ import pt.antares.app.core.util.dayShort
  *
  * A semana começa sempre à segunda: é a semana ISO que o `weekStartEpochDay` dá, e é o que
  * faz este componente, a grelha do progresso e o orçamento semanal concordarem.
+ *
+ * O `onDiaClick` é opcional e por omissão nulo: o treinador e a grelha do Progresso só
+ * mostram a semana, e ganhar um toque que não faz nada seria pior do que não ter toque.
  */
 @Composable
 fun SemanaEmPontos(
@@ -40,6 +47,7 @@ fun SemanaEmPontos(
     titulo: String? = null,
     /** O dia de hoje, para o contornar. Nulo numa semana passada, onde «hoje» não é lá. */
     hoje: Long? = null,
+    onDiaClick: ((Long) -> Unit)? = null,
 ) {
     val marcado = MaterialTheme.colorScheme.primary
 
@@ -60,7 +68,17 @@ fun SemanaEmPontos(
         ) {
             for (i in 0 until DIAS_DA_SEMANA) {
                 val dia = inicioEpochDay + i
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                val rotulo = dayShort(dia)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = if (onDiaClick != null) {
+                        Modifier
+                            .clickable(role = Role.Button) { onDiaClick(dia) }
+                            .semantics { contentDescription = rotulo }
+                    } else {
+                        Modifier
+                    },
+                ) {
                     Box(
                         Modifier
                             .size(CELULA_DP.dp)
