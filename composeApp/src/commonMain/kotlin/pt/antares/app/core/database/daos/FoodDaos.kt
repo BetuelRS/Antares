@@ -414,18 +414,23 @@ interface FoodLogDao {
     suspend fun recentDaysWithLogs(beforeDay: Long, limit: Int = 14): List<Long>
 
     /**
-     * Pesquisa no histórico pelo nome do registo. Sem FTS próprio: o `food_log` não é o
-     * catálogo, e o histórico de uma pessoa não é grande o suficiente para custar um `LIKE`.
+     * Os nomes distintos do histórico, para a pesquisa no diário os comparar sem acentos nem
+     * maiúsculas. Um `LIKE` não o sabe fazer, e os nomes distintos são centenas, não as
+     * dezenas de milhares de linhas.
      */
+    @Query("SELECT DISTINCT nameSnapshot FROM food_log WHERE deleted = 0")
+    suspend fun distinctNames(): List<String>
+
+    /** Os registos de nomes já escolhidos, o mais recente primeiro. */
     @Query(
         """
         SELECT * FROM food_log
-        WHERE deleted = 0 AND nameSnapshot LIKE '%' || :query || '%'
+        WHERE deleted = 0 AND nameSnapshot IN (:nomes)
         ORDER BY epochDay DESC, updatedAt DESC
         LIMIT :limit
         """,
     )
-    suspend fun searchByName(query: String, limit: Int = 50): List<FoodLogEntity>
+    suspend fun byNames(nomes: List<String>, limit: Int): List<FoodLogEntity>
 
     @Query(
         """

@@ -184,8 +184,9 @@ class DiaryViewModelTest : ViewModelHarness() {
         vm.pesquisar("bacalhau")
         advanceUntilIdle()
 
-        val achado = vm.resultadosDaPesquisa.first { it.isNotEmpty() }
-        assertEquals("bacalhau", achado.single().id)
+        val achado = vm.resultadosDaPesquisa.first { it.registos.isNotEmpty() }
+        assertEquals("bacalhau", achado.termo)
+        assertEquals("bacalhau", achado.registos.single().id)
     }
 
     // ---- copiar o dia inteiro ----------------------------------------------------------

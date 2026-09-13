@@ -91,6 +91,12 @@ data class DiaryState(
  */
 data class QuebraDoJejum(val inicioMin: Int, val registos: Int)
 
+/**
+ * O que a pesquisa no diário encontrou, e para que termo. O termo viaja com os registos porque
+ * a pesquisa espera 300 ms: sem ele, o diálogo não sabe se a lista é deste termo ou do anterior.
+ */
+data class ResultadoDaPesquisa(val termo: String, val registos: List<FoodLogEntity>)
+
 data class NutritionRef(
     val reference: EfsaReference,
     val sex: Sex,
@@ -161,10 +167,10 @@ class DiaryViewModel(
      * Pesquisa pelo nome no histórico inteiro, com o mesmo atraso da pesquisa local de
      * alimentos — não dispara uma consulta por tecla.
      */
-    val resultadosDaPesquisa: StateFlow<List<FoodLogEntity>> = _termoDePesquisa
+    val resultadosDaPesquisa: StateFlow<ResultadoDaPesquisa> = _termoDePesquisa
         .debounce(300)
-        .map { diaryRepository.searchLogs(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        .map { ResultadoDaPesquisa(it, diaryRepository.searchLogs(it)) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ResultadoDaPesquisa("", emptyList()))
 
     fun pesquisar(termo: String) {
         _termoDePesquisa.value = termo

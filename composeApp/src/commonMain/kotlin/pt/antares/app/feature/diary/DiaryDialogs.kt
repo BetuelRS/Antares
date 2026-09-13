@@ -185,10 +185,16 @@ internal fun CopyDayDialog(
     )
 }
 
-/** Pesquisar pelo nome no histórico inteiro — não só no dia aberto. */
+/**
+ * Pesquisar pelo nome no histórico inteiro — não só no dia aberto.
+ *
+ * O [resultado] traz o termo a que responde. A pesquisa espera 300 ms antes de ir à base, e
+ * decidir pelo campo e por uma lista de outro instante dizia «Nada encontrado» antes de ter
+ * perguntado — e, ao mudar de termo, mostrava os resultados do anterior por baixo do novo.
+ */
 @Composable
 internal fun DiarySearchDialog(
-    results: List<FoodLogEntity>,
+    resultado: ResultadoDaPesquisa,
     onQueryChange: (String) -> Unit,
     onPick: (FoodLogEntity) -> Unit,
     onDismiss: () -> Unit,
@@ -208,7 +214,9 @@ internal fun DiarySearchDialog(
                 )
                 when {
                     termo.isBlank() -> {}
-                    results.isEmpty() -> Text(
+                    // Ainda não respondeu a este termo: não há nada a dizer, nem que não há.
+                    resultado.termo != termo -> {}
+                    resultado.registos.isEmpty() -> Text(
                         stringResource(Res.string.diary_search_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -218,7 +226,7 @@ internal fun DiarySearchDialog(
                         modifier = Modifier.padding(top = Spacing.sm),
                         verticalArrangement = Arrangement.spacedBy(Spacing.xs),
                     ) {
-                        items(results, key = { it.id }) { log ->
+                        items(resultado.registos, key = { it.id }) { log ->
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -599,11 +607,17 @@ private fun DiaryDayToolsDialogs(folhas: DiarySheets, viewModel: DiaryViewModel,
 
     if (folhas.searchOpen) {
         val resultados by viewModel.resultadosDaPesquisa.collectAsState()
+        // Ao fechar, o termo volta a vazio: senão, reabrir o diálogo voltava a correr a
+        // pesquisa da última vez por baixo de um campo em branco.
         DiarySearchDialog(
-            results = resultados,
+            resultado = resultados,
             onQueryChange = viewModel::pesquisar,
-            onPick = { log -> viewModel.goToDay(log.epochDay); folhas.searchOpen = false },
-            onDismiss = { folhas.searchOpen = false },
+            onPick = { log ->
+                viewModel.goToDay(log.epochDay)
+                viewModel.pesquisar("")
+                folhas.searchOpen = false
+            },
+            onDismiss = { viewModel.pesquisar(""); folhas.searchOpen = false },
         )
     }
 }

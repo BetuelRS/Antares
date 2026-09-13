@@ -17,6 +17,7 @@ import pt.antares.app.core.model.MealSlot
 import pt.antares.app.core.util.Ids
 import pt.antares.app.core.util.MINUTES_PER_DAY
 import pt.antares.app.core.util.MINUTES_PER_HOUR
+import pt.antares.app.core.util.TextNormalize
 import pt.antares.app.core.util.currentMinuteOfDay
 import pt.antares.app.core.util.todayEpochDay
 import kotlin.math.roundToInt
@@ -26,6 +27,10 @@ import pt.antares.app.core.nutrition.microsDeJson
 import pt.antares.app.core.nutrition.microsParaJson
 
 const val DEFAULT_PORTION_G = 100.0
+
+// Quantos nomes vão num `IN (…)` de cada vez: o SQLite antigo aceita 999 variáveis, e uma
+// pesquisa por uma letra bate em muitos nomes.
+private const val NOMES_POR_CONSULTA = 500
 
 data class RepeatableMeal(
     val slot: MealSlot,
@@ -238,9 +243,24 @@ class DiaryRepository(
             }
         }
 
-    /** Pesquisa pelo nome no histórico inteiro — não só no dia aberto. */
+    /**
+     * Pesquisa pelo nome no histórico inteiro — não só no dia aberto —, sem acentos nem
+     * maiúsculas, como a pesquisa de alimentos.
+     *
+     * O `LIKE` do SQLite só dobra maiúsculas ASCII e não tira acentos — «gomes de sa» não
+     * encontrava «Gomes de Sá» —, e o `%` e o `_` que a pessoa escrevesse eram curingas. A
+     * comparação passa para o [TextNormalize], sobre os nomes **distintos** do histórico, e só os
+     * registos dos nomes que batem vêm da base.
+     */
     suspend fun searchLogs(query: String, limit: Int = 50): List<FoodLogEntity> = withContext(io) {
-        if (query.isBlank()) emptyList() else foodLogDao.searchByName(query.trim(), limit)
+        val procura = TextNormalize.normalize(query.trim())
+        if (procura.isBlank()) return@withContext emptyList()
+        foodLogDao.distinctNames()
+            .filter { TextNormalize.normalize(it).contains(procura) }
+            .chunked(NOMES_POR_CONSULTA)
+            .flatMap { nomes -> foodLogDao.byNames(nomes, limit) }
+            .sortedWith(compareByDescending<FoodLogEntity> { it.epochDay }.thenByDescending { it.updatedAt })
+            .take(limit)
     }
 
     suspend fun copyMeal(fromEpochDay: Long, toEpochDay: Long, slot: MealSlot) = withContext(io) {

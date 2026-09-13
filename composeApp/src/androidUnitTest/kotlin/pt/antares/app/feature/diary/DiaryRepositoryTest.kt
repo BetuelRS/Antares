@@ -115,4 +115,35 @@ class DiaryRepositoryTest {
 
         assertEquals(listOf("bacalhau"), achados.map { it.id })
     }
+
+    /**
+     * A pesquisa de alimentos da app ignora acentos e maiúsculas, e quem a usa todos os dias
+     * espera o mesmo aqui. O `LIKE` do SQLite só dobra maiúsculas ASCII e não tira acentos:
+     * «gomes de sa» não encontrava o exemplo que a própria área 02 dá.
+     */
+    @Test
+    fun `pesquisa ignora acentos e maiusculas, como a pesquisa de alimentos`() = runTest {
+        registar("bacalhau", dia = 100, nome = "Bacalhau à Gomes de Sá")
+        registar("pao", dia = 110, nome = "Pão de mistura")
+
+        assertEquals(listOf("bacalhau"), repo.searchLogs("gomes de sa").map { it.id })
+        assertEquals(listOf("pao"), repo.searchLogs("PAO").map { it.id })
+    }
+
+    @Test
+    fun `o que a pessoa escreve nao e um curinga`() = runTest {
+        registar("arroz", dia = 100, nome = "Arroz branco")
+
+        assertEquals(emptyList(), repo.searchLogs("%"))
+        assertEquals(emptyList(), repo.searchLogs("_"))
+    }
+
+    @Test
+    fun `a pesquisa devolve os mais recentes primeiro, ate ao limite`() = runTest {
+        registar("velho", dia = 100, nome = "Arroz")
+        registar("meio", dia = 150, nome = "Arroz")
+        registar("novo", dia = 200, nome = "Arroz")
+
+        assertEquals(listOf("novo", "meio"), repo.searchLogs("arroz", limit = 2).map { it.id })
+    }
 }
