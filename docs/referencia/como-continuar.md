@@ -23,7 +23,7 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 - **2.33.0**, a 2026-09-13, **com a palavra do dono para esta versão e só para ela**. Esquema
   **v41** e catálogo **v6**, inalterados. «O Diário»: o calendário abre um calendário, a tira de
   semana, as kcal e os macros no cabeçalho de cada refeição, a água no resumo do dia, deslizar
-  para apagar com desfazer, copiar o dia inteiro, e pesquisar no diário. **1943 testes Kotlin**,
+  para apagar com desfazer, copiar o dia inteiro, e pesquisar no diário. **1944 testes Kotlin**,
   58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
 - **A segunda revisão da D7 apanhou doze defeitos**, e o pior era o desfazer de um deslizar, que
   nunca funcionava: o estado do gesto era guardável, a lista guarda-o pela chave depois de o item
