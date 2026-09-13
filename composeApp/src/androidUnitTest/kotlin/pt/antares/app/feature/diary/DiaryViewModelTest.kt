@@ -101,14 +101,14 @@ class DiaryViewModelTest : ViewModelHarness() {
         backgroundScope.launch { vm.state.collect {} }
         advanceUntilIdle()
 
+        // Espera-se pela emissão, e não se lê o `state.value`: as consultas do Room emitem
+        // noutra thread, e o `advanceUntilIdle` não espera por elas. O `!loading` põe o valor
+        // inicial de fora.
         vm.previousDay()
-        advanceUntilIdle()
-        assertEquals(hoje - 1, vm.state.value.epochDay, "andar para trás não saiu de hoje")
+        vm.state.first { it.epochDay == hoje - 1 && !it.loading }
 
         vm.goToDay(hoje)
-        advanceUntilIdle()
-        assertEquals(hoje, vm.state.value.epochDay)
-        assertTrue(vm.state.value.isToday)
+        assertTrue(vm.state.first { it.epochDay == hoje && !it.loading }.isToday)
     }
 
     @Test

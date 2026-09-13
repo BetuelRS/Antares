@@ -1151,9 +1151,9 @@ Nada mudou nestes desde a última varredura, e cada um foi recontado hoje:
 - **160 dos 873 exercícios têm o `namePt` igual ao `nameEn`**, e os nomes dos exercícios saem
   sempre em português — visto no cartão de destaque do treino com a app **em inglês**:
   «Supino com Barra · Agachamento com Barra · Remada Curvada com Barra».
-- **O ícone do calendário do diário continua a ser o botão «hoje»** — defeito concreto 1 da
-  `estudo/areas/02-diario.md`. Visto em «Sat, 5 Sep»: o ícone aparece ao lado da data e a
-  descrição dele é `Today`. É a **2.33.0**.
+- ~~**O ícone do calendário do diário continua a ser o botão «hoje»**~~ — defeito concreto 1 da
+  `estudo/areas/02-diario.md`. **Fechado na 2.33.0**: abre um calendário, e voltar a hoje passou
+  para o menu ⋮ do dia.
 - **Os cartões vazios do «Hoje» continuam permanentes** — «Fasting · No active fast» e «Run ·
   No runs yet» num perfil que nunca jejuou nem correu. É a **2.32.0**.
 - **As imagens dos exercícios continuam a sair para o `raw.githubusercontent.com`**
@@ -1303,6 +1303,45 @@ largura não cabiam a frase da água da comida por medir nem o aviso de semana i
 **Aberto:** escolher a meta de passos — hoje é 8 000 fixos, com a fonte escrita; a app não tem
 nenhum sítio onde a pessoa escolha uma meta que ela calcula, e abrir o primeiro é trabalho
 próprio. E, da 2.32.0, o convite semanal dos cartões que saíram e a ordem escolhível.
+
+## O que a 2.33.0 fechou, e o que deixou aberto
+
+**Fechado** — as seis propostas da área 02 e do esboço 02: o calendário abre um calendário
+(defeito concreto 1) · a tira de semana, com o toque a saltar para o dia · as kcal e os macros no
+cabeçalho de cada refeição, na forma do esboço · a água no resumo do dia (defeito concreto 3) ·
+deslizar para apagar, com desfazer · copiar o dia inteiro no menu do dia. E a pesquisa no
+histórico, que a área marca «talvez» e a resposta 2 fez entrar.
+
+**A segunda revisão da D7 apanhou doze defeitos**, e o pior era o desfazer de um deslizar, que
+nunca funcionava: a linha reposta voltava deslizada e apagava-se outra vez. Está em
+`estudo/revisoes/2.33.0-d7.txt`, e as correcções no registo da versão, no plano.
+
+**Contra o esboço, com a razão:**
+
+- **O `WaterCard` fica no fim do diário**, além da barra no resumo — é onde se regista um copo, e
+  um número que só se lê não substitui um botão que se toca.
+- **A tira usa as cores do `SemanaEmPontos`** — os dias com registo na cor da app — e não o verde
+  do esboço: a área manda reaproveitar o vocabulário do treinador e do centro de treino, e duas
+  cores para o mesmo componente eram duas convenções.
+- **«Copiar o dia inteiro» copia para o dia aberto** um dos catorze dias anteriores com registo, e
+  não do aberto para outro dia. É o mesmo gesto visto do destino: navega-se primeiro para lá.
+
+**Aberto, e não estava na linha da versão:**
+
+- **Arrastar para mover** — a outra metade da linha «deslizar / arrastar» da área 02, marcada
+  «sim».
+- **Tocar na hora de um registo para a mudar** — o defeito concreto 2 da área.
+- **A nota do dia e o gráfico de sete dias** — os dois «talvez» da área.
+- **O `QuickAddDialog` enterrado no menu da refeição** — «o que é inútil» da área.
+- **O cartão que regista a água continua no fundo da lista** — a queixa 5 da área. A barra subiu;
+  o botão não.
+- **O `DaySummaryCard` lido pelo leitor de ecrã como elementos soltos** —
+  `estudo/transversal/03` §3.3. A versão acrescentou-lhe a barra da água e não o agrupou.
+
+**Para o dono decidir:** a cópia — do dia, e já antes a da refeição e o «repetir» — leva a hora e
+a fotografia do registo de origem. Copiar para um dia passado põe-lhe horas, e o
+`DiaryRepository` diz que um dia passado não as tem; copiar para hoje pode pôr horas ainda por
+chegar, que entram na janela alimentar e no cruzamento com o jejum.
 
 ---
 

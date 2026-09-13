@@ -23,9 +23,37 @@ data class AppVersion(
  */
 object AppChangelog {
 
-    const val CURRENT = "2.32.2"
+    const val CURRENT = "2.33.0"
 
     val versions: List<AppVersion> = listOf(
+        AppVersion(
+            name = "2.33.0",
+            title = "O diário ganha calendário e semana",
+            titleEn = "The diary gets a calendar and a week",
+            highlights = listOf(
+                "**O ícone do calendário abre um calendário**, e uma tira mostra a semana: toca " +
+                    "num dia para saltar para ele",
+                "**Cada refeição diz as kcal e os macros** por baixo do nome — vê-se de onde vem " +
+                    "a proteína que falta",
+                "**A água sobe para o resumo do dia**, como quarta barra, e diz quando a da " +
+                    "comida não se sabe",
+                "**Desliza um registo para o apagar**, com desfazer, e **copia um dia inteiro** " +
+                    "a partir do menu do dia",
+                "**Pesquisa no diário** pelo nome, em qualquer dia, sem te preocupares com " +
+                    "acentos",
+            ),
+            highlightsEn = listOf(
+                "**The calendar icon opens a calendar**, and a strip shows the week: tap a day to " +
+                    "jump to it",
+                "**Each meal shows its kcal and macros** under its name — you can see where the " +
+                    "missing protein comes from",
+                "**Water moves up into the day summary**, as a fourth bar, and says when the water " +
+                    "from food is unknown",
+                "**Swipe an entry to delete it**, with undo, and **copy a whole day** from the day " +
+                    "menu",
+                "**Search the diary** by name, on any day, without worrying about accents",
+            ),
+        ),
         AppVersion(
             name = "2.32.2",
             title = "O ruído do ecrã de exercício",
@@ -358,39 +386,7 @@ object AppChangelog {
                     "the week",
             ),
         ),
-        AppVersion(
-            name = "2.24.0",
-            title = "O histórico deixa de dizer duas coisas sobre cada treino",
-            titleEn = "The history stops saying two things about each workout",
-            highlights = listOf(
-                "**Cada linha do histórico diz a rotina, a data, a duração e as séries** — " +
-                    "eram a data e o volume, e dois treinos completamente diferentes ficavam " +
-                    "iguais",
-                "**Uma 🌟 nos treinos em que bateste um recorde**, e é o recorde do dia em " +
-                    "que ele aconteceu, não o melhor de hoje",
-                "**Abrir um treino diz qual foi e quando** — a rotina no título, a data e a " +
-                    "hora por baixo. Dizia «Treino» e mais nada",
-                "**O RPE que escreves aparece**. Era gravado desde sempre e não se via em " +
-                    "lado nenhum depois de o escrever",
-                "**Filtras o histórico por rotina**, e já não por exercício: quem procura o " +
-                    "supino quer a progressão do supino, e essa está no exercício",
-            ),
-            highlightsEn = listOf(
-                "**Every history row now shows the routine, the date, the duration and the " +
-                    "sets** — it was the date and the volume, and two completely different " +
-                    "workouts looked the same",
-                "**A 🌟 on the workouts where you set a record**, and it is the record as it " +
-                    "stood that day, not your best today",
-                "**Opening a workout tells you which one and when** — the routine in the " +
-                    "title, the date and time below. It used to say “Workout” and nothing else",
-                "**The RPE you write shows up.** It was always saved and never shown " +
-                    "anywhere after you wrote it",
-                "**You filter the history by routine**, not by exercise: if you are looking " +
-                    "for the bench press you want its progression, and that lives in the " +
-                    "exercise",
-            ),
-        ),
-        // Da 2.2.0 à 2.23.1 saíram daqui à medida que entraram as versões novas: a lista tem
+        // Da 2.2.0 à 2.24.0 saíram daqui à medida que entraram as versões novas: a lista tem
         // tecto de doze e o `AppChangelogTest` cobra-o. O histórico completo é trabalho do
         // `CHANGELOG.md`, que não tem tecto nenhum.
     )

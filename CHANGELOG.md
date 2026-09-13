@@ -13,6 +13,37 @@ se uma atualização é indolor. Os esquemas estão em `composeApp/schemas/`.
 
 ## [Unreleased]
 
+## [2.33.0] — 2026-09-13
+
+**O Diário.** O calendário abre um calendário, a semana aparece no topo, e cada refeição diz de
+onde vem o que falta. Só acrescenta, e é por isso MENOR.
+
+Esquema da base inalterado, **v41**; catálogo inalterado, **v6**.
+
+### Adicionado
+
+- **O ícone do calendário abre um calendário** e salta para o dia escolhido. Até aqui voltava a
+  hoje e perdia o dia onde se estava; voltar a hoje passou para o menu ⋮ do dia, que só o
+  oferece fora de hoje.
+- **A tira de semana** por baixo do cabeçalho: os dias com registo marcados, e um toque salta
+  para o dia.
+- **As kcal e os macros de cada refeição** por baixo do nome dela — «312 kcal · P 12 · H 44 ·
+  G 9» —, e «por registar» quando está vazia.
+- **A água no resumo do dia**, como quarta barra, com o mesmo número do cartão da água do Hoje.
+  Quando se comeu e a água da comida não se sabe, o resumo di-lo em vez de mostrar só a bebida
+  como se fosse a toda.
+- **Deslizar um registo para o apagar**, para qualquer um dos lados, com o mesmo desfazer do
+  menu da linha.
+- **Copiar o dia inteiro** a partir do menu ⋮ do dia: os registos de um dia anterior somam-se
+  aos do dia aberto, e o desfazer leva só o que a cópia trouxe.
+- **Pesquisar no diário** pelo nome, em qualquer dia, sem acentos nem maiúsculas — como a
+  pesquisa de alimentos —, e tocar num resultado salta para o dia dele.
+
+### Corrigido
+
+- **«Copiar dia de ontem» passa a ter desfazer**, como o «Copiar dia inteiro»: era a mesma cópia,
+  e só uma das duas portas o tinha.
+
 ## [2.32.2] — 2026-09-12
 
 **O ruído do ecrã de exercício.** Nasceu como 2.19.1 no plano, e sai com este número: o

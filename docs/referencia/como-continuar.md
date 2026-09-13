@@ -20,6 +20,23 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
 
 ## Onde estamos
 
+- **2.33.0**, a 2026-09-13, **com a palavra do dono para esta versão e só para ela**. Esquema
+  **v41** e catálogo **v6**, inalterados. «O Diário»: o calendário abre um calendário, a tira de
+  semana, as kcal e os macros no cabeçalho de cada refeição, a água no resumo do dia, deslizar
+  para apagar com desfazer, copiar o dia inteiro, e pesquisar no diário. **1943 testes Kotlin**,
+  58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A segunda revisão da D7 apanhou doze defeitos**, e o pior era o desfazer de um deslizar, que
+  nunca funcionava: o estado do gesto era guardável, a lista guarda-o pela chave depois de o item
+  sair, e a linha reposta voltava deslizada e apagava-se outra vez. Era o passo que a corrida no
+  aparelho não tinha conseguido tocar. A revisão está em `estudo/revisoes/2.33.0-d7.txt`, e **o
+  dono mandou a sessão que a fez corrigir e publicar** — um commit por defeito, cada um visto a
+  falhar primeiro.
+- **O que a versão deixou de fora** está no [`o-que-ficou-de-fora.md`](o-que-ficou-de-fora.md):
+  arrastar para mover, a hora tocável, a nota do dia, o gráfico de sete dias, e o resumo do dia
+  ainda lido pelo leitor de ecrã como elementos soltos.
+- **A produção continua em pausa** depois dela: a próxima do plano é a **2.34.0**, «O ciclo sai do
+  ecrã do ciclo», e **não começa sem a palavra do dono** (A1).
+- *O que se segue é o estado até à 2.32.2.*
 - **A produção está em pausa desde 2026-09-11, por decisão do dono**, depois de fechada a 2.32.1:
   *«fecha completamente a 2.32 (…) e depois faz uma pausa na produção direta»*. A próxima do plano
   seria a **2.33.0**, «O Diário», e **não começa sem a palavra dele** (A1). A produção sem o dono,
