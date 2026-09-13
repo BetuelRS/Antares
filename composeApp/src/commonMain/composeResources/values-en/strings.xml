@@ -352,6 +352,7 @@
     <string name="diary_search">Search the diary</string>
     <string name="diary_search_hint">What are you looking for?</string>
     <string name="diary_search_empty">Nothing found.</string>
+    <string name="diary_meal_empty">nothing logged yet</string>
     <string name="diary_water_food_unknown">Without water from food: less than half of what you ate this day has a measured water content.</string>
 
     <string name="meal_breakfast">Breakfast</string>

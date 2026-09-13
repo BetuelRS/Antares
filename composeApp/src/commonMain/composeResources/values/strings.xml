@@ -352,6 +352,7 @@
     <string name="diary_search">Pesquisar no diário</string>
     <string name="diary_search_hint">O que procuras?</string>
     <string name="diary_search_empty">Nada encontrado.</string>
+    <string name="diary_meal_empty">por registar</string>
     <string name="diary_water_food_unknown">Sem a água da comida: menos de metade do que comeste neste dia traz o teor de água medido.</string>
 
     <string name="meal_breakfast">Pequeno-almoço</string>

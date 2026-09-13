@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -100,39 +99,40 @@ internal fun MealHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column {
-            Text(slotLabel(slot), style = MaterialTheme.typography.titleMedium)
-            // Só com registos: sem eles não há macro nenhum para dizer, e «P 0 H 0 G 0»
-            // é ruído numa refeição vazia.
-            if (totalKcal > 0) {
-                val m = macroInitials()
-                Text(
-                    "${m.p} ${proteinG.roundToInt()} · ${m.c} ${carbsG.roundToInt()} · " +
-                        "${m.f} ${fatG.roundToInt()}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (totalKcal > 0) {
-
-                val abrirLabel = stringResource(Res.string.meal_detail_open)
-                Text(
-                    "$totalKcal ${stringResource(Res.string.common_kcal)}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = if (onOpenDetail != null) {
-                        Modifier
-                            .clickable(role = Role.Button, onClick = onOpenDetail)
-                            .semantics { contentDescription = abrirLabel }
+        // A forma do esboço 02: as kcal e os macros na linha pequena por baixo do nome, e à
+        // direita só o ＋ e o ⋮. Com as kcal à direita e os macros por baixo, a coluna não
+        // tinha peso, comia a largura, e a 200 % de letra espremia os dois botões.
+        val abrirLabel = stringResource(Res.string.meal_detail_open)
+        Column(
+            Modifier
+                .weight(1f)
+                .then(
+                    if (onOpenDetail != null) {
+                        // `onClickLabel` e não `contentDescription`: a descrição tapava o nome e
+                        // os números ao leitor de ecrã, que só dizia «ver os nutrientes».
+                        Modifier.clickable(onClickLabel = abrirLabel, role = Role.Button, onClick = onOpenDetail)
                     } else {
                         Modifier
                     },
-                )
-                Spacer(Modifier.width(Spacing.sm))
-            }
-
+                ),
+        ) {
+            Text(slotLabel(slot), style = MaterialTheme.typography.titleMedium)
+            val m = macroInitials()
+            Text(
+                // Sem registos não há macro nenhum para dizer — «P 0 H 0 G 0» era ruído —, e
+                // o esboço escreve «por registar».
+                if (hasLogs) {
+                    val kcal = stringResource(Res.string.common_kcal)
+                    "$totalKcal $kcal · ${m.p} ${proteinG.roundToInt()} · " +
+                        "${m.c} ${carbsG.roundToInt()} · ${m.f} ${fatG.roundToInt()}"
+                } else {
+                    stringResource(Res.string.diary_meal_empty)
+                },
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onAdd) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.diary_add_food))
             }

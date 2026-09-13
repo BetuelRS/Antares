@@ -63,4 +63,23 @@ class EscalaDeLetraTest {
                 "primeiro, a 200 % o segundo sai uma letra por linha.",
         )
     }
+
+    /**
+     * O cabeçalho de cada refeição do diário: o nome e a linha das kcal e dos macros numa
+     * coluna, e o ＋ e o ⋮ à direita. Sem `weight` na coluna, ela come a largura e os dois
+     * botões — as únicas portas para acrescentar à refeição e para o menu dela — ficam
+     * espremidos a 200 %. Foi a 2.33.0 que a alargou, ao pôr os macros por baixo do nome.
+     */
+    @Test
+    fun `a coluna do cabecalho da refeicao leva o peso da linha`() {
+        val cabecalho = fonte("feature/diary/DiaryRows.kt")
+            .substringAfter("internal fun MealHeader(")
+            .substringBefore("IconButton(onClick = onAdd)")
+
+        assertTrue(
+            "Column(" in cabecalho && ".weight(1f)" in cabecalho,
+            "a coluna do nome da refeição perdeu o `weight(1f)`: a 200 % de escala de letra " +
+                "empurra o ＋ e o ⋮ para fora da linha.",
+        )
+    }
 }
