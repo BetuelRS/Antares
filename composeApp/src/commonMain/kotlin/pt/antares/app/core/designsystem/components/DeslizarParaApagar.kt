@@ -19,7 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import pt.antares.app.core.designsystem.Spacing
+
+/** O fundo vermelho do gesto, para o teste saber se ele está desenhado. */
+internal const val FUNDO_DO_GESTO = "fundo-do-gesto"
 
 /**
  * Uma linha que se apaga a deslizar, para qualquer um dos dois lados.
@@ -63,9 +67,13 @@ fun DeslizarParaApagar(
         state = estado,
         modifier = modifier,
         backgroundContent = {
+            // Só durante o gesto. Desenhado sempre, o vermelho aparecia nos cantos redondos do
+            // cartão de cada registo, com a linha parada — visto no aparelho.
+            if (estado.dismissDirection == SwipeToDismissBoxValue.Settled) return@SwipeToDismissBox
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .testTag(FUNDO_DO_GESTO)
                     .background(MaterialTheme.colorScheme.errorContainer)
                     .padding(horizontal = Spacing.lg),
                 contentAlignment = if (estado.dismissDirection == SwipeToDismissBoxValue.StartToEnd) {

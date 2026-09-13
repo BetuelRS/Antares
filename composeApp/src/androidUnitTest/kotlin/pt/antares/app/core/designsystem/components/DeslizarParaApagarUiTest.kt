@@ -12,6 +12,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
@@ -133,5 +134,22 @@ class DeslizarParaApagarUiTest {
             useUnmergedTree = true,
         ).fetchSemanticsNodes()
         assertEquals(0, comDescricao.size, "o fundo do gesto tem descrição, e não faz nada")
+    }
+
+    /**
+     * Parado, o fundo não se desenha. Visto no aparelho: desenhado sempre, o vermelho aparecia
+     * nos cantos redondos do cartão de cada registo do diário.
+     */
+    @Test
+    fun `parado o fundo vermelho nao se desenha`() = runComposeUiTest {
+        setContent {
+            DeslizarParaApagar(onApagar = {}) {
+                Text("linha", modifier = Modifier.fillMaxWidth().height(60.dp))
+            }
+        }
+        waitForIdle()
+
+        val fundo = onAllNodesWithTag(FUNDO_DO_GESTO, useUnmergedTree = true).fetchSemanticsNodes()
+        assertEquals(0, fundo.size, "o fundo do gesto está desenhado com a linha parada")
     }
 }
