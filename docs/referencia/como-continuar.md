@@ -25,6 +25,10 @@ reconstruída de memória a cada vez — e que, sendo reconstruída, envelhecia 
   semana, as kcal e os macros no cabeçalho de cada refeição, a água no resumo do dia, deslizar
   para apagar com desfazer, copiar o dia inteiro, e pesquisar no diário. **1944 testes Kotlin**,
   58 das ferramentas, 68 Deno, detekt e lint limpos — contados com o `verificar.mjs`.
+- **A 2.33.0 está publicada e verde**, conferido a 2026-09-13: a etiqueta `v2.33.0` em `b6f840f`,
+  release «2.33.0 — o diário ganha calendário e semana» com os quatro APKs mais o `catalogo.json` e
+  o `manifesto.json`, **CI verde nesse commit** — oito minutos —, e o `latest` a responder 200 aos
+  dois ficheiros, com o `sha256` do catálogo a bater com o do manifesto.
 - **A segunda revisão da D7 apanhou doze defeitos**, e o pior era o desfazer de um deslizar, que
   nunca funcionava: o estado do gesto era guardável, a lista guarda-o pela chave depois de o item
   sair, e a linha reposta voltava deslizada e apagava-se outra vez. Era o passo que a corrida no
