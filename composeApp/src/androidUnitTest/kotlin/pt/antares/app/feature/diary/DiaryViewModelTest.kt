@@ -2,6 +2,7 @@ package pt.antares.app.feature.diary
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
@@ -94,14 +95,20 @@ class DiaryViewModelTest : ViewModelHarness() {
     @Test
     fun `voltar a hoje repoe o dia`() = runTest(dispatcher) {
         val vm = diaryViewModel()
+        // Alguém tem de estar a ler o estado. Sem isto o `state` fica no valor inicial — que já
+        // é hoje —, o `first { epochDay == hoje }` devolvia-o logo, e o teste passava com a
+        // navegação a não fazer nada.
+        backgroundScope.launch { vm.state.collect {} }
         advanceUntilIdle()
 
         vm.previousDay()
         advanceUntilIdle()
+        assertEquals(hoje - 1, vm.state.value.epochDay, "andar para trás não saiu de hoje")
+
         vm.goToDay(hoje)
         advanceUntilIdle()
-
-        assertTrue(vm.state.first { it.epochDay == hoje }.isToday)
+        assertEquals(hoje, vm.state.value.epochDay)
+        assertTrue(vm.state.value.isToday)
     }
 
     @Test
