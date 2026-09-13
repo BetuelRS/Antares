@@ -529,6 +529,7 @@ internal fun DiaryWeekStrip(epochDay: Long, diasRegistados: List<Long>, onDiaCli
         inicioEpochDay = weekStartEpochDay(epochDay),
         diasMarcados = diasRegistados,
         hoje = todayEpochDay(),
+        aberto = epochDay,
         onDiaClick = onDiaClick,
         modifier = Modifier.fillMaxWidth(),
     )
