@@ -116,6 +116,7 @@ fun DiaryScreen(
                 onPrevious = viewModel::previousDay,
                 onNext = viewModel::nextDay,
                 onPickDate = { folhas.pickDateOpen = true },
+                onToday = { viewModel.goToDay(pt.antares.app.core.util.todayEpochDay()) },
                 onCopyDay = { folhas.copyDayOpen = true; viewModel.loadCopyDayCandidates() },
                 onSearch = { folhas.searchOpen = true },
             )

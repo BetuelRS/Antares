@@ -445,8 +445,9 @@ internal fun LazyListScope.mealSection(
  * **O calendário abre um calendário.** Até à 2.32.2 o mesmo ícone só aparecia fora de hoje e
  * chamava `onToday` — um calendário que não abria calendário nenhum, e que devolvia a hoje
  * quem o tocasse à espera de escolher uma data. Agora está sempre à vista e abre sempre o
- * `DateDialog`; o atalho de voltar a hoje passou para o dia realçado na tira de semana, logo
- * abaixo — é o mesmo toque, só que agora também mostra a semana.
+ * `DateDialog`. O atalho de voltar a hoje passou para o menu ⋮ do dia, e só aparece fora de
+ * hoje: a tira de semana também leva lá, mas só dentro da semana corrente — de há três
+ * semanas, hoje não está na tira.
  */
 @Composable
 internal fun DayHeader(
@@ -455,6 +456,7 @@ internal fun DayHeader(
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     onPickDate: () -> Unit,
+    onToday: () -> Unit,
     onCopyDay: () -> Unit,
     onSearch: () -> Unit,
 ) {
@@ -489,6 +491,14 @@ internal fun DayHeader(
                 )
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                // Fora de hoje, o caminho de volta num toque. A tira de semana só o dá dentro
+                // da semana corrente: de há três semanas, hoje não está nela.
+                if (!isToday) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(Res.string.diary_back_to_today)) },
+                        onClick = { menuOpen = false; onToday() },
+                    )
+                }
                 DropdownMenuItem(
                     text = { Text(stringResource(Res.string.diary_copy_day)) },
                     onClick = { menuOpen = false; onCopyDay() },
