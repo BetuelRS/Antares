@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import pt.antares.app.core.model.Sex
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.clickable
@@ -548,7 +546,7 @@ internal fun EscolherRefeicaoDialog(onEscolha: (MealSlot) -> Unit, onDismiss: ()
 }
 
 /**
- * Os nove diálogos e folhas do diário, e o estado de cada um.
+ * Os treze diálogos e folhas do diário, e o estado de cada um.
  *
  * Vivem juntos porque partilham a mesma regra: só um está aberto de cada vez, e todos se
  * fecham pondo o campo a nulo. Estavam declarados um a um no corpo do ecrã, e eram cento e
@@ -576,8 +574,8 @@ internal class DiarySheets {
 }
 
 /**
- * Os três diálogos do menu do cabeçalho do dia: escolher data, copiar o dia inteiro, e
- * pesquisar. Separados do `DiaryDialogHost` para ele não crescer — é a mesma razão que
+ * Os três diálogos do cabeçalho do dia: escolher a data, pelo ícone do calendário, e copiar o
+ * dia inteiro e pesquisar, pelo menu ⋮. Separados do `DiaryDialogHost` para ele não crescer — é a mesma razão que
  * tirou a fila de categorias do `AddExerciseScreen` na 2.32.2.
  */
 @Composable
